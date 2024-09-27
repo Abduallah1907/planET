@@ -1,0 +1,16 @@
+Packages:
+    moongose: create mongoDB schema and handle db queries
+    nodemon: node server startup/configuration
+    express: handle all HTTP requests
+    nodemailer: handle emails
+    Auth:
+        express-jwt,express-basic-auth,jsonwebtoken
+    error-handler: better error handling/debugging (only in dev enviroment)
+    dotenv: access .env file
+    cors: middleware to handle Cross Origin Request Sharing
+    bcrypt: encrypt data mainly passwords
+    agenda: handle scheduled jobs
+    express-async-errors: handle async errors
+    winston: logging
+    typedi: dependancy injection tool
+    event-dispatch: Allows to register subscribers and dispatch events across the application.
