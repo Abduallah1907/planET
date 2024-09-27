@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "dev": "node ./build/server.js",
-    "start": "tsc && npm run dev"
+    "start": "node src/app.js"
   },
   "dependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -39,7 +39,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
-    "@types/node": "^22.7.2",
+    "@types/node": "^22.7.3",
     "@types/nodemailer": "^6.4.16",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
