@@ -5,7 +5,7 @@ const route = Router();
 
 
 export default (app: Router) => {
-    app.use('/users', route);
+    app.use('/seller', route);
     
     route.post('/createSeller', createSeller);
     route.get('/getSeller', getSeller);
