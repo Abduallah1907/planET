@@ -44,10 +44,9 @@ router.delete(
 );
 
 // Given an email, name, phone number, username, and password,
-// automatically creates the account and returns the newly created
-// user
+// automatically creates the account and returns the newly created governor
 router.post(
-  "/CreateGovernor",
+  "/createGovernor",
   async (req: Request, res: Response): Promise<any> => {
     const { email, name, phone_number, username, password } = req.body;
     const adminServiceInstance = new adminService();
@@ -60,6 +59,28 @@ router.post(
         password
       );
       res.status(201).json({ success: true, data: newGovernor });
+    } catch (e: any) {
+      res.status(404).json({ success: false, message: e.message });
+    }
+  }
+);
+
+// Given an email, name, phone number, username, and password,
+// automatically creates the account and returns the newly created admin
+router.post(
+  "/createAdmin",
+  async (req: Request, res: Response): Promise<any> => {
+    const { email, name, phone_number, username, password } = req.body;
+    const adminServiceInstance = new adminService();
+    try {
+      const newAdmin = await adminServiceInstance.createAdmin(
+        email,
+        name,
+        phone_number,
+        username,
+        password
+      );
+      res.status(201).json({ success: true, data: newAdmin });
     } catch (e: any) {
       res.status(404).json({ success: false, message: e.message });
     }

@@ -7,7 +7,7 @@ const validUserID = async (
 ): Promise<any> => {
   const { id } = req.body;
   if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).json({ error: "No such user" });
+    return res.status(404).json({ success: false, message: "No such user" });
   next();
 };
 

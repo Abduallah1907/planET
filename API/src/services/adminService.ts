@@ -31,7 +31,25 @@ class adminService {
       name,
       phone_number,
       password,
-      role: "governor",
+      role: "GOVERNOR",
+    });
+    return governor;
+  }
+
+  public async createAdmin(
+    email: string,
+    name: string,
+    phone_number: string,
+    username: string,
+    password: string
+  ): Promise<any> {
+    const governor = await User.create({
+      username,
+      email,
+      name,
+      phone_number,
+      password,
+      role: "ADMIN",
     });
     return governor;
   }
