@@ -1,12 +1,12 @@
 import { ITourist } from '@/interfaces/ITourist';
+import Cart from '@/types/Cart';
+import TouristBadge from '@/types/enums/touristBadge';
 import mongoose from 'mongoose';
+import CartSchema from '@/types/Cart'; // Adjust the import path as necessary
 
 
 const touristSchema = new mongoose.Schema({
-  tourist_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
+  
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -44,7 +44,6 @@ const touristSchema = new mongoose.Schema({
   wallet: {
     type: Number,
     required: true,
-    immutable: true, // This makes the field non-editable after creation
   },
   loyality_points: {
     type: Number,
@@ -52,13 +51,18 @@ const touristSchema = new mongoose.Schema({
   },
   badge: {
     type: String,
-    enum: ['1', '2', '3'],
+    enum: Object.values(TouristBadge),
     required: true,
   },
   addresses: [{
     type: String,
     required: true,
-  }]
+  }],
+  cart:{
+    type: CartSchema,
+    default: {items: [], cost: 0},
+    required: true,
+  }
 }, { timestamps: true });
 
 const Tourist = mongoose.model<ITourist & mongoose.Document>('Tourist', touristSchema);

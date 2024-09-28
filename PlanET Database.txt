@@ -3,11 +3,14 @@ PlanET Database
 User{
 user_id:IDENTITY,
 username:String,
+name:String,
 password:String,
 email:String,
 role:ENUM('tourist', 'tourguide', 'advertisor', 'governor', 'admin', 'seller'),
 phone_number:String,
-name:String
+salt:String (used to hash password),
+first_time_login: boolean,
+status: String
 }
 
 
@@ -21,9 +24,8 @@ nation:String,
 wallet:double (final:not editable),
 loyality_points:double,
 badge:ENUM(1,2,3 according to loyality_points),
-addresses:[String]
-
-
+addresses:[String],
+cart: cart
 }
 
 Bookmark_notify{
@@ -94,7 +96,7 @@ Governor{
 governor_id:IDENTITY,
 user_id:int (ref to user),
 histroical_locations:[historical_location_id] (ref to historical_location)
-
+nation:String
 }
 
 Activity{
@@ -229,7 +231,7 @@ payment_type:ENUM(credit card,cash)
 
 Cart{
 cart_id:IDENTITY,
-items:[Cart_item_id],
+items:[cart_items],
 cost:double
 }
 
@@ -237,7 +239,6 @@ Cart_item{
 cart_item_id:IDENTITY,
 product_id:int (ref to product),
 quantity:int
-
 }
 
 Wishlist{

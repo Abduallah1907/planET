@@ -3,10 +3,6 @@ import mongoose from "mongoose";
 
 const activitySchema = new mongoose.Schema(
   {
-    activity_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      auto: true,
-    },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
@@ -59,6 +55,11 @@ const activitySchema = new mongoose.Schema(
     active_flag: {
       type: Boolean,
       required: false,
+    },
+    adverstier_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Advertiser",
+      required: true,
     },
   },
   { timestamps: true }
