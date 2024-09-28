@@ -14,9 +14,26 @@ class adminService {
       .skip((page - 1) * 10);
     return users;
   }
-  public async searchUser(username: String): Promise<any> {
+  public async searchUser(username: string): Promise<any> {
     const user = await User.find({ username: username });
     return user;
+  }
+  public async createGovernor(
+    email: string,
+    name: string,
+    phone_number: string,
+    username: string,
+    password: string
+  ): Promise<any> {
+    const governor = await User.create({
+      username,
+      email,
+      name,
+      phone_number,
+      password,
+      role: "governor",
+    });
+    return governor;
   }
 }
 
