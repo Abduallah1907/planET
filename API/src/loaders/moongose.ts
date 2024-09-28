@@ -23,7 +23,7 @@ export default async (): Promise<Db> => {
   //   autoCreate?: boolean;
   // }
 
-  const connection = await mongoose.connect(databaseURL, {
+  const connection = await mongoose.connect(databaseURL.concat("planET"), {
     autoIndex: true,
     autoCreate: true
   });

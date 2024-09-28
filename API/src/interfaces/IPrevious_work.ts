@@ -1,7 +1,7 @@
 import { Document, ObjectId } from 'mongoose';
 
-export interface IPrevious_work extends Document {
-  previous_work_id: ObjectId;
+export interface IPrevious_Work extends Document {
+ 
   title: string;
   place: string;
   from: Date;

@@ -1,7 +1,6 @@
 import { Document, ObjectId } from 'mongoose';
 
-export interface IHistorical_location extends Document {
-  historical_location_id: ObjectId;
+export interface IHistorical_Location extends Document {
   governor_id: ObjectId;
   comments: ObjectId[];
   name: string;

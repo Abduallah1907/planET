@@ -1,11 +1,8 @@
-import { IPrevious_work } from '@/interfaces/IPrevious_work';
+import { IPrevious_Work } from '@/interfaces/IPrevious_Work';
 import mongoose from 'mongoose';
 
 const previousWorkSchema = new mongoose.Schema({
-  previous_work_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
+  
   title: {
     type: String,
     required: true,
@@ -24,6 +21,6 @@ const previousWorkSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-const Previous_work = mongoose.model<IPrevious_work & mongoose.Document>('Previous_work', previousWorkSchema);
+const Previous_Work = mongoose.model<IPrevious_Work & mongoose.Document>('Previous_Work', previousWorkSchema);
 
-export default Previous_work;
+export default Previous_Work;

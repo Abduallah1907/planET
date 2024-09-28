@@ -1,7 +1,6 @@
 import { Document, ObjectId } from 'mongoose';
 
 export interface IItinerary extends Document {
-  itinerary_id: ObjectId;
   activities: ObjectId[];
   timeline: ObjectId[];
   comments: ObjectId[];
@@ -16,6 +15,7 @@ export interface IItinerary extends Document {
   tags?: string[];
   active_flag: boolean;
   inappropriate_flag: boolean;
+  tour_guide_id: ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 }

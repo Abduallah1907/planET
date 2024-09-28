@@ -2,10 +2,7 @@ import { IGovernor } from '@/interfaces/IGovernor';
 import mongoose from 'mongoose';
 
 const governorSchema = new mongoose.Schema({
-  governor_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
+  
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -13,8 +10,12 @@ const governorSchema = new mongoose.Schema({
   },
   historical_locations: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Historical_location',
-  }]
+    ref: 'Historical_Location',
+  }],
+  nation: {
+    type: String,
+    required: true,
+  }
 }, { timestamps: true });
 
 const Governor = mongoose.model<IGovernor & mongoose.Document>('Governor', governorSchema);

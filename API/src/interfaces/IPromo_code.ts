@@ -1,7 +1,7 @@
 import { Document, ObjectId } from 'mongoose';
 
-export interface IPromo_code extends Document {
-  promo_code_id: ObjectId;
+
+export interface IPromo_Code extends Document {
   code: string;
   expiry_date: Date;
   discount: number;

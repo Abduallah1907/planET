@@ -1,11 +1,8 @@
-import { IBookmark_notify } from '@/interfaces/IBookmark_notify';
+import { IBookmark_Notify } from '@/interfaces/IBookmark_Notify';
 import mongoose from 'mongoose';
 
 const bookmarkNotifySchema = new mongoose.Schema({
-  bookmark_notify_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
+  
   activity_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Activity',
@@ -18,6 +15,6 @@ const bookmarkNotifySchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-const Bookmark_notify = mongoose.model<IBookmark_notify & mongoose.Document>('Bookmark_notify', bookmarkNotifySchema);
+const Bookmark_Notify = mongoose.model<IBookmark_Notify & mongoose.Document>('Bookmark_Notify', bookmarkNotifySchema);
 
-export default Bookmark_notify
+export default Bookmark_Notify

@@ -1,10 +1,8 @@
-import { Request, Response, NextFunction } from "express";
-import express from "express";
-import User from "@/models/user";
+import { Request, Response, Router, NextFunction } from "express";
 import middlewares from "../middlewares";
 import adminService from "../../services/adminService";
 
-const router = express.Router();
+const router = Router();
 // all routes have /api/admin before each route
 
 // This returns all users given a page number
@@ -45,6 +43,9 @@ router.delete(
   }
 );
 
+// Given an email, name, phone number, username, and password,
+// automatically creates the account and returns the newly created
+// user
 router.post(
   "/CreateGovernor",
   async (req: Request, res: Response): Promise<any> => {
