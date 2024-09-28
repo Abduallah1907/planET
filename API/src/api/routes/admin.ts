@@ -10,8 +10,9 @@ const router = express.Router();
 // This returns all users
 // TODO paginate this
 router.get("/getUsers", async (req: Request, res: Response): Promise<any> => {
+  const { page } = req.body;
   const adminServiceInstance = new adminService();
-  const users = await adminServiceInstance.getUsers();
+  const users = await adminServiceInstance.getUsers(page);
   res.json(users).status(200);
 });
 

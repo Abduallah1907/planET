@@ -7,8 +7,11 @@ class adminService {
     return user;
   }
 
-  public async getUsers(): Promise<any> {
-    const users = await User.find({}).sort({ createdAt: -1 });
+  public async getUsers(page: number): Promise<any> {
+    const users = await User.find({})
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .skip((page - 1) * 10);
     return users;
   }
   public async searchUser(username: String): Promise<any> {
