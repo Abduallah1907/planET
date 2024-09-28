@@ -10,18 +10,19 @@ const sellerSchema = new mongoose.Schema({
   },
   documents_required: [{
     type: String,
+    default: [],
     required: true,
   }],
   logo: {
     type: String,
-    required: true,
+    default: 'NONE',
   },
   description: {
     type: String,
-    required: true,
   },
   approval: {
     type: Boolean,
+    default: false,
     required: true,
   }
 }, { timestamps: true });

@@ -14,6 +14,7 @@ const UserSchema = new mongoose.Schema(
       lowercase: true,
       unique: true,
       index: true,
+      required: true,
     },
     password: {
       type: String,
@@ -26,12 +27,14 @@ const UserSchema = new mongoose.Schema(
       type: String,
       enum: ['tourist', 'tourguide', 'advertisor', 'governor', 'admin', 'seller'],
       default: 'tourist',
+      required: true,
     },
     phone_number: {
       type: String,
     },
     name: {
       type: String,
+      required: true,
     },
   },
   { timestamps: true },

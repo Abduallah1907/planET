@@ -1,11 +1,11 @@
 import express from 'express';
 
 import { createSeller, getSeller, updateSeller } from "../../controllers/sellerController";
-const router = express.Router();
+const sellerRouter = express.Router();
 
-router.post('/createSeller', createSeller);
-router.get('/getSeller', getSeller);
-router.put('/updateSeller', updateSeller);
+sellerRouter.post('/createSeller', createSeller);
+sellerRouter.get('/getSeller', getSeller);
+sellerRouter.put('/updateSeller', updateSeller);
 
 
-export default router;
+export default sellerRouter;
