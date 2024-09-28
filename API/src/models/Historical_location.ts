@@ -2,10 +2,7 @@ import { IHistorical_Location } from '@/interfaces/IHistorical_Location';
 import mongoose from 'mongoose';
 
 const historicalLocationSchema = new mongoose.Schema({
-  historical_location_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
+  
   governor_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Governor',

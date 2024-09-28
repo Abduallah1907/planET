@@ -1,7 +1,6 @@
 import { Document, ObjectId } from 'mongoose';
 
 export interface IOrder extends Document {
-  order_id: ObjectId;
   user_id: ObjectId;
   products: ObjectId[];
   date: Date;

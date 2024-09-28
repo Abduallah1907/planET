@@ -2,10 +2,7 @@ import { IBookmark_Notify } from '@/interfaces/IBookmark_Notify';
 import mongoose from 'mongoose';
 
 const bookmarkNotifySchema = new mongoose.Schema({
-  bookmark_notify_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
+  
   activity_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Activity',

@@ -1,7 +1,6 @@
 import { Document, ObjectId } from 'mongoose';
 
 export interface IItinerary extends Document {
-  itinerary_id: ObjectId;
   activities: ObjectId[];
   timeline: ObjectId[];
   comments: ObjectId[];

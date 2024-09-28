@@ -2,10 +2,7 @@ import { ISeller } from '@/interfaces/ISeller';
 import mongoose from 'mongoose';
 
 const sellerSchema = new mongoose.Schema({
-  seller_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
+  
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

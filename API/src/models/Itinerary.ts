@@ -3,10 +3,7 @@ import mongoose from "mongoose";
 
 const itinerarySchema = new mongoose.Schema(
   {
-    itinerary_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      auto: true,
-    },
+    
     activities: [
       {
         type: mongoose.Schema.Types.ObjectId,

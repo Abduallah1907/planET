@@ -2,10 +2,7 @@ import { IGovernor } from '@/interfaces/IGovernor';
 import mongoose from 'mongoose';
 
 const governorSchema = new mongoose.Schema({
-  governor_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
+  
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

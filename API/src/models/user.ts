@@ -5,10 +5,6 @@ import UserStatus from '@/types/enums/userStatus';
 
 const UserSchema = new mongoose.Schema(
   {
-    user_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      auto: true,
-    },
     name: {
       type: String,
     },

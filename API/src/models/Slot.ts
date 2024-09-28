@@ -2,10 +2,7 @@ import { ISlot } from '@/interfaces/ISlot';
 import mongoose from 'mongoose';
 
 const slotSchema = new mongoose.Schema({
-  slot_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
+  
   title: {
     type: String,
     required: true,

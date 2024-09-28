@@ -1,7 +1,7 @@
 import { Document, ObjectId } from 'mongoose';
 
 export interface ITourist extends Document {
-  tourist_id: ObjectId;
+
   user_id: ObjectId;
   bookmarks: ObjectId[];
   date_of_birth: Date;
