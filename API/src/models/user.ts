@@ -3,10 +3,7 @@ import { IUser } from '../interfaces/IUser';
 
 const UserSchema = new mongoose.Schema(
   {
-    user_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      auto: true,
-    },
+    
     username: {
       type: String,
       required: [true, 'Please enter a username'],

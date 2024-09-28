@@ -2,10 +2,6 @@ import { IActivity } from '@/interfaces/IActivity';
 import mongoose from 'mongoose';
 
 const activitySchema = new mongoose.Schema({
-  activity_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category',

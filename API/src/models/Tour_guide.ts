@@ -2,10 +2,7 @@ import { ITour_guide } from '@/interfaces/ITour_guide';
 import mongoose from 'mongoose';
 
 const tourGuideSchema = new mongoose.Schema({
-  tour_guide_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
+  
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

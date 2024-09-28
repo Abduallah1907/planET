@@ -18,13 +18,13 @@ export default class UserSubscriber {
    * then save the latest in Redis/Memcache or something similar
    */
   @On(events.user.signIn)
-  public onUserSignIn({ _id }: Partial<IUser>) {
+  public onUserSignIn({ user_id }: Partial<IUser>) {
     const Logger: Logger = Container.get('logger');
 
     try {
       const UserModel = Container.get('UserModel') as mongoose.Model<IUser & mongoose.Document>;
 
-      UserModel.findOneAndUpdate({ _id }, { $set: { lastLogin: new Date() } }, {new: true}).exec();
+      UserModel.findOneAndUpdate({ user_id }, { $set: { lastLogin: new Date() } }, {new: true}).exec();
     } catch (e) {
       Logger.error(`🔥 Error on event ${events.user.signIn}: %o`, e);
 
@@ -34,7 +34,7 @@ export default class UserSubscriber {
   }
 
   @On(events.user.signUp)
-  public onUserSignUp({ username, email, _id }: Partial<IUser>) {
+  public onUserSignUp({ username, email, user_id }: Partial<IUser>) {
     const Logger: Logger = Container.get('logger');
 
     try {

@@ -2,10 +2,7 @@ import { IPrevious_work } from '@/interfaces/IPrevious_work';
 import mongoose from 'mongoose';
 
 const previousWorkSchema = new mongoose.Schema({
-  previous_work_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
+  
   title: {
     type: String,
     required: true,

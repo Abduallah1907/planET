@@ -1,7 +1,6 @@
 import { Document,ObjectId } from 'mongoose';
 
 export interface IActivity extends Document {
-  activity_id: ObjectId;
   category: ObjectId;
   comment: ObjectId[];
   name: string;

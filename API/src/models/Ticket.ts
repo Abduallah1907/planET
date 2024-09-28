@@ -2,10 +2,7 @@ import { ITicket } from '@/interfaces/ITicket';
 import mongoose from 'mongoose';
 
 const ticketSchema = new mongoose.Schema({
-  ticket_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
+  
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

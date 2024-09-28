@@ -3,10 +3,7 @@ import mongoose from "mongoose";
 
 const promoCodeSchema = new mongoose.Schema(
   {
-    promo_code_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      auto: true,
-    },
+    
     code: {
       type: String,
       required: true,

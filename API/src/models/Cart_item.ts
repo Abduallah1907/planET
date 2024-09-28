@@ -2,10 +2,7 @@ import { ICart_item } from '@/interfaces/ICart_item';
 import mongoose from 'mongoose';
 
 const cartItemSchema = new mongoose.Schema({
-  cart_item_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
+  
   product_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product',

@@ -2,10 +2,7 @@ import { IComplaint } from '@/interfaces/IComplaint';
 import mongoose from 'mongoose';
 
 const complaintSchema = new mongoose.Schema({
-  complaint_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
+  
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

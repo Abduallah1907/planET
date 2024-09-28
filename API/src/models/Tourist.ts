@@ -3,10 +3,7 @@ import mongoose from 'mongoose';
 
 
 const touristSchema = new mongoose.Schema({
-  tourist_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
+  
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

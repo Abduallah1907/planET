@@ -2,10 +2,7 @@ import { IComment_rating } from '@/interfaces/IComment_rating';
 import mongoose from 'mongoose';
 
 const commentRatingSchema = new mongoose.Schema({
-  comment_rating_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    auto: true,
-  },
+  
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
