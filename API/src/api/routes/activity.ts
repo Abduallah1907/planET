@@ -1,7 +1,7 @@
-import { Router, Request, Response } from "express";
-const Activity = require("../../models/Activity");
-const ActivityID = require("../../interfaces/IActivity");
+import { Router } from "express";
+import { createActivity } from "../controllers/Activity_Con";
+const router = Router();
 
-const createActivity=async (req:Request,res:Response)=>{
-    
-}
+router.post("/addactivity", createActivity);
+
+export default router;
