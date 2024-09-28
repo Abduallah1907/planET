@@ -1,4 +1,4 @@
-import { ITour_guide } from '@/interfaces/ITour_guide';
+import { ITour_Guide } from '@/interfaces/ITour_Guide';
 import mongoose from 'mongoose';
 
 const tourGuideSchema = new mongoose.Schema({
@@ -14,14 +14,14 @@ const tourGuideSchema = new mongoose.Schema({
   }],
   comments: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Comment_rating',
+    ref: 'Comment_Rating',
   }],
   years_of_experience: {
     type: Number,
   },
   previous_work_description: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Previous_work',
+    ref: 'Previous_Work',
   }],
   documents_required: [{
     type: String,
@@ -37,6 +37,6 @@ const tourGuideSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-const Tour_guide = mongoose.model<ITour_guide & mongoose.Document>('Tour_guide', tourGuideSchema);
+const Tour_Guide = mongoose.model<ITour_Guide & mongoose.Document>('Tour_Guide', tourGuideSchema);
 
-export default Tour_guide;
+export default Tour_Guide;

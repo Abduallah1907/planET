@@ -1,6 +1,6 @@
 import { Document, ObjectId } from 'mongoose';
 
-export interface IComment_rating extends Document {
+export interface IComment_Rating extends Document {
   user_id: ObjectId;
   comment: string;
   rating: number;

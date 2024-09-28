@@ -10,8 +10,12 @@ const governorSchema = new mongoose.Schema({
   },
   historical_locations: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Historical_location',
-  }]
+    ref: 'Historical_Location',
+  }],
+  nation: {
+    type: String,
+    required: true,
+  }
 }, { timestamps: true });
 
 const Governor = mongoose.model<IGovernor & mongoose.Document>('Governor', governorSchema);

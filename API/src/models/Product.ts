@@ -10,7 +10,7 @@ const productSchema = new mongoose.Schema({
   },
   comments: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Comment_rating',
+    ref: 'Comment_Rating',
   }],
   name: {
     type: String,

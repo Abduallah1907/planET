@@ -1,15 +1,13 @@
 import { Router } from "express";
-import sellerRouter from "./routes/sellerRoute";
-import userRouter from "./routes/userRoute";
+
+import user from "./routes/user";
+import seller from "./routes/seller";
 
 export default () => {
   const app = Router();
 
-  app.use("/user", userRouter);
-
-  app.use("/seller", sellerRouter);
-
-
+  user(app);
+  seller(app);
 
   return app;
 };

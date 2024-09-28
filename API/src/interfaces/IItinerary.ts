@@ -15,6 +15,7 @@ export interface IItinerary extends Document {
   tags?: string[];
   active_flag: boolean;
   inappropriate_flag: boolean;
+  tour_guide_id: ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 }

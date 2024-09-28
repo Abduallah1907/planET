@@ -7,9 +7,9 @@ const activitySchema = new mongoose.Schema({
     ref: 'Category',
     required: true,
   },
-  comment: [{
+  comments: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Comment_rating',
+    ref: 'Comment_Rating',
   }],
   name: {
     type: String,
@@ -48,7 +48,12 @@ const activitySchema = new mongoose.Schema({
   active_flag: {
     type: Boolean,
     required: true,
-  }
+  },
+  adverstier_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Advertiser',
+    required: true,
+  },
 }, { timestamps: true });
 
 const Activity = mongoose.model<IActivity & mongoose.Document>('Activity', activitySchema);

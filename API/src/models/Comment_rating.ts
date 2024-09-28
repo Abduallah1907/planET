@@ -1,4 +1,4 @@
-import { IComment_rating } from '@/interfaces/IComment_rating';
+import { IComment_Rating } from '@/interfaces/IComment_Rating';
 import mongoose from 'mongoose';
 
 const commentRatingSchema = new mongoose.Schema({
@@ -18,6 +18,6 @@ const commentRatingSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-const Comment_rating = mongoose.model<IComment_rating & mongoose.Document>('Comment_rating', commentRatingSchema);
+const Comment_Rating = mongoose.model<IComment_Rating & mongoose.Document>('Comment_Rating', commentRatingSchema);
 
-export default Comment_rating;
+export default Comment_Rating;
