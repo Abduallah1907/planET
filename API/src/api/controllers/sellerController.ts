@@ -1,4 +1,4 @@
-import {getSellerService,createSellerService,updateSellerService} from "../services/sellerService";
+import {getSellerService,createSellerService,updateSellerService} from "../../services/sellerService";
 
 export const getSeller = async (req: any, res: any) => {getSellerService(req,res);};
 export const createSeller = async (req: any, res: any) => {createSellerService(req,res)};

@@ -1,11 +1,13 @@
-import express from 'express';
+import { Router } from 'express';
 
-import { createSeller, getSeller, updateSeller } from "../../controllers/sellerController";
-const router = express.Router();
-
-router.post('/createSeller', createSeller);
-router.get('/getSeller', getSeller);
-router.put('/updateSeller', updateSeller);
+import { createSeller, getSeller, updateSeller } from "../controllers/sellerController";
+const route = Router();
 
 
-export default router;
+export default (app: Router) => {
+    app.use('/users', route);
+    
+    route.post('/createSeller', createSeller);
+    route.get('/getSeller', getSeller);
+    route.put('/updateSeller', updateSeller);
+};
