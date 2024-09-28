@@ -87,4 +87,17 @@ router.post(
   }
 );
 
+router.post(
+  "/createCategory",
+  async (req: Request, res: Response): Promise<any> => {
+    const { type } = req.body;
+    const adminServiceInstance = new adminService();
+    try {
+      const newCategory = await adminServiceInstance.createCategory(type);
+      res.status(201).json({ success: true, data: newCategory });
+    } catch (e: any) {
+      res.status(404).json({ success: false, message: e.message });
+    }
+  }
+);
 export default router;

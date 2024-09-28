@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import User from "../models/user";
+import Category from "../models/Category";
 class adminService {
   public async deleteUser(id: mongoose.ObjectId): Promise<any> {
     const user = await User.findByIdAndDelete(id);
@@ -52,6 +53,10 @@ class adminService {
       role: "ADMIN",
     });
     return governor;
+  }
+  public async createCategory(type: string): Promise<any> {
+    const category = await Category.create({ type });
+    return category;
   }
 }
 
