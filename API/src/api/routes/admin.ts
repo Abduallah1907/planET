@@ -100,4 +100,19 @@ router.post(
     }
   }
 );
+
+router.get(
+  "/getCategories",
+  async (req: Request, res: Response): Promise<any> => {
+    const { page } = req.body;
+    const adminServiceInstance = new adminService();
+    try {
+      const categories = await adminServiceInstance.getCategories(page);
+      res.status(201).json({ success: true, data: categories });
+    } catch (e: any) {
+      res.status(404).json({ success: false, message: e.message });
+    }
+  }
+);
+
 export default router;

@@ -58,6 +58,14 @@ class adminService {
     const category = await Category.create({ type });
     return category;
   }
+
+  public async getCategories(page: number): Promise<any> {
+    const categories = await Category.find({})
+      .sort({ type: 1 })
+      .limit(10)
+      .skip((page - 1) * 10);
+    return categories;
+  }
 }
 
 export default adminService;
