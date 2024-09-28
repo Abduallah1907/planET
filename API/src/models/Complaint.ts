@@ -1,4 +1,5 @@
 import { IComplaint } from '@/interfaces/IComplaint';
+import ComplaintStatus from '@/types/enums/complaintStatus';
 import mongoose from 'mongoose';
 
 const complaintSchema = new mongoose.Schema({
@@ -21,7 +22,8 @@ const complaintSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Pending', 'Resolved'],
+    enum: Object.values(ComplaintStatus),
+    default: ComplaintStatus.Pending,
     required: true,
   },
   reply: {

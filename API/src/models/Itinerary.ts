@@ -22,7 +22,7 @@ const itinerarySchema = new mongoose.Schema(
     comments: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Comment_rating",
+        ref: "Comment_Rating",
       },
     ],
     locations: [
@@ -74,6 +74,11 @@ const itinerarySchema = new mongoose.Schema(
     },
     inappropriate_flag: {
       type: Boolean,
+      required: true,
+    },
+    tour_guide_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tour_Guide",
       required: true,
     },
   },

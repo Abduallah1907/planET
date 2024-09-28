@@ -1,5 +1,8 @@
 import { IOrder } from "@/interfaces/IOrder";
+import OrderStatus from "@/types/enums/orderStatus";
+import PaymentType from "@/types/enums/paymentType";
 import mongoose from "mongoose";
+import Cart_ItemSchema from "@/types/Cart";
 
 const orderSchema = new mongoose.Schema(
   {
@@ -14,8 +17,7 @@ const orderSchema = new mongoose.Schema(
     },
     products: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Cart_item",
+        type: Cart_ItemSchema,
         required: true,
       },
     ],
@@ -29,12 +31,13 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "cancelled", "delivered"],
+      enum: Object.values(OrderStatus),
+      default: OrderStatus.Pending,
       required: true,
     },
     payment_type: {
       type: String,
-      enum: ["credit card", "cash"],
+      enum: Object.values(PaymentType),
       required: true,
     },
   },

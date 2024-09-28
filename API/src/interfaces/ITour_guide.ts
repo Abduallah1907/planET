@@ -1,6 +1,6 @@
 import { Document, ObjectId } from 'mongoose';
 
-export interface ITour_guide extends Document {
+export interface ITour_Guide extends Document {
   tour_guide_id: ObjectId;
   user_id: ObjectId;
   itineraries: ObjectId[];

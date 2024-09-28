@@ -1,4 +1,5 @@
 import { ITicket } from '@/interfaces/ITicket';
+import TicketType from '@/types/enums/ticketType';
 import mongoose from 'mongoose';
 
 const ticketSchema = new mongoose.Schema({
@@ -13,7 +14,7 @@ const ticketSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['Itinerary', 'Activity'],
+    enum: Object.values(TicketType),
     required: true,
   },
   booking_id: {
