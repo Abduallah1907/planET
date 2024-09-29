@@ -62,7 +62,11 @@ const touristSchema = new mongoose.Schema({
     type: CartSchema,
     default: {items: [], cost: 0},
     required: true,
-  }
+  },
+  wishlist: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
+  }],
 }, { timestamps: true });
 
 const Tourist = mongoose.model<ITourist & mongoose.Document>('Tourist', touristSchema);

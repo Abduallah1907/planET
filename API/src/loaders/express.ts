@@ -4,6 +4,7 @@ import { OpticMiddleware } from '@useoptic/express-middleware';
 import routes from '@/api';
 import config from '@/config';
 import "express-async-errors";
+import swaggerDocs from '@/swagger';
 
 export default ({ app }: { app: Application }) => {
     /**
@@ -33,6 +34,8 @@ export default ({ app }: { app: Application }) => {
     // Load API routes
     app.use(config.api.prefix, routes());
 
+    swaggerDocs(app, config.port, routes());
+
     // API Documentation
     app.use(OpticMiddleware({
         enabled: process.env.NODE_ENV !== 'production',
@@ -56,7 +59,7 @@ export default ({ app }: { app: Application }) => {
             });
         } else {
             res.status(err.status || 500).json({
-                code: err.status || 401,
+                code: err.status || 500,
                 errors: {
                     message: err.message,
                 },

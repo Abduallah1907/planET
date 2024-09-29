@@ -1,4 +1,6 @@
+import TouristBadge from '@/types/enums/touristBadge';
 import { Document, ObjectId } from 'mongoose';
+import { Cart } from '@/types/Cart';
 
 export interface ITourist extends Document {
 
@@ -9,8 +11,10 @@ export interface ITourist extends Document {
   nation: string;
   wallet: number;
   loyality_points: number;
-  badge: '1' | '2' | '3';
+  badge: TouristBadge;
   addresses: string[];
+  cart: Cart;
+  wishlist: ObjectId[];
   createdAt?: Date;
   updatedAt?: Date;
 }

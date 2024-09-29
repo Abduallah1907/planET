@@ -12,6 +12,17 @@ const Cart_ItemSchema = new Schema({
   quantity: { type: Number, required: true },
 });
 
+type Cart = {
+  items: ObjectId[];
+  cost: number;
+};
 
-export default { CartSchema, Cart_ItemSchema };
+type Cart_Item = {
+  product_id: ObjectId;
+  quantity: number;
+};
+
+
+export { CartSchema, Cart_ItemSchema };
+export type { Cart, Cart_Item };
 
