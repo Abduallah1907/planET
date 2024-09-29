@@ -4,13 +4,16 @@ import Category from "../models/Category";
 import response from "@/types/response/response";
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
-import user from "@/api/routes/user";
+import { IUserAdminViewDTO } from "@/interfaces/IUser";
 
 // User related services (delete, view, and create users)
 
 export const getUsersService = async (page: number): Promise<any> => {
   if (!page) throw new Error("No page number was found");
-  const users = await User.find({})
+  const users = await User.find(
+    {},
+    "name username email role phone_number status createdAt updatedAt"
+  )
     .sort({ createdAt: -1 })
     .limit(10)
     .skip((page - 1) * 10);
@@ -19,7 +22,11 @@ export const getUsersService = async (page: number): Promise<any> => {
 
 export const searchUserService = async (username: string): Promise<any> => {
   if (!username) throw new Error("Username is required");
-  const user = await User.find({ username: username });
+  const user = await User.find(
+    { username: username },
+    "name username email role phone_number status createdAt updatedAt"
+  );
+
   return new response(true, user, "User found", 200);
 };
 
@@ -30,7 +37,9 @@ export const deleteUserService = async (
   if (!mongoose.Types.ObjectId.isValid(_id.toString()))
     throw new Error("_id is invalid");
 
-  const user = await User.findByIdAndDelete(_id);
+  const user = await User.findByIdAndDelete(_id).select(
+    "name username email role phone_number status createdAt updatedAt"
+  );
   if (!user) throw new Error("User not found");
   return new response(true, user, "Deleted user", 200);
 };
@@ -53,7 +62,12 @@ export const createGovernorService = async (
     role: UserRoles.Governor,
     status: UserStatus.APPROVED,
   });
-  return new response(true, governor, "Created new governor!", 200);
+  return new response(
+    true,
+    { _id: governor._id, username },
+    "Created new governor!",
+    200
+  );
 };
 
 export const createAdminService = async (
@@ -74,7 +88,12 @@ export const createAdminService = async (
     role: UserRoles.Admin,
     status: UserStatus.APPROVED,
   });
-  return new response(true, admin, "Created new governor!", 200);
+  return new response(
+    true,
+    { _id: admin._id, username },
+    "Created new admin!",
+    200
+  );
 };
 
 // CRUD for categories
