@@ -6,6 +6,7 @@ import {
   createCategoryService,
   getCategoriesService,
   updateCategoryService,
+  deleteCategoryService,
 } from "@/services/adminService";
 import { Request, Response } from "express";
 
@@ -86,4 +87,13 @@ export const updateCategory = async (
   const { oldType, newType } = req.body;
   const updatedCategory = await updateCategoryService(oldType, newType);
   res.json({ updatedCategory });
+};
+
+export const deleteCategory = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const { type } = req.body;
+  const deletedCategory = await deleteCategoryService(type);
+  res.json({ deletedCategory });
 };

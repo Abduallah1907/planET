@@ -8,6 +8,7 @@ import {
   createAdmin,
   getCategories,
   updateCategory,
+  deleteCategory,
 } from "../controllers/adminController";
 
 const router = Router();
@@ -47,4 +48,7 @@ export default (app: Router) => {
   // and have its name be the second category name
   // if the category does not exist, it throws an error
   router.put("/updateCategory", updateCategory);
+
+  // Given a category name, it will delete the category
+  router.delete("/deleteCategory", deleteCategory);
 };

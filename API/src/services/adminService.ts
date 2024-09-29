@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import User from "../models/user";
 import Category from "../models/Category";
-import response from "@/types/responce/response";
+import response from "@/types/response/response";
 import UserRoles from "@/types/enums/userRoles";
 
 // User related services (delete, view, and create users)
@@ -90,5 +90,13 @@ export const updateCategoryService = async (
     { type: newType },
     { new: true }
   );
+  if (!updatedCategory) throw new Error("Category name not found");
   return new response(true, updatedCategory, "Category updated!", 200);
+};
+
+export const deleteCategoryService = async (type: string): Promise<any> => {
+  if (!type) throw new Error("The category name is empty");
+  const deletedCategory = await Category.findOneAndDelete({ type: type });
+  if (!deletedCategory) throw new Error("Category name not found");
+  return new response(true, deletedCategory, "Category deleted!", 200);
 };
