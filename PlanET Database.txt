@@ -1,0 +1,251 @@
+PlanET Database
+
+User{
+user_id:IDENTITY,
+username:String,
+name:String,
+password:String,
+email:String,
+role:ENUM('tourist', 'tourguide', 'advertisor', 'governor', 'admin', 'seller'),
+phone_number:String,
+salt:String (used to hash password),
+first_time_login: boolean,
+status: String
+}
+
+
+Tourist{
+tourist_id:IDENTITY,
+user_id:int (ref to user),
+bookmarks:[activity_id] (ref to activity),
+date_of_birth:date, //greater than 18
+job:String,
+nation:String,
+wallet:double (final:not editable),
+loyality_points:double,
+badge:ENUM(1,2,3 according to loyality_points),
+addresses:[String],
+cart: cart
+}
+
+Bookmark_notify{
+bookmark_notify_id:IDENTITY,
+activity_id:int (ref to activity),//get activity_id from front_end and search with it in activities in Tourist(bookmarks)	
+user_id:int (ref to user),	//when activity booking flag is true.Get all user_ids related to this activity in this table and notify	
+
+
+}
+
+Comment_rating{
+comment_rating_id:IDENTITY,
+user_id:int (ref to user),
+comment:String,
+rating:double
+
+}
+
+
+
+Previous_work{
+previous_work_id:IDENTITY
+title:String,
+place:String,
+from:date,
+to:date
+}
+
+
+Tour_guide{
+tour_guide_id:IDENTITY,
+user_id:int (ref to user),
+itineraries:[itinerary_id] (ref to itinerary),
+comments:[comment_rating_id] (ref to comment_rating),
+years_of_experience:int,//not required
+previous_work_description:[previous_work_id] (ref to previous_work),
+documents_required:[String],
+photo:String,
+approval:boolean
+}
+
+
+Advertisor{
+advertisor_id:IDENTITY,
+user_id:int (ref to user),
+activities:[activity_id] (ref to activity),
+documents_required:[String],
+link_to_website:String,
+hotline:String,
+About:String,
+logo:String,
+approval:boolean
+
+
+}
+
+Seller{
+seller_id:IDENTITY,
+user_id:int (ref to user),
+documents_required:[String],
+logo:String,
+description:String,
+approval:boolean
+
+}
+
+Governor{
+governor_id:IDENTITY,
+user_id:int (ref to user),
+histroical_locations:[historical_location_id] (ref to historical_location)
+nation:String
+}
+
+Activity{
+activity_id:IDENTITY,
+category:category_id (ref to category) //admin only has access to category entity,
+comment:[comment_rating_id] (ref to comment_rating),
+name:String,
+date:date,
+time:time,
+location:location,
+price:double,
+special_discount:double,
+tags:[Strings],//Asking TA
+booking_flag:boolean,//admin changes this flag if booking is notify when in bookmark of tourist
+inappropriate_flag:boolean, //admin changes this flag if inapp shown to all users this change refund:ok
+active_flag:boolean//show/hide activity from users refund:ok
+
+
+}
+
+Category{
+category_id:IDENTITY,
+type:String
+
+
+}
+
+
+Itinerary{
+itinerary_id:IDENTITY,
+activities:[activity_id] (ref to activity),
+timeline:[slot_id] (ref to slot),
+comments:[comment_rating_id] (ref to comment_rating),
+locations:[location],
+duration:time,//derived from slot
+languages:[String],
+price:double,
+availale_dates:date,
+accessibility:boolean,
+pickup_loc:location,
+drop_off_loc:location,
+tags:[String],
+active_flag:boolean,//Tour guide changes already booked:show,not booked:hide 
+inappropriate_flag:boolean,//same as activity flag
+
+
+}
+
+Slot{
+slot_id:IDENTITY,
+title:String,
+description:String,
+from:time,
+to:time
+
+}
+
+Historical_location{
+historical_location_id:IDENTITY,
+governer_id:governor_id (ref to governor),
+comments:[comment_rating_id] (ref to comment_rating),
+name:String,
+description:String,
+picture:[String],
+location:location,
+opening_hours_from:time,
+opening_hours_to:time,
+opening_days:[String],
+native_price:double,
+foreign_price:double,
+student_price:double,
+active_flag:boolean //governor only access and used when display upcoming events
+tags:[String],//special tag
+
+
+
+}
+
+Product{
+product_id:IDENTITY,
+user_id:int (ref to user role=seller),
+comments:[comment_rating_id] (ref to comment_rating),
+name:String,
+description:String,
+picture:String,
+price:double,
+quantity:double,
+sales:int,
+archieve_flag:boolean //Admin,seller hide from tourist certain product
+
+}
+
+Ticket{
+ticket_id:IDENTITY,
+user_id:int (ref to user),
+type:ENUM(Itinerary,Activity),
+booking_id:int (ref to itinerary_id or actvity_id depending on the type),
+cancelled:boolean
+
+}
+
+Complaint{
+complaint_d:IDENTITY,
+user_id:int (ref to user),
+title:String,
+date:datetime,
+status:ENUM(Pending,Resolved),
+reply:String
+
+}
+
+Promo_code{
+promo_code_id:IDENTITY,
+code:String,
+expiry_date:datetime,
+discount:double
+
+}
+
+
+Order{
+order_id:IDENTITY,
+user_id:int (ref to user),
+products:[cart_item_id],
+date:datetime,
+cost:double,
+status:ENUM(pending,cancelled,deliverd),
+payment_type:ENUM(credit card,cash)
+
+}
+
+
+Cart{
+cart_id:IDENTITY,
+items:[cart_items],
+cost:double
+}
+
+Cart_item{
+cart_item_id:IDENTITY,
+product_id:int (ref to product),
+quantity:int
+}
+
+Wishlist{
+wishlist_id:IDENTITY,
+user_id:int (ref to user),
+products:[product_id] (ref to product)
+
+}
+
+
