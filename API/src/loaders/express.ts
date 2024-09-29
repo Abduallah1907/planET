@@ -56,7 +56,7 @@ export default ({ app }: { app: Application }) => {
             });
         } else {
             res.status(err.status || 500).json({
-                code: err.status || 401,
+                code: err.status || 500,
                 errors: {
                     message: err.message,
                 },
