@@ -50,7 +50,7 @@
     border-radius: 50% !important; /* Ensure this is set to 50% */
 }
 .btn-flag:hover {
-    scale: 1.1; /* Adjust as needed */
+    scale: 1.05; /* Adjust as needed */
 }
 
 .btn-help {

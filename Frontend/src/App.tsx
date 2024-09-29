@@ -1,13 +1,17 @@
 import React from 'react';
 import TopBar from './components/TopBar';
+import { BrowserRouter as Router ,Route , Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <TopBar />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<TopBar />} />
+      </Routes>
+    </Router>
+
   );
 }
 
