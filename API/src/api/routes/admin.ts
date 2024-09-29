@@ -2,7 +2,7 @@ import { Request, Response, Router, NextFunction } from "express";
 import middlewares from "../middlewares";
 import {
   getUsers,
-  getUser,
+  searchUser,
   deleteUser,
   createGovernor,
   createAdmin,
@@ -21,14 +21,15 @@ export default (app: Router) => {
   // Each page has 10 users
   router.get("/getUsers", getUsers);
 
-  // This searches by exact username;
-  // a nice TODO would be to have it search by similarity
-  router.get("/searchUser", getUser);
+  // This searches by exact username; if no username is found it returns empty data
+  // i.e it does not throw an error
+  // a nice TODO would be to have it search by similarity and ID
+  router.get("/searchUser", searchUser);
 
   // Given an ID, it deletes the user if the id is valid and returns
   // the deleted user information
   // TODO remove password as one of the things returned
-  router.delete("/deleteUser", middlewares.validUserID, deleteUser);
+  router.delete("/deleteUser", deleteUser);
 
   // Given an email, name, phone number, username, and password,
   // automatically creates the account and returns the newly created governor

@@ -1,6 +1,6 @@
 import {
   getUsersService,
-  getUserService,
+  searchUserService,
   deleteUserService,
   createGovernorService,
   createCategoryService,
@@ -17,15 +17,15 @@ export const getUsers = async (req: Request, res: Response): Promise<any> => {
   res.json({ users });
 };
 
-export const getUser = async (req: Request, res: Response): Promise<any> => {
+export const searchUser = async (req: Request, res: Response): Promise<any> => {
   const { username } = req.body;
-  const user = await getUserService(username);
+  const user = await searchUserService(username);
   res.json({ user });
 };
 
 export const deleteUser = async (req: Request, res: Response): Promise<any> => {
-  const { id } = req.body;
-  const user = await deleteUserService(id);
+  const { _id } = req.body;
+  const user = await deleteUserService(_id);
   res.json({ user });
 };
 

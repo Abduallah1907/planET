@@ -3,6 +3,8 @@ import User from "../models/user";
 import Category from "../models/Category";
 import response from "@/types/response/response";
 import UserRoles from "@/types/enums/userRoles";
+import UserStatus from "@/types/enums/userStatus";
+import user from "@/api/routes/user";
 
 // User related services (delete, view, and create users)
 
@@ -15,16 +17,20 @@ export const getUsersService = async (page: number): Promise<any> => {
   return new response(true, users, "Page " + page + " of users", 200);
 };
 
-export const getUserService = async (username: string): Promise<any> => {
+export const searchUserService = async (username: string): Promise<any> => {
+  if (!username) throw new Error("Username is required");
   const user = await User.find({ username: username });
-  if (!user) throw new Error("User not found");
   return new response(true, user, "User found", 200);
 };
 
 export const deleteUserService = async (
-  id: mongoose.ObjectId
+  _id: mongoose.ObjectId
 ): Promise<any> => {
-  const user = await User.findByIdAndDelete(id);
+  if (!_id) throw new Error("_id is required");
+  if (!mongoose.Types.ObjectId.isValid(_id.toString()))
+    throw new Error("_id is invalid");
+
+  const user = await User.findByIdAndDelete(_id);
   if (!user) throw new Error("User not found");
   return new response(true, user, "Deleted user", 200);
 };
@@ -36,6 +42,8 @@ export const createGovernorService = async (
   username: string,
   password: string
 ): Promise<any> => {
+  if (!email || !name || !phone_number || !username || !password)
+    throw new Error("One of the fields is empty");
   const governor = await User.create({
     username,
     email,
@@ -43,6 +51,7 @@ export const createGovernorService = async (
     phone_number,
     password,
     role: UserRoles.Governor,
+    status: UserStatus.APPROVED,
   });
   return new response(true, governor, "Created new governor!", 200);
 };
@@ -54,6 +63,8 @@ export const createAdminService = async (
   username: string,
   password: string
 ): Promise<any> => {
+  if (!email || !name || !phone_number || !username || !password)
+    throw new Error("One of the fields is empty");
   const admin = await User.create({
     username,
     email,
@@ -61,6 +72,7 @@ export const createAdminService = async (
     phone_number,
     password,
     role: UserRoles.Admin,
+    status: UserStatus.APPROVED,
   });
   return new response(true, admin, "Created new governor!", 200);
 };
