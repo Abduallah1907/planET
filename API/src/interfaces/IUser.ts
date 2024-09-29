@@ -1,13 +1,16 @@
+import UserRoles from "@/types/enums/userRoles"
+import UserStatus from "@/types/enums/userStatus"
+
 export interface IUser {
     name: string,
     username: string,
     email: string,
     password: string,
     salt: string,
-    role: string,
+    role: UserRoles,
     phone_number: string,
     first_time_login: boolean,
-    status: string,
+    status: UserStatus,
     createdAt: Date,
     updatedAt: Date
 }
@@ -17,5 +20,5 @@ export interface IUserInputDTO {
     username: string,
     email: string,
     password: string,
-    role: string
+    role: UserRoles
 }
