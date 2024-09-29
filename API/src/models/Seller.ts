@@ -20,11 +20,7 @@ const sellerSchema = new mongoose.Schema({
   description: {
     type: String,
   },
-  approval: {
-    type: Boolean,
-    default: false,
-    required: true,
-  }
+  
 }, { timestamps: true });
 
 const Seller = mongoose.model<ISeller & mongoose.Document>('Seller', sellerSchema);

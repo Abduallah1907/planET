@@ -17,7 +17,6 @@ export interface ISeller extends Document {
   documents_required: string[];
   logo: string;
   description: string;
-  approval: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

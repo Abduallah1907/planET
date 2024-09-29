@@ -8,7 +8,6 @@ export interface ITour_Guide extends Document {
   previous_work_description: ObjectId[];
   documents_required: string[];
   photo: string;
-  approval: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
