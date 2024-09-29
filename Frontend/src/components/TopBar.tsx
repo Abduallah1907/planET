@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navbar, Nav, Button } from 'react-bootstrap';
+import { Navbar, Button } from 'react-bootstrap';
 import "./topbar.css";
 import Logo from '../assets/LogoNoBackground.svg';
 
