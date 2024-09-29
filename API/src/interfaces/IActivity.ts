@@ -6,7 +6,7 @@ export interface IActivity extends Document {
   name: string;
   date: Date;
   time: string;
-  location: string;
+  location: [Number]; // [longitude, latitude];
   price?: number; // Single price (optional)
   priceRange?: {
     // Price range (optional) check the users story 21 in azure
@@ -25,7 +25,7 @@ export interface IActivity extends Document {
 export interface IACtivityDTO {
   date: Date;
   time: string;
-  location: string;
+  location: [Number]; // [longitude, latitude];
   price?: number; // Single price (optional)
   priceRange?: {
     // Price range (optional)
@@ -36,4 +36,5 @@ export interface IACtivityDTO {
   special_discount?: number;
   tags?: string[];
   booking_flag: boolean;
+  adverstier_id: ObjectId;
 }

@@ -27,7 +27,7 @@ const activitySchema = new mongoose.Schema(
       required: true,
     },
     location: {
-      type: String,
+      type: [Number], // [longitude, latitude],
       required: true,
     },
     price: { type: Number, required: false }, // Optional single price
@@ -69,7 +69,7 @@ activitySchema.pre("save", function (next) {
   const activity = this;
 
   // Check if both price and priceRange are provided
-  if (activity.price && activity.priceRange) {
+  if (activity.price && activity.priceRange?.max && activity.priceRange.min) {
     return next(
       new Error("You must provide either price or priceRange, but not both.")
     );
