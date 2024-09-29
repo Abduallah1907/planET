@@ -1,13 +1,14 @@
 import { Router } from "express";
-import adminRoutes from "./routes/admin";
 import user from "./routes/user";
 import seller from "./routes/seller";
+import admin from "./routes/admin";
 
 export default () => {
   const app = Router();
 
   user(app);
   seller(app);
-  app.use("/admin", adminRoutes);
+  admin(app);
+
   return app;
 };
