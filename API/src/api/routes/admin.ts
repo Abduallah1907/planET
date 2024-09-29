@@ -7,6 +7,7 @@ import {
   createGovernor,
   createAdmin,
   getCategories,
+  updateCategory,
 } from "../controllers/adminController";
 
 const router = Router();
@@ -41,4 +42,9 @@ export default (app: Router) => {
 
   // Given a page number, it will return a list containing 10 categories
   router.get("/getCategories", getCategories);
+
+  // Given an two category names, it will update the first category name
+  // and have its name be the second category name
+  // if the category does not exist, it throws an error
+  router.put("/updateCategory", updateCategory);
 };

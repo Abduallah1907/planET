@@ -5,6 +5,7 @@ import {
   createGovernorService,
   createCategoryService,
   getCategoriesService,
+  updateCategoryService,
 } from "@/services/adminService";
 import { Request, Response } from "express";
 
@@ -76,4 +77,13 @@ export const getCategories = async (
   const { page } = req.body;
   const categories = await getCategoriesService(page);
   res.json({ categories });
+};
+
+export const updateCategory = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const { oldType, newType } = req.body;
+  const updatedCategory = await updateCategoryService(oldType, newType);
+  res.json({ updatedCategory });
 };

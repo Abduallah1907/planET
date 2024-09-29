@@ -77,5 +77,18 @@ export const getCategoriesService = async (page: number): Promise<any> => {
     .sort({ type: 1 })
     .limit(10)
     .skip((page - 1) * 10);
-  return new response(true, categories, "", 200);
+  return new response(true, categories, "Page " + page + " of Categories", 200);
+};
+
+export const updateCategoryService = async (
+  oldType: string,
+  newType: string
+): Promise<any> => {
+  if (!oldType || !newType) throw new Error("The category name is empty");
+  const updatedCategory = await Category.findOneAndUpdate(
+    { type: oldType },
+    { type: newType },
+    { new: true }
+  );
+  return new response(true, updatedCategory, "Category updated!", 200);
 };
