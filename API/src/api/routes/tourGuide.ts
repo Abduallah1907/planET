@@ -1,11 +1,13 @@
 import { Router } from "express";
-import { createProfile } from "../controllers/tourGuideController";
+import { createPreviousWork, updateProfile } from "../controllers/tourGuideController";
 const router = Router();
 // all routes have /api/tourGuide before each route
 
 export default (app: Router) => {
   app.use("/tourGuide", router);
-
+  // CRUD for work experience
+  router.post("/createPreviousWork", createPreviousWork);
+  // Read and update for profile
   /*
 The reason we do not have a create profile (only update/view) is due to the fact 
 that when the tour guide registers, we create a document for him inside the User table AND
@@ -16,5 +18,6 @@ but alas this is the one we ended up with
   */
   //router.post("/createProfile");
   router.get("/viewProfile");
-  router.put("/updateProfile");
+  // p
+  router.put("/updateProfile", updateProfile);
 };
