@@ -4,7 +4,7 @@ import { createUserService } from "./userService";
 import User from "../models/user";
 import { ISellerOutputDTO } from "../interfaces/ISeller";
 import UserRoles from "@/types/enums/userRoles";
-import responce from "@/types/responces/responce";
+import response from "@/types/responses/response";
 import { HttpError, InternalServerError } from "@/types/Errors";
 
 //input email of seller retrun seller data
@@ -42,8 +42,7 @@ export const getSellerService = async (email:string) => {
             logo: seller.logo,
             description: seller.description
         };
-        // return new responce(true, sellerOutput, "Seller found", 200);
-        return sellerOutput;
+        return new response(true, sellerOutput, "Seller found", 200);
     
 };
 //Any seller need to be cerated as a user first role seller so we need to call createUserService first then seller will be created
@@ -57,9 +56,6 @@ export const createSellerService = async (documents_required:string,logo:string,
         if(newUser.data==null)
             throw new HttpError("User not created",404);
         
-        
-        
-
         const newSeller = new Seller({user_id:newUser.data._id,documents_required:documents_required,logo:logo});
 
        
@@ -73,7 +69,7 @@ export const createSellerService = async (documents_required:string,logo:string,
             logo: newSeller.logo,
             description: newSeller.description
         };
-        return new responce(true, sellerOutput, "Seller created", 201);
+        return new response(true, sellerOutput, "Seller created", 201);
 
 };
 
@@ -106,7 +102,7 @@ export const updateSellerService = async (email:string,name:string,description:s
             logo: updatedSeller.logo,
             description: updatedSeller.description
         };
-        return new responce(true, sellerOutput, "Seller updated", 200);
+        return new response(true, sellerOutput, "Seller updated", 200);
   
     
 };

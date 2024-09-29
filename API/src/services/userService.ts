@@ -2,8 +2,7 @@
 import mongoose from "mongoose";
 import User from "../models/user";
 import { HttpError, InternalServerError } from "../types/Errors";
-import responce from "../types/responces/responce";
-
+import response from "../types/responses/response";
 
 export const createUserService = async (name:string,username:string,email:string,password:string,phone_number:string) => {
 
@@ -15,8 +14,6 @@ export const createUserService = async (name:string,username:string,email:string
         // throw new HttpError("User not created",404);
         throw new Error("User not created");
     await newUser.save();
-    const response = new responce(true, newUser, "User created", 201);
-    return response;     
-
+    return new response(true, newUser, "User created", 200);
 
 };

@@ -7,7 +7,8 @@ export default () => {
   const app = Router();
 
   user(app);
-  app.use("/seller", seller);
+  seller(app);
+  
 
   return app;
 };
