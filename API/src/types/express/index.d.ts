@@ -16,8 +16,6 @@ declare global {
     export type ActivityModel = Model<IActivity & Document>;
     export type AdvertiserModel = Model<IAdvertiser & Document>;
     export type Bookmark_notifyModel = Model<IBookmark_notify & Document>;
-    export type Cart_itemModel = Model<ICart_item & Document>;  
-    export type CartModel = Model<ICart & Document>;
     export type CategoryModel = Model<ICategory & Document>;
     export type Comment_ratingModel = Model<IComment_rating & Document>;
     export type ComplaintModel = Model<IComplaint & Document>;
