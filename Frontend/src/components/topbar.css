@@ -41,7 +41,7 @@
 .btn-flag {
     width: 30px; /* Ensure width and height are equal */
     height: 30px; /* Ensure width and height are equal */
-    background-image: url('../assets/UK.png'); /* Ensure this path is correct */
+    background-image: url('../assets/UK.webp'); /* Ensure this path is correct */
     background-size: cover;
     background-position: center;
     border: none !important; /* Remove any border */
