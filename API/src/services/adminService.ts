@@ -22,8 +22,9 @@ export const getUsersService = async (page: number): Promise<any> => {
 
 export const searchUserService = async (username: string): Promise<any> => {
   if (!username) throw new Error("Username is required");
+  const regex = new RegExp(username, "i");
   const user = await User.find(
-    { username: username },
+    { username: { $regex: regex } },
     "name username email role phone_number status createdAt updatedAt"
   );
 
