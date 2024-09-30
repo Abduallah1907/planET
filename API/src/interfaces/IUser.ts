@@ -1,5 +1,6 @@
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
+import e from "cors";
 
 export interface IUser {
   name: string;
@@ -11,6 +12,7 @@ export interface IUser {
   phone_number: string;
   first_time_login: boolean;
   status: UserStatus;
+  date_of_birth: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -40,4 +42,25 @@ export interface IUserInputDTO {
   email: string;
   password: string;
   role: UserRoles;
+  phone_number: string;
+  date_of_birth: Date;
+}
+
+export interface IUserCreateDTO {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+  role: UserRoles;
+  phone_number: string;
+  date_of_birth: Date;
+}
+
+export interface IUserOutputDTO {
+  name: string;
+  username: string;
+  email: string;
+  role: UserRoles;
+  phone_number: string;
+  date_of_birth: Date;
 }
