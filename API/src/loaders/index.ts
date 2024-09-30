@@ -49,11 +49,6 @@ export default async ({ expressApp }: { expressApp: Application }) => {
         model: require('../models/comment_rating').default,
     };
 
-    const commentModel= {
-        name: 'commentModel',
-        // Notice the require syntax and the '.default'
-        model: require('../models/comment').default,
-    };
     const complaintModel= { 
         name: 'complaintModel',
         // Notice the require syntax and the '.default'
@@ -65,10 +60,10 @@ export default async ({ expressApp }: { expressApp: Application }) => {
         // Notice the require syntax and the '.default'
         model: require('../models/governor').default,
     };
-    const historical_locationsModel= {
-        name: 'historical_locationsModel',
+    const historical_locationModel= {
+        name: 'historical_locationModel',
         // Notice the require syntax and the '.default'
-        model: require('../models/historical_locations').default,
+        model: require('../models/historical_location').default,
     };
     const itineraryModel= {
         name: 'itineraryModel',
@@ -126,46 +121,6 @@ export default async ({ expressApp }: { expressApp: Application }) => {
         model: require('../models/wishlist').default,
     };
 
-
-
-//controllers    
-    const sellerController= {
-        name: 'sellerController',
-        // Notice the require syntax and the '.default'
-        controller: require('../api/controllers/sellerController').default,
-    };
-    const touristController= {
-        name: 'touristController',
-        // Notice the require syntax and the '.default'
-        controller: require('../api/controllers/touristController').default,
-    };
-    const userController= {
-        name: 'userController',
-        // Notice the require syntax and the '.default'
-        controller: require('../api/controllers/userController').default,
-    };
-
-
-
-//services    
-    const sellerService= {
-        name: 'sellerService',
-        // Notice the require syntax and the '.default'
-        service: require('../services/sellerService').default,
-    };
-    const touristService= {
-        name: 'touristService',
-        // Notice the require syntax and the '.default'
-        service: require('../services/touristService').default,
-    };
-    const userService= {
-        name: 'userService',
-        // Notice the require syntax and the '.default'
-        service: require('../services/userService').default,
-    };
-    
-
-
     // It returns the agenda instance because it's needed in the subsequent loaders
   const { agenda } = await dependencyInjectorLoader({
     mongoConnection,
@@ -176,10 +131,9 @@ export default async ({ expressApp }: { expressApp: Application }) => {
       bookmark_notifyModel,
       categoryModel,
       comment_ratingModel,
-      commentModel,
       complaintModel,
       governorModel,
-      historical_locationsModel,
+      historical_locationModel,
       itineraryModel,
       orderModel,
       previous_workModel,
@@ -192,16 +146,6 @@ export default async ({ expressApp }: { expressApp: Application }) => {
       touristModel,
       wishlistModel,
 
-    ],
-    controllers: [
-        sellerController,
-        touristController,
-        userController,
-    ],
-    services: [
-        sellerService,
-        touristService,
-        userService,
     ]
   });
   Logger.info('✌️ Dependency Injector loaded');

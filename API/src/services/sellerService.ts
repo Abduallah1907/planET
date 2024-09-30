@@ -2,16 +2,16 @@ import { ISellerInputDTO, ISellerOutputDTO } from "@/interfaces/ISeller";
 import UserRoles from "@/types/enums/userRoles";
 import response from "@/types/responses/response";
 import { HttpError, InternalServerError } from "@/types/Errors";
-import { Inject, Service } from "typedi";
+import Container, { Inject, Service } from "typedi";
 import { IUserInputDTO } from "@/interfaces/IUser";
 import UserService from "./userService";
 
-@Service('sellerService')
+@Service()
 export default class SellerService {
+    private userService: UserService = Container.get(UserService);
     constructor(
         @Inject('sellerModel') private sellerModel: Models.SellerModel,
-        @Inject('userModel') private userModel: Models.UserModel,
-        @Inject('userService') private userService: UserService
+        @Inject('userModel') private userModel: Models.UserModel
     ) {
     }
     //input email of seller retrun seller data

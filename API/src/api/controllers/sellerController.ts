@@ -1,13 +1,10 @@
 import SellerService from "@/services/sellerService";
 import { ISellerInputDTO } from "@/interfaces/ISeller";
-import { Inject, Service } from "typedi";
+import Container, { Inject, Service } from "typedi";
 
-@Service('sellerController')
+@Service()
 export class SellerController {
-    constructor(
-        @Inject('sellerService') private sellerService: SellerService
-    ) {
-    }
+    private sellerService: SellerService = Container.get(SellerService);
     public async getSeller(req: any, res: any) {
         const seller = await this.sellerService.getSellerService(req.body.email)
         res.json({seller})

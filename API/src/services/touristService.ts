@@ -3,22 +3,18 @@ import { ITouristOutputDTO } from "@/interfaces/ITourist";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 
-import { Inject, Service } from "typedi";
+import Container, { Inject, Service } from "typedi";
 import UserService from "./userService";
 
 
-@Service('touristService')
+@Service()
 export default class TouristService {
     constructor(
         @Inject("touristModel") private touristModel: Models.TouristModel, 
         @Inject("userModel") private userModel: Models.UserModel,
         @Inject("activityModel") private activityModel: Models.ActivityModel,
         @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel,
-        @Inject("historical_locationsModel") private historical_locationsModel: Models.Historical_locationsModel,
-
-        @Inject("userService") private userService: UserService
-
-
+        @Inject("historical_locationModel") private historical_locationsModel: Models.Historical_locationsModel,
     ) {
     }
 
@@ -68,7 +64,8 @@ public async createTouristService(name:string,username:string,email:string,passw
         phone_number: phone_number,
         date_of_birth: date_of_birth
     }
-    const newUserResponse = await this.userService.createUserService(IUserInputDTO);
+    const userService: UserService = Container.get(UserService);
+    const newUserResponse = await userService.createUserService(IUserInputDTO);
     const newUser = new this.userModel(newUserResponse.data);
     newUser.role=UserRoles.Tourist;
     await newUser.save();

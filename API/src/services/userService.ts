@@ -5,7 +5,7 @@ import { IUserInputDTO } from "@/interfaces/IUser";
 
 
 
-@Service('userService')
+@Service()
 export default class UserService {
     constructor(
         @Inject('userModel') private userModel:Models.UserModel
