@@ -28,7 +28,7 @@ const activitySchema = new mongoose.Schema(
       required: true,
     },
     location: {
-      type: [LocationSchema], // [longitude, latitude],
+      type: LocationSchema, // [longitude, latitude],
       required: true,
     },
     price: { type: Number, required: false }, // Optional single price
@@ -66,28 +66,6 @@ const activitySchema = new mongoose.Schema(
   { timestamps: true }
 );
 // Pre-save validation to ensure only one of `price` or `priceRange` is provided
-activitySchema.pre("save", function (next) {
-  const activity = this;
-
-  // Check if both price and priceRange are provided
-  if (activity.price && activity.price_range?.max && activity.price_range.min) {
-    return next(
-      new Error("You must provide either price or priceRange, but not both.")
-    );
-  }
-
-  // Check if neither price nor priceRange are provided
-  if (
-    !activity.price &&
-    (!activity.price_range ||
-      !activity.price_range.min ||
-      !activity.price_range.max)
-  ) {
-    return next(new Error("You must provide either price or priceRange."));
-  }
-
-  next();
-});
 
 const Activity = mongoose.model<IActivity & mongoose.Document>(
   "Activity",

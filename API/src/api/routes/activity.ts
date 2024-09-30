@@ -1,21 +1,21 @@
 import { Router } from "express";
-import {
-  ActivityController,
-  // createActivity,
-  // deleteActivity,
-  // getActivityByAdvisor_ID,
-  // getActivityByID,
-  // updateActivity,
-} from "../controllers/activityController";
+import { ActivityController } from "../controllers/activityController";
+import Container from "typedi";
 const router = Router();
 
 export default (app: Router) => {
+  const activityController: ActivityController =
+    Container.get(ActivityController);
+
   app.use("/activity", router);
 
-  // router.post("/addActivity", createActivity);
-  router.get("/allActivites", ActivityController.getAllActivities);
-  // router.get("/ActivityByID", getActivityByID);
-  // router.get("/ActivityByAdvisorID", getActivityByAdvisor_ID);
-  //router.put("/updateActivity", updateActivity);
-  // router.delete("/deleteActivity", deleteActivity);
+  router.post("/addActivity", activityController.createActivity);
+  router.get("/allActivites", activityController.getAllActivities);
+  router.get("/ActivityByID", activityController.getActivityByID);
+  router.get(
+    "/ActivityByAdvisorID",
+    activityController.getActivityByAdvisor_ID
+  );
+  router.put("/updateActivity", activityController.updateActivity);
+  router.delete("/deleteActivity", activityController.deleteActivity);
 };
