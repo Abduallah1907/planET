@@ -5,7 +5,6 @@ import { HttpError, InternalServerError } from "@/types/Errors";
 import Container, { Inject, Service } from "typedi";
 import { IUserInputDTO } from "@/interfaces/IUser";
 import UserService from "./userService";
-import LoggerInstance from "@/loaders/logger";
 
 @Service()
 export default class SellerService {
@@ -16,7 +15,6 @@ export default class SellerService {
     }
     //input email of seller retrun seller data
     public async getSellerService(email: string) {
-        LoggerInstance.info("Getting seller data");
         const user = await this.userModel.findOne({ email: email, role: UserRoles.Seller });
         if (user instanceof Error)
             throw new InternalServerError("Internal server error");
