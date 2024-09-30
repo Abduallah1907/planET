@@ -43,6 +43,11 @@ const UserSchema = new mongoose.Schema(
       required: true,
       default: true,
     },
+    date_of_birth: {
+      type: Date,
+      required: true,
+     
+    },
     status: {
       type: String,
       required: true,

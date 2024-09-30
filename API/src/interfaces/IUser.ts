@@ -11,6 +11,7 @@ export interface IUser {
     phone_number: string,
     first_time_login: boolean,
     status: UserStatus,
+    date_of_birth: Date,
     createdAt: Date,
     updatedAt: Date
 }

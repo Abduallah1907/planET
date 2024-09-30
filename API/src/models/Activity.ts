@@ -17,19 +17,19 @@ const activitySchema = new mongoose.Schema({
   },
   date: {
     type: Date,
-    required: true,
+    // required: true,
   },
   time: {
     type: String,
-    required: true,
+    // required: true,
   },
   location: {
     type: String,
-    required: true,
+    // required: true,
   },
   price: {
     type: Number,
-    required: true,
+    // required: true,
   },
   special_discount: {
     type: Number,
@@ -39,22 +39,23 @@ const activitySchema = new mongoose.Schema({
   }],
   booking_flag: {
     type: Boolean,
-    required: true,
+    // required: true,
   },
   inappropriate_flag: {
     type: Boolean,
-    required: true,
+    // required: true,
   },
   active_flag: {
     type: Boolean,
-    required: true,
+    // required: true,
   },
-  adverstier_id: {
+  advertiser_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Advertiser',
-    required: true,
+    // required: true,
   },
 }, { timestamps: true });
+
 
 const Activity = mongoose.model<IActivity & mongoose.Document>('Activity', activitySchema);
 

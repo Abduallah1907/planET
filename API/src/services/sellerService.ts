@@ -46,8 +46,8 @@ export const getSellerService = async (email:string) => {
     
 };
 //Any seller need to be cerated as a user first role seller so we need to call createUserService first then seller will be created
-export const createSellerService = async (documents_required:string,logo:string,name:string,username:string,email:string,password:string,phone_number:string) => {
-        const newUserResponse = await createUserService(name,username,email,password,phone_number);
+export const createSellerService = async (documents_required:string,logo:string,name:string,username:string,email:string,password:string,phone_number:string,date_of_birth:Date) => {
+        const newUserResponse = await createUserService(name,username,email,password,phone_number,date_of_birth);
 
         const newUser = new User(newUserResponse.data);
         newUser.role=UserRoles.Seller;

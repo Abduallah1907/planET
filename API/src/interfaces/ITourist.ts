@@ -30,7 +30,6 @@ export interface ITourist extends Document {
 
   user_id: ObjectId;
   bookmarks: ObjectId[];
-  date_of_birth: Date;
   job: string;
   nation: string;
   wallet: number;

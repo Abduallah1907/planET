@@ -15,11 +15,6 @@ const touristSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Activity',
   }],
-  date_of_birth: {
-    type: Date,
-    required: true,
-   
-  },
   job: {
     type: String,
     required: true,

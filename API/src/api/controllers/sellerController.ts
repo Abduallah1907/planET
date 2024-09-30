@@ -6,7 +6,7 @@ export const getSeller = async (req: any, res: any) => {
 };
     
 export const createSeller = async (req: any, res: any) => {
-    const seller = await createSellerService(req.body.documents_required,req.body.logo,req.body.name,req.body.username,req.body.email,req.body.password,req.body.phone_number)
+    const seller = await createSellerService(req.body.documents_required,req.body.logo,req.body.name,req.body.username,req.body.email,req.body.password,req.body.phone_number,req.body.date_of_birth)
     res.json({seller})
 
 };

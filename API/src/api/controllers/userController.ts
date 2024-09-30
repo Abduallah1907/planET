@@ -10,7 +10,7 @@ class UserController {
 
 
 export const createUser = async (req: any, res: any) => {
-    const user = await createUserService(req.body.name,req.body.username,req.body.email,req.body.password,req.body.phone_number)
+    const user = await createUserService(req.body.name,req.body.username,req.body.email,req.body.password,req.body.phone_number,req.body.date_of_birth);
     res.json({user});
 
 };
