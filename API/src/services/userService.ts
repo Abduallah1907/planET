@@ -2,16 +2,15 @@ import { HttpError, InternalServerError } from "../types/Errors";
 import response from "../types/responses/response";
 import { Inject, Service } from "typedi";
 import { IUserInputDTO } from "@/interfaces/IUser";
-import Models from "../types/express/index.d";
 
 
 
 @Service('userService')
 export default class UserService {
     constructor(
-        @Inject("userModel") private userModel: Models.UserModel
-    ) {
-    }
+        @Inject('userModel') private userModel:Models.UserModel
+
+    ) {}
 
     public async createUserService(userData: IUserInputDTO) {
         const newUser = new this.userModel(userData);

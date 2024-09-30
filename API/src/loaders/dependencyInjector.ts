@@ -19,6 +19,7 @@ export default ({ mongoConnection,models,services,controllers}: { mongoConnectio
     });
 
     Container.set("userController",UserController);
+    Container.set("userService",UserService);
     // Container.set("userService",UserService);
     const agendaInstance = agendaFactory({ mongoConnection });
     const transporter = nodemailer.createTransport({
