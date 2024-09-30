@@ -6,7 +6,7 @@ import {
   getActivityByID,
   getAllActivities,
   updateActivity,
-} from "../controllers/Activity_Con";
+} from "../controllers/activityController";
 const router = Router();
 
 export default (app: Router) => {

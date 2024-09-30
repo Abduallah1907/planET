@@ -1,4 +1,5 @@
 import { IActivity } from "@/interfaces/IActivity";
+import { LocationSchema } from "@/types/Location";
 import mongoose from "mongoose";
 
 const activitySchema = new mongoose.Schema(
@@ -27,7 +28,7 @@ const activitySchema = new mongoose.Schema(
       required: true,
     },
     location: {
-      type: [Number], // [longitude, latitude],
+      type: LocationSchema, // [longitude, latitude],
       required: true,
     },
     price: { type: Number, required: false }, // Optional single price

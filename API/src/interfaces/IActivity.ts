@@ -1,23 +1,5 @@
+import { Location } from "@/types/Location";
 import { Document, ObjectId } from "mongoose";
-
-
-export interface IActivityOutputDTO {
-  category_type:string;
-  comments: ObjectId[];
-  name: string;
-  date: Date;
-  time: string;
-  location: string;
-  price: number;
-  special_discount?: number;
-  tags?: string[];
-  booking_flag: boolean;
-  inappropriate_flag: boolean;
-  active_flag: boolean;
-  advertiser_id:ObjectId;
-
-}
-
 
 export interface IActivity extends Document {
   category: ObjectId;
@@ -25,7 +7,7 @@ export interface IActivity extends Document {
   name: string;
   date: Date;
   time: string;
-  location: [Number]; // [longitude, latitude];
+  location: Location; // [longitude, latitude];
   price?: number; // Single price (optional)
   price_range?: {
     // Price range (optional) check the users story 21 in azure
@@ -41,10 +23,10 @@ export interface IActivity extends Document {
   createdAt?: Date;
   updatedAt?: Date;
 }
-export interface IACtivityDTO {
+export interface IActivityDTO {
   date: Date;
   time: string;
-  location: [Number]; // [longitude, latitude];
+  location: Location; // [longitude, latitude];
   price?: number; // Single price (optional)
   price_range?: {
     // Price range (optional)
