@@ -8,7 +8,7 @@ export interface IActivity extends Document {
   time: string;
   location: [Number]; // [longitude, latitude];
   price?: number; // Single price (optional)
-  priceRange?: {
+  price_range?: {
     // Price range (optional) check the users story 21 in azure
     min: number;
     max: number;
@@ -27,7 +27,7 @@ export interface IACtivityDTO {
   time: string;
   location: [Number]; // [longitude, latitude];
   price?: number; // Single price (optional)
-  priceRange?: {
+  price_range?: {
     // Price range (optional)
     min: number;
     max: number;

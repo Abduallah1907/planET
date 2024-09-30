@@ -11,7 +11,7 @@ export const createActivity = async (
     time,
     location, // [longitude, latitude]
     price,
-    priceRange,
+    price_range,
     category,
     tags,
     special_discount,
@@ -24,7 +24,7 @@ export const createActivity = async (
       time,
       location, // [longitude, latitude]
       price,
-      priceRange,
+      price_range,
       category,
       tags,
       special_discount,
@@ -114,7 +114,7 @@ export const updateActivity = async (
       updateFields.location = req.body.location;
     }
     if (req.body.price !== undefined) updateFields.price = req.body.price;
-    if (req.body.priceRange) updateFields.priceRange = req.body.priceRange;
+    if (req.body.price_range) updateFields.price_range = req.body.price_range;
     if (req.body.category) updateFields.category = req.body.category;
     if (req.body.special_discount !== undefined)
       updateFields.special_discount = req.body.special_discount;

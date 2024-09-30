@@ -31,7 +31,7 @@ const activitySchema = new mongoose.Schema(
       required: true,
     },
     price: { type: Number, required: false }, // Optional single price
-    priceRange: {
+    price_range: {
       min: { type: Number, required: false }, // Optional price range
       max: { type: Number, required: false },
     },
@@ -69,7 +69,7 @@ activitySchema.pre("save", function (next) {
   const activity = this;
 
   // Check if both price and priceRange are provided
-  if (activity.price && activity.priceRange?.max && activity.priceRange.min) {
+  if (activity.price && activity.price_range?.max && activity.price_range.min) {
     return next(
       new Error("You must provide either price or priceRange, but not both.")
     );
@@ -78,9 +78,9 @@ activitySchema.pre("save", function (next) {
   // Check if neither price nor priceRange are provided
   if (
     !activity.price &&
-    (!activity.priceRange ||
-      !activity.priceRange.min ||
-      !activity.priceRange.max)
+    (!activity.price_range ||
+      !activity.price_range.min ||
+      !activity.price_range.max)
   ) {
     return next(new Error("You must provide either price or priceRange."));
   }
