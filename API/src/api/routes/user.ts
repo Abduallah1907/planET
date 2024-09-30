@@ -1,9 +1,11 @@
 import { Router, Request, Response } from 'express';
-import userController from '../controllers/userController';
+import { UserController } from '@/api/controllers/userController';
+import Container from 'typedi';
 const route = Router();
-
+const userController = Container.get('userController') as UserController;
 
 export default (app: Router) => {
+
   app.use('/users', route);
    /**
    * @swagger
