@@ -1,4 +1,3 @@
-import User from "@/models/user";
 import { ISellerInputDTO, ISellerOutputDTO } from "@/interfaces/ISeller";
 import UserRoles from "@/types/enums/userRoles";
 import response from "@/types/responses/response";

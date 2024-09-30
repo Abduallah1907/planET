@@ -1,8 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { UserController } from '@/api/controllers/userController';
 import Container from 'typedi';
+
 const route = Router();
-const userController = Container.get('userController') as UserController;
+const userController =Container.get("userController") as UserController;
+
 
 export default (app: Router) => {
 
@@ -23,4 +25,6 @@ export default (app: Router) => {
    *         description: A list of users.
    */
   route.get('/test', userController.test);
+  route.post('/createUser', userController.createUser);
+
 };

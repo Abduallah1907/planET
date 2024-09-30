@@ -3,13 +3,23 @@ import nodemailer from 'nodemailer';
 import LoggerInstance from './logger';
 import agendaFactory from './agenda';
 import config from '@/config';
+import { UserController } from '@/api/controllers/userController';
+import UserService from '@/services/userService';
 
-export default ({ mongoConnection, models }: { mongoConnection: any; models: { name: string; model: any }[] }) => {
+export default ({ mongoConnection,models,services,controllers}: { mongoConnection: any; models: { name: string; model: any }[] ;services:{ name: string; service: any }[];controllers:{ name: string; controller: any }[]}) => {
   try {
     models.forEach(m => {
       Container.set(m.name, m.model);
     });
+    services.forEach(s => {
+      Container.set(s.name, s.service);
+    });
+    controllers.forEach(c => {
+      Container.set(c.name, c.controller);
+    });
 
+    Container.set("userController",UserController);
+    // Container.set("userService",UserService);
     const agendaInstance = agendaFactory({ mongoConnection });
     const transporter = nodemailer.createTransport({
         service: config.emails.host,

@@ -1,26 +1,36 @@
 import { HttpError, InternalServerError } from "@/types/Errors";
-import  Tourist  from "../models/Tourist";
 import { ITouristOutputDTO } from "@/interfaces/ITourist";
-import User from "@/models/user";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
-import { createUserService } from "./userService";
-import Itinerary from "@/models/Itinerary";
-import Historical_Location from "@/models/Historical_location";
-import Activity from "@/models/Activity";
+
+import { Inject, Service } from "typedi";
+import UserService from "./userService";
 
 
+@Service('touristService')
+export default class TouristService {
+    constructor(
+        @Inject("touristModel") private touristModel: Models.TouristModel, 
+        @Inject("userModel") private userModel: Models.UserModel,
+        @Inject("activityModel") private activityModel: Models.ActivityModel,
+        @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel,
+        @Inject("historical_locationsModel") private historical_locationsModel: Models.Historical_locationsModel,
 
-export const getTouristService = async (email:string) => {
-    const user = await User.findOne({email:email,role:UserRoles.Tourist});
+        @Inject("userService") private userService: UserService
+
+
+    ) {
+    }
+
+public async getTouristService(email:string){
+    const user = await this.userModel.findOne({email:email,role:UserRoles.Tourist});
     if(user instanceof Error)
         throw new InternalServerError("Internal server error");
 
     if(user==null)
         throw new HttpError("Tourist not found",404);
 
-    const tourist = await Tourist.findOne({user_id:user._id});
-
+    const tourist = await this.touristModel.findOne({user_id:user._id});
     if(tourist instanceof Error)
         throw new InternalServerError("Internal server error");
 
@@ -48,11 +58,18 @@ export const getTouristService = async (email:string) => {
     return new response(true, touristOutput, "Tourist found", 200);
 };
  
-export const createTouristService = async (name:string,username:string,email:string,password:string,phone_number:string,job:string,nation:string,date_of_birth:Date) => {
-    const newUserResponse = await createUserService(name,username,email,password,phone_number,date_of_birth);
-    console.log(nation);
-    console.log(date_of_birth);
-    const newUser = new User(newUserResponse.data);
+public async createTouristService(name:string,username:string,email:string,password:string,phone_number:string,job:string,nation:string,date_of_birth:Date){
+    const IUserInputDTO = {
+        email: email,
+        name: name,
+        username: username,
+        password: password,
+        role: UserRoles.Tourist,
+        phone_number: phone_number,
+        date_of_birth: date_of_birth
+    }
+    const newUserResponse = await this.userService.createUserService(IUserInputDTO);
+    const newUser = new this.userModel(newUserResponse.data);
     newUser.role=UserRoles.Tourist;
     await newUser.save();
     if(newUser instanceof Error)
@@ -62,7 +79,7 @@ export const createTouristService = async (name:string,username:string,email:str
         throw new HttpError("User not created",404);
 
 
-    const newTourist = new Tourist({user_id:newUser._id,date_of_birth:date_of_birth,job:job,nation:nation});
+    const newTourist = new this.touristModel({user_id:newUser._id,date_of_birth:date_of_birth,job:job,nation:nation});
     await newTourist.save();
     if (newTourist instanceof Error)
         throw new InternalServerError("Internal server error");
@@ -93,15 +110,15 @@ export const createTouristService = async (name:string,username:string,email:str
     
 };
 
-export const updateTouristService = async (searchEmail:string,name:string,newEmail:string,password:string,phone_number:string,job:string,nation:string,addresses:[string]) => {
-    const user = await User.findOneAndUpdate({email:searchEmail,role:UserRoles.Tourist},{name:name,email:newEmail,password:password,phone_number:phone_number},{new:true});
+public async updateTouristService(searchEmail:string,name:string,newEmail:string,password:string,phone_number:string,job:string,nation:string,addresses:[string]){
+    const user = await this.userModel.findOneAndUpdate({email:searchEmail,role:UserRoles.Tourist},{name:name,email:newEmail,password:password,phone_number:phone_number},{new:true});
     if(user instanceof Error)
         throw new InternalServerError("Internal server error");
 
     if(user==null)
         throw new HttpError("Tourist not found",404);
 
-    const tourist = await Tourist.findOneAndUpdate({user_id:user._id},{job:job,nation:nation,addresses:addresses},{new:true});
+    const tourist = await this.touristModel.findOneAndUpdate({user_id:user._id},{job:job,nation:nation,addresses:addresses},{new:true});
 
     if(tourist instanceof Error)
         throw new InternalServerError("Internal server error");
@@ -136,7 +153,7 @@ export const updateTouristService = async (searchEmail:string,name:string,newEma
 
 };
 
-export const getActivitiesService = async (name:string,category:string,tag:string) => {
+public async  getActivitiesService(name:string,category:string,tag:string){
 
 
     // const newCategory = new Category({type:category});
@@ -151,7 +168,7 @@ export const getActivitiesService = async (name:string,category:string,tag:strin
     // console.log(newCategory);
     // console.log(newActivity);
 
-    const activities = await Activity.find({name:name,tags:tag}).populate({path: 'category', match: { type: category }});
+    const activities = await this.activityModel.find({name:name,tags:tag}).populate({path: 'category', match: { type: category }});
 
     if(activities instanceof Error)
         throw new InternalServerError("Internal server error");
@@ -164,8 +181,8 @@ export const getActivitiesService = async (name:string,category:string,tag:strin
     return new response(true, activities, "Fetched activities", 200);
 }
 
-export const getItinerariesService = async (name:string,category:string,tag:string) => {
-    const itineraries = await Itinerary.find({name:name,tags:tag}).populate({path: 'category', match: { type: category }});
+public async getItinerariesService(name:string,category:string,tag:string){
+    const itineraries = await this.itineraryModel.find({name:name,tags:tag}).populate({path: 'category', match: { type: category }});
     if(itineraries instanceof Error)
         throw new InternalServerError("Internal server error");
 
@@ -174,8 +191,8 @@ export const getItinerariesService = async (name:string,category:string,tag:stri
     return new response(true, itineraries, "Fetched itineraries", 200);
 }
 
-export const getHistorical_locationsService = async (name:string,category:string,tag:string) => {
-    const historical_locations = await Historical_Location.find({name:name,tags:tag}).populate({path: 'category', match: { type: category }});
+public async  getHistorical_locationsService (name:string,category:string,tag:string){
+    const historical_locations = await this.historical_locationsModel.find({name:name,tags:tag}).populate({path: 'category', match: { type: category }});
     if(historical_locations instanceof Error)
         throw new InternalServerError("Internal server error");
 
@@ -185,3 +202,4 @@ export const getHistorical_locationsService = async (name:string,category:string
     return new response(true, historical_locations, "Fetched historical locations", 200);
 }
 
+}

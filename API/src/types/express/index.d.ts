@@ -11,7 +11,7 @@ declare global {
 
 
 
-  namespace Models {
+  export namespace Models {
     export type UserModel = Model<IUser & Document>;
     export type ActivityModel = Model<IActivity & Document>;
     export type AdvertiserModel = Model<IAdvertiser & Document>;
