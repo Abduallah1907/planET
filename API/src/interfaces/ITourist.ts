@@ -38,6 +38,7 @@ export interface ITourist extends Document {
   addresses: string[];
   cart: Cart;
   wishlist: ObjectId[];
+  date_of_birth: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }

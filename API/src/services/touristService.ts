@@ -1,4 +1,4 @@
-import { HttpError, InternalServerError } from "@/types/Errors";
+import {InternalServerError, NotFoundError } from "@/types/Errors";
 import { ITouristOutputDTO } from "@/interfaces/ITourist";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
@@ -24,14 +24,14 @@ public async getTouristService(email:string){
         throw new InternalServerError("Internal server error");
 
     if(user==null)
-        throw new HttpError("Tourist not found",404);
+        throw new NotFoundError("User not found");
 
     const tourist = await this.touristModel.findOne({user_id:user._id});
     if(tourist instanceof Error)
         throw new InternalServerError("Internal server error");
 
     if(tourist==null)  
-        throw new HttpError("User not found",404);
+        throw new NotFoundError("Tourist not found");
 
     const touristOutput: ITouristOutputDTO = {
         name: user.name,
@@ -41,7 +41,7 @@ public async getTouristService(email:string){
         role: user.role,
         phone_number: user.phone_number,
         status: user.status,
-        date_of_birth: user.date_of_birth,//May be changed
+        date_of_birth: tourist.date_of_birth,//May be changed
         job: tourist.job,
         nation: tourist.nation,
         wallet: tourist.wallet,
@@ -72,8 +72,6 @@ public async createTouristService(name:string,username:string,email:string,passw
     if(newUser instanceof Error)
         throw new InternalServerError("Internal server error");
     
-    if(newUser==null)
-        throw new HttpError("User not created",404);
 
 
     const newTourist = new this.touristModel({user_id:newUser._id,date_of_birth:date_of_birth,job:job,nation:nation});
@@ -82,7 +80,7 @@ public async createTouristService(name:string,username:string,email:string,passw
         throw new InternalServerError("Internal server error");
 
     if(newTourist==null)
-        throw new HttpError("Tourist not created",404);
+        throw new NotFoundError("Tourist not found");
 
     const touristOutput: ITouristOutputDTO = {
         name: newUser.name,
@@ -92,7 +90,7 @@ public async createTouristService(name:string,username:string,email:string,passw
         role: newUser.role,
         phone_number: newUser.phone_number,
         status: newUser.status,
-        date_of_birth: newUser.date_of_birth,//May be changed
+        date_of_birth: newTourist.date_of_birth,//May be changed
         job: newTourist.job,
         nation: newTourist.nation,
         wallet: newTourist.wallet,
@@ -113,7 +111,7 @@ public async updateTouristService(searchEmail:string,name:string,newEmail:string
         throw new InternalServerError("Internal server error");
 
     if(user==null)
-        throw new HttpError("Tourist not found",404);
+        throw new NotFoundError("User not found");
 
     const tourist = await this.touristModel.findOneAndUpdate({user_id:user._id},{job:job,nation:nation,addresses:addresses},{new:true});
 
@@ -121,7 +119,7 @@ public async updateTouristService(searchEmail:string,name:string,newEmail:string
         throw new InternalServerError("Internal server error");
 
     if(tourist==null)  
-        throw new HttpError("User not found",404);
+        throw new NotFoundError("Tourist not found");
 
 
     const touristOutput: ITouristOutputDTO = {
@@ -132,7 +130,7 @@ public async updateTouristService(searchEmail:string,name:string,newEmail:string
         role: user.role,
         phone_number: user.phone_number,
         status: user.status,
-        date_of_birth: user.date_of_birth,//May be changed
+        date_of_birth: tourist.date_of_birth,//May be changed
         job: tourist.job,
         nation: tourist.nation,
         wallet: tourist.wallet,
@@ -171,8 +169,7 @@ public async  getActivitiesService(name:string,category:string,tag:string){
         throw new InternalServerError("Internal server error");
     
     if(activities==null)
-        throw new HttpError("Activities not found",404);
-    
+        throw new NotFoundError("Activities not found");
 
 
     return new response(true, activities, "Fetched activities", 200);
@@ -184,7 +181,7 @@ public async getItinerariesService(name:string,category:string,tag:string){
         throw new InternalServerError("Internal server error");
 
     if(itineraries==null)
-        throw new HttpError("Itineraries not found",404);
+        throw new NotFoundError("Itineraries not found");
     return new response(true, itineraries, "Fetched itineraries", 200);
 }
 
@@ -194,7 +191,7 @@ public async  getHistorical_locationsService (name:string,category:string,tag:st
         throw new InternalServerError("Internal server error");
 
     if(historical_locations==null)
-        throw new HttpError("Historical locations not found",404);
+        throw new NotFoundError("Historical locations not found");
 
     return new response(true, historical_locations, "Fetched historical locations", 200);
 }

@@ -32,6 +32,11 @@ const touristSchema = new mongoose.Schema({
     type: Number,
     
   },
+  date_of_birth: {
+    type: Date,
+    required: true,
+   
+  },
   badge: {
     type: String,
     enum: Object.values(TouristBadge),
