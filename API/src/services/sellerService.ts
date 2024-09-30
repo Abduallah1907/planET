@@ -9,29 +9,29 @@ import { HttpError, InternalServerError } from "@/types/Errors";
 
 //input email of seller retrun seller data
 export const getSellerService = async (email:string) => {
-    //rename email to sellerEmail for DTO conversion
+
 
         const user = await User.findOne({ email: email, role: UserRoles.Seller });
         if(user instanceof Error)
-            // throw new InternalServerError("Internal server error");
-            throw new Error ("Internal server error");
+            throw new InternalServerError("Internal server error");
+            // throw new Error ("Internal server error");
 
         if(user==null)
-            // throw new HttpError("User not found",404);
-            throw new Error("User not found");
+            throw new HttpError("User not found",404);
+            // throw new Error("User not found");
         
         
         
         
         const seller = await Seller.findOne({ user_id: user._id });
         if(seller==null)
-        // throw new HttpError("Seller not found",404);    
-        throw new Error("Seller not found");
+        throw new HttpError("Seller not found",404);    
+        // throw new Error("Seller not found");
 
         
         if(seller instanceof Error)
-        // throw new InternalServerError("Internal server error");
-        throw new Error("Internal server error");
+        throw new InternalServerError("Internal server error");
+        // throw new Error("Internal server error");
         
 
         const sellerOutput: ISellerOutputDTO = {
@@ -47,25 +47,27 @@ export const getSellerService = async (email:string) => {
 };
 //Any seller need to be cerated as a user first role seller so we need to call createUserService first then seller will be created
 export const createSellerService = async (documents_required:string,logo:string,name:string,username:string,email:string,password:string,phone_number:string) => {
-        const newUser = await createUserService(name,username,email,password,phone_number);
-        newUser.data.role=UserRoles.Seller;
-        newUser.data.save();
+        const newUserResponse = await createUserService(name,username,email,password,phone_number);
+
+        const newUser = new User(newUserResponse.data);
+        newUser.role=UserRoles.Seller;
+        newUser.save();
         if(newUser instanceof Error)
             throw new InternalServerError("Internal server error");
         
-        if(newUser.data==null)
+        if(newUser==null)
             throw new HttpError("User not created",404);
         
-        const newSeller = new Seller({user_id:newUser.data._id,documents_required:documents_required,logo:logo});
+        const newSeller = new Seller({user_id:newUser._id,documents_required:documents_required,logo:logo});
 
        
         await newSeller.save();
 
         const sellerOutput: ISellerOutputDTO = {
-            email: newUser.data.email,
-            name: newUser.data.name,
-            username: newUser.data.username,
-            phone_number: newUser.data.phone_number,
+            email: newUser.email,
+            name: newUser.name,
+            username: newUser.username,
+            phone_number: newUser.phone_number,
             logo: newSeller.logo,
             description: newSeller.description
         };
@@ -75,7 +77,7 @@ export const createSellerService = async (documents_required:string,logo:string,
 
 //Takes old and new name and description of seller
 export const updateSellerService = async (email:string,name:string,description:string) => {
-    const user = await User.findOne({email,role:"seller"});
+    const user = await User.findOne({email,role:UserRoles.Seller});
         if(user instanceof Error)
             throw new InternalServerError("Internal server error");
         if(user==null)

@@ -33,7 +33,6 @@ const UserSchema = new mongoose.Schema(
       type: String,
       enum: Object.values(UserRoles),
       default: UserRoles.Tourist,
-      immutable: true,
       required:true,
     },
     phone_number: {

@@ -8,11 +8,11 @@ export const createUserService = async (name:string,username:string,email:string
 
     const newUser = new User({name,username,email,password,phone_number});
     if(newUser instanceof Error)
-        // throw new InternalServerError("Internal server error");
-        throw new Error ("Internal server error");
+        throw new InternalServerError("Internal server error");
+        // throw new Error ("Internal server error");
     if(newUser==null)
-        // throw new HttpError("User not created",404);
-        throw new Error("User not created");
+        throw new HttpError("User not created",404);
+        // throw new Error("User not created");
     await newUser.save();
     return new response(true, newUser, "User created", 200);
 
