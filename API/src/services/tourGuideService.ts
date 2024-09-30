@@ -37,8 +37,12 @@ export const deletePreviousWorkService = async (_id: ObjectId) => {
   return new response(true, deletedPreviousWork, "Previous work deleted!", 200);
 };
 // CRUD for tour guide profile
-// TODO update the user first_login boolean
-export const viewProfileService = async (user_id: ObjectId): Promise<any> => {};
+export const getProfileService = async (_id: ObjectId): Promise<any> => {
+  if (!_id) throw new Error("_id is required");
+  if (!Types.ObjectId.isValid(_id.toString())) throw new Error("_id is invalid");
+  const tourGuideProfile = await Tour_Guide.findById(_id);
+  return new response(true, tourGuideProfile, "Tour guide profile", 200);
+};
 
 export const updateProfileService = async (
   years_of_experience: Number,

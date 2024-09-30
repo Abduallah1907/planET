@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createPreviousWork, updatePreviousWork, deletePreviousWork, updateProfile } from "../controllers/tourGuideController";
+import { createPreviousWork, updatePreviousWork, deletePreviousWork, updateProfile, getProfile } from "../controllers/tourGuideController";
 const router = Router();
 // all routes have /api/tourGuide before each route
 
@@ -19,7 +19,7 @@ unneccessary. A better approach would be to simply add documents to the user tab
 but alas this is the one we ended up with
   */
   //router.post("/createProfile");
-  router.get("/viewProfile");
+  router.get("/getProfile", getProfile);
   // p
   router.put("/updateProfile", updateProfile);
 };
