@@ -1,4 +1,4 @@
-import { createPreviousWorkService, updatePreviousWorkService, updateProfileService } from "@/services/tourGuideService";
+import { createPreviousWorkService, deletePreviousWorkService, updatePreviousWorkService, updateProfileService } from "@/services/tourGuideService";
 import { Request, Response } from "express";
 
 // TODO the user_id should be taken from the token, and not directly as input from the user
@@ -14,6 +14,12 @@ export const updatePreviousWork = async (req: Request, res: Response): Promise<a
   const { _id, title, place, from, to } = req.body;
   const updatedPreviousWork = await updatePreviousWorkService(_id, title, place, from, to);
   res.json({ updatedPreviousWork });
+};
+
+export const deletePreviousWork = async (req: Request, res: Response): Promise<any> => {
+  const { _id } = req.body;
+  const deletedPreviousWork = await deletePreviousWorkService(_id);
+  res.json(deletedPreviousWork);
 };
 
 export const updateProfile = async (req: Request, res: Response): Promise<any> => {

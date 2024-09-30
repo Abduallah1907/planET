@@ -1,5 +1,5 @@
 import Tour_Guide from "@/models/Tour_guide";
-import { ObjectId } from "mongoose";
+import { ObjectId, Types } from "mongoose";
 import response from "@/types/responses/response";
 import User from "@/models/user";
 import UserRoles from "@/types/enums/userRoles";
@@ -26,6 +26,15 @@ export const updatePreviousWorkService = async (_id: ObjectId, title: String, pl
 
   const updatedPreviousWork = await Previous_Work.findByIdAndUpdate(_id, { title, place, from, to }, { new: true });
   return new response(true, updatedPreviousWork, "Previous work updated!", 200);
+};
+
+export const deletePreviousWorkService = async (_id: ObjectId) => {
+  if (!_id) throw new Error("_id is required");
+  if (!Types.ObjectId.isValid(_id.toString())) throw new Error("_id is invalid");
+
+  const deletedPreviousWork = await Previous_Work.findByIdAndDelete(_id);
+  if (!deletedPreviousWork) throw new Error("Previous work not found");
+  return new response(true, deletedPreviousWork, "Previous work deleted!", 200);
 };
 // CRUD for tour guide profile
 // TODO update the user first_login boolean
