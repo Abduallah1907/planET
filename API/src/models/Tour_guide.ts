@@ -1,4 +1,4 @@
-import { ITour_Guide } from '@/interfaces/ITour_Guide';
+import { ITour_Guide } from '@/interfaces/ITour_guide';
 import mongoose from 'mongoose';
 
 const tourGuideSchema = new mongoose.Schema({
@@ -31,10 +31,7 @@ const tourGuideSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  approval: {
-    type: Boolean,
-    required: true,
-  }
+  
 }, { timestamps: true });
 
 const Tour_Guide = mongoose.model<ITour_Guide & mongoose.Document>('Tour_Guide', tourGuideSchema);

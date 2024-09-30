@@ -1,4 +1,4 @@
-import { IBookmark_Notify } from '@/interfaces/IBookmark_Notify';
+import { IBookmark_Notify } from '@/interfaces/IBookmark_notify';
 import mongoose from 'mongoose';
 
 const bookmarkNotifySchema = new mongoose.Schema({
