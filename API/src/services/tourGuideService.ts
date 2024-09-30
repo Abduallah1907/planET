@@ -40,7 +40,7 @@ export const deletePreviousWorkService = async (_id: ObjectId) => {
 export const getProfileService = async (_id: ObjectId): Promise<any> => {
   if (!_id) throw new Error("_id is required");
   if (!Types.ObjectId.isValid(_id.toString())) throw new Error("_id is invalid");
-  const tourGuideProfile = await Tour_Guide.findById(_id);
+  const tourGuideProfile = await Tour_Guide.findById(_id).populate("previous_work_description");
   return new response(true, tourGuideProfile, "Tour guide profile", 200);
 };
 
