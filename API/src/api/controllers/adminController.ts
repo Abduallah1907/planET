@@ -1,99 +1,66 @@
-import {
-  getUsersService,
-  searchUserService,
-  deleteUserService,
-  createGovernorService,
-  createCategoryService,
-  getCategoriesService,
-  updateCategoryService,
-  deleteCategoryService,
-} from "@/services/adminService";
+import AdminService from "@/services/adminService";
 import { Request, Response } from "express";
+import { Inject, Service } from "typedi";
 
 // CRUD for users
-export const getUsers = async (req: Request, res: Response): Promise<any> => {
-  const { page } = req.body;
-  const users = await getUsersService(page);
-  res.json({ users });
-};
+@Service("adminController")
+export class AdminController {
+  constructor(@Inject("adminController") private adminService: AdminService) {}
 
-export const searchUser = async (req: Request, res: Response): Promise<any> => {
-  const { username } = req.body;
-  const user = await searchUserService(username);
-  res.json({ user });
-};
+  public async getUsers(req: Request, res: Response): Promise<any> {
+    const { page } = req.body;
+    const users = await this.adminService.getUsersService(page);
+    res.json({ users });
+  }
 
-export const deleteUser = async (req: Request, res: Response): Promise<any> => {
-  const { _id } = req.body;
-  const user = await deleteUserService(_id);
-  res.json({ user });
-};
+  public async searchUser(req: Request, res: Response): Promise<any> {
+    const { username } = req.body;
+    const user = await this.adminService.searchUserService(username);
+    res.json({ user });
+  }
 
-export const createGovernor = async (
-  req: Request,
-  res: Response
-): Promise<any> => {
-  const { email, name, phone_number, username, password } = req.body;
-  const newGovernor = await createGovernorService(
-    email,
-    name,
-    phone_number,
-    username,
-    password
-  );
-  res.json({ newGovernor });
-};
+  public async deleteUser(req: Request, res: Response): Promise<any> {
+    const { _id } = req.body;
+    const user = await this.adminService.deleteUserService(_id);
+    res.json({ user });
+  }
 
-export const createAdmin = async (
-  req: Request,
-  res: Response
-): Promise<any> => {
-  const { email, name, phone_number, username, password } = req.body;
-  const newAdmin = await createGovernorService(
-    email,
-    name,
-    phone_number,
-    username,
-    password
-  );
-  res.json({ newAdmin });
-};
+  public async createGovernor(req: Request, res: Response): Promise<any> {
+    // const { email, name, phone_number, username, password }=req.body;
+    // const newGovernor = await this.adminService.createGovernorService(email, name, phone_number, username, password);
+    // res.json({ newGovernor });
+  }
 
-// --------------------
-// CRUD for categories
+  public async createAdmin(req: Request, res: Response): Promise<any> {
+    // const { email, name, phone_number, username, password }req.body;
+    // const newAdmin = await this.adminService.createAdminService(email, name, phone_number, username, password);
+    // res.json({ newAdmin });
+  }
 
-export const createCategory = async (
-  req: Request,
-  res: Response
-): Promise<any> => {
-  const { type } = req.body;
-  const newCategory = await createCategoryService(type);
-  res.json({ newCategory });
-};
+  // --------------------
+  // CRUD for categories
 
-export const getCategories = async (
-  req: Request,
-  res: Response
-): Promise<any> => {
-  const { page } = req.body;
-  const categories = await getCategoriesService(page);
-  res.json({ categories });
-};
+  public async createCategory(req: Request, res: Response): Promise<any> {
+    const { type } = req.body;
+    const newCategory = await this.adminService.createCategoryService(type);
+    res.json({ newCategory });
+  }
 
-export const updateCategory = async (
-  req: Request,
-  res: Response
-): Promise<any> => {
-  const { oldType, newType } = req.body;
-  const updatedCategory = await updateCategoryService(oldType, newType);
-  res.json({ updatedCategory });
-};
+  public async getCategories(req: Request, res: Response): Promise<any> {
+    const { page } = req.body;
+    const categories = await this.adminService.getCategoriesService(page);
+    res.json({ categories });
+  }
 
-export const deleteCategory = async (
-  req: Request,
-  res: Response
-): Promise<any> => {
-  const { type } = req.body;
-  const deletedCategory = await deleteCategoryService(type);
-  res.json({ deletedCategory });
-};
+  public async updateCategory(req: Request, res: Response): Promise<any> {
+    const { oldType, newType } = req.body;
+    const updatedCategory = await this.adminService.updateCategoryService(oldType, newType);
+    res.json({ updatedCategory });
+  }
+
+  public async deleteCategory(req: Request, res: Response): Promise<any> {
+    const { type } = req.body;
+    const deletedCategory = await this.adminService.deleteCategoryService(type);
+    res.json({ deletedCategory });
+  }
+}
