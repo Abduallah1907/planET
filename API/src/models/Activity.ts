@@ -28,7 +28,7 @@ const activitySchema = new mongoose.Schema(
       required: true,
     },
     location: {
-      type: LocationSchema, // [longitude, latitude],
+      type: [LocationSchema], // [longitude, latitude],
       required: true,
     },
     price: { type: Number, required: false }, // Optional single price
