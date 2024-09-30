@@ -1,4 +1,4 @@
-import { IPromo_Code } from "../interfaces/IPromo_code";
+import { IPromo_code } from "@/interfaces/IPromo_code";
 import mongoose from "mongoose";
 
 const promoCodeSchema = new mongoose.Schema(
@@ -19,9 +19,6 @@ const promoCodeSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Promo_Code = mongoose.model<IPromo_Code & mongoose.Document>(
-  "Promo_Code",
-  promoCodeSchema
-);
+const Promo_Code = mongoose.model<IPromo_code & mongoose.Document>("Promo_Code", promoCodeSchema);
 
 export default Promo_Code;

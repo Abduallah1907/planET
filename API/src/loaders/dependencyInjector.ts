@@ -4,7 +4,7 @@ import LoggerInstance from './logger';
 import agendaFactory from './agenda';
 import config from '@/config';
 
-export default ({ mongoConnection, models }: { mongoConnection: any; models: { name: string; model: any }[] }) => {
+export default ({ mongoConnection,models}: { mongoConnection: any; models: { name: string; model: any }[] ;}) => {
   try {
     models.forEach(m => {
       Container.set(m.name, m.model);

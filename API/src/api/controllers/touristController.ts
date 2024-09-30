@@ -1,34 +1,41 @@
 
-import { getTouristService,updateTouristService,createTouristService } from "../../services/touristService";
-import { getActivitiesService,getItinerariesService,getHistorical_locationsService } from "../../services/touristService";
+import TouristService from "../../services/touristService";
+import Container, { Inject, Service } from "typedi";
+@Service()
+export class TouristController {
+    public async getTourist(req: any, res: any) {
+        const touristService: TouristService = Container.get(TouristService);
+        const tourist = await touristService.getTouristService(req.body.email);
+        res.status(tourist.status).json({ tourist });
+    };
 
+    public async createTourist(req: any, res: any) {
+        const touristService: TouristService = Container.get(TouristService);
+        const createdTourist = await touristService.createTouristService(req.body.name, req.body.username, req.body.email, req.body.password, req.body.phone_number, req.body.job, req.body.nation, req.body.date_of_birth);
+        res.status(createdTourist.status).json({ createdTourist });
+    };
 
-export const getTourist = async (req: any, res: any) => {
-    const tourist=await getTouristService(req.body.email);
-    res.json({tourist});
-};
+    public async updateTourist(req: any, res: any) {
+        const touristService: TouristService = Container.get(TouristService);
+        const updatedTourist = await touristService.updateTouristService(req.body.searchEmail, req.body.name, req.body.newEmail, req.body.password, req.body.phone_number, req.body.job, req.body.nation, req.body.addresses);
+        res.status(updatedTourist).json({ updatedTourist });
+    };
 
-export const createTourist = async (req: any, res: any) => {
-    const updatedTourist=await createTouristService(req.body.name,req.body.username,req.body.email,req.body.password,req.body.phone_number,req.body.job,req.body.nation,req.body.date_of_birth);
-    res.json({updatedTourist});
-};
+    public async getActivities(req: any, res: any) {
+        const touristService: TouristService = Container.get(TouristService);
+        const activities = await touristService.getActivitiesService(req.body.name, req.body.category, req.body.tag);
+        res.status(activities.status).json({ activities });
+    };
 
-export const updateTourist = async (req: any, res: any) => {
-    const updatedTourist= await updateTouristService(req.body.searchEmail,req.body.name,req.body.newEmail,req.body.password,req.body.phone_number,req.body.job,req.body.nation,req.body.addresses);
-    res.json({updatedTourist});
-};
+    public async getItinerary(req: any, res: any) {
+        const touristService: TouristService = Container.get(TouristService);
+        const itineraries = await touristService.getItinerariesService(req.body.name, req.body.category, req.body.tag);
+        res.status(itineraries.status).json({ itineraries });
+    };
 
-export const getActivities = async (req: any, res: any) => {
-    const activities= await getActivitiesService(req.body.name,req.body.category,req.body.tag);
-    res.json({activities});
-};
-
-export const getItinerary = async (req: any, res: any) => {
-    const itineraries= await getItinerariesService(req.body.name,req.body.category,req.body.tag);
-    res.json({itineraries});
-};
-
-export const getHistorical_locations = async (req: any, res: any) => {
-    const historical_locations= await getHistorical_locationsService(req.body.name,req.body.category,req.body.tag);
-    res.json({historical_locations});
-};
+    public async getHistorical_locations(req: any, res: any) {
+        const touristService: TouristService = Container.get(TouristService);
+        const historical_locations = await touristService.getHistorical_locationsService(req.body.name, req.body.category, req.body.tag);
+        res.status(historical_locations.status).json({ historical_locations });
+    };
+}

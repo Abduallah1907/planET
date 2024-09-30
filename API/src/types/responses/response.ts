@@ -1,4 +1,4 @@
-export default class Responce {
+export default class Response {
   status: number;
   success: boolean;
   data: any;
