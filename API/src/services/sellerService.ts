@@ -5,10 +5,10 @@ import { HttpError, InternalServerError } from "@/types/Errors";
 import Container, { Inject, Service } from "typedi";
 import { IUserInputDTO } from "@/interfaces/IUser";
 import UserService from "./userService";
+import LoggerInstance from "@/loaders/logger";
 
 @Service()
 export default class SellerService {
-    private userService: UserService = Container.get(UserService);
     constructor(
         @Inject('sellerModel') private sellerModel: Models.SellerModel,
         @Inject('userModel') private userModel: Models.UserModel
@@ -16,6 +16,7 @@ export default class SellerService {
     }
     //input email of seller retrun seller data
     public async getSellerService(email: string) {
+        LoggerInstance.info("Getting seller data");
         const user = await this.userModel.findOne({ email: email, role: UserRoles.Seller });
         if (user instanceof Error)
             throw new InternalServerError("Internal server error");
@@ -58,7 +59,8 @@ export default class SellerService {
             phone_number: sellerData.phone_number,
             date_of_birth: sellerData.date_of_birth
         };
-        const newUserResponse = await this.userService.createUserService(userData);
+        const userService: UserService = Container.get(UserService)
+        const newUserResponse = await userService.createUserService(userData);
 
         const newUser = new this.userModel(newUserResponse.data);
         newUser.role = UserRoles.Seller;
