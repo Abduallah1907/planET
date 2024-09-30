@@ -1,6 +1,7 @@
 import { IHistorical_Location } from '@/interfaces/IHistorical_Location';
 import mongoose from 'mongoose';
 
+
 const historicalLocationSchema = new mongoose.Schema({
   
   governor_id: {
@@ -12,6 +13,11 @@ const historicalLocationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Comment_Rating',
   }],
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+    required: true,
+  },
   name: {
     type: String,
     required: true,

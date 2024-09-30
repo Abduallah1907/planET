@@ -8,7 +8,6 @@ export interface IAdvertiser extends Document {
   hotline: string;
   about: string;
   logo: string;
-  approval: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
