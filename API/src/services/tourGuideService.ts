@@ -5,16 +5,27 @@ import User from "@/models/user";
 import UserRoles from "@/types/enums/userRoles";
 import Previous_Work from "@/models/Previous_work";
 
-// CRUD for work experiences
+// CUD for work experiences
+// Read is mostly like not needed as it will be viewed along side the profile, so the logic for that is moved down there
+// *depends on frontend implementation tho
 export const createPreviousWorkService = async (title: String, place: String, from: Date, to: Date): Promise<any> => {
   if (!title || !place || !from || !to) throw new Error("One of the fields is empty");
-  const newWorkExperience = await Previous_Work.create({
-    title,
-    place,
-    from,
-    to,
-  });
+  const newWorkExperience = await Previous_Work.create({ title, place, from, to });
   return new response(true, newWorkExperience, "Work experience created successfully!", 200);
+};
+
+export const updatePreviousWorkService = async (_id: ObjectId, title: String, place: String, from: Date, to: Date): Promise<any> => {
+  const previousWork = await Previous_Work.findById(_id);
+  if (!previousWork) throw new Error("Previous work not found");
+
+  // this is to prevent empty data from overwriting the old data
+  if (!title) title = previousWork.title;
+  if (!place) place = previousWork.place;
+  if (!from) from = previousWork.from;
+  if (!to) to = previousWork.to;
+
+  const updatedPreviousWork = await Previous_Work.findByIdAndUpdate(_id, { title, place, from, to }, { new: true });
+  return new response(true, updatedPreviousWork, "Previous work updated!", 200);
 };
 // CRUD for tour guide profile
 // TODO update the user first_login boolean

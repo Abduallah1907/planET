@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { createPreviousWork, updateProfile } from "../controllers/tourGuideController";
+import { createPreviousWork, updatePreviousWork, updateProfile } from "../controllers/tourGuideController";
+import Previous_Work from "@/models/Previous_work";
 const router = Router();
 // all routes have /api/tourGuide before each route
 
@@ -7,6 +8,7 @@ export default (app: Router) => {
   app.use("/tourGuide", router);
   // CRUD for work experience
   router.post("/createPreviousWork", createPreviousWork);
+  router.put("/updatePreviousWork", updatePreviousWork);
   // Read and update for profile
   /*
 The reason we do not have a create profile (only update/view) is due to the fact 
