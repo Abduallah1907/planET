@@ -1,3 +1,4 @@
+import { IPreviousWorkInputDTO } from "@/interfaces/IPrevious_work";
 import TourGuideService from "@/services/tourGuideService";
 import { Request, Response } from "express";
 import Container, { Service } from "typedi";
@@ -6,9 +7,9 @@ import Container, { Service } from "typedi";
 @Service()
 export class TourGuideController {
   public async createPreviousWork(req: Request, res: Response): Promise<any> {
-    const { title, place, from, to, tour_guide_id } = req.body;
+    const previousWorkData = req.body as IPreviousWorkInputDTO;
     const tourGuideService: TourGuideService = Container.get(TourGuideService);
-    const newWorkExperience = await tourGuideService.createPreviousWorkService(title, place, from, to);
+    const newWorkExperience = await tourGuideService.createPreviousWorkService(previousWorkData);
     res.json({ newWorkExperience });
   }
 
@@ -20,9 +21,9 @@ export class TourGuideController {
   }
 
   public async deletePreviousWork(req: Request, res: Response): Promise<any> {
-    const { _id } = req.body;
+    const { _id, tour_guide_id } = req.body;
     const tourGuideService: TourGuideService = Container.get(TourGuideService);
-    const deletedPreviousWork = await tourGuideService.deletePreviousWorkService(_id);
+    const deletedPreviousWork = await tourGuideService.deletePreviousWorkService(_id, tour_guide_id);
     res.json(deletedPreviousWork);
   }
   // ---- Profile ----
