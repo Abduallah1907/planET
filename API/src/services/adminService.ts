@@ -115,7 +115,7 @@ export default class AdminService {
       updatedAt: user.updatedAt,
     };
 
-    return new response(true, { ...userOutput, ...deletedRole, ...deletedCreations }, "User deleted", 200);
+    return new response(true, { ...userOutput, deletedRole: deletedRole._doc, deletedCreations }, "User deleted", 200);
   }
 
   public async createGovernorService(governorData: IUserAdminCreateGovernorDTO): Promise<any> {
