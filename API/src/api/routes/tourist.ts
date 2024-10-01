@@ -106,5 +106,9 @@ export default (app: Router) => {
   route.get("/getItineraries", touristController.getItinerary);
   route.get("/getHistorical_locations", touristController.getHistorical_locations);
 
+  route.get("/getUpcomingActivities", touristController.getUpcomingActivities);
+  route.get("/getUpcomingItineraries", touristController.getUpcomingItineraries);
+  route.get("/getUpcomingHistorical_locations", touristController.getUpcomingHistorical_locations);
+
 
 };

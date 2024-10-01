@@ -97,6 +97,7 @@ public async createTouristService(name:string,username:string,email:string,passw
         loyality_points: newTourist.loyality_points,
         badge: newTourist.badge,
         addresses: newTourist.addresses,
+        
         // cart: newTourist.cart,
         // wishlist: newTourist.wishlist,//out of current scope of sprint
     };
@@ -163,7 +164,7 @@ public async  getActivitiesService(name:string,category:string,tag:string){
     // console.log(newCategory);
     // console.log(newActivity);
 
-    const activities = await this.activityModel.find({name:name,tags:tag}).populate({path: 'category', match: { type: category }});
+    const activities = await this.activityModel.find({name:name,tags:tag}).populate({path: 'category', match: { type: category }}).populate("comments").populate({path:"advertiser_id",select : "name"});
 
     if(activities instanceof Error)
         throw new InternalServerError("Internal server error");
@@ -176,7 +177,7 @@ public async  getActivitiesService(name:string,category:string,tag:string){
 }
 
 public async getItinerariesService(name:string,category:string,tag:string){
-    const itineraries = await this.itineraryModel.find({name:name,tags:tag}).populate({path: 'category', match: { type: category }});
+    const itineraries = await this.itineraryModel.find({name:name,tags:tag}).populate({path: 'category', match: { type: category }}).populate('timeline').populate('activities').populate({path:"tour_guide_id",select : "name"});
     if(itineraries instanceof Error)
         throw new InternalServerError("Internal server error");
 
@@ -186,7 +187,7 @@ public async getItinerariesService(name:string,category:string,tag:string){
 }
 
 public async  getHistorical_locationsService (name:string,category:string,tag:string){
-    const historical_locations = await this.historical_locationsModel.find({name:name,tags:tag}).populate({path: 'category', match: { type: category }});
+    const historical_locations = await this.historical_locationsModel.find({name:name,tags:tag}).populate({path: 'category', match: { type: category }}).populate("comments").populate({path:"governor_id",select : "name"});
     if(historical_locations instanceof Error)
         throw new InternalServerError("Internal server error");
 
@@ -195,5 +196,24 @@ public async  getHistorical_locationsService (name:string,category:string,tag:st
 
     return new response(true, historical_locations, "Fetched historical locations", 200);
 }
+
+public async getUpcomingActivitiesService(){
+    const today = new Date();
+    const activities = await this.activityModel.find({date_time:{$gte:today}}).populate('category').populate("comments").populate({path:"advertiser_id",select : "name"});
+    return new response(true, activities, "Fetched upcoming activities", 200);
+}
+
+public async getUpcomingItinerariesService(){
+    const today = new Date();
+    const itineraries = (await this.itineraryModel.find({available_dates:{$gte:today}}).populate('category').populate('timeline').populate('activities').populate({path:"tour_guide_id",select : "name"}));
+    return new response(true, itineraries, "Fetched upcoming itineraries", 200);
+}
+
+public async getUpcomingHistorical_locationsService(){
+    const today = new Date();
+    const historical_locations = await this.historical_locationsModel.find({date_time:{$gte:today}}).populate('category').populate("comments").populate({path:"governor_id",select : "name"});
+    return new response(true, historical_locations, "Fetched upcoming historical locations", 200);
+}  
+
 
 }

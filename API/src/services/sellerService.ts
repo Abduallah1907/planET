@@ -84,6 +84,7 @@ export default class SellerService {
         return new response(true, sellerOutput, "Seller created", 201);
 
     };
+    
 
     //Takes old and new name and description of seller
     public async updateSellerService(email: string, name: string, description: string) {

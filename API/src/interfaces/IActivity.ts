@@ -5,8 +5,7 @@ export interface IActivityOutputDTO {
   category_type:string;
   comments: ObjectId[];
   name: string;
-  date: Date;
-  time: string;
+  date_time: Date;
   location: string;
   price: number;
   special_discount?: number;
@@ -23,8 +22,7 @@ export interface IActivity extends Document {
   category: ObjectId;
   comments: ObjectId[];
   name: string;
-  date: Date;
-  time: string;
+  date_time: Date;
   location: string;
   price: number;
   special_discount?: number;

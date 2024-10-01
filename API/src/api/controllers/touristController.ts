@@ -38,4 +38,24 @@ export class TouristController {
         const historical_locations = await touristService.getHistorical_locationsService(req.body.name, req.body.category, req.body.tag);
         res.status(historical_locations.status).json({ historical_locations });
     };
+
+    public async getUpcomingActivities(req: any, res: any) {
+        const touristService: TouristService = Container.get(TouristService);
+        const upcomingActivities = await touristService.getUpcomingActivitiesService();
+        console.log(upcomingActivities);
+
+        res.status(upcomingActivities.status).json({ upcomingActivities });
+    }
+    public async getUpcomingItineraries(req: any, res: any) {
+        const touristService: TouristService = Container.get(TouristService);
+        const upcomingItineraries = await touristService.getUpcomingItinerariesService();
+        res.status(upcomingItineraries.status).json({ upcomingItineraries });
+    }
+    public async getUpcomingHistorical_locations(req: any, res: any) {
+        const touristService: TouristService = Container.get(TouristService);
+        const upcomingHistorical_locations = await touristService.getUpcomingHistorical_locationsService();
+        res.status(upcomingHistorical_locations.status).json({ upcomingHistorical_locations });
+    }
+
+
 }
