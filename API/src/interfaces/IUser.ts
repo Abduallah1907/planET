@@ -17,7 +17,7 @@ export interface IUser {
 }
 
 // this interace is used whenever the admin creates an account for another person (governor or admin)
-export interface IUserAdminCreate {
+export interface IUserAdminCreateDTO {
   email: string;
   name: string;
   phone_number: string;

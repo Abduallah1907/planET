@@ -1,10 +1,12 @@
 import mongoose from "mongoose";
-import { Inject, Service } from "typedi";
+import Container, { Inject, Service } from "typedi";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
-import { IUserAdminViewDTO } from "@/interfaces/IUser";
+import { IUserAdminCreateDTO, IUserAdminViewDTO, IUserInputDTO } from "@/interfaces/IUser";
 import { InternalServerError, HttpError } from "@/types/Errors";
+import UserService from "./userService";
+import admin from "@/api/routes/admin";
 
 // User related services (delete, view, and create users)
 
@@ -102,32 +104,43 @@ export default class AdminService {
     return new response(true, { ...userOutput, ...deletedRole }, "User deleted", 200);
   }
 
-  public async createGovernorService(email: string, name: string, phone_number: string, username: string, password: string): Promise<any> {
-    if (!email || !name || !phone_number || !username || !password) throw new Error("One of the fields is empty");
-    const governor = await this.userModel.create({
-      username,
-      email,
-      name,
-      phone_number,
-      password,
-      role: UserRoles.Governor,
-      status: UserStatus.APPROVED,
-    });
-    return new response(true, { _id: governor._id, username }, "Created new governor!", 200);
-  }
+  // public async createGovernorService(governorData: ): Promise<any> {
+  // email: string, name: string, phone_number: string, username: string, password: string
 
-  public async createAdminService(email: string, name: string, phone_number: string, username: string, password: string): Promise<any> {
-    if (!email || !name || !phone_number || !username || !password) throw new Error("One of the fields is empty");
-    const admin = await this.userModel.create({
-      username,
-      email,
-      name,
-      phone_number,
-      password,
-      role: UserRoles.Admin,
-      status: UserStatus.APPROVED,
-    });
-    return new response(true, { _id: admin._id, username }, "Created new admin!", 200);
+  // const governor = await this.userModel.create({
+  //   username,
+  //   email,
+  //   name,
+  //   phone_number,
+  //   password,
+  //   role: UserRoles.Governor,
+  //   status: UserStatus.APPROVED,
+  // });
+
+  // return new response(true, { _id: governor._id, username }, "Created new governor!", 200);
+  // }
+
+  public async createAdminService(adminData: IUserAdminCreateDTO): Promise<any> {
+    // we add the status and role since they are not inputs taken by the user
+    const newAdmin = new this.userModel({ ...adminData, status: UserStatus.APPROVED, role: UserRoles.Admin });
+    // the reason we dont call user service to create the admin is because the user service DTO does
+    // not expect status as one of its attributes, so we have to do it ourselves
+
+    if (newAdmin instanceof Error) throw new InternalServerError("Internal server error");
+    if (!newAdmin) throw new HttpError("Admin not created", 404);
+
+    await newAdmin.save();
+    const adminOutput: IUserAdminViewDTO = {
+      email: newAdmin.email,
+      name: newAdmin.name,
+      username: newAdmin.username,
+      role: newAdmin.role,
+      phone_number: newAdmin.phone_number,
+      status: newAdmin.status,
+      createdAt: newAdmin.createdAt,
+      updatedAt: newAdmin.updatedAt,
+    };
+    return new response(true, adminOutput, "Admin created", 200);
   }
 
   // CRUD for categories

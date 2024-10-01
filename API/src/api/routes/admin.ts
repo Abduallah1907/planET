@@ -24,7 +24,7 @@ export default (app: Router) => {
   // Given an email, name, phone number, username, and password,
   // automatically creates the account and returns the newly created governor
   // (excluding information about the salt and password)
-  router.post("/createGovernor", adminController.createGovernor);
+  // router.post("/createGovernor", adminController.createGovernor);
 
   // Given an email, name, phone number, username, and password,
   // automatically creates the account and returns the newly created admin
@@ -32,7 +32,7 @@ export default (app: Router) => {
   router.post("/createAdmin", adminController.createAdmin);
 
   // Give any string, it will create a new category
-  router.post("/createCategory", adminController.createGovernor);
+  router.post("/createCategory", adminController.createCategory);
 
   // Given a page number, it will return a list containing 10 categories
   router.get("/getCategories", adminController.getCategories);

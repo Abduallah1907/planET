@@ -1,3 +1,4 @@
+import { IUserAdminCreateDTO } from "@/interfaces/IUser";
 import AdminService from "@/services/adminService";
 import { Request, Response } from "express";
 import Container, { Inject, Service } from "typedi";
@@ -26,16 +27,17 @@ export class AdminController {
     res.json({ user });
   }
 
-  public async createGovernor(req: Request, res: Response): Promise<any> {
-    // const { email, name, phone_number, username, password }=req.body;
-    // const newGovernor = await this.adminService.createGovernorService(email, name, phone_number, username, password);
-    // res.json({ newGovernor });
-  }
+  // public async createGovernor(req: Request, res: Response): Promise<any> {
+  // const { email, name, phone_number, username, password }=req.body;
+  // const newGovernor = await this.adminService.createGovernorService(email, name, phone_number, username, password);
+  // res.json({ newGovernor });
+  // }
 
   public async createAdmin(req: Request, res: Response): Promise<any> {
-    // const { email, name, phone_number, username, password }req.body;
-    // const newAdmin = await this.adminService.createAdminService(email, name, phone_number, username, password);
-    // res.json({ newAdmin });
+    const adminData = req.body as IUserAdminCreateDTO;
+    const adminService: AdminService = Container.get(AdminService);
+    const newAdmin = await adminService.createAdminService(adminData);
+    res.json({ newAdmin });
   }
 
   // --------------------
