@@ -15,7 +15,7 @@ export default class AdminService {
     @Inject("categoryModel") private categoryModel: Models.CategoryModel,
     @Inject("sellerModel") private sellerModel: Models.SellerModel,
     @Inject("touristModel") private touristModel: Models.TouristModel,
-    @Inject("tourGuideModel") private tourGuideModel: Models.Tour_guideModel,
+    @Inject("tour_guideModel") private tourGuideModel: Models.Tour_guideModel,
     @Inject("advertiserModel") private adveristerModel: Models.AdvertiserModel
   ) {}
 
