@@ -1,7 +1,7 @@
 import { ITourist } from '@/interfaces/ITourist';
 import TouristBadge from '@/types/enums/touristBadge';
 import mongoose from 'mongoose';
-import {CartSchema} from '@/types/Cart'; // Adjust the import path as necessary
+import CartSchema from '@/types/Cart'; // Adjust the import path as necessary
 
 
 const touristSchema = new mongoose.Schema({
@@ -31,6 +31,11 @@ const touristSchema = new mongoose.Schema({
   loyality_points: {
     type: Number,
     
+  },
+  date_of_birth: {
+    type: Date,
+    required: true,
+   
   },
   badge: {
     type: String,

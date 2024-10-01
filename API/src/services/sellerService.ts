@@ -1,18 +1,16 @@
-import User from "@/models/user";
 import { ISellerInputDTO, ISellerOutputDTO } from "@/interfaces/ISeller";
 import UserRoles from "@/types/enums/userRoles";
 import response from "@/types/responses/response";
-import { HttpError, InternalServerError } from "@/types/Errors";
-import { Inject, Service } from "typedi";
+import {InternalServerError, NotFoundError } from "@/types/Errors";
+import Container, { Inject, Service } from "typedi";
 import { IUserInputDTO } from "@/interfaces/IUser";
 import UserService from "./userService";
 
-@Service('sellerService')
+@Service()
 export default class SellerService {
     constructor(
         @Inject('sellerModel') private sellerModel: Models.SellerModel,
-        @Inject('userModel') private userModel: Models.UserModel,
-        @Inject('userService') private userService: UserService
+        @Inject('userModel') private userModel: Models.UserModel
     ) {
     }
     //input email of seller retrun seller data
@@ -23,12 +21,12 @@ export default class SellerService {
         // throw new Error ("Internal server error");
 
         if (user == null)
-            throw new HttpError("User not found", 404);
+           throw new NotFoundError("User not found");
         // throw new Error("User not found");
 
         const seller = await this.sellerModel.findOne({ user_id: user._id });
         if (seller == null)
-            throw new HttpError("Seller not found", 404);
+            throw new NotFoundError("Seller not found");
         // throw new Error("Seller not found");
 
 
@@ -59,7 +57,8 @@ export default class SellerService {
             phone_number: sellerData.phone_number,
             date_of_birth: sellerData.date_of_birth
         };
-        const newUserResponse = await this.userService.createUserService(userData);
+        const userService: UserService = Container.get(UserService)
+        const newUserResponse = await userService.createUserService(userData);
 
         const newUser = new this.userModel(newUserResponse.data);
         newUser.role = UserRoles.Seller;
@@ -68,8 +67,7 @@ export default class SellerService {
             throw new InternalServerError("Internal server error");
 
         if (newUser == null)
-            throw new HttpError("User not created", 404);
-
+            throw new NotFoundError("User not found");
         const newSeller = new this.sellerModel({ user_id: newUser._id, documents_required: sellerData.documents_required, logo: sellerData.logo });
 
 
@@ -93,8 +91,7 @@ export default class SellerService {
         if (user instanceof Error)
             throw new InternalServerError("Internal server error");
         if (user == null)
-            throw new HttpError("User not found", 404);
-
+            throw new NotFoundError("User not found");
 
 
         user.name = name;
@@ -104,8 +101,7 @@ export default class SellerService {
         if (updatedSeller instanceof Error)
             throw new InternalServerError("Internal server error");
         if (updatedSeller == null)
-            throw new HttpError("Seller not found", 404);
-
+            throw new NotFoundError("Seller not found");
 
 
         const sellerOutput: ISellerOutputDTO = {
