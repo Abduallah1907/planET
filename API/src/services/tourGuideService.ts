@@ -69,13 +69,7 @@ export default class TourGuideService {
     return new response(true, tourGuideProfile, "Tour guide profile", 200);
   }
 
-  public async updateProfileService(
-    years_of_experience: number,
-    previous_work_description: [ObjectId],
-    photo: string,
-    user_id: ObjectId,
-    tour_guide_id: ObjectId
-  ): Promise<any> {
+  public async updateProfileService(years_of_experience: number, photo: string, user_id: ObjectId, tour_guide_id: ObjectId): Promise<any> {
     const user = await this.userModel.findById(user_id).select("status role");
     if (user) {
       const isAccepted = user.status;
@@ -96,7 +90,6 @@ export default class TourGuideService {
     //  kept as is in the database and not overwritten to also be empty
     if (photo) tourGuide.photo = photo;
     if (years_of_experience) tourGuide.years_of_experience = years_of_experience;
-    if (previous_work_description) tourGuide.previous_work_description.push(...previous_work_description);
     await tourGuide.save();
     return new response(true, tourGuide, "Profile updated successfully!", 200);
   }

@@ -36,7 +36,7 @@ export class TourGuideController {
   public async updateProfile(req: Request, res: Response): Promise<any> {
     const { years_of_experience, previous_work_description, photo, user_id, tour_guide_id } = req.body;
     const tourGuideService: TourGuideService = Container.get(TourGuideService);
-    const updatedProfile = tourGuideService.updateProfileService(years_of_experience, previous_work_description, photo, user_id, tour_guide_id);
+    const updatedProfile = tourGuideService.updateProfileService(years_of_experience, previous_work_description, photo, user_id);
     res.json({ updatedProfile });
   }
 }
