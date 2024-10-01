@@ -2,7 +2,6 @@ import { Router } from "express";
 import Container from "typedi";
 import { AdminController } from "@/api/controllers/adminController";
 const router = Router();
-const adminController = Container.get("adminController") as AdminController;
 // all routes have /api/admin before each route
 
 export default (app: Router) => {

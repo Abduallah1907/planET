@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import Container, { Inject, Service } from "typedi";
 
 // CRUD for users
-@Service("adminController")
+@Service()
 export class AdminController {
   public async getUsers(req: Request, res: Response): Promise<any> {
     const { page } = req.body;

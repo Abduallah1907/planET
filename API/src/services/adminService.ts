@@ -8,7 +8,7 @@ import { InternalServerError, HttpError } from "@/types/Errors";
 
 // User related services (delete, view, and create users)
 
-@Service("adminService")
+@Service()
 export default class AdminService {
   constructor(
     @Inject("userModel") private userModel: Models.UserModel,
