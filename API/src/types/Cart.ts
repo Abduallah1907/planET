@@ -23,6 +23,6 @@ type Cart_Item = {
 };
 
 
-export { CartSchema, Cart_ItemSchema };
+export default{ CartSchema, Cart_ItemSchema };
 export type { Cart, Cart_Item };
 

@@ -22,6 +22,15 @@ const itinerarySchema = new mongoose.Schema(
         ref: "Comment_Rating",
       },
     ],
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
     locations: [
       {
         type: String,
