@@ -27,11 +27,12 @@ export class AdminController {
     res.json({ user });
   }
 
-  // public async createGovernor(req: Request, res: Response): Promise<any> {
-  // const { email, name, phone_number, username, password }=req.body;
-  // const newGovernor = await this.adminService.createGovernorService(email, name, phone_number, username, password);
-  // res.json({ newGovernor });
-  // }
+  public async createGovernor(req: Request, res: Response): Promise<any> {
+    const governorData = req.body as IUserAdminCreateDTO;
+    const adminService: AdminService = Container.get(AdminService);
+    const newGovernor = await adminService.createGovernorService(governorData);
+    res.json({ newGovernor });
+  }
 
   public async createAdmin(req: Request, res: Response): Promise<any> {
     const adminData = req.body as IUserAdminCreateDTO;

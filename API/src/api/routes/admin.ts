@@ -24,7 +24,7 @@ export default (app: Router) => {
   // Given an email, name, phone number, username, and password,
   // automatically creates the account and returns the newly created governor
   // (excluding information about the salt and password)
-  // router.post("/createGovernor", adminController.createGovernor);
+  router.post("/createGovernor", adminController.createGovernor);
 
   // Given an email, name, phone number, username, and password,
   // automatically creates the account and returns the newly created admin

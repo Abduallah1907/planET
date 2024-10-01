@@ -104,21 +104,28 @@ export default class AdminService {
     return new response(true, { ...userOutput, ...deletedRole }, "User deleted", 200);
   }
 
-  // public async createGovernorService(governorData: ): Promise<any> {
-  // email: string, name: string, phone_number: string, username: string, password: string
+  public async createGovernorService(governorData: IUserAdminCreateDTO): Promise<any> {
+    // we add the status and role since they are not inputs taken by the user
+    const newGovernor = new this.userModel({ ...governorData, status: UserStatus.APPROVED, role: UserRoles.Governor });
+    // the reason we dont call user service to create the admin is because the user service DTO does
+    // not expect status as one of its attributes, so we have to do it ourselves
 
-  // const governor = await this.userModel.create({
-  //   username,
-  //   email,
-  //   name,
-  //   phone_number,
-  //   password,
-  //   role: UserRoles.Governor,
-  //   status: UserStatus.APPROVED,
-  // });
+    if (newGovernor instanceof Error) throw new InternalServerError("Internal server error");
+    if (!newGovernor) throw new HttpError("Governor not created", 404);
 
-  // return new response(true, { _id: governor._id, username }, "Created new governor!", 200);
-  // }
+    await newGovernor.save();
+    const governorOutput: IUserAdminViewDTO = {
+      email: newGovernor.email,
+      name: newGovernor.name,
+      username: newGovernor.username,
+      role: newGovernor.role,
+      phone_number: newGovernor.phone_number,
+      status: newGovernor.status,
+      createdAt: newGovernor.createdAt,
+      updatedAt: newGovernor.updatedAt,
+    };
+    return new response(true, governorOutput, "Governor created", 200);
+  }
 
   public async createAdminService(adminData: IUserAdminCreateDTO): Promise<any> {
     // we add the status and role since they are not inputs taken by the user
