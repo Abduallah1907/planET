@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { Inject, Service } from "typedi";
-import response from "@/types/response/response";
+import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
 import { IUserAdminViewDTO } from "@/interfaces/IUser";

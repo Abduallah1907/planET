@@ -7,7 +7,7 @@ const adminController = Container.get("adminController") as AdminController;
 
 export default (app: Router) => {
   app.use("/admin", router);
-
+  const adminController: AdminController = Container.get(AdminController);
   // This returns all users given a page number
   // Each page has 10 users
   router.get("/getUsers", adminController.getUsers);
