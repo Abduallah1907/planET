@@ -1,4 +1,4 @@
-import { IUserAdminCreateDTO } from "@/interfaces/IUser";
+import { IUserAdminCreateAdminDTO, IUserAdminCreateGovernorDTO } from "@/interfaces/IUser";
 import AdminService from "@/services/adminService";
 import { Request, Response } from "express";
 import Container, { Inject, Service } from "typedi";
@@ -28,14 +28,14 @@ export class AdminController {
   }
 
   public async createGovernor(req: Request, res: Response): Promise<any> {
-    const governorData = req.body as IUserAdminCreateDTO;
+    const governorData = req.body as IUserAdminCreateGovernorDTO;
     const adminService: AdminService = Container.get(AdminService);
     const newGovernor = await adminService.createGovernorService(governorData);
     res.json({ newGovernor });
   }
 
   public async createAdmin(req: Request, res: Response): Promise<any> {
-    const adminData = req.body as IUserAdminCreateDTO;
+    const adminData = req.body as IUserAdminCreateAdminDTO;
     const adminService: AdminService = Container.get(AdminService);
     const newAdmin = await adminService.createAdminService(adminData);
     res.json({ newAdmin });

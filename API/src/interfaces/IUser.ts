@@ -1,5 +1,6 @@
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
+import { ObjectId } from "mongoose";
 import e from "cors";
 
 export interface IUser {
@@ -16,16 +17,27 @@ export interface IUser {
   updatedAt: Date;
 }
 
-// this interace is used whenever the admin creates an account for another person (governor or admin)
-export interface IUserAdminCreateDTO {
+// this interace is used whenever the admin creates another admin
+export interface IUserAdminCreateAdminDTO {
   email: string;
   name: string;
   phone_number: string;
   username: string;
   password: string;
 }
+
+// this interace is used whenever the admin creates a new governor
+export interface IUserAdminCreateGovernorDTO {
+  email: string;
+  name: string;
+  phone_number: string;
+  username: string;
+  password: string;
+  nation: string;
+}
 // this interface is used anytime an admin views the users
 export interface IUserAdminViewDTO {
+  _id: ObjectId;
   name: string;
   username: string;
   email: string;

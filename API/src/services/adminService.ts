@@ -1,12 +1,10 @@
 import mongoose from "mongoose";
-import Container, { Inject, Service } from "typedi";
+import { Inject, Service } from "typedi";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
-import { IUserAdminCreateDTO, IUserAdminViewDTO, IUserInputDTO } from "@/interfaces/IUser";
+import { IUserAdminCreateAdminDTO, IUserAdminCreateGovernorDTO, IUserAdminViewDTO } from "@/interfaces/IUser";
 import { InternalServerError, HttpError } from "@/types/Errors";
-import UserService from "./userService";
-import admin from "@/api/routes/admin";
 
 // User related services (delete, view, and create users)
 
@@ -18,7 +16,12 @@ export default class AdminService {
     @Inject("sellerModel") private sellerModel: Models.SellerModel,
     @Inject("touristModel") private touristModel: Models.TouristModel,
     @Inject("tour_guideModel") private tourGuideModel: Models.Tour_guideModel,
-    @Inject("advertiserModel") private adveristerModel: Models.AdvertiserModel
+    @Inject("advertiserModel") private adveristerModel: Models.AdvertiserModel,
+    @Inject("governorModel") private governorModel: Models.GovernorModel,
+    @Inject("activityModel") private activityModel: Models.ActivityModel,
+    @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel,
+    @Inject("historical_locationModel") private historicalLocationsModel: Models.Historical_locationsModel,
+    @Inject("productModel") private productModel: Models.ProductModel
   ) {}
 
   public async getUsersService(page: number): Promise<any> {
@@ -29,7 +32,8 @@ export default class AdminService {
       .skip((page - 1) * 10);
 
     const usersOutput: IUserAdminViewDTO[] = users.map(
-      (user: { email: any; name: any; username: any; role: any; phone_number: any; status: any; createdAt: any; updatedAt: any }) => ({
+      (user: { _id: any; email: any; name: any; username: any; role: any; phone_number: any; status: any; createdAt: any; updatedAt: any }) => ({
+        _id: user._id,
         email: user.email,
         name: user.name,
         username: user.username,
@@ -50,7 +54,8 @@ export default class AdminService {
     if (users instanceof Error) throw new InternalServerError("Internal server error");
 
     const usersOutput: IUserAdminViewDTO[] = users.map(
-      (user: { email: any; name: any; username: any; role: any; phone_number: any; status: any; createdAt: any; updatedAt: any }) => ({
+      (user: { _id: any; email: any; name: any; username: any; role: any; phone_number: any; status: any; createdAt: any; updatedAt: any }) => ({
+        _id: user._id,
         email: user.email,
         name: user.name,
         username: user.username,
@@ -73,24 +78,33 @@ export default class AdminService {
     const role = user.role;
     const user_id = user._id;
     let deletedRole;
+    let deletedCreations; // holds any deleted activity/ititerrnary/historical place
     // since extra information related to the user is in other tables, we need to search that table and delete
     // the corresponding id
     switch (role) {
       case UserRoles.Advertiser:
-        deletedRole = this.adveristerModel.findOneAndDelete({ user_id });
+        deletedRole = await this.adveristerModel.findOneAndDelete({ user_id });
+        if (deletedRole) deletedCreations = await this.activityModel.deleteMany({ advertiser_id: deletedRole._id });
         break;
       case UserRoles.Seller:
-        deletedRole = this.sellerModel.findOneAndDelete({ user_id });
+        deletedRole = await this.sellerModel.findOneAndDelete({ user_id });
+        if (deletedRole) deletedCreations = await this.productModel.deleteMany({ user_id: deletedRole._id });
         break;
       case UserRoles.TourGuide:
-        deletedRole = this.tourGuideModel.findOneAndDelete({ user_id });
+        deletedRole = await this.tourGuideModel.findOneAndDelete({ user_id });
+        if (deletedRole) deletedCreations = await this.itineraryModel.deleteMany({ tour_guide_id: deletedRole._id });
+        break;
+      case UserRoles.Governor:
+        deletedRole = await this.governorModel.findOneAndDelete({ user_id });
+        if (deletedRole) deletedCreations = await this.historicalLocationsModel.deleteMany({ governor_id: deletedRole._id });
         break;
       case UserRoles.Tourist:
-        deletedRole = this.touristModel.findOneAndDelete({ user_id });
+        deletedRole = await this.touristModel.findOneAndDelete({ user_id });
         break;
     }
 
     const userOutput: IUserAdminViewDTO = {
+      _id: user._id,
       email: user.email,
       name: user.name,
       username: user.username,
@@ -101,33 +115,37 @@ export default class AdminService {
       updatedAt: user.updatedAt,
     };
 
-    return new response(true, { ...userOutput, ...deletedRole }, "User deleted", 200);
+    return new response(true, { ...userOutput, ...deletedRole, ...deletedCreations }, "User deleted", 200);
   }
 
-  public async createGovernorService(governorData: IUserAdminCreateDTO): Promise<any> {
+  public async createGovernorService(governorData: IUserAdminCreateGovernorDTO): Promise<any> {
     // we add the status and role since they are not inputs taken by the user
-    const newGovernor = new this.userModel({ ...governorData, status: UserStatus.APPROVED, role: UserRoles.Governor });
+    const newGovernorUser = new this.userModel({ ...governorData, status: UserStatus.APPROVED, role: UserRoles.Governor });
     // the reason we dont call user service to create the admin is because the user service DTO does
     // not expect status as one of its attributes, so we have to do it ourselves
 
-    if (newGovernor instanceof Error) throw new InternalServerError("Internal server error");
-    if (!newGovernor) throw new HttpError("Governor not created", 404);
+    if (newGovernorUser instanceof Error) throw new InternalServerError("Internal server error");
+    if (!newGovernorUser) throw new HttpError("Governor not created", 404);
 
-    await newGovernor.save();
+    await newGovernorUser.save();
+    const newGovernor = await this.governorModel.create({ user_id: newGovernorUser._id, nation: governorData.nation });
+
     const governorOutput: IUserAdminViewDTO = {
-      email: newGovernor.email,
-      name: newGovernor.name,
-      username: newGovernor.username,
-      role: newGovernor.role,
-      phone_number: newGovernor.phone_number,
-      status: newGovernor.status,
-      createdAt: newGovernor.createdAt,
-      updatedAt: newGovernor.updatedAt,
+      _id: newGovernorUser._id,
+      email: newGovernorUser.email,
+      name: newGovernorUser.name,
+      username: newGovernorUser.username,
+      role: newGovernorUser.role,
+      phone_number: newGovernorUser.phone_number,
+      status: newGovernorUser.status,
+      createdAt: newGovernorUser.createdAt,
+      updatedAt: newGovernorUser.updatedAt,
     };
-    return new response(true, governorOutput, "Governor created", 200);
+
+    return new response(true, { ...governorOutput, nation: newGovernor.nation }, "Governor created", 200);
   }
 
-  public async createAdminService(adminData: IUserAdminCreateDTO): Promise<any> {
+  public async createAdminService(adminData: IUserAdminCreateAdminDTO): Promise<any> {
     // we add the status and role since they are not inputs taken by the user
     const newAdmin = new this.userModel({ ...adminData, status: UserStatus.APPROVED, role: UserRoles.Admin });
     // the reason we dont call user service to create the admin is because the user service DTO does
@@ -138,6 +156,7 @@ export default class AdminService {
 
     await newAdmin.save();
     const adminOutput: IUserAdminViewDTO = {
+      _id: newAdmin._id,
       email: newAdmin.email,
       name: newAdmin.name,
       username: newAdmin.username,
