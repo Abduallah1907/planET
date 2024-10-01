@@ -13,8 +13,8 @@ export default (app: Router) => {
   router.get("/allActivites", activityController.getAllActivities);
   router.get("/ActivityByID", activityController.getActivityByID);
   router.get(
-    "/ActivityByAdvisorID",
-    activityController.getActivityByAdvisor_ID
+    "/ActivityByadverstierID",
+    activityController.getActivityByAdverstier_ID
   );
   router.put("/updateActivity", activityController.updateActivity);
   router.delete("/deleteActivity", activityController.deleteActivity);

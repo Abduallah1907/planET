@@ -29,7 +29,7 @@ export class ActivityController {
     const activity = await activityService.getActivityByIDService(activityData);
     res.status(activity.status).json({ activity });
   }
-  public async getActivityByAdvisor_ID(req: any, res: any) {
+  public async getActivityByAdverstier_ID(req: any, res: any) {
     const activityService: ActivityService = Container.get(ActivityService);
     const activityData = req.body.adverstier_id;
     const activity = await activityService.getActivityByIDService(activityData);

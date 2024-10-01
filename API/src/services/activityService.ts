@@ -63,18 +63,18 @@ export default class ActivityService {
     return new response(true, activity, "Activity is found", 200);
   };
 
-  public getActivityByAdvisorIDService = async (advisorId: string) => {
-    if (!Types.ObjectId.isValid(advisorId)) {
-      throw new HttpError("Invalid Advisor ID format", 400);
+  public getActivityByAdverstierIDService = async (adverstier_id: string) => {
+    if (!Types.ObjectId.isValid(adverstier_id)) {
+      throw new HttpError("Invalid Adverstier ID format", 400);
     }
     const activity = await this.activityModel.findOne({
-      adverstier_id: new mongoose.Schema.Types.ObjectId(advisorId),
+      adverstier_id: new mongoose.Schema.Types.ObjectId(adverstier_id),
     });
     if (activity instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
     if (activity == null) {
-      throw new NotFoundError("No Activity with this Advisor ID");
+      throw new NotFoundError("No Activity with this Adverstier ID");
     }
     return new response(true, activity, "Activity is found", 200);
   };
@@ -126,24 +126,15 @@ export default class ActivityService {
     if (activityData.tags) updateFields.tags = activityData.tags;
     if (activityData.booking_flag !== undefined)
       updateFields.booking_flag = activityData.booking_flag;
-    // if (updateFields.price !== undefined) {
-    //   updateFields.price_range = undefined;
-    // } else if (
-    //   updateFields.price_range?.min !== undefined &&
-    //   updateFields.price_range?.max !== undefined
-    // ) {
-    //   updateFields.price = undefined;
-    // }
+    if (updateFields.price !== undefined) {
+      updateFields.price_range = { min: 0, max: 0 };
+    } else if (
+      updateFields.price_range?.min !== undefined &&
+      updateFields.price_range?.max !== undefined
+    ) {
+      updateFields.price = 0;
+    }
 
-    // if (updateFields.price === undefined) {
-    //   updateFields.price = undefined;
-    // }
-
-    // if (updateFields.price_range === undefined) {
-    //   updateFields.price_range = undefined;
-    // }
-    //I wanted to make if I updated price ,the price range if
-    //set from before to be null but I can't do it
     const updatedActivity = await this.activityModel.findByIdAndUpdate(
       new Types.ObjectId(id),
       { $set: updateFields },
