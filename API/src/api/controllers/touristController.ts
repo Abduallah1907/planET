@@ -18,7 +18,7 @@ export class TouristController {
     public async updateTourist(req: any, res: any) {
         const touristService: TouristService = Container.get(TouristService);
         const updatedTourist = await touristService.updateTouristService(req.body.searchEmail, req.body.name, req.body.newEmail, req.body.password, req.body.phone_number, req.body.job, req.body.nation, req.body.addresses);
-        res.status(updatedTourist).json({ updatedTourist });
+        res.status(updatedTourist.status).json({ updatedTourist });
     };
 
     public async getActivities(req: any, res: any) {
