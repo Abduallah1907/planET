@@ -4,6 +4,7 @@ import user from "./routes/user";
 import seller from "./routes/seller";
 import admin from "./routes/admin";
 import tourist from "./routes/tourist";
+import mailer from "./routes/mailer";
 
 export default () => {
   const app = Router();
@@ -12,6 +13,7 @@ export default () => {
   seller(app);
   admin(app);
   tourist(app);
+  mailer(app);
 
   return app;
 };
