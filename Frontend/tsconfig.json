@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "lib": [
       "dom",
       "dom.iterable",
@@ -18,9 +18,15 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": "src", // Ensure this is set to "src"
+    "paths": {
+      "@/*": ["*"] // Ensure this is set correctly
+    }
   },
   "include": [
-    "src"
-  ]
+    "src/**/*.ts", 
+    "src/**/*.tsx"
+  ],
+  "exclude": ["node_modules", "tests"]
 }
