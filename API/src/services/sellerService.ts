@@ -5,6 +5,7 @@ import {InternalServerError, NotFoundError } from "@/types/Errors";
 import Container, { Inject, Service } from "typedi";
 import { IUserInputDTO } from "@/interfaces/IUser";
 import UserService from "./userService";
+import { ISellerUpdateDTO } from "@/interfaces/ISeller";
 
 @Service()
 export default class SellerService {
@@ -47,15 +48,15 @@ export default class SellerService {
 
     };
     //Any seller need to be cerated as a user first role seller so we need to call createUserService first then seller will be created
-    public async createSellerService(sellerData: ISellerInputDTO) {
+    public async createSellerService(newSellerData: ISellerInputDTO) {
         const userData : IUserInputDTO = {
-            email: sellerData.email,
-            name: sellerData.name,
-            username: sellerData.username,
-            password: sellerData.password,
+            email: newSellerData.email,
+            name: newSellerData.name,
+            username: newSellerData.username,
+            password: newSellerData.password,
             role: UserRoles.Seller,
-            phone_number: sellerData.phone_number,
-            date_of_birth: sellerData.date_of_birth
+            phone_number: newSellerData.phone_number,
+            date_of_birth: newSellerData.date_of_birth
         };
         const userService: UserService = Container.get(UserService)
         const newUserResponse = await userService.createUserService(userData);
@@ -68,7 +69,7 @@ export default class SellerService {
 
         if (newUser == null)
             throw new NotFoundError("User not found");
-        const newSeller = new this.sellerModel({ user_id: newUser._id, documents_required: sellerData.documents_required, logo: sellerData.logo });
+        const newSeller = new this.sellerModel({ user_id: newUser._id, documents_required: newSellerData.documents_required, logo: newSellerData.logo });
 
 
         await newSeller.save();
@@ -85,18 +86,15 @@ export default class SellerService {
 
     };
     
-
     //Takes old and new name and description of seller
-    public async updateSellerService(email: string, name: string, description: string) {
-        const user = await this.userModel.findOne({ email, role: UserRoles.Seller });
+    public async updateSellerService(updatedSellerData: ISellerUpdateDTO) {
+        const { searchEmail, name, description } = updatedSellerData;
+        const user = await this.userModel.findOneAndUpdate({ searchEmail, role: UserRoles.Seller }, { name: name }, { new: true });
         if (user instanceof Error)
             throw new InternalServerError("Internal server error");
         if (user == null)
             throw new NotFoundError("User not found");
 
-
-        user.name = name;
-        user.save();//Update name of user and put in db
         const updatedSeller = await this.sellerModel.findOneAndUpdate({ user_id: user._id }, { description: description }, { new: true });
 
         if (updatedSeller instanceof Error)

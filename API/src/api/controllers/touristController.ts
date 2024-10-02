@@ -25,20 +25,23 @@ export class TouristController {
     };
 
     public async getActivities(req: any, res: any) {
+        const { name, category, tag } = req.query;
         const touristService: TouristService = Container.get(TouristService);
-        const activities = await touristService.getActivitiesService(req.body.name, req.body.category, req.body.tag);
+        const activities = await touristService.getActivitiesService(name,category,tag);
         res.status(activities.status).json({ activities });
     };
 
     public async getItinerary(req: any, res: any) {
+        const {name,category,tag} = req.query;
         const touristService: TouristService = Container.get(TouristService);
-        const itineraries = await touristService.getItinerariesService(req.body.name, req.body.category, req.body.tag);
+        const itineraries = await touristService.getItinerariesService(name,category,tag);
         res.status(itineraries.status).json({ itineraries });
     };
 
     public async getHistorical_locations(req: any, res: any) {
+        const {name,category,tag} = req.query;
         const touristService: TouristService = Container.get(TouristService);
-        const historical_locations = await touristService.getHistorical_locationsService(req.body.name, req.body.category, req.body.tag);
+        const historical_locations = await touristService.getHistorical_locationsService(name,category,tag);
         res.status(historical_locations.status).json({ historical_locations });
     };
 
@@ -49,11 +52,13 @@ export class TouristController {
 
         res.status(upcomingActivities.status).json({ upcomingActivities });
     }
+
     public async getUpcomingItineraries(req: any, res: any) {
         const touristService: TouristService = Container.get(TouristService);
         const upcomingItineraries = await touristService.getUpcomingItinerariesService();
         res.status(upcomingItineraries.status).json({ upcomingItineraries });
     }
+    
     public async getUpcomingHistorical_locations(req: any, res: any) {
         const touristService: TouristService = Container.get(TouristService);
         const upcomingHistorical_locations = await touristService.getUpcomingHistorical_locationsService();

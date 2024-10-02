@@ -22,6 +22,12 @@ export interface ISellerInputDTO {
   date_of_birth: Date;
 }
 
+export interface ISellerUpdateDTO {
+  searchEmail: string;
+  name?: string;
+  description?: string;
+}
+
 
 export interface ISeller extends Document {
  

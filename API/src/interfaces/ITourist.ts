@@ -61,11 +61,11 @@ export interface ITouristNewUserDTO {
 
 export interface ITouristUpdateDTO {
   searchEmail: string;
-  name: string;
-  newEmail: string;
-  password: string;
-  phone_number: string;
-  job: string;
-  nation: string;
-  addresses: string[];
+  name?: string;
+  newEmail?: string;
+  password?: string;
+  phone_number?: string;
+  job?: string;
+  nation?: string;
+  addresses?: string[];
 }
