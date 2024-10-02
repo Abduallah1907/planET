@@ -1,5 +1,5 @@
 import { IActivityDTO } from "@/interfaces/IActivity";
-import { HttpError, InternalServerError, NotFoundError } from "@/types/Errors";
+import { BadRequestError, InternalServerError, NotFoundError } from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
 import mongoose, { Types } from "mongoose";
@@ -7,14 +7,16 @@ import mongoose, { Types } from "mongoose";
 export default class ActivityService {
   constructor(
     @Inject("activityModel") private activityModel: Models.ActivityModel
-  ) {}
+  ) { }
 
   public getAllActivitiesService = async () => {
     const activities = await this.activityModel.find({});
     return new response(true, activities, "All activites are fetched", 200);
   };
+
   public createActivityService = async (activityDatainput: IActivityDTO) => {
     const activityData: IActivityDTO = {
+      name: activityDatainput.name,
       date: activityDatainput.date,
       time: activityDatainput.time,
       location: activityDatainput.location, // [longitude, latitude]
@@ -24,14 +26,14 @@ export default class ActivityService {
       tags: activityDatainput.tags,
       special_discount: activityDatainput.special_discount,
       booking_flag: activityDatainput.booking_flag,
-      adverstier_id: activityDatainput.adverstier_id,
+      advertiser_id: activityDatainput.advertiser_id,
     };
     if (
       activityData.price &&
       activityData.price_range?.max &&
       activityData.price_range.min
     ) {
-      throw new HttpError("Price and price range can't be both defined", 400);
+      throw new BadRequestError("Price and price range can't be both defined");
     }
     if (
       !activityData.price &&
@@ -39,7 +41,7 @@ export default class ActivityService {
         !activityData.price_range.min ||
         !activityData.price_range.max)
     ) {
-      throw new HttpError("You need one of them ", 400);
+      throw new BadRequestError("You need one of them ");
     }
     const activity = await this.activityModel.create(activityData);
 
@@ -50,9 +52,10 @@ export default class ActivityService {
 
     return new response(true, activity, "Activity", 201);
   };
+
   public getActivityByIDService = async (id: string) => {
     if (!Types.ObjectId.isValid(id)) {
-      throw new HttpError("Invalid ID format", 400);
+      throw new BadRequestError("Invalid ID format");
     }
     const activity = await this.activityModel.findById(new Types.ObjectId(id));
     if (activity instanceof Error)
@@ -63,12 +66,12 @@ export default class ActivityService {
     return new response(true, activity, "Activity is found", 200);
   };
 
-  public getActivityByAdverstierIDService = async (adverstier_id: string) => {
-    if (!Types.ObjectId.isValid(adverstier_id)) {
-      throw new HttpError("Invalid Adverstier ID format", 400);
+  public getActivityByAdvertiserIDService = async (advertiserID: string) => {
+    if (!Types.ObjectId.isValid(advertiserID)) {
+      throw new BadRequestError("Invalid Adverstier ID format");
     }
     const activity = await this.activityModel.findOne({
-      adverstier_id: new mongoose.Schema.Types.ObjectId(adverstier_id),
+      adverstier_id: new mongoose.Schema.Types.ObjectId(advertiserID),
     });
     if (activity instanceof Error) {
       throw new InternalServerError("Internal server error");
@@ -78,12 +81,13 @@ export default class ActivityService {
     }
     return new response(true, activity, "Activity is found", 200);
   };
+
   public updateActivityService = async (
     id: string,
     activityData: IActivityDTO
   ) => {
     if (!Types.ObjectId.isValid(id)) {
-      throw new HttpError("Invalid ID format", 400);
+      throw new BadRequestError("Invalid ID format");
     }
     const activity = await this.activityModel.findById(new Types.ObjectId(id));
     if (activity instanceof Error) {
@@ -98,10 +102,7 @@ export default class ActivityService {
       activityData.price_range?.max &&
       activityData.price_range.min
     ) {
-      throw new HttpError(
-        "Cannot enter both price and price range,choose one of them",
-        400
-      );
+      throw new BadRequestError("Cannot enter both price and price range,choose one of them");
     }
 
     if (activityData.date) updateFields.date = activityData.date;
@@ -148,10 +149,11 @@ export default class ActivityService {
       200
     );
   };
+
   //Delete Actitivity
   public deleteActivityService = async (id: string) => {
     if (!Types.ObjectId.isValid(id)) {
-      throw new HttpError("Invalid ID format", 400);
+      throw new BadRequestError("Invalid ID format");
     }
     const activity = await this.activityModel.findByIdAndDelete(
       new Types.ObjectId(id)

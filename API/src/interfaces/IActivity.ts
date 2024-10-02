@@ -23,7 +23,9 @@ export interface IActivity extends Document {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
 export interface IActivityDTO {
+  name: string;
   date: Date;
   time: string;
   location: Location; // [longitude, latitude];
@@ -37,5 +39,5 @@ export interface IActivityDTO {
   special_discount?: number;
   tags?: string[];
   booking_flag: boolean;
-  adverstier_id: ObjectId;
+  advertiser_id: ObjectId;
 }

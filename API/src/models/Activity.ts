@@ -57,7 +57,7 @@ const activitySchema = new mongoose.Schema(
       type: Boolean,
       required: false,
     },
-    adverstier_id: {
+    advertiser_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Advertiser",
       required: true,

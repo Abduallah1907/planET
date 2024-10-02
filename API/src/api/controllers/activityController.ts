@@ -1,8 +1,4 @@
-import activityModel from "../../models/Activity";
-import { Response, Request } from "express";
 import { IActivityDTO } from "../../interfaces/IActivity";
-import { BadRequestError, HttpError, NotFoundError } from "@/types/Errors";
-import response from "../../types/responses/response";
 import Container, { Service } from "typedi";
 import ActivityService from "@/services/activityService";
 
@@ -24,28 +20,28 @@ export class ActivityController {
   }
   //Get activity using ID
   public async getActivityByID(req: any, res: any) {
+    const { id } = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activityData = req.body.id;
-    const activity = await activityService.getActivityByIDService(activityData);
+    const activity = await activityService.getActivityByIDService(id);
     res.status(activity.status).json({ activity });
   }
-  public async getActivityByAdverstier_ID(req: any, res: any) {
+  public async getActivityByAdvertiserID(req: any, res: any) {
+    const { advertiserID } = req.params
     const activityService: ActivityService = Container.get(ActivityService);
-    const activityData = req.body.adverstier_id;
-    const activity = await activityService.getActivityByIDService(activityData);
+    const activity = await activityService.getActivityByAdvertiserIDService(advertiserID);
     res.status(activity.status).json({ activity });
   }
   public async updateActivity(req: any, res: any) {
+    const { id} = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activity = await activityService.updateActivityService(
-      req.body.id,
-      req.body.activityData
-    );
+    const activity = await activityService.updateActivityService(id,req.body.activityData);
     res.status(activity.status).json({ activity });
   }
+
   public async deleteActivity(req: any, res: any) {
+    const { id } = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activity = await activityService.deleteActivityService(req.body.id);
+    const activity = await activityService.deleteActivityService(id);
     res.status(activity.status).json({ activity });
   }
 }
