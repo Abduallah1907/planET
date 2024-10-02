@@ -357,6 +357,41 @@ export default (app: Router) => {
    *         description: Bad request.
    *       500:
    *         description: Internal server error.
+   * /api/tourist/getFilteredActivities:
+   *   get:
+   *     tags:
+   *       - Tourist
+   *     summary: Retrieve filtered activities from system
+   *     description: Retrieve filtered activities data
+   *     parameters:
+   *       - in: query
+   *         name: budget
+   *         description: Budget for the activity
+   *         schema:
+   *           type: number
+   *       - in: query
+   *         name: rating
+   *         description: Rating of the activity
+   *         schema:
+   *           type: number
+   *       - in: query
+   *         name: date
+   *         description: Date of the activity
+   *         schema:
+   *           type: string
+   *           format: date
+   *       - in: query
+   *         name: category
+   *         description: Category of the activity
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: List of filtered activities.
+   *       400:
+   *         description: Bad request.
+   *       500:
+   *         description: Internal server error.
    */
   route.get('/getTourist/:email', touristController.getTourist);
   route.put('/updateTourist', touristController.updateTourist);
@@ -372,6 +407,9 @@ export default (app: Router) => {
   route.get("/getUpcomingActivities", touristController.getUpcomingActivities);
   route.get("/getUpcomingItineraries", touristController.getUpcomingItineraries);
   route.get("/getUpcomingHistorical_locations", touristController.getUpcomingHistorical_locations);
+
+  route.get("/getFilteredActivities", touristController.getFilteredActivities);
+  
 
 
 };

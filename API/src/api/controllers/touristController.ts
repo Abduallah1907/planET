@@ -65,5 +65,10 @@ export class TouristController {
         res.status(upcomingHistorical_locations.status).json({ upcomingHistorical_locations });
     }
 
-
+    public async getFilteredActivities(req: any, res: any) {
+        const {budget,date,category,ratings,} = req.query;
+        const touristService: TouristService = Container.get(TouristService);
+        const activities = await touristService.getFilteredActivitiesService(budget,date,category,ratings);
+        res.status(activities.status).json({ activities });
+    }
 }

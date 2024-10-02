@@ -16,6 +16,7 @@ export default class TouristService {
         @Inject("activityModel") private activityModel: Models.ActivityModel,
         @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel,
         @Inject("historical_locationModel") private historical_locationsModel: Models.Historical_locationsModel,
+        @Inject("categoryModel") private categoryModel: Models.CategoryModel,
     ) {
     }
 
@@ -195,6 +196,20 @@ export default class TouristService {
         // console.log(newCategory);
         // console.log(newActivity);
 
+        const newCategory = await new this.categoryModel({ type: category ,budget:3000});
+        await newCategory.save();
+        const newActivity = await new this.activityModel({
+            category: newCategory._id,
+            name: name,
+            tags: [tag],
+            date_time: new Date(),
+        });
+        await newActivity.save();
+        console.log(newCategory);
+        console.log(newActivity);
+
+
+
         if(!name && !category && !tag)
             throw new BadRequestError("Invalid input");
 
@@ -296,5 +311,54 @@ export default class TouristService {
         return new response(true, historical_locations, "Fetched upcoming historical locations", 200);
     }
 
+    public async getFilteredActivitiesService(budget: Number, date: Date, category: string, ratings: Number) {
+        if (!budget && !date && !category && !ratings) {
+            throw new BadRequestError("Invalid input");
+        }
+        
+        const categoryMatch = category ? { type: category } : {};
+        const commentsMatch = ratings ? { ratings: ratings } : {};
+    
+        // Check if there are any matching categories
+        if (category) {
+            // console.log(categoryMatch);
+            let categoryValidate = (await this.activityModel.find({}).populate({ path: 'category', match: categoryMatch })).filter(activity => activity.category !== null);
+            // console.log("category validation",categoryValidate);
 
-}
+            categoryValidate = categoryValidate.filter(activity => activity.category !== null);
+            // console.log("after filter",categoryValidate);
+            if (categoryValidate.length === 0) {
+                throw new NotFoundError("Category not found");
+            }
+            
+        }
+    
+        // Check if there are any matching comments
+        if (ratings) {
+            let commentsValidate = await this.activityModel.find({}).populate({ path: 'comments', match: commentsMatch });
+            // console.log("This is comment validation",commentsValidate);
+
+            commentsValidate = commentsValidate.filter(activity => activity.comments !== null);
+            if (commentsValidate.every(activity => activity.comments.length === 0)) {
+                throw new NotFoundError("Comments not found");
+            }
+        }
+    
+        const activities = await this.activityModel.find({budget:{$lte:budget},date_time:{$gte:date}})
+            .populate({ path: 'category', match: categoryMatch })
+            .populate({ path: 'comments', match: commentsMatch })
+            .populate({ path: 'advertiser_id', select: 'name' });
+        console.log(activities);
+        const activities2 =activities.filter(activity => activity.category !== null || activity.comments.length !== 0);    
+        console.log(activities2);
+        if (activities2.length === 0) {
+            throw new NotFoundError("No activities found matching the criteria");
+        }
+    
+        return new response(true, activities2, "Fetched filtered activities", 200);
+    }
+    
+
+
+    }  
+
