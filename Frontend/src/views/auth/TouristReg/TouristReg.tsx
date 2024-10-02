@@ -3,7 +3,7 @@ import TouristForm from "../../../components/TouristForm/TouristForm";
 import { Form } from "react-bootstrap";
 import ButtonWide from "../../../components/ButtonWide/ButtonWide";
 import IconCircle from "../../../assets/IconCircle.svg";
-import TopBar from "@/components/TopBar";
+import TopBar from "../../../components/TopBar";
 
 export default function TouristReg() {
   return (
