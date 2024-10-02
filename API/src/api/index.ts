@@ -3,6 +3,7 @@ import { Router } from "express";
 import user from "./routes/user";
 import seller from "./routes/seller";
 import tourist from "./routes/tourist";
+import mailer from "./routes/mailer";
 
 export default () => {
   const app = Router();
@@ -10,7 +11,7 @@ export default () => {
   user(app);
   seller(app);
   tourist(app);
-  
+  mailer(app);
 
   return app;
 };

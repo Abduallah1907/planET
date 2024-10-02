@@ -1,5 +1,6 @@
 import { Service, Inject } from 'typedi';
 import { IUser } from '@/interfaces/IUser';
+import config from '@/config';
 
 @Service()
 export default class MailerService {
@@ -11,7 +12,7 @@ export default class MailerService {
      */
     // Added example for sending mail from mailgun
     const data = {
-      from: 'Excited User <me@samples.mailgun.org>',
+      from: config.emails.user,
       to: [email],
       subject: 'Hello',
       text: 'Testing some Mailgun awesomness!'
