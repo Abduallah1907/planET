@@ -1,9 +1,9 @@
 import { IItinerary } from "@/interfaces/IItinerary";
+import { LocationSchema } from "@/types/Location";
 import mongoose from "mongoose";
 
 const itinerarySchema = new mongoose.Schema(
   {
-    
     activities: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -24,7 +24,7 @@ const itinerarySchema = new mongoose.Schema(
     ],
     category: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Category',
+      ref: "Category",
       required: true,
     },
     name: {
@@ -33,7 +33,7 @@ const itinerarySchema = new mongoose.Schema(
     },
     locations: [
       {
-        type: String,
+        type: LocationSchema,
         required: true,
       },
     ],
