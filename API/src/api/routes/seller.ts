@@ -1,11 +1,10 @@
-import { Router } from 'express';
-import Container from 'typedi';
-import { SellerController } from '@/api/controllers/sellerController';
+import { Router } from "express";
+import Container from "typedi";
+import { SellerController } from "@/api/controllers/sellerController";
 const route = Router();
 
 export default (app: Router) => {
-
-    const sellerController: SellerController = Container.get(SellerController);
+  const sellerController: SellerController = Container.get(SellerController);
 
     app.use('/seller', route);
     /**
