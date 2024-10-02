@@ -4,7 +4,7 @@ import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
 import { IUserAdminCreateAdminDTO, IUserAdminCreateGovernorDTO, IUserAdminViewDTO } from "@/interfaces/IUser";
-import { InternalServerError, HttpError } from "@/types/Errors";
+import { InternalServerError, HttpError, BadRequestError } from "@/types/Errors";
 
 // User related services (delete, view, and create users)
 
@@ -69,8 +69,8 @@ export default class AdminService {
     return new response(true, usersOutput, "User found", 200);
   }
 
-  public async deleteUserService(_id: mongoose.ObjectId): Promise<any> {
-    if (!mongoose.Types.ObjectId.isValid(_id.toString())) throw new InternalServerError("_id is invalid");
+  public async deleteUserService(_id: mongoose.Types.ObjectId): Promise<any> {
+    if (!mongoose.Types.ObjectId.isValid(_id.toString())) throw new BadRequestError("_id is invalid");
 
     const user = await this.userModel.findByIdAndDelete(_id);
     if (!user) throw new HttpError("User not found", 404);
@@ -142,7 +142,7 @@ export default class AdminService {
       updatedAt: newGovernorUser.updatedAt,
     };
 
-    return new response(true, { ...governorOutput, nation: newGovernor.nation }, "Governor created", 200);
+    return new response(true, { ...governorOutput, nation: newGovernor.nation }, "Governor created", 201);
   }
 
   public async createAdminService(adminData: IUserAdminCreateAdminDTO): Promise<any> {
@@ -166,7 +166,7 @@ export default class AdminService {
       createdAt: newAdmin.createdAt,
       updatedAt: newAdmin.updatedAt,
     };
-    return new response(true, adminOutput, "Admin created", 200);
+    return new response(true, adminOutput, "Admin created", 201);
   }
 
   // CRUD for categories
@@ -175,7 +175,7 @@ export default class AdminService {
     if (category instanceof Error) throw new InternalServerError("Internal server error");
     if (!category) throw new HttpError("Category not found", 404);
 
-    return new response(true, category, "Created new category!", 200);
+    return new response(true, category, "Created new category!", 201);
   }
 
   public async getCategoriesService(page: number): Promise<any> {

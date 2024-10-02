@@ -2,43 +2,46 @@ import { IUserAdminCreateAdminDTO, IUserAdminCreateGovernorDTO } from "@/interfa
 import AdminService from "@/services/adminService";
 import { Request, Response } from "express";
 import Container, { Inject, Service } from "typedi";
+import mongoose from "mongoose";
 
 // CRUD for users
 @Service()
 export class AdminController {
   public async getUsers(req: Request, res: Response): Promise<any> {
-    const { page } = req.body;
+    const { page } = req.params;
+    const pageNum: number = parseInt(page);
     const adminService: AdminService = Container.get(AdminService);
-    const users = await adminService.getUsersService(page);
-    res.json({ users });
+    const users = await adminService.getUsersService(pageNum);
+    res.status(users.status).json({ users });
   }
 
   public async searchUser(req: Request, res: Response): Promise<any> {
-    const { username } = req.body;
+    const { username } = req.params;
     const adminService: AdminService = Container.get(AdminService);
     const user = await adminService.searchUserService(username);
-    res.json({ user });
+    res.status(user.status).json({ user });
   }
 
   public async deleteUser(req: Request, res: Response): Promise<any> {
-    const { _id } = req.body;
+    const { id } = req.params;
+    const _id = new mongoose.Types.ObjectId(id);
     const adminService: AdminService = Container.get(AdminService);
     const user = await adminService.deleteUserService(_id);
-    res.json({ user });
+    res.status(user.status).json({ user });
   }
 
   public async createGovernor(req: Request, res: Response): Promise<any> {
     const governorData = req.body as IUserAdminCreateGovernorDTO;
     const adminService: AdminService = Container.get(AdminService);
     const newGovernor = await adminService.createGovernorService(governorData);
-    res.json({ newGovernor });
+    res.status(newGovernor.status).json({ newGovernor });
   }
 
   public async createAdmin(req: Request, res: Response): Promise<any> {
     const adminData = req.body as IUserAdminCreateAdminDTO;
     const adminService: AdminService = Container.get(AdminService);
     const newAdmin = await adminService.createAdminService(adminData);
-    res.json({ newAdmin });
+    res.status(newAdmin.status).json({ newAdmin });
   }
 
   // --------------------
@@ -48,27 +51,28 @@ export class AdminController {
     const { type } = req.body;
     const adminService: AdminService = Container.get(AdminService);
     const newCategory = await adminService.createCategoryService(type);
-    res.json({ newCategory });
+    res.status(newCategory.status).json({ newCategory });
   }
 
   public async getCategories(req: Request, res: Response): Promise<any> {
-    const { page } = req.body;
+    const { page } = req.params;
+    const pageNum: number = parseInt(page);
     const adminService: AdminService = Container.get(AdminService);
-    const categories = await adminService.getCategoriesService(page);
-    res.json({ categories });
+    const categories = await adminService.getCategoriesService(pageNum);
+    res.status(categories.status).json({ categories });
   }
 
   public async updateCategory(req: Request, res: Response): Promise<any> {
     const { oldType, newType } = req.body;
     const adminService: AdminService = Container.get(AdminService);
     const updatedCategory = await adminService.updateCategoryService(oldType, newType);
-    res.json({ updatedCategory });
+    res.status(updatedCategory.status).json({ updatedCategory });
   }
 
   public async deleteCategory(req: Request, res: Response): Promise<any> {
     const { type } = req.body;
     const adminService: AdminService = Container.get(AdminService);
     const deletedCategory = await adminService.deleteCategoryService(type);
-    res.json({ deletedCategory });
+    res.status(deletedCategory.status).json({ deletedCategory });
   }
 }
