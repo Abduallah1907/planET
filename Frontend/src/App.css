@@ -147,3 +147,15 @@ body {
 
 
 }
+
+.bg-active{
+  background-color: rgb(89, 232, 103);
+}
+
+.bg-inactive{
+  background-color: rgb(232, 89, 89);
+}
+
+.bg-tag{
+  background-color: rgba(217, 217, 217, 0.5) !important;
+}
