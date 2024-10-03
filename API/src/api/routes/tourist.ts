@@ -395,7 +395,7 @@ export default (app: Router) => {
    *   get:
    *     tags:
    *       - Tourist
-   *     summary: Retrieve filtered itineraries from system
+   *     summary: Retrieve filtered itineraries from system by preferences,budget,date
    *     description: Retrieve filtered itineraries data
    *     parameters:
    *       - in: query
@@ -417,6 +417,25 @@ export default (app: Router) => {
    *     responses:
    *       200:
    *         description: List of filtered itineraries.
+   *       400:
+   *         description: Bad request.
+   *       500:
+   *         description: Internal server error.
+   * /api/tourist/getFilteredHistorical_locations:
+   *   get:
+   *     tags:
+   *       - Tourist
+   *     summary: Retrieve filtered historical locations from system by tags
+   *     description: Retrieve filtered historical locations data
+   *     parameters:
+   *       - in: query
+   *         name: tags
+   *         description: Tags of the historical location
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: List of filtered historical locations.
    *       400:
    *         description: Bad request.
    *       500:
@@ -448,5 +467,10 @@ export default (app: Router) => {
   route.get(
     "/getFitleredItineraries",
     touristController.getFilteredItineraries
+  );
+
+  route.get(
+    "/getFilteredHistorical_locations",
+    touristController.getFilteredHistorical_locations
   );
 };

@@ -93,13 +93,22 @@ export class TouristController {
     const touristService: TouristService = Container.get(TouristService);
     var filters = {};
     if (budget)
-      filters = {
-        ...filters,
-        price: {
-          min: parseFloat(budget.split("-")[0]),
-          max: parseFloat(budget.split("-")[1]),
-        },
-      };
+      if (budget.includes("-")) {
+        filters = {
+          ...filters,
+          price: {
+            min: parseFloat(budget.split("-")[0]),
+            max: parseFloat(budget.split("-")[1]),
+          },
+        };
+      } else {
+        filters = {
+          ...filters,
+          price: {
+            max: parseFloat(budget),
+          },
+        };
+      }
     if (date) filters = { ...filters, date: { start: date } };
     if (category) {
       const categoryList = category.split(",").map((cat: string) => cat.trim());
@@ -134,14 +143,24 @@ export class TouristController {
     const { budget, date, preferences } = req.query;
     const touristService: TouristService = Container.get(TouristService);
     var filters = {};
-    if (budget)
-      filters = {
-        ...filters,
-        price: {
-          min: parseFloat(budget.split("-")[0]),
-          max: parseFloat(budget.split("-")[1]),
-        },
-      };
+    if (budget) {
+      if (budget.includes("-")) {
+        filters = {
+          ...filters,
+          price: {
+            min: parseFloat(budget.split("-")[0]),
+            max: parseFloat(budget.split("-")[1]),
+          },
+        };
+      } else {
+        filters = {
+          ...filters,
+          price: {
+            max: parseFloat(budget),
+          },
+        };
+      }
+    }
     if (date) filters = { ...filters, date: { start: date } };
     if (preferences) {
       const preferencesList = preferences
@@ -153,5 +172,19 @@ export class TouristController {
       filters
     );
     res.status(itineraries.status).json({ itineraries });
+  }
+
+  public async getFilteredHistorical_locations(req: any, res: any) {
+    const { tags } = req.query;
+    const touristService: TouristService = Container.get(TouristService);
+    var filters = {};
+    if (tags) {
+      const tagsList = tags.split(",").map((tag: string) => tag.trim());
+      filters = { ...filters, tags: tagsList };
+    }
+    const historical_locations =
+      await touristService.getFilteredHistorical_locationsService(filters);
+
+    res.status(historical_locations.status).json({ historical_locations });
   }
 }

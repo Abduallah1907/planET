@@ -439,6 +439,8 @@ export default class TouristService {
     console.log(aggregationPipeline);
     console.log(matchStage);
     const activities = await this.activityModel.aggregate(aggregationPipeline);
+    if (activities instanceof Error)
+      throw new InternalServerError("Internal server error");
     return new response(
       true,
       activities,
@@ -462,6 +464,7 @@ export default class TouristService {
       );
     }
     const matchStage: any = {};
+    matchStage.active_flag = true;
     if (filters.price) {
       if (filters.price.min !== undefined) {
         matchStage.price = { ...matchStage.price, $gte: filters.price.min };
@@ -507,9 +510,62 @@ export default class TouristService {
     const itineraries = await this.itineraryModel.aggregate(
       aggregationPipeline
     );
+    if (itineraries instanceof Error)
+      throw new InternalServerError("Internal server error");
     return new response(
       true,
       itineraries,
+      "Filtered itineraries are fetched",
+      200
+    );
+  }
+
+  public async getFilteredHistorical_locationsService(filters: {
+    tags?: string[];
+  }) {
+    if (!filters) {
+      const historical_locations = await this.historical_locationsModel.find();
+      return new response(
+        true,
+        historical_locations,
+        "All historical locations are fetched no filter applied",
+        200
+      );
+    }
+    const matchStage: any = {};
+    var aggregationPipeline: any[] = [
+      {
+        $lookup: {
+          from: "tags", // The name of the tag collection
+          localField: "tags", // The field in the tags collection
+          foreignField: "_id", // The field in the tags collection
+          as: "tagDetails",
+        },
+      },
+      {
+        $unwind: "$tagDetails",
+      },
+      {
+        $match: matchStage,
+      },
+    ];
+    if (filters.tags) {
+      aggregationPipeline.push({
+        $match: {
+          "tagDetails.type": { $in: filters.tags },
+        },
+      });
+    }
+    console.log("Agg", aggregationPipeline);
+    const historical_locations = await this.historical_locationsModel.aggregate(
+      aggregationPipeline
+    );
+    if (historical_locations instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    return new response(
+      true,
+      historical_locations,
       "Filtered itineraries are fetched",
       200
     );
