@@ -229,35 +229,6 @@ export default (app: Router) => {
    *         description: Bad request.
    *       500:
    *         description: Internal server error.
-   * /api/tourist/getActivities:
-   *   get:
-   *     tags:
-   *       - Tourist
-   *     summary: Retrieve activities from system
-   *     description: Retrieve activities data by name, category, and tag
-   *     parameters:
-   *       - in: query
-   *         name: name
-   *         description: Name of the activity
-   *         schema:
-   *           type: string
-   *       - in: query
-   *         name: category
-   *         description: Category of the activity
-   *         schema:
-   *           type: string
-   *       - in: query
-   *         name: tag
-   *         description: Tag of the activity
-   *         schema:
-   *           type: string
-   *     responses:
-   *       200:
-   *         description: List of Activities.
-   *       400:
-   *         description: Bad request.
-   *       500:
-   *         description: Internal server error.
    * /api/tourist/getItineraries:
    *   get:
    *     tags:
@@ -317,19 +288,6 @@ export default (app: Router) => {
    *         description: Bad request.
    *       500:
    *         description: Internal server error.
-   * /api/tourist/getUpcomingActivities:
-   *   get:
-   *     tags:
-   *       - Tourist
-   *     summary: Retrieve upcoming activities from system
-   *     description: Retrieve upcoming activities data
-   *     responses:
-   *       200:
-   *         description: List of upcoming activities.
-   *       400:
-   *         description: Bad request.
-   *       500:
-   *         description: Internal server error.
    * /api/tourist/getUpcomingItineraries:
    *   get:
    *     tags:
@@ -352,41 +310,6 @@ export default (app: Router) => {
    *     responses:
    *       200:
    *         description: List of upcoming historical locations.
-   *       400:
-   *         description: Bad request.
-   *       500:
-   *         description: Internal server error.
-   * /api/tourist/getFilteredActivities:
-   *   get:
-   *     tags:
-   *       - Tourist
-   *     summary: Retrieve filtered activities from system
-   *     description: Retrieve filtered activities data
-   *     parameters:
-   *       - in: query
-   *         name: budget
-   *         description: Budget for the activity
-   *         schema:
-   *           type: string
-   *       - in: query
-   *         name: rating
-   *         description: Rating of the activity
-   *         schema:
-   *           type: string
-   *       - in: query
-   *         name: date
-   *         description: Date of the activity
-   *         schema:
-   *           type: string
-   *           format: date
-   *       - in: query
-   *         name: category
-   *         description: Category of the activity
-   *         schema:
-   *           type: string
-   *     responses:
-   *       200:
-   *         description: List of filtered activities.
    *       400:
    *         description: Bad request.
    *       500:
@@ -445,14 +368,12 @@ export default (app: Router) => {
   route.put("/updateTourist", touristController.updateTourist);
   route.post("/createTourist", touristController.createTourist);
 
-  route.get("/getActivities", touristController.getActivities);
   route.get("/getItineraries", touristController.getItinerary);
   route.get(
     "/getHistorical_locations",
     touristController.getHistorical_locations
   );
 
-  route.get("/getUpcomingActivities", touristController.getUpcomingActivities);
   route.get(
     "/getUpcomingItineraries",
     touristController.getUpcomingItineraries
@@ -461,8 +382,6 @@ export default (app: Router) => {
     "/getUpcomingHistorical_locations",
     touristController.getUpcomingHistorical_locations
   );
-
-  route.get("/getFilteredActivities", touristController.getFilteredActivities);
 
   route.get(
     "/getFitleredItineraries",

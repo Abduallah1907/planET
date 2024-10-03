@@ -33,17 +33,6 @@ export class TouristController {
     res.status(updatedTourist.status).json({ updatedTourist });
   }
 
-  public async getActivities(req: any, res: any) {
-    const { name, category, tag } = req.query;
-    const touristService: TouristService = Container.get(TouristService);
-    const activities = await touristService.getActivitiesService(
-      name,
-      category,
-      tag
-    );
-    res.status(activities.status).json({ activities });
-  }
-
   public async getItinerary(req: any, res: any) {
     const { name, category, tag } = req.query;
     const touristService: TouristService = Container.get(TouristService);
@@ -63,15 +52,6 @@ export class TouristController {
     res.status(historical_locations.status).json({ historical_locations });
   }
 
-  public async getUpcomingActivities(req: any, res: any) {
-    const touristService: TouristService = Container.get(TouristService);
-    const upcomingActivities =
-      await touristService.getUpcomingActivitiesService();
-    console.log(upcomingActivities);
-
-    res.status(upcomingActivities.status).json({ upcomingActivities });
-  }
-
   public async getUpcomingItineraries(req: any, res: any) {
     const touristService: TouristService = Container.get(TouristService);
     const upcomingItineraries =
@@ -86,57 +66,6 @@ export class TouristController {
     res
       .status(upcomingHistorical_locations.status)
       .json({ upcomingHistorical_locations });
-  }
-
-  public async getFilteredActivities(req: any, res: any) {
-    const { budget, date, category, rating } = req.query;
-    const touristService: TouristService = Container.get(TouristService);
-    var filters = {};
-    if (budget)
-      if (budget.includes("-")) {
-        filters = {
-          ...filters,
-          price: {
-            min: parseFloat(budget.split("-")[0]),
-            max: parseFloat(budget.split("-")[1]),
-          },
-        };
-      } else {
-        filters = {
-          ...filters,
-          price: {
-            max: parseFloat(budget),
-          },
-        };
-      }
-    if (date) filters = { ...filters, date: { start: date } };
-    if (category) {
-      const categoryList = category.split(",").map((cat: string) => cat.trim());
-      filters = { ...filters, category: categoryList };
-    }
-
-    if (rating) {
-      if (rating.includes("-")) {
-        filters = {
-          ...filters,
-          rating: {
-            min: parseFloat(rating.split("-")[0]),
-            max: parseFloat(rating.split("-")[1]),
-          },
-        };
-      } else {
-        filters = {
-          ...filters,
-          rating: {
-            min: parseFloat(rating),
-          },
-        };
-      }
-    }
-    const activities = await touristService.getFilteredActivitiesService(
-      filters
-    );
-    res.status(activities.status).json({ activities });
   }
 
   public async getFilteredItineraries(req: any, res: any) {
