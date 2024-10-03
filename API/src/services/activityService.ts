@@ -1,16 +1,28 @@
-import { IActivityDTO } from "@/interfaces/IActivity";
-import { BadRequestError, InternalServerError, NotFoundError } from "@/types/Errors";
+import { IActivityDTO, UpdateIActivityDTO } from "@/interfaces/IActivity";
+import {
+  BadRequestError,
+  InternalServerError,
+  NotFoundError,
+} from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
 import mongoose, { Types } from "mongoose";
+import { error } from "console";
 @Service()
 export default class ActivityService {
   constructor(
     @Inject("activityModel") private activityModel: Models.ActivityModel
-  ) { }
+  ) {}
 
   public getAllActivitiesService = async () => {
     const activities = await this.activityModel.find({});
+    if (activities instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+    if (activities == null) {
+      throw new NotFoundError("No Activities Found");
+    }
+
     return new response(true, activities, "All activites are fetched", 200);
   };
 
@@ -84,7 +96,7 @@ export default class ActivityService {
 
   public updateActivityService = async (
     id: string,
-    activityData: IActivityDTO
+    activityData: UpdateIActivityDTO
   ) => {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID format");
@@ -102,7 +114,9 @@ export default class ActivityService {
       activityData.price_range?.max &&
       activityData.price_range.min
     ) {
-      throw new BadRequestError("Cannot enter both price and price range,choose one of them");
+      throw new BadRequestError(
+        "Cannot enter both price and price range,choose one of them"
+      );
     }
 
     if (activityData.date) updateFields.date = activityData.date;
@@ -116,10 +130,10 @@ export default class ActivityService {
     }
     if (activityData.price !== undefined)
       updateFields.price = activityData.price;
-    if (activityData.price_range)
+    if (activityData.price_range !== undefined)
       updateFields.price_range = {
-        min: activityData.price_range.min,
-        max: activityData.price_range.max,
+        min: activityData.price_range.min ?? 0,
+        max: activityData.price_range.max ?? 0,
       };
     if (activityData.category) updateFields.category = activityData.category;
     if (activityData.special_discount !== undefined)
