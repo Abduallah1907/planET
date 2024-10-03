@@ -1,23 +1,5 @@
-import { Document,ObjectId } from 'mongoose';
-
-
-export interface IActivityOutputDTO {
-  category_type:string;
-  comments: ObjectId[];
-  name: string;
-  date: Date;
-  time: string;
-  location: string;
-  price: number;
-  special_discount?: number;
-  tags?: string[];
-  booking_flag: boolean;
-  inappropriate_flag: boolean;
-  active_flag: boolean;
-  advertiser_id:ObjectId;
-
-}
-
+import { Location } from "@/types/Location";
+import { Document, ObjectId } from "mongoose";
 
 export interface IActivity extends Document {
   category: ObjectId;
@@ -32,9 +14,6 @@ export interface IActivity extends Document {
     min: number;
     max: number;
   };
-  date_time: Date;
-  location: string;
-  price: number;
   special_discount?: number;
   tags?: string[];
   booking_flag: boolean;

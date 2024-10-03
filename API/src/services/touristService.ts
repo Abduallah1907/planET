@@ -311,53 +311,38 @@ export default class TouristService {
         return new response(true, historical_locations, "Fetched upcoming historical locations", 200);
     }
 
-    public async getFilteredActivitiesService(budget: Number, date: Date, category: string, ratings: Number) {
-        if (!budget && !date && !category && !ratings) {
-            throw new BadRequestError("Invalid input");
+    public getFilteredActivitiesService = async (filters: {
+        budget?: { min: number; max: number };
+        date?: { start: Date; end: Date };
+        category?: string[];
+        ratings?: { min?: number; max?: number };
+      }) => {
+        const query: any = {};
+      
+        if (filters.budget) {
+          query.price = { $gte: filters.budget.min, $lte: filters.budget.max };
+        }
+      
+        if (filters.date) {
+          query.date = { $gte: filters.date.start, $lte: filters.date.end };
+        }
+      
+        if (filters.category) {
+          query.category = { $in: filters.category };
         }
         
-        const categoryMatch = category ? { type: category } : {};
-        const commentsMatch = ratings ? { ratings: ratings } : {};
-    
-        // Check if there are any matching categories
-        if (category) {
-            // console.log(categoryMatch);
-            let categoryValidate = (await this.activityModel.find({}).populate({ path: 'category', match: categoryMatch })).filter(activity => activity.category !== null);
-            // console.log("category validation",categoryValidate);
-
-            categoryValidate = categoryValidate.filter(activity => activity.category !== null);
-            // console.log("after filter",categoryValidate);
-            if (categoryValidate.length === 0) {
-                throw new NotFoundError("Category not found");
-            }
-            
+        if (filters.ratings) {
+          if (filters.ratings.min !== undefined) {
+            query.ratings = { ...query.ratings, $gte: filters.ratings.min };
+          }
+          if (filters.ratings.max !== undefined) {
+            query.ratings = { ...query.ratings, $lte: filters.ratings.max };
+          }
         }
-    
-        // Check if there are any matching comments
-        if (ratings) {
-            let commentsValidate = await this.activityModel.find({}).populate({ path: 'comments', match: commentsMatch });
-            // console.log("This is comment validation",commentsValidate);
-
-            commentsValidate = commentsValidate.filter(activity => activity.comments !== null);
-            if (commentsValidate.every(activity => activity.comments.length === 0)) {
-                throw new NotFoundError("Comments not found");
-            }
-        }
-    
-        const activities = await this.activityModel.find({budget:{$lte:budget},date_time:{$gte:date}})
-            .populate({ path: 'category', match: categoryMatch })
-            .populate({ path: 'comments', match: commentsMatch })
-            .populate({ path: 'advertiser_id', select: 'name' });
-        console.log(activities);
-        const activities2 =activities.filter(activity => activity.category !== null || activity.comments.length !== 0);    
-        console.log(activities2);
-        if (activities2.length === 0) {
-            throw new NotFoundError("No activities found matching the criteria");
-        }
-    
-        return new response(true, activities2, "Fetched filtered activities", 200);
-    }
-    
+      
+        const activities = await this.activityModel.find(query);
+        return new response(true, activities, "Filtered activities are fetched",200);
+      };
 
 
     }  
