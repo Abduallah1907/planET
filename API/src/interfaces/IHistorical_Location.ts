@@ -15,7 +15,7 @@ export interface IHistorical_location extends Document {
   foreign_price: number;
   student_price: number;
   active_flag: boolean;
-  tags?: string[];
+  tags?: ObjectId[];
   date_time?: Date;
   createdAt?: Date;
   updatedAt?: Date;

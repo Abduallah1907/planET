@@ -1,16 +1,15 @@
-import { Router } from 'express';
-import Container from 'typedi';
-import { TouristController } from '../controllers/touristController';
+import { Router } from "express";
+import Container from "typedi";
+import { TouristController } from "../controllers/touristController";
 const route = Router();
 
 export default (app: Router) => {
-
   const touristController: TouristController = Container.get(TouristController);
 
-  app.use('/tourist', route);
+  app.use("/tourist", route);
   /**
    * @swagger
-   * 
+   *
    * components:
    *  schemas:
    *    ITouristCreateDTO:
@@ -117,7 +116,7 @@ export default (app: Router) => {
    *        date_of_birth:
    *          type: string
    *          format: date
-   * 
+   *
    * tags:
    *   - name: Tourist
    *     description: Tourist management and retrieval
@@ -368,12 +367,12 @@ export default (app: Router) => {
    *         name: budget
    *         description: Budget for the activity
    *         schema:
-   *           type: number
+   *           type: string
    *       - in: query
    *         name: rating
    *         description: Rating of the activity
    *         schema:
-   *           type: number
+   *           type: string
    *       - in: query
    *         name: date
    *         description: Date of the activity
@@ -392,24 +391,62 @@ export default (app: Router) => {
    *         description: Bad request.
    *       500:
    *         description: Internal server error.
+   * /api/tourist/getFitleredItineraries:
+   *   get:
+   *     tags:
+   *       - Tourist
+   *     summary: Retrieve filtered itineraries from system
+   *     description: Retrieve filtered itineraries data
+   *     parameters:
+   *       - in: query
+   *         name: budget
+   *         description: Budget for the itinerary
+   *         schema:
+   *           type: string
+   *       - in: query
+   *         name: date
+   *         description: Date of the itinerary
+   *         schema:
+   *           type: string
+   *           format: date
+   *       - in: query
+   *         name: preferences
+   *         description: Preferences of the itinerary
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: List of filtered itineraries.
+   *       400:
+   *         description: Bad request.
+   *       500:
+   *         description: Internal server error.
    */
-  route.get('/getTourist/:email', touristController.getTourist);
-  route.put('/updateTourist', touristController.updateTourist);
-  route.post('/createTourist', touristController.createTourist);
-
+  route.get("/getTourist/:email", touristController.getTourist);
+  route.put("/updateTourist", touristController.updateTourist);
+  route.post("/createTourist", touristController.createTourist);
 
   route.get("/getActivities", touristController.getActivities);
   route.get("/getItineraries", touristController.getItinerary);
-  route.get("/getHistorical_locations", touristController.getHistorical_locations);
-
-
+  route.get(
+    "/getHistorical_locations",
+    touristController.getHistorical_locations
+  );
 
   route.get("/getUpcomingActivities", touristController.getUpcomingActivities);
-  route.get("/getUpcomingItineraries", touristController.getUpcomingItineraries);
-  route.get("/getUpcomingHistorical_locations", touristController.getUpcomingHistorical_locations);
+  route.get(
+    "/getUpcomingItineraries",
+    touristController.getUpcomingItineraries
+  );
+  route.get(
+    "/getUpcomingHistorical_locations",
+    touristController.getUpcomingHistorical_locations
+  );
 
   route.get("/getFilteredActivities", touristController.getFilteredActivities);
-  
 
-
+  route.get(
+    "/getFitleredItineraries",
+    touristController.getFilteredItineraries
+  );
 };

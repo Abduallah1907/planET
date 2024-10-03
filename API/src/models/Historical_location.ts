@@ -1,4 +1,4 @@
-import { IHistorical_location } from "../interfaces/IHistorical_location";
+import { IHistorical_location } from "../interfaces/IHistorical_Location";
 import { LocationSchema } from "@/types/Location";
 import mongoose from "mongoose";
 
@@ -24,10 +24,10 @@ const historicalLocationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-  date_time:{
-    type: Date,
-    // required: true,
-  },
+    date_time: {
+      type: Date,
+      // required: true,
+    },
     description: {
       type: String,
       required: true,
@@ -74,7 +74,8 @@ const historicalLocationSchema = new mongoose.Schema(
     },
     tags: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
       },
     ],
   },
