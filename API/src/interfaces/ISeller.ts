@@ -8,6 +8,7 @@ export interface ISellerOutputDTO {
   phone_number: string;
   logo: string;
   description: string;
+  products: ObjectId[];
 }
 
 export interface ISellerInputDTO {

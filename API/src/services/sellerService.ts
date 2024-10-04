@@ -27,12 +27,10 @@ export default class SellerService {
     // throw new Error("User not found");
 
     const seller = await this.sellerModel.findOne({ user_id: user._id });
-    if (seller == null) throw new NotFoundError("Seller not found");
-    // throw new Error("Seller not found");
-
     if (seller instanceof Error)
       throw new InternalServerError("Internal server error");
-    // throw new Error("Internal server error");
+
+    if (seller == null) throw new NotFoundError("Seller not found");
 
     const sellerOutput: ISellerOutputDTO = {
       email: user.email,
@@ -41,6 +39,7 @@ export default class SellerService {
       phone_number: user.phone_number,
       logo: seller.logo,
       description: seller.description,
+      products: seller.products,
     };
     return new response(true, sellerOutput, "Seller found", 200);
   }
@@ -53,7 +52,6 @@ export default class SellerService {
       password: newSellerData.password,
       role: UserRoles.Seller,
       phone_number: newSellerData.phone_number,
-      date_of_birth: newSellerData.date_of_birth,
     };
     const userService: UserService = Container.get(UserService);
     const newUserResponse = await userService.createUserService(userData);
@@ -80,6 +78,7 @@ export default class SellerService {
       phone_number: newUser.phone_number,
       logo: newSeller.logo,
       description: newSeller.description,
+      products: [],
     };
     return new response(true, sellerOutput, "Seller created", 201);
   }
@@ -116,6 +115,7 @@ export default class SellerService {
       phone_number: user.phone_number,
       logo: updatedSeller.logo,
       description: updatedSeller.description,
+      products: updatedSeller.products,
     };
     return new response(true, sellerOutput, "Seller updated", 200);
   }
