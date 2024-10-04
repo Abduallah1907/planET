@@ -21,6 +21,6 @@ export default (app: Router) => {
    * move documents to user, or just leave it out commented as is.
    */
   //router.post("/createProfile");
-  router.get("/getProfile", tourGuideController.getProfile);
+  router.get("/getProfile/:tour_guide_user_id", tourGuideController.getProfile);
   router.put("/updateProfile", tourGuideController.updateProfile);
 };

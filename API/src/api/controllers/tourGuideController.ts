@@ -31,9 +31,10 @@ export class TourGuideController {
   }
   // ---- Profile ----
   public async getProfile(req: Request, res: Response): Promise<any> {
-    const { _id } = req.body;
+    const { tour_guide_user_id } = req.params;
+    const tour_guide_idObjectId = new Types.ObjectId(tour_guide_user_id);
     const tourGuideService: TourGuideService = Container.get(TourGuideService);
-    const tourGuideProfile = await tourGuideService.getProfileService(_id);
+    const tourGuideProfile = await tourGuideService.getProfileService(tour_guide_idObjectId);
     res.json({ tourGuideProfile });
   }
   public async updateProfile(req: Request, res: Response): Promise<any> {

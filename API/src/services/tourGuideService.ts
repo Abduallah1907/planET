@@ -57,10 +57,11 @@ export default class TourGuideService {
 
     return new response(true, deletedPreviousWork, "Previous work deleted!", 200);
   }
+
   // CRUD for tour guide profile
-  public async getProfileService(_id: Types.ObjectId): Promise<any> {
-    if (!Types.ObjectId.isValid(_id.toString())) throw new HttpError("_id is invalid", 400);
-    const tourGuideProfile = await this.tourGuideModel.findById(_id).populate("previous_work_description");
+  public async getProfileService(tour_guide_user_id: Types.ObjectId): Promise<any> {
+    if (!Types.ObjectId.isValid(tour_guide_user_id.toString())) throw new HttpError("_id is invalid", 400);
+    const tourGuideProfile = await this.tourGuideModel.findOne({ user_id: tour_guide_user_id }).populate("previous_work_description");
 
     if (tourGuideProfile instanceof Error) throw new InternalServerError("Internal server error");
     if (!tourGuideProfile) throw new HttpError("Tour guide not found", 404);
@@ -68,8 +69,8 @@ export default class TourGuideService {
     return new response(true, tourGuideProfile, "Tour guide profile", 200);
   }
 
-  public async updateProfileService(years_of_experience: number, photo: string, user_id: ObjectId, tour_guide_id: ObjectId): Promise<any> {
-    const user = await this.userModel.findById(user_id).select("status role");
+  public async updateProfileService(years_of_experience: number, photo: string, tour_guide_user_id: ObjectId): Promise<any> {
+    const user = await this.userModel.findById(tour_guide_user_id).select("status role");
     if (user) {
       const isAccepted = user.status;
       const role = user.role;
@@ -79,16 +80,14 @@ export default class TourGuideService {
       throw new HttpError("This user is not registered to our system?? This error should never be thrown :)", 400);
     }
 
-    const tourGuide = await Tour_Guide.findById(tour_guide_id);
+    const tourGuide = await Tour_Guide.findOne({ user_id: tour_guide_user_id });
     if (!tourGuide)
       throw new HttpError(
         "For some reason, the tour guide is registered as user and not in the tour guide table. In other words, if this error is thrown, something has gone terribly wrong",
         404
       );
-    // this checks if any of the fields are empty; so that if they are empty they are
-    //  kept as is in the database and not overwritten to also be empty
-    if (photo) tourGuide.photo = photo;
-    if (years_of_experience) tourGuide.years_of_experience = years_of_experience;
+    tourGuide.photo = photo;
+    tourGuide.years_of_experience = years_of_experience;
     await tourGuide.save();
     return new response(true, tourGuide, "Profile updated successfully!", 200);
   }
