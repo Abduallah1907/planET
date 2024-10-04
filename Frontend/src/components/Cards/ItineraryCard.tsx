@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Card, Badge, Row, Col, Image } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkedAlt, faMap } from "@fortawesome/free-solid-svg-icons"; // Import travel-related icons
-import Rating from "react-rating";
-import "./ActivityCard.css";
+import "./Cards.css";
+import Rating from "../Rating/Rating";
 
 interface InputData {
   locations: string;
@@ -11,7 +11,7 @@ interface InputData {
   dropoff: string;
   Languages: string;
   accessibility: boolean;
-  Rating: number; // Initial Rating
+  RatingVal: number; // Initial Rating
   Reviews: number;
   Price: number;
   Duration: string;
@@ -27,7 +27,7 @@ const ItineraryCard = ({
   dropoff,
   Languages,
   accessibility,
-  Rating: initialRating,
+  RatingVal,
   Reviews,
   Price,
   Duration,
@@ -37,7 +37,6 @@ const ItineraryCard = ({
   onChange,
 }: InputData) => {
   // Manage the state for the rating
-  const [currentRating, setCurrentRating] = useState(initialRating);
   const [bookingStatus, setBookingStatus] = useState(isBooked); // Handle booking status
 
   // Toggle booking status
@@ -92,7 +91,9 @@ const ItineraryCard = ({
               <Card.Text className="text-muted">
                 Pickup: {pickup} • Dropoff: {dropoff}
               </Card.Text>
-              <Card.Text className="text-muted">Languages: {Languages}</Card.Text>
+              <Card.Text className="text-muted">
+                Languages: {Languages}
+              </Card.Text>
               <Card.Text className="text-muted d-flex align-items-center">
                 Accessibility:{" "}
                 {accessibility ? (
@@ -120,20 +121,14 @@ const ItineraryCard = ({
         >
           {/* Rating and Reviews */}
           <div className="d-flex align-items-center justify-content-end mb-1">
-            <Rating
-              emptySymbol="far fa-star" // Font Awesome empty star
-              fullSymbol="fas fa-star" // Font Awesome filled star
-              fractions={2} // Allows half-star ratings
-              initialRating={currentRating}
-              onChange={(newRating) => setCurrentRating(newRating)} // Update the rating state on change
-            />
+            <Rating rating={RatingVal} readOnly={true} />
             <Badge
               className="ms-2 review-badge text-center"
               style={{
                 fontSize: "1rem",
               }}
             >
-              {currentRating.toFixed(1)}
+              {RatingVal.toFixed(1)}
             </Badge>
           </div>
           <p

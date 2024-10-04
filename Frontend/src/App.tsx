@@ -9,9 +9,7 @@ import BookingLayout from "./views/CreateActivities";
 import ProfileForm from "./components/ProfileForm/ProfileForm";
 import ActivityCard from "./components/Cards/ActivityCard";
 import HistoricalLocationCard from "./components/Cards/HistoricalLocation";
-import ActivityCard from "./components/ActivityCard";
-import HistoricalLocationCard from "./components/HistoricalLocation";
-import ItineraryCard from "./components/ItineraryCard";
+import ItineraryCard from "./components/Cards/ItineraryCard";
 
 const App: React.FC = () => {
   const [isBooked, setIsBooked] = useState(false); // Manage booking state
@@ -72,7 +70,7 @@ const App: React.FC = () => {
               dropoff={"Egyptian Museum"}
               Languages={"English, Arabic"}
               accessibility={true}
-              Rating={0.5}
+              RatingVal={0.5}
               Reviews={100}
               Price={49.99}
               isActive={true}
