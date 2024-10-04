@@ -365,10 +365,61 @@ export default (app: Router) => {
    *         description: Bad request.
    *       500:
    *         description: Internal server error.
+   * /api/tourist/getSortedActivities:
+   *   get:
+   *     tags:
+   *       - Tourist
+   *     summary: Retrieve sorted activities from system
+   *     description: Retrieve sorted activities data by sort and direction sort as "ratings" or "price" and direction as 1=Asc , -1=Desc
+   *     parameters:
+   *       - in: query
+   *         name: sort
+   *         description: Sort the activities by ratings or price
+   *         schema:
+   *           type: string
+   *       - in: query
+   *         name: direction
+   *         description: Direction of the sort
+   *         schema:
+   *           type: number
+   *     responses:
+   *       200:
+   *         description: List of sorted activities.
+   *       400:
+   *         description: Bad request.
+   *       500:
+   *         description: Internal server error.
+   * /api/tourist/getSortedItineraries:
+   *   get:
+   *     tags:
+   *       - Tourist
+   *     summary: Retrieve sorted itineraries from system
+   *     description: Retrieve sorted itineraries data by sort and direction sort as "ratings" or "price" and direction as 1=Asc , -1=Desc
+   *     parameters:
+   *       - in: query
+   *         name: sort
+   *         description: Sort the itineraries by ratings or price
+   *         schema:
+   *           type: string
+   *       - in: query
+   *         name: direction
+   *         description: Direction of the sort
+   *         schema:
+   *           type: number
+   *     responses:
+   *       200:
+   *         description: List of sorted itineraries.
+   *       400:
+   *         description: Bad request.
+   *       500:
+   *         description: Internal server error.
    */
   route.get("/getTourist/:email", touristController.getTourist);
   route.put("/updateTourist/:searchEmail", touristController.updateTourist);
   route.post("/createTourist", touristController.createTourist);
+
+  route.get("/getSortedActivities", touristController.getSortedActivities);
+  route.get("/getSortedItineraries", touristController.getSortedItineraries);
 
   route.get("/getItineraries", touristController.getItinerary);
   route.get(

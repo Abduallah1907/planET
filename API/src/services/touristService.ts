@@ -22,7 +22,8 @@ export default class TouristService {
     @Inject("userModel") private userModel: Models.UserModel,
     @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel,
     @Inject("historical_locationModel")
-    private historical_locationsModel: Models.Historical_locationsModel
+    private historical_locationsModel: Models.Historical_locationsModel,
+    @Inject("activityModel") private activityModel: Models.ActivityModel
   ) {}
 
   public async getTouristService(email: string) {
@@ -410,6 +411,66 @@ export default class TouristService {
       true,
       historical_locations,
       "Filtered itineraries are fetched",
+      200
+    );
+  }
+  public async getSortedActivitiesService(sort: string, direction: string) {
+    let sortCriteria = {};
+
+    if (!sort && !direction) {
+      const activities = await this.activityModel.find();
+      return new response(
+        true,
+        activities,
+        "Activities with no sort criteria provided",
+        200
+      );
+    }
+    console.log("direction", direction);
+    if (sort === "price") {
+      sortCriteria = { price: parseInt(direction) };
+    } else if (sort === "ratings") {
+      sortCriteria = { average_rating: parseInt(direction) };
+    } else {
+      throw new BadRequestError("Invalid sort criteria");
+    }
+    console.log("sort criteria", sortCriteria);
+    const activities = await this.activityModel.find().sort(sortCriteria);
+    if (activities instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    return new response(true, activities, "Sorted activities are fetched", 200);
+  }
+
+  public async getSortedItinerariesService(sort: string, direction: string) {
+    let sortCriteria = {};
+    if (!sort && !direction) {
+      const itineraries = await this.itineraryModel.find();
+      return new response(
+        true,
+        itineraries,
+        "Itineraries with no sort criteria provided",
+        200
+      );
+    }
+
+    if (sort === "price") {
+      sortCriteria = { price: parseInt(direction) };
+    } else if (sort === "ratings") {
+      sortCriteria = { average_rating: parseInt(direction) };
+    } else {
+      throw new BadRequestError("Invalid sort criteria");
+    }
+    console.log("sort criteria", sortCriteria);
+
+    const itineraries = await this.itineraryModel.find().sort(sortCriteria);
+    if (itineraries instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    return new response(
+      true,
+      itineraries,
+      "Sorted activities are fetched",
       200
     );
   }

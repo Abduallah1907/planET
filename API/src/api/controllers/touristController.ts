@@ -118,4 +118,22 @@ export class TouristController {
 
     res.status(historical_locations.status).json({ historical_locations });
   }
+  public async getSortedActivities(req: any, res: any) {
+    const { sort, direction } = req.query;
+    const touristService: TouristService = Container.get(TouristService);
+    const activities = await touristService.getSortedActivitiesService(
+      sort,
+      direction
+    );
+    res.status(activities.status).json({ activities });
+  }
+  public async getSortedItineraries(req: any, res: any) {
+    const { sort, direction } = req.query;
+    const touristService: TouristService = Container.get(TouristService);
+    const itineraries = await touristService.getSortedItinerariesService(
+      sort,
+      direction
+    );
+    res.status(itineraries.status).json({ itineraries });
+  }
 }

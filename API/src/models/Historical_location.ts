@@ -32,6 +32,13 @@ const historicalLocationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    average_rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      required: true,
+      default: 0,
+    },
     picture: [
       {
         type: String,

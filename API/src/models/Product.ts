@@ -38,6 +38,13 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    average_rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      required: true,
+      default: 0,
+    },
     archieve_flag: {
       type: Boolean,
       required: true,

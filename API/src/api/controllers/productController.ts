@@ -50,4 +50,27 @@ export class ProductController {
     const products = await productService.getFilteredProductsService(filters);
     res.status(products.status).json({ products });
   }
+
+  public async getSortedProducts(req: any, res: any) {
+    const { sort, direction } = req.query;
+    const productService: ProductService = Container.get(ProductService);
+    const products = await productService.getSortedProductsService(
+      sort,
+      direction
+    );
+    res.status(products.status).json({ products });
+  }
+  public async getAllProducts(req: any, res: any) {
+    const productService: ProductService = Container.get(ProductService);
+    const products = await productService.getAllProductsService();
+    res.status(products.status).json({ products });
+  }
+
+  public async getProductByName(req: any, res: any) {
+    const productService: ProductService = Container.get(ProductService);
+    const { product_name } = req.params;
+    console.log("name", product_name);
+    const product = await productService.getProductByNameService(product_name);
+    res.status(product.status).json({ product });
+  }
 }

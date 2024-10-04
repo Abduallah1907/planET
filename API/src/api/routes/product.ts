@@ -10,7 +10,7 @@ export default (app: Router) => {
    * @swagger
    * /api/product/createProduct/{user_id}:
    *   post:
-   *     description: Create a product and linking it to the seller with his user_id
+   *     description: Create a product and link it to the seller with their user_id
    *     tags:
    *       - Product
    *     parameters:
@@ -47,7 +47,7 @@ export default (app: Router) => {
    *                 description: Product sales
    *               archieve_flag:
    *                 type: boolean
-   *                 description: Product archieve flag
+   *                 description: Product archive flag
    *             required:
    *               - name
    *               - description
@@ -99,7 +99,7 @@ export default (app: Router) => {
    *                 description: Product sales
    *               archieve_flag:
    *                 type: boolean
-   *                 description: Product archieve flag
+   *                 description: Product archive flag
    *     responses:
    *       200:
    *         description: Product is updated
@@ -123,10 +123,69 @@ export default (app: Router) => {
    *         description: Filtered products are fetched
    *       500:
    *         description: Internal Server Error
+   * /api/product/getSortedProducts:
+   *   get:
+   *     tags:
+   *       - Product
+   *     summary: Get sorted products
+   *     description: Get sorted products by ratings and price and direction 1=Asc and -1=Desc
+   *     parameters:
+   *       - in: query
+   *         name: sort
+   *         schema:
+   *           type: string
+   *         description: Sort criteria
+   *       - in: query
+   *         name: direction
+   *         schema:
+   *           type: number
+   *         description: Sort direction
+   *     responses:
+   *       200:
+   *         description: Sorted products are fetched
+   *       500:
+   *         description: Internal Server Error
+   * /api/product/getAllProducts:
+   *   get:
+   *     tags:
+   *       - Product
+   *     summary: Get all products
+   *     description: Get all products
+   *     responses:
+   *       200:
+   *         description: All products are fetched
+   *       500:
+   *         description: Internal Server Error
+   * /api/product/getProductByName/{product_name}:
+   *   get:
+   *     tags:
+   *       - Product
+   *     summary: Get product by name
+   *     description: Get product by name
+   *     parameters:
+   *       - in: path
+   *         name: product_name
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: Product name
+   *     responses:
+   *       200:
+   *         description: Product is fetched
+   *       404:
+   *         description: Product not found
+   *       500:
+   *         description: Internal Server Error
    */
 
   route.post("/createProduct/:user_id", productController.createProduct);
 
   route.put("/updateProduct/:product_id", productController.updateProduct);
   route.get("/getFilteredProducts", productController.getFilteredProducts);
+  route.get("/getSortedProducts", productController.getSortedProducts);
+  route.get("/getAllProducts", productController.getAllProducts);
+  route.get(
+    "/getProductByName/:product_name",
+    productController.getProductByName
+  );
 };
