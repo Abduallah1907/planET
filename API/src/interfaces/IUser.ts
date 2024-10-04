@@ -1,7 +1,6 @@
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
 import { ObjectId } from "mongoose";
-import e from "cors";
 
 export interface IUser {
   name: string;

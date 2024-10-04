@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import TopBar from "../TopBar/TopBar"; // Adjust the path as necessary
-import "./ProfileForm.css";
-import CustomFormGroup from "../FormGroup/FormGroup";
-import Logo from "../../assets/person-circle.svg";
+import TopBar from "../components/TopBar";
+import "./CreateAdmin.css";
+import AdminFormGroup from "../components/FormGroup";
+import Logo from "../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
+import nationalityOptionsData from "../utils/nationalityOptions.json"; // Adjust the path as necessary
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
 
 interface NationalityOption {
@@ -25,7 +25,7 @@ interface FormData {
   dob: string;
 }
 
-const ProfileForm: React.FC = () => {
+const CreateGoverner: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     email: "",
     mobile: "",
@@ -73,30 +73,46 @@ const ProfileForm: React.FC = () => {
       <TopBar />
       <Row className="align-items-center mb-4">
         <Col xs={7} className="text-left">
-          <h2 className="my-profile-heading">My Profile</h2>
-        </Col>
-        <Col xs={3} className="text-center">
-          <img
-            src={Logo}
-            width="70"
-            height="50"
-            className="align-top logo"
-            alt="Travel Agency logo"
-          />
+          <h2 className="my-profile-heading">Create governer account</h2>
         </Col>
       </Row>
-
-      <div className="wallet-card">
-        <h3>Wallet</h3>
-        <p>$400</p>
-      </div>
 
       <Container>
         <Form onSubmit={handleSubmit}>
           <Row>
             <Col>
-              <CustomFormGroup
-                label="Email:"
+              <AdminFormGroup
+                label="First name"
+                type="name"
+                placeholder="Enter your first name"
+                id="fname"
+                name="fname"
+                disabled={false}
+                required={true}
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </Col>
+            <Col>
+              <AdminFormGroup
+                label="Last name"
+                type="text"
+                placeholder="Enter your last name"
+                id="dob"
+                name="dob"
+                disabled={false}
+                required={true}
+                value={formData.dob}
+                onChange={handleChange}
+              />
+            </Col>
+            
+          </Row>
+
+          <Row>
+          <Col>
+              <AdminFormGroup
+                label="Email"
                 type="email"
                 placeholder="Enter your email"
                 id="email"
@@ -108,37 +124,8 @@ const ProfileForm: React.FC = () => {
               />
             </Col>
             <Col>
-              <CustomFormGroup
-                label="Username:"
-                type="text"
-                placeholder="Enter your username"
-                id="username"
-                name="username"
-                disabled={true}
-                required={false}
-                value={formData.username}
-                onChange={handleChange}
-              />
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <CustomFormGroup
-                label="Mobile Number:"
-                type="tel"
-                placeholder="Enter your mobile number"
-                id="mobile"
-                name="mobile"
-                disabled={false}
-                required={true}
-                value={formData.mobile}
-                onChange={handleChange}
-              />
-            </Col>
-            <Col>
               <Form.Group className="form-group" controlId="nationality">
-                <Form.Label>Nationality:</Form.Label>
+                <Form.Label>Nationality</Form.Label>
                 <div className="custom-select-container">
                   <Form.Control
                     as="select"
@@ -163,12 +150,12 @@ const ProfileForm: React.FC = () => {
 
           <Row>
             <Col>
-              <CustomFormGroup
-                label="Profession:"
+              <AdminFormGroup
+                label="Username"
                 type="text"
-                placeholder="Enter your profession"
-                id="profession"
-                name="profession"
+                placeholder="Enter your username"
+                id="username"
+                name="username"
                 disabled={false}
                 required={false}
                 value={formData.profession}
@@ -176,15 +163,15 @@ const ProfileForm: React.FC = () => {
               />
             </Col>
             <Col>
-              <CustomFormGroup
-                label="Date of Birth (MM/DD/YY):"
-                type="text"
-                placeholder="Enter your date of birth"
-                id="dob"
-                name="dob"
-                disabled={true}
-                required={false}
-                value={formData.dob}
+              <AdminFormGroup
+                label="Mobile Number"
+                type="tel"
+                placeholder="Enter your mobile number"
+                id="mobile"
+                name="mobile"
+                disabled={false}
+                required={true}
+                value={formData.mobile}
                 onChange={handleChange}
               />
             </Col>
@@ -192,8 +179,8 @@ const ProfileForm: React.FC = () => {
 
           <Row>
             <Col>
-              <CustomFormGroup
-                label="Password:"
+              <AdminFormGroup
+                label="Password"
                 type="password"
                 placeholder="Enter your password"
                 id="password"
@@ -205,8 +192,8 @@ const ProfileForm: React.FC = () => {
               />
             </Col>
             <Col>
-              <CustomFormGroup
-                label="Retype Password:"
+              <AdminFormGroup
+                label="Confirm Password"
                 type="password"
                 placeholder="Retype your password"
                 id="retypePassword"
@@ -218,13 +205,28 @@ const ProfileForm: React.FC = () => {
               />
             </Col>
           </Row>
+          <Row>
+  <Col xs={6}>
+    <Form.Check
+      type="checkbox"
+      id="checkbox1"
+      label="Remember me"
+      name="terms"
+      onChange={handleChange}
+    />
+    <Form.Check
+      type="checkbox"
+      id="checkbox2"
+      label="I agree to all terms and privacy policy"
+      name="newsletter"
+      onChange={handleChange}
+    />
+  </Col>
+</Row>
 
           <div className="form-actions">
             <Button type="submit" className="update-btn">
-              Update
-            </Button>
-            <Button type="button" className="cancel-btn" onClick={handleCancel}>
-              Cancel
+              Create governer
             </Button>
           </div>
         </Form>
@@ -233,4 +235,4 @@ const ProfileForm: React.FC = () => {
   );
 };
 
-export default ProfileForm;
+export default CreateGoverner;
