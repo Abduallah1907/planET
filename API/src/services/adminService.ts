@@ -104,7 +104,7 @@ export default class AdminService {
         break;
     }
 
-    const userOutput: IUserAdminViewDTO = {
+    let userOutput: IUserAdminViewDTO = {
       _id: user._id,
       email: user.email,
       name: user.name,
@@ -115,8 +115,9 @@ export default class AdminService {
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };
-
-    return new response(true, { ...userOutput, deletedRole: deletedRole._doc, deletedCreations }, "User deleted", 200);
+    if (deletedRole) userOutput = { ...userOutput, ...deletedRole._doc };
+    console.log(deletedRole);
+    return new response(true, { ...userOutput }, "User deleted", 200);
   }
 
   public async createGovernorService(governorData: IUserAdminCreateGovernorDTO): Promise<any> {
@@ -137,7 +138,7 @@ export default class AdminService {
     const newGovernor = await this.governorModel.create({ user_id: newUserResponse.data._id, nation: governorData.nation });
 
     const governorOutput: IUserAdminViewDTO = {
-      _id: newGovernor._id,
+      _id: newGovernor.user_id,
       email: newGovernorUser.email,
       name: newGovernorUser.name,
       username: newGovernorUser.username,
@@ -184,7 +185,6 @@ export default class AdminService {
   public async createCategoryService(type: string): Promise<any> {
     const category = await this.categoryModel.create({ type });
     if (category instanceof Error) throw new InternalServerError("Internal server error");
-    if (!category) throw new HttpError("Category not found", 404);
 
     return new response(true, category, "Created new category!", 201);
   }
