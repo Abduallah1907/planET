@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import InputField from "../InputField/InputField";
 import "./TouristForm.css";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import { Form } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import { BiChevronDown } from "react-icons/bi";
 import nationalityOptionsData from "../../utils/nationalityOptions.json";
 import jobOptionsData from "../../utils/jobOptions.json";
@@ -82,32 +82,38 @@ export default function TouristForm() {
 
   return (
     <Form className="form-fields" onSubmit={handleSubmit}>
-      <div className="d-flex justify-content-between mb-5">
-        <CustomFormGroup
-          label={"Username"}
-          type={"text"}
-          placeholder={"username"}
-          id={"username"}
-          disabled={false}
-          required={true}
-          value={regData.username}
-          onChange={handleChange}
-          name={"username"}
-        />
+      <h2>Create account</h2>
+      <Row>
+        <Col>
+          <CustomFormGroup
+            label={"Username"}
+            type={"text"}
+            placeholder={"username"}
+            id={"username"}
+            disabled={false}
+            required={true}
+            value={regData.username}
+            onChange={handleChange}
+            name={"username"}
+          />
 
-        <CustomFormGroup
-          label={"Email"}
-          type={"email"}
-          placeholder={"abcd@gmail.com"}
-          id={"email"}
-          disabled={false}
-          required={true}
-          value={regData.email}
-          onChange={handleChange}
-          name={"email"}
-        />
-      </div>
-      <div className="d-flex justify-content-between mb-5">
+        </Col>
+        <Col>
+          <CustomFormGroup
+            label={"Email"}
+            type={"email"}
+            placeholder={"abcd@gmail.com"}
+            id={"email"}
+            disabled={false}
+            required={true}
+            value={regData.email}
+            onChange={handleChange}
+            name={"email"}
+          />
+        </Col>
+      </Row>
+      <Row>
+      <Col>
         <CustomFormGroup
           label={"Password"}
           type={"password"}
@@ -119,6 +125,8 @@ export default function TouristForm() {
           onChange={handleChange}
           name={"password"}
         />
+        </Col>
+        <Col>
         {/* </CustomFormGroup> */}
         {/* <input
           type={"password"}
@@ -140,8 +148,10 @@ export default function TouristForm() {
           onChange={handleChange}
           name={"confirmPassword"}
         />
-      </div>
-      <div className="d-flex justify-content-between mb-5">
+        </Col>
+      </Row>
+      <Row>
+      <Col>
         <CustomFormGroup
           label={"Mobile Number"}
           type={"string"}
@@ -153,6 +163,8 @@ export default function TouristForm() {
           onChange={handleChange}
           name={"mobile"}
         />
+        </Col>
+        <Col>
         <CustomFormGroup
           label={"Date of Birth"}
           type={"date"}
@@ -164,9 +176,11 @@ export default function TouristForm() {
           onChange={handleChange}
           name={"dob"}
         />
-      </div>
-      <div className="d-flex justify-content-between mb-5">
-        <Form.Group className="form-group" controlId="nationality">
+        </Col>
+      </Row>
+      <Row>
+      <Col>
+        <Form.Group className="form-group" id="nationality">
           <Form.Label>Nationality:</Form.Label>
           <div className="custom-select-container">
             <Form.Control
@@ -187,7 +201,9 @@ export default function TouristForm() {
             <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
           </div>
         </Form.Group>
-        <Form.Group className="form-group" controlId="job">
+        </Col>
+        <Col>
+        <Form.Group className="form-group" id="job">
           <Form.Label>Job</Form.Label>
           <div className="custom-select-container">
             <Form.Control
@@ -208,7 +224,8 @@ export default function TouristForm() {
             <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
           </div>
         </Form.Group>
-      </div>
+        </Col>
+      </Row>
       <div key="default-checkbox" className="mb-3">
         <Form.Check
           type="checkbox"
