@@ -6,6 +6,7 @@ import admin from "./routes/admin";
 import tourist from "./routes/tourist";
 import mailer from "./routes/mailer";
 
+import activity from "./routes/activity";
 export default () => {
   const app = Router();
 
@@ -13,6 +14,8 @@ export default () => {
   seller(app);
   admin(app);
   tourist(app);
+
+  activity(app);
   mailer(app);
 
   return app;
