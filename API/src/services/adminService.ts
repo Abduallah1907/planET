@@ -129,7 +129,6 @@ export default class AdminService {
       phone_number: governorData.phone_number,
       password: governorData.password,
       role: UserRoles.Governor,
-      date_of_birth: new Date(),
     };
 
     const userService: UserService = Container.get(UserService);
@@ -161,7 +160,6 @@ export default class AdminService {
       phone_number: adminData.phone_number,
       password: adminData.password,
       role: UserRoles.Admin,
-      date_of_birth: new Date(),
     };
 
     const userService: UserService = Container.get(UserService);

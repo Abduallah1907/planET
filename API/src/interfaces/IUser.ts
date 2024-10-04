@@ -54,7 +54,7 @@ export interface IUserInputDTO {
   password: string;
   role: UserRoles;
   phone_number: string;
-  date_of_birth: Date;
+  date_of_birth?: Date;
 }
 
 export interface IUserCreateDTO {
