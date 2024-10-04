@@ -39,7 +39,15 @@ export default (app: Router) => {
     historical_locationController.getHistorical_locationByIDController
   );
   router.get(
-    "/getHistorical_locationByGovernerID/:id",
+    "/getHistorical_locationByGovernerID/:governer_id",
     historical_locationController.getHistorical_locationByGovernerIDController
+  );
+  router.put(
+    "/updateHistorical_location/:id",
+    historical_locationController.updateHistorical_locationController
+  );
+  router.delete(
+    "/deleteHistorical_location/:id",
+    historical_locationController.deleteHistorical_locationController
   );
 };

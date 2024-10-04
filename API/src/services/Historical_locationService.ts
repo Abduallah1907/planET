@@ -78,6 +78,7 @@ export default class Historical_locationService {
       200
     );
   };
+  //Get Historical_location by Governer_id
   public getHistorical_locationByGovernerIDService = async (
     Governer_id: string
   ) => {
@@ -99,5 +100,71 @@ export default class Historical_locationService {
       "Historical Location is found",
       200
     );
+  };
+  //Update Historical_location
+  public updateHistorical_locationService = async (
+    id: string,
+    Data: Update_IHistorical_locationDTO
+  ) => {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestError("Invalid ID format");
+    }
+    const Historical_location = await this.historical_locationsModel.findById(
+      new Types.ObjectId(id)
+    );
+    if (Historical_location instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+    if (Historical_location == null) {
+      throw new NotFoundError("Historical Location not found");
+    }
+    const updateFields: Partial<Update_IHistorical_locationDTO> = {};
+    if (Data.name) updateFields.name = Data.name;
+    if (Data.description) updateFields.description = Data.description;
+    if (Data.picture) updateFields.picture = Data.picture;
+    if (Data.location) updateFields.location = Data.location;
+    if (Data.opening_hours_from)
+      updateFields.opening_hours_from = Data.opening_hours_from;
+    if (Data.opening_hours_to)
+      updateFields.opening_hours_to = Data.opening_hours_to;
+    if (Data.native_price) updateFields.native_price = Data.native_price;
+    if (Data.foreign_price) updateFields.foreign_price = Data.foreign_price;
+    if (Data.student_price) updateFields.student_price = Data.student_price;
+
+    const Updated_historical_location =
+      await this.historical_locationsModel.findByIdAndUpdate(
+        new Types.ObjectId(id),
+        { $set: updateFields },
+        { new: true } // Returns the updated document
+      );
+    if (Updated_historical_location instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+    if (Updated_historical_location == null) {
+      throw new NotFoundError("Historical Location not found");
+    }
+    return new response(
+      true,
+      Updated_historical_location,
+      "Historical Location is updated",
+      200
+    );
+  };
+  //Delete Historical_location
+  public deleteHistorical_locationService = async (id: string) => {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestError("Invalid ID format");
+    }
+    const Historical_location =
+      await this.historical_locationsModel.findByIdAndDelete(
+        new Types.ObjectId(id)
+      );
+    if (Historical_location instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+    if (Historical_location == null) {
+      throw new NotFoundError("Historical Location not found");
+    }
+    return new response(true, null, "Historical Location is deleted", 200);
   };
 }

@@ -38,13 +38,35 @@ export class Historical_locationController {
     req: any,
     res: any
   ) {
-    const { Governer_id } = req.params;
+    const Governer_id = req.params.governer_id;
     const historical_locationService: Historical_locationService =
       Container.get(Historical_locationService);
     const historical_location =
       await historical_locationService.getHistorical_locationByGovernerIDService(
         Governer_id
       );
+    res.status(historical_location.status).json({ historical_location });
+  }
+  //Update Historical_location
+  public async updateHistorical_locationController(req: any, res: any) {
+    const { id } = req.params;
+    const historical_locationService: Historical_locationService =
+      Container.get(Historical_locationService);
+    const Historical_locationData = req.body as Update_IHistorical_locationDTO;
+    const historical_location =
+      await historical_locationService.updateHistorical_locationService(
+        id,
+        Historical_locationData
+      );
+    res.status(historical_location.status).json({ historical_location });
+  }
+  //Delete Historical_location
+  public async deleteHistorical_locationController(req: any, res: any) {
+    const { id } = req.params;
+    const historical_locationService: Historical_locationService =
+      Container.get(Historical_locationService);
+    const historical_location =
+      await historical_locationService.deleteHistorical_locationService(id);
     res.status(historical_location.status).json({ historical_location });
   }
 }
