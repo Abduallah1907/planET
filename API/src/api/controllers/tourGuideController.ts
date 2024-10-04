@@ -3,7 +3,7 @@ import TourGuideService from "@/services/tourGuideService";
 import { Request, Response } from "express";
 import Container, { Service } from "typedi";
 import { Types } from "mongoose";
-import { IItineraryCreateDTO } from "@/interfaces/IItinerary";
+import { IItineraryCreateDTO, IItineraryUpdateDTO } from "@/interfaces/IItinerary";
 
 // TODO the user_id should be taken from the token, and not directly as input from the user
 @Service()
@@ -61,6 +61,11 @@ export class TourGuideController {
     const newItinerary = await tourGuideService.getItineraryService(itinerary_idObjectId);
     res.json({ newItinerary });
   }
-  public async updateItinerary(req: Request, res: Response): Promise<any> {}
+  public async updateItinerary(req: Request, res: Response): Promise<any> {
+    const itineraryData = req.body as IItineraryUpdateDTO;
+    const tourGuideService: TourGuideService = Container.get(TourGuideService);
+    const updatedItinerary = await tourGuideService.updateItineraryService(itineraryData);
+    res.json({ updatedItinerary });
+  }
   public async deleteItinerary(req: Request, res: Response): Promise<any> {}
 }

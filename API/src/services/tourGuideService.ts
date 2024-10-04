@@ -4,7 +4,7 @@ import UserRoles from "@/types/enums/userRoles";
 import { Inject, Service } from "typedi";
 import { HttpError, InternalServerError } from "@/types/Errors";
 import { IPreviousWorkInputDTO, IPreviousWorkUpdateDTO } from "@/interfaces/IPrevious_work";
-import { IItineraryCreateDTO } from "@/interfaces/IItinerary";
+import { IItineraryCreateDTO, IItineraryUpdateDTO } from "@/interfaces/IItinerary";
 @Service()
 export default class TourGuideService {
   constructor(
@@ -110,11 +110,15 @@ export default class TourGuideService {
   }
   public async getItineraryService(itinerary_id: Types.ObjectId) {
     const itineraryData = await this.itineraryModel.findById(itinerary_id);
-    console.log(itinerary_id);
     if (itineraryData instanceof Error) throw new InternalServerError("Internal server error");
     if (!itineraryData) throw new HttpError("Itinerary not found", 404);
     return new response(true, itineraryData, "Itinerary found!", 201);
   }
-  public async updateItineraryService() {}
+  public async updateItineraryService(itineraryUpdatedData: IItineraryUpdateDTO) {
+    const updatedItinerary = await this.itineraryModel.findByIdAndUpdate(itineraryUpdatedData.itinerary_id, itineraryUpdatedData, { new: true });
+    if (!updatedItinerary) throw new HttpError("Itinerary not found", 404);
+    if (updatedItinerary instanceof Error) throw new InternalServerError("Internal server error");
+    return new response(true, updatedItinerary, "Itinerary updated!", 201);
+  }
   public async deleteItineraryService() {}
 }
