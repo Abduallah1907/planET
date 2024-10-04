@@ -169,5 +169,4 @@ export default class Historical_locationService {
     }
     return new response(true, null, "Historical Location is deleted", 200);
   };
-  //create historical_tags
 }
