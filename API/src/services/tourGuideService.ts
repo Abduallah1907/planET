@@ -108,7 +108,13 @@ export default class TourGuideService {
 
     return new response(true, newItinerary, "Itinerary created successfully!", 201);
   }
-  public async getItineraryService() {}
+  public async getItineraryService(itinerary_id: Types.ObjectId) {
+    const itineraryData = await this.itineraryModel.findById(itinerary_id);
+    console.log(itinerary_id);
+    if (itineraryData instanceof Error) throw new InternalServerError("Internal server error");
+    if (!itineraryData) throw new HttpError("Itinerary not found", 404);
+    return new response(true, itineraryData, "Itinerary found!", 201);
+  }
   public async updateItineraryService() {}
   public async deleteItineraryService() {}
 }

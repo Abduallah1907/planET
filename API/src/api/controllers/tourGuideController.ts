@@ -53,7 +53,14 @@ export class TourGuideController {
     const newItinerary = await tourGuideService.createItineraryService(itineraryData);
     res.json({ newItinerary });
   }
-  public async getItinerary(req: Request, res: Response): Promise<any> {}
+
+  public async getItinerary(req: Request, res: Response): Promise<any> {
+    const { itinerary_id } = req.params;
+    const itinerary_idObjectId = new Types.ObjectId(itinerary_id);
+    const tourGuideService: TourGuideService = Container.get(TourGuideService);
+    const newItinerary = await tourGuideService.getItineraryService(itinerary_idObjectId);
+    res.json({ newItinerary });
+  }
   public async updateItinerary(req: Request, res: Response): Promise<any> {}
   public async deleteItinerary(req: Request, res: Response): Promise<any> {}
 }
