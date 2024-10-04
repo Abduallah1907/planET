@@ -4,37 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import ProfileForm from "./components/ProfileForm/ProfileForm";
-import CustomFormGroup from "./components/FormGroup";
-import { Placeholder } from "react-bootstrap";
-import TopBarLinks from './views/Main Page/TopBarLinks';
-import SearchBar from './views/Main Page/SearchBar';
-import HeroSection from './views/Main Page/Hero'
-import Services from './views/Main Page/Services'
-import Destinations from './views/Main Page/Destinations'
-
-const Home: React.FC = () => {
-  return (
-    <>
-      <div>
-        <TopBar />
-        <TopBarLinks />
-      </div>
-      <div className="search-bar">
-        <SearchBar />
-      </div>
-      <div>
-        <HeroSection />
-      </div>
-      <div>
-        <Services />
-      </div>
-      <div>
-        <Destinations />
-      </div>
-
-    </>
-  );
-}
+import MainPage from "./views/Main Page/MainPage";
 
 const App: React.FC = () => {
   return (
@@ -42,7 +12,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<TopBar />} />
         <Route path="/editprofile" Component={ProfileForm} />
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<MainPage />} />
 
       </Routes>
     </Router>
