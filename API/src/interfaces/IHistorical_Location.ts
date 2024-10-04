@@ -1,3 +1,4 @@
+import { historical_tag } from "@/types/Historical_tags";
 import { Location } from "@/types/Location";
 import { Document, ObjectId } from "mongoose";
 
@@ -15,7 +16,7 @@ export interface IHistorical_location extends Document {
   foreign_price: number;
   student_price: number;
   active_flag: boolean;
-  tags?: string[];
+  tags?: historical_tag;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -38,6 +39,8 @@ export interface IHistorical_locationDTO {
   foreign_price: number;
 
   student_price: number;
+
+  tags?: historical_tag;
 }
 
 export interface Update_IHistorical_locationDTO {
@@ -58,4 +61,5 @@ export interface Update_IHistorical_locationDTO {
   foreign_price?: number;
 
   student_price?: number;
+  tags?: historical_tag;
 }

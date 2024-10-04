@@ -8,6 +8,15 @@ export interface IAdvertiser extends Document {
   hotline: string;
   about: string;
   logo: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  company_profile: string;
+}
+
+export interface IAdvertiserDTO {
+  activities: ObjectId[];
+  documents_required: string[];
+  link_to_website: string;
+  hotline: string;
+  about: string;
+  logo: string;
+  company_profile: string;
 }

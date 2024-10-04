@@ -1,8 +1,4 @@
 import {
-  Update_IHistorical_locationDTO,
-  IHistorical_locationDTO,
-} from "@/interfaces/IHistorical_location";
-import {
   BadRequestError,
   InternalServerError,
   NotFoundError,
@@ -11,6 +7,10 @@ import {
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
 import mongoose, { Types } from "mongoose";
+import {
+  IHistorical_locationDTO,
+  Update_IHistorical_locationDTO,
+} from "@/interfaces/IHistorical_location";
 @Service()
 export default class Historical_locationService {
   constructor(
@@ -46,6 +46,7 @@ export default class Historical_locationService {
       native_price: historical_locationInput.native_price,
       foreign_price: historical_locationInput.foreign_price,
       student_price: historical_locationInput.student_price,
+      tags: historical_locationInput.tags,
     };
     const historical_location = await this.historical_locationsModel.create(
       historical_locationData
@@ -130,6 +131,7 @@ export default class Historical_locationService {
     if (Data.native_price) updateFields.native_price = Data.native_price;
     if (Data.foreign_price) updateFields.foreign_price = Data.foreign_price;
     if (Data.student_price) updateFields.student_price = Data.student_price;
+    if (Data.tags) updateFields.tags = Data.tags;
 
     const Updated_historical_location =
       await this.historical_locationsModel.findByIdAndUpdate(
@@ -167,4 +169,5 @@ export default class Historical_locationService {
     }
     return new response(true, null, "Historical Location is deleted", 200);
   };
+  //create historical_tags
 }

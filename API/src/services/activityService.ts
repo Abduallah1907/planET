@@ -7,7 +7,6 @@ import {
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
 import mongoose, { Types } from "mongoose";
-import { error } from "console";
 @Service()
 export default class ActivityService {
   constructor(
@@ -83,7 +82,7 @@ export default class ActivityService {
       throw new BadRequestError("Invalid Adverstier ID format");
     }
     const activity = await this.activityModel.findOne({
-      adverstier_id: new mongoose.Schema.Types.ObjectId(advertiserID),
+      adverstier_id: new Types.ObjectId(advertiserID),
     });
     if (activity instanceof Error) {
       throw new InternalServerError("Internal server error");
@@ -110,9 +109,9 @@ export default class ActivityService {
     }
     const updateFields: Partial<IActivityDTO> = {};
     if (
-      activityData.price &&
+      activityData?.price &&
       activityData.price_range?.max &&
-      activityData.price_range.min
+      activityData.price_range?.min
     ) {
       throw new BadRequestError(
         "Cannot enter both price and price range,choose one of them"
@@ -128,20 +127,19 @@ export default class ActivityService {
     ) {
       updateFields.location = activityData.location;
     }
-    if (activityData.price !== undefined)
-      updateFields.price = activityData.price;
-    if (activityData.price_range !== undefined)
+    if (activityData.price) updateFields.price = activityData.price;
+    if (activityData.price_range)
       updateFields.price_range = {
         min: activityData.price_range.min ?? 0,
         max: activityData.price_range.max ?? 0,
       };
     if (activityData.category) updateFields.category = activityData.category;
-    if (activityData.special_discount !== undefined)
+    if (activityData.special_discount)
       updateFields.special_discount = activityData.special_discount;
     if (activityData.tags) updateFields.tags = activityData.tags;
-    if (activityData.booking_flag !== undefined)
+    if (activityData?.booking_flag)
       updateFields.booking_flag = activityData.booking_flag;
-    if (updateFields.price !== undefined) {
+    if (updateFields.price) {
       updateFields.price_range = { min: 0, max: 0 };
     } else if (
       updateFields.price_range?.min !== undefined &&

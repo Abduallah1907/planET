@@ -1,9 +1,9 @@
+import Container, { Service } from "typedi";
+import Historical_locationService from "@/services/Historical_locationService";
 import {
   IHistorical_locationDTO,
   Update_IHistorical_locationDTO,
-} from "../../interfaces/IHistorical_location";
-import Container, { Service } from "typedi";
-import Historical_locationService from "@/services/Historical_locationService";
+} from "@/interfaces/IHistorical_location";
 
 @Service()
 export class Historical_locationController {
@@ -56,7 +56,7 @@ export class Historical_locationController {
     const historical_location =
       await historical_locationService.updateHistorical_locationService(
         id,
-        Historical_locationData
+        req.body
       );
     res.status(historical_location.status).json({ historical_location });
   }
