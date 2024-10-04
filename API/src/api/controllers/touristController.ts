@@ -25,9 +25,11 @@ export class TouristController {
   }
 
   public async updateTourist(req: any, res: any) {
+    const { searchEmail } = req.params;
     const touristUpdateData: ITouristUpdateDTO = req.body;
     const touristService: TouristService = Container.get(TouristService);
     const updatedTourist = await touristService.updateTouristService(
+      searchEmail,
       touristUpdateData
     );
     res.status(updatedTourist.status).json({ updatedTourist });

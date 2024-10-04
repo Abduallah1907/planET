@@ -34,8 +34,6 @@ export default (app: Router) => {
    *    ITouristUpdateDTO:
    *      type: object
    *      properties:
-   *        searchEmail:
-   *          type: string
    *        name:
    *          type: string
    *        newEmail:
@@ -140,12 +138,19 @@ export default (app: Router) => {
    *         description: Bad request.
    *       500:
    *         description: Internal server error.
-   * /api/tourist/updateTourist:
+   * /api/tourist/updateTourist/{searchEmail}:
    *   put:
    *     tags:
    *       - Tourist
    *     summary: Update tourist in system
    *     description: Update tourist data by email
+   *     parameters:
+   *       - in: path
+   *         name: searchEmail
+   *         required: true
+   *         description: Email of the tourist to update for
+   *         schema:
+   *           type: string
    *     requestBody:
    *       required: true
    *       content:
@@ -153,9 +158,6 @@ export default (app: Router) => {
    *           schema:
    *             type: object
    *             properties:
-   *               searchEmail:
-   *                 type: string
-   *                 description: Email of the tourist to search for
    *               name:
    *                 type: string
    *                 description: Name of the tourist
@@ -365,7 +367,7 @@ export default (app: Router) => {
    *         description: Internal server error.
    */
   route.get("/getTourist/:email", touristController.getTourist);
-  route.put("/updateTourist", touristController.updateTourist);
+  route.put("/updateTourist/:searchEmail", touristController.updateTourist);
   route.post("/createTourist", touristController.createTourist);
 
   route.get("/getItineraries", touristController.getItinerary);

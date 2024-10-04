@@ -22,7 +22,7 @@ export default class TouristService {
     @Inject("userModel") private userModel: Models.UserModel,
     @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel,
     @Inject("historical_locationModel")
-    private historical_locationsModel: Models.Historical_locationsModel,
+    private historical_locationsModel: Models.Historical_locationsModel
   ) {}
 
   public async getTouristService(email: string) {
@@ -116,7 +116,10 @@ export default class TouristService {
     return new response(true, touristOutput, "Tourist created", 201);
   }
 
-  public async updateTouristService(touristUpdateData: ITouristUpdateDTO) {
+  public async updateTouristService(
+    searchEmail: string,
+    touristUpdateData: ITouristUpdateDTO
+  ) {
     const phoneNumRegex =
       /^\+\d{1,3}[\s-]?(\d{1,4}[\s-]?\d{1,4}[\s-]?\d{1,9})$/;
     if (
@@ -126,10 +129,7 @@ export default class TouristService {
       throw new BadRequestError("Invalid phone number");
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (
-      !touristUpdateData.searchEmail ||
-      !emailRegex.test(touristUpdateData.searchEmail)
-    )
+    if (searchEmail || !emailRegex.test(searchEmail))
       throw new BadRequestError("Invalid inputted email");
 
     if (
@@ -145,7 +145,7 @@ export default class TouristService {
       phone_number: touristUpdateData.phone_number,
     };
     const user = await this.userModel.findOneAndUpdate(
-      { email: touristUpdateData.searchEmail, role: UserRoles.Tourist },
+      { email: searchEmail, role: UserRoles.Tourist },
       updatedUserData,
       { new: true }
     );

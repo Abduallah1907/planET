@@ -1,5 +1,5 @@
-import { IProduct } from "@/interfaces/IProduct";
-import { InternalServerError } from "@/types/Errors";
+import { IProduct, IProductInputDTO } from "@/interfaces/IProduct";
+import { InternalServerError, NotFoundError } from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Service, Inject } from "typedi";
 
@@ -38,6 +38,25 @@ export class ProductService {
       throw new InternalServerError("Internal Server Error cannot save seller");
 
     return new response(true, resultProduct, "Product is created", 201);
+  }
+
+  public async updateProductService(
+    product_id: string,
+    product: IProductInputDTO
+  ) {
+    console.log("product", product);
+    const updatedProduct = await this.productModel.findByIdAndUpdate(
+      product_id,
+      { ...product },
+      { new: true }
+    );
+    console.log("updatedProduct", updatedProduct);
+    if (updatedProduct instanceof Error)
+      throw new InternalServerError("Internal Server Error");
+
+    if (!updatedProduct) throw new NotFoundError("Product not found");
+
+    return new response(true, updatedProduct, "Product is updated", 200);
   }
 
   public async getFilteredProductsService(filters: {

@@ -22,7 +22,7 @@ export interface ISellerInputDTO {
 }
 
 export interface ISellerUpdateDTO {
-  searchEmail: string;
+  email?: string;
   name?: string;
   description?: string;
 }

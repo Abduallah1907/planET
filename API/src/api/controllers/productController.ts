@@ -1,7 +1,7 @@
 import { Service } from "typedi";
 import { ProductService } from "../../services/productService";
 import { Container } from "typedi";
-import { IProduct } from "../../interfaces/IProduct";
+import { IProduct, IProductInputDTO } from "../../interfaces/IProduct";
 
 @Service()
 export class ProductController {
@@ -12,6 +12,17 @@ export class ProductController {
     const result = await productService.createProductService(user_id, product);
     console.log("result", result);
     res.status(result.status).json({ result });
+  }
+
+  public async updateProduct(req: any, res: any) {
+    const productService: ProductService = Container.get(ProductService);
+    const product: IProductInputDTO = req.body;
+    const { product_id } = req.params;
+    const updatedProduct = await productService.updateProductService(
+      product_id,
+      product
+    );
+    res.status(updatedProduct.status).json({ updatedProduct });
   }
 
   public async getFilteredProducts(req: any, res: any) {
