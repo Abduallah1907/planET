@@ -6,7 +6,8 @@ import mongoose, { Types } from "mongoose";
 @Service()
 export default class ActivityService {
   constructor(
-    @Inject("activityModel") private activityModel: Models.ActivityModel
+    @Inject("activityModel") private activityModel: Models.ActivityModel,
+    @Inject("categoryModel") private categoryModel: Models.CategoryModel
   ) { }
 
   public getAllActivitiesService = async () => {
@@ -166,4 +167,159 @@ export default class ActivityService {
     }
     return new response(true, null, "Activity deleted successfully", 200);
   };
+
+  public async getActivitiesService(
+    name: string,
+    category: string,
+    tag: string
+  ) {
+    // const newCategory = new Category({type:category});
+    // await newCategory.save();
+    // const newActivity = new Activity({
+    //     category: newCategory._id,
+    //     name: name,
+    //     tags: [tag],
+    // });
+    // await newActivity.save();
+
+    // console.log(newCategory);
+    // console.log(newActivity);
+
+    const newCategory = await new this.categoryModel({ type: category });
+    await newCategory.save();
+    const newActivity = await new this.activityModel({
+      category: newCategory._id,
+      name: name,
+      tags: [tag],
+      date: new Date(),
+      price: 3000,
+    });
+    await newActivity.save();
+    console.log(newCategory);
+    console.log(newActivity);
+
+    if (!name && !category && !tag) throw new BadRequestError("Invalid input");
+
+    const activities = await this.activityModel
+      .find({ name: name, tags: tag })
+      .populate({ path: "category", match: { type: category } })
+      .populate("comments")
+      .populate({ path: "advertiser_id", select: "name" });
+
+    if (activities instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (activities == null) throw new NotFoundError("Activities not found");
+
+    if (activities.length == 0)
+      throw new NotFoundError("No activities with this search data");
+
+    return new response(true, activities, "Fetched activities", 200);
+  }
+
+  public async getUpcomingActivitiesService() {
+    const today = Date.now();
+    const activities = await this.activityModel
+      .find({ date_time: { $gte: today } })
+      .populate("category")
+      .populate("comments")
+      .populate({ path: "advertiser_id", select: "name" });
+
+    if (activities instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (activities == null) throw new NotFoundError("Activities not found");
+
+    if (activities.length == 0)
+      throw new NotFoundError("No upcoming activities with searched data");
+
+    return new response(true, activities, "Fetched upcoming activities", 200);
+  }
+
+  public async getFilteredActivitiesService(filters: {
+    price?: { min?: number; max?: number };
+    date?: { start?: Date; end?: Date };
+    category?: string[];
+    rating?: { min?: number; max?: number };
+  }) {
+    if (!filters) {
+      const activities = await this.activityModel.find();
+      return new response(
+        true,
+        activities,
+        "All activities are fetched no filters applied",
+        200
+      );
+    }
+    const matchStage: any = {};
+
+    if (filters.price) {
+      if (filters.price.min !== undefined) {
+        matchStage.price = { ...matchStage.price, $gte: filters.price.min };
+      }
+      if (filters.price.max !== undefined) {
+        matchStage.price = { ...matchStage.price, $lte: filters.price.max };
+      }
+    }
+
+    if (filters.date) {
+      if (filters.date.start !== undefined) {
+        matchStage.date = { ...matchStage.date, $gte: filters.date.start };
+      }
+      if (filters.date.end !== undefined) {
+        matchStage.date = { ...matchStage.date, $lte: filters.date.end };
+      }
+    }
+
+    if (filters.rating) {
+      if (filters.rating.min !== undefined) {
+        matchStage.average_rating = {
+          ...matchStage.average_rating,
+          $gte: filters.rating.min,
+        };
+      }
+      if (filters.rating.max !== undefined) {
+        matchStage.average_rating = {
+          ...matchStage.average_rating,
+          $lte: filters.rating.max,
+        };
+      }
+    }
+
+    var aggregationPipeline: any[] = [
+      {
+        $lookup: {
+          from: "categories", // The name of the category collection
+          localField: "category", // The field in the activities collection
+          foreignField: "_id", // The field in the category collection
+          as: "categoryDetails",
+        },
+      },
+      {
+        $unwind: "$categoryDetails",
+      },
+      {
+        $match: matchStage,
+      },
+    ];
+
+    if (filters.category) {
+      aggregationPipeline.push({
+        $match: {
+          "categoryDetails.type": { $in: filters.category },
+        },
+      });
+    }
+    console.log(aggregationPipeline);
+    console.log(matchStage);
+    const activities = await this.activityModel.aggregate(aggregationPipeline);
+    if (activities instanceof Error)
+      throw new InternalServerError("Internal server error");
+    return new response(
+      true,
+      activities,
+      "Filtered activities are fetched",
+      200
+    );
+  }
 }
