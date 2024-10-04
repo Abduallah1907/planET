@@ -8,6 +8,14 @@ export class ProductService {
     @Inject("productModel") private productModel: Models.ProductModel
   ) {}
 
+  public async createProductService(product: Models.ProductModel) {
+    const newProduct = new this.productModel(product);
+    const result = await newProduct.save();
+    if (result instanceof Error)
+      throw new InternalServerError("Internal Server Error");
+    return new response(true, result, "Product is created", 201);
+  } //Still erbot by user_id still not finished
+
   public async getFilteredProductsService(filters: {
     price?: {
       min?: number;
