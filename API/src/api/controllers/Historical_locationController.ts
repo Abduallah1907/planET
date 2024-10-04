@@ -33,4 +33,18 @@ export class Historical_locationController {
       await historical_locationService.getHistorical_locationByIDService(id);
     res.status(historical_location.status).json({ historical_location });
   }
+  //Get Historical_location by Governer_id
+  public async getHistorical_locationByGovernerIDController(
+    req: any,
+    res: any
+  ) {
+    const { Governer_id } = req.params;
+    const historical_locationService: Historical_locationService =
+      Container.get(Historical_locationService);
+    const historical_location =
+      await historical_locationService.getHistorical_locationByGovernerIDService(
+        Governer_id
+      );
+    res.status(historical_location.status).json({ historical_location });
+  }
 }

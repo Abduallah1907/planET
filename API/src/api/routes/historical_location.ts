@@ -38,4 +38,8 @@ export default (app: Router) => {
     "/getHistorical_locationByID/:id",
     historical_locationController.getHistorical_locationByIDController
   );
+  router.get(
+    "/getHistorical_locationByGovernerID/:id",
+    historical_locationController.getHistorical_locationByGovernerIDController
+  );
 };

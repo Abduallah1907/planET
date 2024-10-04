@@ -63,8 +63,30 @@ export default class Historical_locationService {
       throw new BadRequestError("Invalid ID format");
     }
     const Historical_location = await this.historical_locationsModel.findById(
-      id
+      new Types.ObjectId(id)
     );
+    if (Historical_location instanceof Error)
+      throw new InternalServerError("Internal server error");
+    // throw new Error ("Internal server error");
+
+    if (Historical_location == null)
+      throw new NotFoundError("Historical Location not found");
+    return new response(
+      true,
+      Historical_location,
+      "Historical Location is found",
+      200
+    );
+  };
+  public getHistorical_locationByGovernerIDService = async (
+    Governer_id: string
+  ) => {
+    if (!Types.ObjectId.isValid(Governer_id)) {
+      throw new BadRequestError("Invalid Governer ID format");
+    }
+    const Historical_location = await this.historical_locationsModel.findOne({
+      governor_id: new Types.ObjectId(Governer_id),
+    });
     if (Historical_location instanceof Error)
       throw new InternalServerError("Internal server error");
     // throw new Error ("Internal server error");
