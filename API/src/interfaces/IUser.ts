@@ -74,3 +74,8 @@ export interface IUserOutputDTO {
   phone_number: string;
   date_of_birth: Date;
 }
+export interface IUserLoginDTO {
+  email: string;
+  username: string;
+  password: string;
+}
