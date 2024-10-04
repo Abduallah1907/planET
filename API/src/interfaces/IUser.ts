@@ -1,6 +1,5 @@
 import UserRoles from "@/types/enums/userRoles"
 import UserStatus from "@/types/enums/userStatus"
-import e from "cors"
 
 export interface IUser {
     name: string,
