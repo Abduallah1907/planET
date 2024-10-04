@@ -1,4 +1,5 @@
 import React, { CSSProperties } from 'react';
+import { HiOutlineTrendingDown, HiOutlineTrendingUp } from 'react-icons/hi';
 
 const stats = [
   { title: 'Today Views', value: '40,689', percentage: '8.5%', direction: 'up' },
@@ -12,10 +13,11 @@ const StatisticsCards = () => {
     <div style={styles.container}>
       {stats.map((stat, index) => (
         <div key={index} style={styles.card}>
-          <h4>{stat.title}</h4>
-          <p>{stat.value}</p>
+          <h4 className='cards'>{stat.title}</h4>
+          <p className='dash'>{stat.value}</p>
           <small style={stat.direction === 'up' ? styles.green : styles.red}>
-            {stat.percentage} {stat.direction === 'up' ? 'Up' : 'Down'}
+            {stat.percentage} {stat.direction === 'up' ? <HiOutlineTrendingUp /> : <HiOutlineTrendingDown />}
+            <small className='chart-time'> from last week</small>
           </small>
         </div>
       ))}
@@ -26,15 +28,18 @@ const StatisticsCards = () => {
 const styles: { [key: string]: CSSProperties } = {
   container: {
     display: 'flex',
-    justifyContent: 'space-around',
-    margin: '20px 0',
+    justifyContent: 'space-between',
+    gap: '1.5rem',
+    
   },
   card: {
+
     padding: '20px',
-    border: '1px solid #ccc',
+    border: '2px solid var(--main-color)',
     borderRadius: '8px',
-    width: '200px',
-    textAlign: 'center',
+    fontWeight: 'bold',
+    width: '100%',
+    textAlign: 'left',
   },
   green: {
     color: 'green',

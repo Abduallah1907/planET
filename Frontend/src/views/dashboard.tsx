@@ -11,8 +11,8 @@ const Dashboard = () => {
         <div>
             <TopBar />
             <Container className='text-center'>
-                <h1 className='dash'>Dashboard</h1>
-                <div className="welcome-container">
+                <h1 className='dash mt-2'>Dashboard</h1>
+                <div className="welcome-container mt-5">
                     <h2>Welcome to <span className="orange-text">PlanET</span></h2>
                     <img
                         src={Icon}

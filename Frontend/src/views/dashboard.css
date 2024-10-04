@@ -1,9 +1,24 @@
 .statistics-cards {
-    border: 2px solid var(--main-color);
-    padding: 20px;
+    width: 100%;
     margin-bottom: 20px;
     border-radius: 8px;
     background-color: #f9f9f9;
+  }
+  .statistics-cards .cards {
+    font-weight: bold;
+    font-size: 1rem;
+    color: rgba(32, 34, 36, 0.5);
+  }
+  .statistics-cards p {
+    font-weight: bold;
+    font-size: 2rem;
+  }
+  .statistics-cards .chart-time {
+    color: rgba(32, 34, 36, 0.5);
+  }
+  .statistics-cards small {
+    font-weight: bold;
+    font-size: 1rem;
   }
   
   .country-campaign-table {
@@ -37,4 +52,8 @@
   .dash{
     font-weight: bold;
 
+  }
+  .cards{
+    font-weight: bold;
+    font-size: small;
   }
