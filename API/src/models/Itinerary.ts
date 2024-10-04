@@ -62,11 +62,11 @@ const itinerarySchema = new mongoose.Schema(
       required: true,
     },
     pickup_loc: {
-      type: String,
+      type: LocationSchema,
       required: true,
     },
     drop_off_loc: {
-      type: String,
+      type: LocationSchema,
       required: true,
     },
     tags: [
@@ -91,9 +91,6 @@ const itinerarySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Itinerary = mongoose.model<IItinerary & mongoose.Document>(
-  "Itinerary",
-  itinerarySchema
-);
+const Itinerary = mongoose.model<IItinerary & mongoose.Document>("Itinerary", itinerarySchema);
 
 export default Itinerary;
