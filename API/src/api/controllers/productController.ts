@@ -8,7 +8,8 @@ export class ProductController {
   public async createProduct(req: any, res: any) {
     const productService: ProductService = Container.get(ProductService);
     const product: IProduct = req.body;
-    const result = await productService.createProductService(product);
+    const { user_id } = req.params;
+    const result = await productService.createProductService(user_id, product);
     console.log("result", result);
     res.status(result.status).json({ result });
   }

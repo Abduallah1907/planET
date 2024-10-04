@@ -8,11 +8,18 @@ export default (app: Router) => {
   app.use("/product", route);
   /**
    * @swagger
-   * /api/product/createProduct:
+   * /api/product/createProduct/{user_id}:
    *   post:
-   *     description: Create a product
+   *     description: Create a product and linking it to the seller with his user_id
    *     tags:
    *       - Product
+   *     parameters:
+   *       - in: path
+   *         name: user_id
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: user_id of the seller
    *     requestBody:
    *       required: true
    *       content:
@@ -70,7 +77,8 @@ export default (app: Router) => {
    *       500:
    *         description: Internal Server Error
    */
-  route.post("/createProduct", productController.createProduct);
+
+  route.post("/createProduct/:user_id", productController.createProduct);
 
   route.get("/getFilteredProducts", productController.getFilteredProducts);
 };

@@ -1,6 +1,5 @@
-import e from 'express';
-import { Document, ObjectId } from 'mongoose';
-
+import e from "express";
+import { Document, ObjectId } from "mongoose";
 
 export interface ISellerOutputDTO {
   email: string;
@@ -28,13 +27,12 @@ export interface ISellerUpdateDTO {
   description?: string;
 }
 
-
 export interface ISeller extends Document {
- 
   user_id: ObjectId;
   documents_required: string[];
   logo: string;
   description: string;
+  products: ObjectId[];
   createdAt?: Date;
   updatedAt?: Date;
 }
