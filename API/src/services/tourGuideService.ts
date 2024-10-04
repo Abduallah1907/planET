@@ -55,6 +55,7 @@ export default class TourGuideService {
     if (!deletedPreviousWork) throw new HttpError("Previous work not found", 404);
 
     tourGuide.previous_work_description.pull(deletedPreviousWork._id);
+    await tourGuide.save();
 
     return new response(true, deletedPreviousWork, "Previous work deleted!", 200);
   }
@@ -120,5 +121,18 @@ export default class TourGuideService {
     if (updatedItinerary instanceof Error) throw new InternalServerError("Internal server error");
     return new response(true, updatedItinerary, "Itinerary updated!", 201);
   }
-  public async deleteItineraryService() {}
+  public async deleteItineraryService(tour_guide_user_id: Types.ObjectId, itinerary_id: Types.ObjectId) {
+    console.log(tour_guide_user_id);
+    console.log(itinerary_id);
+    const tourGuide = await this.tourGuideModel.findOne({ user_id: tour_guide_user_id });
+    if (!tourGuide) throw new HttpError("Tour guide not found", 404);
+
+    const deletedItinerary = await this.itineraryModel.findByIdAndDelete(itinerary_id);
+    if (!deletedItinerary) throw new HttpError("Itinerary not found", 404);
+
+    tourGuide.itineraries.pull(itinerary_id);
+    await tourGuide.save();
+
+    return new response(true, deletedItinerary, "Itinerary deleted!", 200);
+  }
 }
