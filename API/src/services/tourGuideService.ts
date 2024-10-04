@@ -4,7 +4,7 @@ import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import { Inject, Service } from "typedi";
 import { HttpError, InternalServerError } from "@/types/Errors";
-import { IPreviousWorkInputDTO } from "@/interfaces/IPrevious_work";
+import { IPreviousWorkInputDTO, IPreviousWorkUpdateDTO } from "@/interfaces/IPrevious_work";
 @Service()
 export default class TourGuideService {
   constructor(
@@ -17,7 +17,7 @@ export default class TourGuideService {
   // *depends on frontend implementation tho
   // creates the work experience AND inserts it into the tour guide
   public async createPreviousWorkService(previousWork: IPreviousWorkInputDTO): Promise<any> {
-    const tourGuide = await this.tourGuideModel.findOne({ tour_guide_id: previousWork.tour_user_id });
+    const tourGuide = await this.tourGuideModel.findOne({ tour_guide_id: previousWork.tour_guide_user_id });
     if (!tourGuide) throw new HttpError("Tour guide not found. Is the ID correct?", 404);
 
     const newWorkExperience = await this.previousWorkModel.create(previousWork);
@@ -27,39 +27,38 @@ export default class TourGuideService {
 
     if (newWorkExperience instanceof Error) throw new InternalServerError("Internal server error");
 
-    return new response(true, newWorkExperience, "Work experience created successfully!", 200);
+    return new response(true, newWorkExperience, "Work experience created successfully!", 201);
   }
 
-  public async updatePreviousWorkService(_id: ObjectId, title: string, place: string, from: Date, to: Date): Promise<any> {
-    if (!Types.ObjectId.isValid(_id.toString())) throw new Error("_id is invalid");
-    const previousWork = await this.previousWorkModel.findById(_id);
+  public async updatePreviousWorkService(updatedPreviousWorkInfo: IPreviousWorkUpdateDTO): Promise<any> {
+    if (!Types.ObjectId.isValid(updatedPreviousWorkInfo.previous_work_id.toString())) throw new Error("_id is invalid");
+    const previousWork = await this.previousWorkModel.findById(updatedPreviousWorkInfo.previous_work_id);
     if (!previousWork) throw new Error("Previous work not found");
 
-    previousWork.title = title;
-    previousWork.place = place;
-    previousWork.from = from;
-    previousWork.to = to;
+    previousWork.title = updatedPreviousWorkInfo.title;
+    previousWork.place = updatedPreviousWorkInfo.place;
+    previousWork.from = updatedPreviousWorkInfo.from;
+    previousWork.to = updatedPreviousWorkInfo.to;
     await previousWork.save();
-    return new response(true, previousWork, "Previous work updated!", 200);
+    return new response(true, previousWork, "Previous work updated!", 201);
   }
 
-  public async deletePreviousWorkService(_id: ObjectId, tour_guide_id: ObjectId) {
-    if (!Types.ObjectId.isValid(_id.toString())) throw new Error("_id is invalid");
-    if (!Types.ObjectId.isValid(tour_guide_id.toString())) throw new Error("_id is invalid");
+  public async deletePreviousWorkService(previous_work_id: Types.ObjectId, tour_guide_user_id: Types.ObjectId) {
+    if (!Types.ObjectId.isValid(previous_work_id.toString())) throw new Error("_id is invalid");
+    if (!Types.ObjectId.isValid(tour_guide_user_id.toString())) throw new Error("_id is invalid");
 
-    const tourGuide = await this.tourGuideModel.findOne({ tour_guide_id });
+    const tourGuide = await this.tourGuideModel.findOne({ user_id: tour_guide_user_id });
     if (!tourGuide) throw new HttpError("Tour guide not found", 404);
 
-    const deletedPreviousWork = await this.previousWorkModel.findByIdAndDelete(_id);
+    const deletedPreviousWork = await this.previousWorkModel.findByIdAndDelete(previous_work_id);
     if (!deletedPreviousWork) throw new HttpError("Previous work not found", 404);
 
     tourGuide.previous_work_description.pull(deletedPreviousWork._id);
 
-    console.log(tourGuide);
     return new response(true, deletedPreviousWork, "Previous work deleted!", 200);
   }
   // CRUD for tour guide profile
-  public async getProfileService(_id: ObjectId): Promise<any> {
+  public async getProfileService(_id: Types.ObjectId): Promise<any> {
     if (!Types.ObjectId.isValid(_id.toString())) throw new HttpError("_id is invalid", 400);
     const tourGuideProfile = await this.tourGuideModel.findById(_id).populate("previous_work_description");
 

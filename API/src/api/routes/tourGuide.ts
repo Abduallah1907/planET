@@ -10,7 +10,7 @@ export default (app: Router) => {
   // CRUD for work experience
   router.post("/createPreviousWork", tourGuideController.createPreviousWork);
   router.put("/updatePreviousWork", tourGuideController.updatePreviousWork);
-  router.delete("/deletePreviousWork", tourGuideController.deletePreviousWork);
+  router.delete("/deletePreviousWork/:tour_guide_user_id/previousWork/:previous_work_id", tourGuideController.deletePreviousWork);
   // Read and update for profile
   /**
    * The reason we do not have a create profile (only update/view) is due to the fact

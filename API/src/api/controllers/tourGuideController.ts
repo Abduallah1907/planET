@@ -1,7 +1,8 @@
-import { IPreviousWorkInputDTO } from "@/interfaces/IPrevious_work";
+import { IPreviousWorkInputDTO, IPreviousWorkUpdateDTO } from "@/interfaces/IPrevious_work";
 import TourGuideService from "@/services/tourGuideService";
 import { Request, Response } from "express";
 import Container, { Service } from "typedi";
+import { Types } from "mongoose";
 
 // TODO the user_id should be taken from the token, and not directly as input from the user
 @Service()
@@ -14,16 +15,18 @@ export class TourGuideController {
   }
 
   public async updatePreviousWork(req: Request, res: Response): Promise<any> {
-    const { _id, title, place, from, to } = req.body;
+    const updatedPreviousWorkData = req.body as IPreviousWorkUpdateDTO;
     const tourGuideService: TourGuideService = Container.get(TourGuideService);
-    const updatedPreviousWork = await tourGuideService.updatePreviousWorkService(_id, title, place, from, to);
+    const updatedPreviousWork = await tourGuideService.updatePreviousWorkService(updatedPreviousWorkData);
     res.json({ updatedPreviousWork });
   }
 
   public async deletePreviousWork(req: Request, res: Response): Promise<any> {
-    const { _id, tour_guide_id } = req.body;
+    const { previous_work_id, tour_guide_user_id } = req.params;
+    const _idObjectId = new Types.ObjectId(previous_work_id);
+    const tour_guide_idObjectId = new Types.ObjectId(tour_guide_user_id);
     const tourGuideService: TourGuideService = Container.get(TourGuideService);
-    const deletedPreviousWork = await tourGuideService.deletePreviousWorkService(_id, tour_guide_id);
+    const deletedPreviousWork = await tourGuideService.deletePreviousWorkService(_idObjectId, tour_guide_idObjectId);
     res.json(deletedPreviousWork);
   }
   // ---- Profile ----
