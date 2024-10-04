@@ -1,14 +1,14 @@
 import React from 'react';
 import { Navbar, Button, Dropdown } from 'react-bootstrap';
 import "./topbar.css";
-import Logo from '../assets/LogoNoBackground.svg';
+import Logo from '../../assets/LogoNoBackground.svg';
 import { useNavigate } from 'react-router-dom';
-import EgyptFlag from '../assets/Egypt.webp';
-import FranceFlag from '../assets/FRANCE.webp';
-import UKFlag from '../assets/UK.webp';
-import DeutschFlag from '../assets/Deutsch.webp';
+import EgyptFlag from '../../assets/Egypt.webp';
+import FranceFlag from '../../assets/FRANCE.webp';
+import UKFlag from '../../assets/UK.webp';
+import DeutschFlag from '../../assets/Deutsch.webp';
 import { useTranslation } from 'react-i18next';
-import {useAppContext } from '../AppContext';
+import { useAppContext } from '../../AppContext';
 
 
 const TopBar: React.FC = () => {

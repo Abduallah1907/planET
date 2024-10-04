@@ -20,7 +20,6 @@ const App: React.FC = () => {
   return (
     <AppProvider>
       <Routes>
-        <Route path="/" element={<TopBar />} />
         <Route path="/admin" element={<CreateAdmin />} />
         <Route path="/governer" element={<CreateGoverner />} />
         <Route path="/test" element={<BookingLayout />} />
