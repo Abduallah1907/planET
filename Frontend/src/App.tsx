@@ -7,6 +7,8 @@ import "./App.css";
 import CreateGoverner from "./views/CreateGoverner";
 import BookingLayout from "./views/CreateActivities";
 import ProfileForm from "./components/ProfileForm/ProfileForm";
+import ActivityCard from "./components/Cards/ActivityCard";
+import HistoricalLocationCard from "./components/Cards/HistoricalLocation";
 import ActivityCard from "./components/ActivityCard";
 import HistoricalLocationCard from "./components/HistoricalLocation";
 import ItineraryCard from "./components/ItineraryCard";
@@ -29,7 +31,7 @@ const App: React.FC = () => {
               Name={"Retag Match 3almy"}
               location={"retag, Tagmo3"}
               category={"Football"}
-              Rating={0.5}
+              RatingVal={3.1}
               Reviews={1000}
               Price={49.99}
               isActive={true}
@@ -46,7 +48,7 @@ const App: React.FC = () => {
               Name={"Pyramids"}
               location={"Cairo, Giza"}
               category={"Entratinment"}
-              Rating={0.5}
+              RatingVal={0.5}
               Reviews={1000}
               NativePrice={49.99}
               ForeignPrice={100.2}

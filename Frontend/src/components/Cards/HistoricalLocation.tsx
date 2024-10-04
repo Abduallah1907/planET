@@ -1,35 +1,43 @@
-import React, { useState } from "react";
 import { Card, Badge, Row, Col, Image } from "react-bootstrap";
-import "./ActivityCard.css";
-import Rating from "react-rating";
+import Rating from '../Rating/Rating';
+import "./Cards.css";
 
 interface InputData {
   Name: string;
   location: string;
   category: string;
-  Rating: number; // Initial Rating
+  RatingVal: number; // Initial Rating
   Reviews: number;
-  Price: number;
-  Date_Time: Date;
+  NativePrice: number;
+  ForeignPrice: number;
+  StudentPrice: number;
+  OpeningHourFrom: string; // Using string for time representation
+  OpeningHourTo: string; // Using string for time representation
+  OpeningDays: string; // New property for opening days
+  Description: string; // Fixed typo from Descripition to Description
   isActive: boolean;
   isBooked: boolean; // Added isBooked prop
   onChange?: () => void; // Change onChange to a function that does not take parameters
 }
 
-const CustomActivityCard = ({
+const HistoricalLocationCard = ({
   Name,
   location,
   category,
-  Rating: initialRating,
+  RatingVal,
   Reviews,
-  Price,
-  Date_Time,
+  NativePrice,
+  ForeignPrice,
+  StudentPrice,
+  OpeningHourFrom,
+  OpeningHourTo,
+  OpeningDays, // New property
+  Description,
   isActive,
   isBooked,
   onChange,
 }: InputData) => {
   // Manage the state for the rating
-  const [currentRating, setCurrentRating] = useState(initialRating);
 
   return (
     <Card
@@ -64,7 +72,7 @@ const CustomActivityCard = ({
                   Outdoor
                 </Badge>
                 <Badge pill bg="secondary" className="custom-badge">
-                  Nightlife
+                  Historical
                 </Badge>
               </div>
               <Card.Text>
@@ -77,13 +85,17 @@ const CustomActivityCard = ({
                 </a>
               </Card.Text>
 
-              {/* Category and Date/Time */}
+              {/* Category, Opening Hours, and Opening Days */}
               <Card.Text className="text-muted">Category: {category}</Card.Text>
               <Card.Text className="text-muted">
-                {Date_Time.toLocaleDateString()} <br />
-                {Date_Time.toLocaleTimeString()}
+                Opening Hours: {OpeningHourFrom} - {OpeningHourTo}
+              </Card.Text>
+              <Card.Text className="text-muted">
+                Opening Days: {OpeningDays}
               </Card.Text>
             </div>
+            {/* Description */}
+            <Card.Text className="text-muted">{Description}</Card.Text>
           </Card.Body>
         </Col>
 
@@ -93,14 +105,11 @@ const CustomActivityCard = ({
           className="d-flex flex-column justify-content-between align-items-end"
         >
           {/* Rating and Reviews on the Far Right */}
-          <div className="d-flex align-items-center justify-content-end mb-1">
+          <div className="d-flex align-items-center justify-content-end mb-3">
             {/* Rating Stars */}
             <Rating
-              emptySymbol="far fa-star" // Font Awesome empty star
-              fullSymbol="fas fa-star" // Font Awesome filled star
-              fractions={2} // Allows half-star ratings
-              initialRating={currentRating}
-              //onChange={(newRating) => setCurrentRating(newRating)} // Update the rating state on change
+              rating={RatingVal}
+              readOnly={true}
             />
             <Badge
               className="ms-2 review-badge text-center"
@@ -108,25 +117,30 @@ const CustomActivityCard = ({
                 fontSize: "1rem",
               }}
             >
-              {currentRating.toFixed(1)}
+              {RatingVal.toFixed(1)}
             </Badge>
           </div>
-          <p
-            className="text-muted text-right"
-            style={{ fontSize: "1.1rem", fontWeight: "500" }}
-          >
+          <p className="text-muted text-right" style={{ fontSize: "0.9rem" }}>
             {Reviews.toLocaleString()} Reviews
           </p>
 
-          {/* Price and Active/Inactive Button */}
-          <div className="text-end">
-            <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
+          {/* Price Display */}
+          <div className="text-right">
+            <h6 style={{ fontWeight: "bold" }}>Prices:</h6>
+            <p className="mb-1">Native Price: ${NativePrice.toFixed(2)}</p>
+            <p className="mb-1">Foreign Price: ${ForeignPrice.toFixed(2)}</p>
+            <p className="mb-1">Student Price: ${StudentPrice.toFixed(2)}</p>
+          </div>
+
+          {/* Booking Badge */}
+          <div className="text-right">
             <Badge
-              bg={isBooked ? "success" : "danger"} // Change color based on booking status
-              className="mt-2 custom-status-badge rounded-4 text-center"
+              bg={isBooked ? "danger" : "success"} // Change color based on booking status
+              className="mt-2 clickable-badge"
+              style={{ cursor: "pointer", fontSize: "1.2rem" }}
               onClick={onChange} // Call onChange when clicked
             >
-              {isBooked ? "Booking On" : "Booking Off"}
+              {isBooked ? "Booking Off" : "Book Now"}
             </Badge>
           </div>
         </Col>
@@ -135,4 +149,4 @@ const CustomActivityCard = ({
   );
 };
 
-export default CustomActivityCard;
+export default HistoricalLocationCard;
