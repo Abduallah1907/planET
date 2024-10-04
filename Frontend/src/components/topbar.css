@@ -3,6 +3,7 @@
 	background-color: var(--main-color);
 	height: 100px;
     display: flex;
+    position: fixed;
 
 }
 
