@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
-import { Inject, Service } from "typedi";
+import Container, { Inject, Service } from "typedi";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
-import { IUserAdminCreateAdminDTO, IUserAdminCreateGovernorDTO, IUserAdminViewDTO } from "@/interfaces/IUser";
-import { InternalServerError, HttpError } from "@/types/Errors";
+import { IUserAdminCreateAdminDTO, IUserAdminCreateGovernorDTO, IUserAdminViewDTO, IUserInputDTO } from "@/interfaces/IUser";
+import { InternalServerError, HttpError, BadRequestError } from "@/types/Errors";
+import UserService from "./userService";
 
 // User related services (delete, view, and create users)
 
@@ -69,8 +70,8 @@ export default class AdminService {
     return new response(true, usersOutput, "User found", 200);
   }
 
-  public async deleteUserService(_id: mongoose.ObjectId): Promise<any> {
-    if (!mongoose.Types.ObjectId.isValid(_id.toString())) throw new InternalServerError("_id is invalid");
+  public async deleteUserService(_id: mongoose.Types.ObjectId): Promise<any> {
+    if (!mongoose.Types.ObjectId.isValid(_id.toString())) throw new BadRequestError("_id is invalid");
 
     const user = await this.userModel.findByIdAndDelete(_id);
     if (!user) throw new HttpError("User not found", 404);
@@ -103,7 +104,7 @@ export default class AdminService {
         break;
     }
 
-    const userOutput: IUserAdminViewDTO = {
+    let userOutput: IUserAdminViewDTO = {
       _id: user._id,
       email: user.email,
       name: user.name,
@@ -114,68 +115,78 @@ export default class AdminService {
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };
-
-    return new response(true, { ...userOutput, deletedRole: deletedRole._doc, deletedCreations }, "User deleted", 200);
+    if (deletedRole) userOutput = { ...userOutput, ...deletedRole._doc };
+    console.log(deletedRole);
+    return new response(true, { ...userOutput }, "User deleted", 200);
   }
 
   public async createGovernorService(governorData: IUserAdminCreateGovernorDTO): Promise<any> {
     // we add the status and role since they are not inputs taken by the user
-    const newGovernorUser = new this.userModel({ ...governorData, status: UserStatus.APPROVED, role: UserRoles.Governor });
-    // the reason we dont call user service to create the admin is because the user service DTO does
-    // not expect status as one of its attributes, so we have to do it ourselves
+    const newGovernorUser: IUserInputDTO = {
+      name: governorData.name,
+      email: governorData.email,
+      username: governorData.username,
+      phone_number: governorData.phone_number,
+      password: governorData.password,
+      role: UserRoles.Governor,
+      date_of_birth: new Date(),
+    };
 
-    if (newGovernorUser instanceof Error) throw new InternalServerError("Internal server error");
-    if (!newGovernorUser) throw new HttpError("Governor not created", 404);
+    const userService: UserService = Container.get(UserService);
+    const newUserResponse = await userService.createUserService(newGovernorUser);
 
-    await newGovernorUser.save();
-    const newGovernor = await this.governorModel.create({ user_id: newGovernorUser._id, nation: governorData.nation });
+    const newGovernor = await this.governorModel.create({ user_id: newUserResponse.data._id, nation: governorData.nation });
 
     const governorOutput: IUserAdminViewDTO = {
-      _id: newGovernorUser._id,
+      _id: newGovernor.user_id,
       email: newGovernorUser.email,
       name: newGovernorUser.name,
       username: newGovernorUser.username,
       role: newGovernorUser.role,
       phone_number: newGovernorUser.phone_number,
-      status: newGovernorUser.status,
-      createdAt: newGovernorUser.createdAt,
-      updatedAt: newGovernorUser.updatedAt,
+      status: newUserResponse.data.status,
+      createdAt: newUserResponse.data.createdAt,
+      updatedAt: newUserResponse.data.updatedAt,
     };
 
-    return new response(true, { ...governorOutput, nation: newGovernor.nation }, "Governor created", 200);
+    return new response(true, { ...governorOutput, nation: newGovernor.nation }, "Governor created", 201);
   }
 
   public async createAdminService(adminData: IUserAdminCreateAdminDTO): Promise<any> {
     // we add the status and role since they are not inputs taken by the user
-    const newAdmin = new this.userModel({ ...adminData, status: UserStatus.APPROVED, role: UserRoles.Admin });
-    // the reason we dont call user service to create the admin is because the user service DTO does
-    // not expect status as one of its attributes, so we have to do it ourselves
-
-    if (newAdmin instanceof Error) throw new InternalServerError("Internal server error");
-    if (!newAdmin) throw new HttpError("Admin not created", 404);
-
-    await newAdmin.save();
-    const adminOutput: IUserAdminViewDTO = {
-      _id: newAdmin._id,
-      email: newAdmin.email,
-      name: newAdmin.name,
-      username: newAdmin.username,
-      role: newAdmin.role,
-      phone_number: newAdmin.phone_number,
-      status: newAdmin.status,
-      createdAt: newAdmin.createdAt,
-      updatedAt: newAdmin.updatedAt,
+    const newAdminUser: IUserInputDTO = {
+      name: adminData.name,
+      email: adminData.email,
+      username: adminData.username,
+      phone_number: adminData.phone_number,
+      password: adminData.password,
+      role: UserRoles.Admin,
+      date_of_birth: new Date(),
     };
-    return new response(true, adminOutput, "Admin created", 200);
+
+    const userService: UserService = Container.get(UserService);
+    const newUserResponse = await userService.createUserService(newAdminUser);
+
+    const adminOutput: IUserAdminViewDTO = {
+      _id: newUserResponse.data._id,
+      email: newUserResponse.data.email,
+      name: newUserResponse.data.name,
+      username: newUserResponse.data.username,
+      role: newUserResponse.data.role,
+      phone_number: newUserResponse.data.phone_number,
+      status: newUserResponse.data.status,
+      createdAt: newUserResponse.data.createdAt,
+      updatedAt: newUserResponse.data.updatedAt,
+    };
+    return new response(true, adminOutput, "Admin created", 201);
   }
 
   // CRUD for categories
   public async createCategoryService(type: string): Promise<any> {
     const category = await this.categoryModel.create({ type });
     if (category instanceof Error) throw new InternalServerError("Internal server error");
-    if (!category) throw new HttpError("Category not found", 404);
 
-    return new response(true, category, "Created new category!", 200);
+    return new response(true, category, "Created new category!", 201);
   }
 
   public async getCategoriesService(page: number): Promise<any> {

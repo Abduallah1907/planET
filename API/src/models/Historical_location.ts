@@ -77,12 +77,6 @@ const historicalLocationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-<<<<<<< HEAD
 const Historical_location = mongoose.model<IHistorical_location & mongoose.Document>("Historical_Location", historicalLocationSchema);
-=======
-const Historical_location = mongoose.model<
-  IHistorical_location & mongoose.Document
->("Historical_Location", historicalLocationSchema);
->>>>>>> backend
 
 export default Historical_location;
