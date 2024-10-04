@@ -61,7 +61,9 @@ export default {
    * NodeMailer Config
    */
   emails: {
+    service: process.env.MAIL_SERVICE,
     host: process.env.MAIL_HOST,
+    port: process.env.MAIL_PORT,
     user: process.env.MAIL_USERNAME,
     pass: process.env.MAIL_PASSWORD,
     clientID: process.env.OAUTH_MAIL_CLIENTID,

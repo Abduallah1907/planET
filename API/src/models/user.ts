@@ -20,6 +20,7 @@ const UserSchema = new mongoose.Schema(
       lowercase: true,
       unique: true,
       index: true,
+      required: true,
     },
     password: {
       type: String,
@@ -32,7 +33,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       enum: Object.values(UserRoles),
       default: UserRoles.Tourist,
-      immutable: true,
+      required:true,
     },
     phone_number: {
       type: String,
@@ -44,6 +45,7 @@ const UserSchema = new mongoose.Schema(
     },
     status: {
       type: String,
+      required: true,
       enum: Object.values(UserStatus),
       default: UserStatus.WAITING_FOR_APPROVAL,
     },
