@@ -1,7 +1,6 @@
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
 import { ObjectId } from "mongoose";
-import e from "cors";
 
 export interface IUser {
   name: string;
@@ -54,7 +53,7 @@ export interface IUserInputDTO {
   password: string;
   role: UserRoles;
   phone_number: string;
-  date_of_birth: Date;
+  date_of_birth?: Date;
 }
 
 export interface IUserCreateDTO {

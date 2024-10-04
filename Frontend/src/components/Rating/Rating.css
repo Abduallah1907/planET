@@ -1,0 +1,30 @@
+.rating {
+    display: flex;
+    gap: 5px;
+    cursor: pointer;
+    /* Cursor when interactive */
+}
+
+.rating .read-only {
+    cursor: default;
+    /* Cursor when in read-only mode */
+}
+
+.star {
+    position: relative;
+    width: 1.2rem;
+    /* Size of the star */
+    height: 1.2rem;
+    background-image: url('../../assets/StarFrame.svg');
+    background-size: cover;
+}
+
+.star-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-image: url('../../assets/Star.svg');
+    background-size: cover;
+    overflow: hidden;
+}
