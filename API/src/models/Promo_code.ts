@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 
 const promoCodeSchema = new mongoose.Schema(
   {
-    
     code: {
       type: String,
       required: true,

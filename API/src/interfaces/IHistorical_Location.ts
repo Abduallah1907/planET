@@ -1,4 +1,5 @@
-import { Document, ObjectId } from 'mongoose';
+import { Location } from "@/types/Location";
+import { Document, ObjectId } from "mongoose";
 
 export interface IHistorical_location extends Document {
   governor_id: ObjectId;
@@ -6,7 +7,7 @@ export interface IHistorical_location extends Document {
   name: string;
   description: string;
   picture: string[];
-  location: string;
+  location: Location;
   opening_hours_from: string;
   opening_hours_to: string;
   opening_days: string[];

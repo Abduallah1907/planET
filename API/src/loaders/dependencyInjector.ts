@@ -12,13 +12,16 @@ export default ({ mongoConnection,models}: { mongoConnection: any; models: { nam
 
     const agendaInstance = agendaFactory({ mongoConnection });
     const transporter = nodemailer.createTransport({
-        service: config.emails.host,
+        service: config.emails.service,
         auth: {
             user: config.emails.user,
             pass: config.emails.pass,
-            clientId: config.emails.clientID,
-            clientSecret: config.emails.clientSecret,
-            refreshToken: config.emails.refershToken
+            // clientId: config.emails.clientID,
+            // clientSecret: config.emails.clientSecret,
+            // refreshToken: config.emails.refershToken
+        },
+        tls: {
+            rejectUnauthorized: false
         }
     });
 

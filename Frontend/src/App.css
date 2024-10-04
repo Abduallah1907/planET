@@ -1,3 +1,15 @@
+:root{
+  --main-color : #d76f30;
+  --secondary-color : #ffffff;
+  
+  
+}
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+
+body {
+  font-family: 'League Spartan', sans-serif;
+}
+
 .App {
   text-align: center;
 }
@@ -28,6 +40,81 @@
   color: #61dafb;
 }
 
+.btn-main {
+  background-color: var(--secondary-color);
+  color: var(--main-color);
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin-right: 15px;
+  font-weight: bold !important;
+  cursor: pointer;
+}
+
+.btn-main:hover {
+  background-color: var(--secondary-color);
+  color: var(--main-color);
+  scale: 1.05;
+}
+
+.btn-main:active {
+  background-color: var(--secondary-color) !important;
+  color: var(--main-color) !important;
+  scale: 0.9;
+
+}
+
+/* General Dropdown Styles */
+.dropdown-toggle {
+  background-color: transparent !important; /* Remove background color */
+  border: none; /* Remove border */
+  color: inherit; /* Inherit text color */
+  padding: 0; /* Remove padding */
+  box-shadow: none; /* Remove box shadow */
+}
+
+.dropdown-toggle::after {
+  display: none; /* Hide the dropdown arrow */
+}
+
+.dropdown-toggle:hover,
+.dropdown-toggle:active {
+  background-color: transparent; /* Remove background color on hover, focus, and active states */
+  border: none; /* Remove border on hover, focus, and active states */
+  box-shadow: none; /* Remove box shadow on hover, focus, and active states */
+}
+
+/* Additional styles for the dropdown menu */
+.dropdown-menu {
+  background-color: #fff; /* Background color for the dropdown menu */
+  border: 1px solid #ccc; /* Border for the dropdown menu */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Box shadow for the dropdown menu */
+}
+
+/* Styles for the dropdown menu when it is opened */
+.dropdown-menu.show {
+  background-color: var(--secondary-color); /* Change background color when opened */
+  border-color: var(--main-color); /* Change border color when opened */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Change box shadow when opened */
+}
+
+/* Specific styles for the currency dropdown when it is opened */
+.currency-dropdown .dropdown-menu.show {
+  background-color: var(--secondary-color); /* Example background color for currency dropdown when opened */
+  border-color: var(--main-color); /* Example border color for currency dropdown when opened */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Example box shadow for currency dropdown when opened */
+}
+
+.dropdown-item {
+  color: #333; /* Text color for dropdown items */
+  padding: 10px 20px; /* Padding for dropdown items */
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: #e9ecef; /* Background color for dropdown items on hover and focus */
+  color: #000; /* Text color for dropdown items on hover and focus */
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -35,4 +122,6 @@
   to {
     transform: rotate(360deg);
   }
+
+
 }

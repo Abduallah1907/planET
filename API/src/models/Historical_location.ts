@@ -1,4 +1,5 @@
 import { IHistorical_location } from "@/interfaces/IHistorical_Location";
+import { LocationSchema } from "@/types/Location";
 import mongoose from "mongoose";
 
 const historicalLocationSchema = new mongoose.Schema(
@@ -34,7 +35,7 @@ const historicalLocationSchema = new mongoose.Schema(
       },
     ],
     location: {
-      type: String,
+      type: LocationSchema,
       required: true,
     },
     opening_hours_from: {
@@ -76,6 +77,12 @@ const historicalLocationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+<<<<<<< HEAD
 const Historical_location = mongoose.model<IHistorical_location & mongoose.Document>("Historical_Location", historicalLocationSchema);
+=======
+const Historical_location = mongoose.model<
+  IHistorical_location & mongoose.Document
+>("Historical_Location", historicalLocationSchema);
+>>>>>>> backend
 
 export default Historical_location;
