@@ -1,3 +1,5 @@
+import OrderStatus from '@/types/enums/orderStatus';
+import PaymentType from '@/types/enums/paymentType';
 import { Document, ObjectId } from 'mongoose';
 
 export interface IOrder extends Document {
@@ -5,8 +7,8 @@ export interface IOrder extends Document {
   products: ObjectId[];
   date: Date;
   cost: number;
-  status: 'pending' | 'cancelled' | 'delivered';
-  payment_type: 'credit card' | 'cash';
+  status: OrderStatus;
+  payment_type: PaymentType;
   createdAt?: Date;
   updatedAt?: Date;
 }

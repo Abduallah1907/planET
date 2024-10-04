@@ -1,8 +1,11 @@
-import React from 'react';
-import TopBar from './components/TopBar';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
+import React from "react";
+import TopBar from "./components/TopBar";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
+import ProfileForm from "./components/ProfileForm/ProfileForm";
+import CustomFormGroup from "./components/FormGroup";
+import { Placeholder } from "react-bootstrap";
 import TopBarLinks from './views/Main Page/TopBarLinks';
 import SearchBar from './views/Main Page/SearchBar';
 import HeroSection from './views/Main Page/Hero'
@@ -34,15 +37,16 @@ const Home: React.FC = () => {
 }
 
 const App: React.FC = () => {
-
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<TopBar />} />
+        <Route path="/editprofile" Component={ProfileForm} />
         <Route path="/" element={<Home />} />
 
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;

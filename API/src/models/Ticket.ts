@@ -14,6 +14,10 @@ const ticketSchema = new mongoose.Schema({
     enum: Object.values(TicketType),
     required: true,
   },
+  price: {
+    type: Number,
+    required: true,
+  },
   booking_id: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
