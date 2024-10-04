@@ -6,6 +6,7 @@ import "./App.css";
 import ProfileForm from "./components/ProfileForm/ProfileForm";
 import CustomFormGroup from "./components/FormGroup";
 import { Placeholder } from "react-bootstrap";
+import Dashboard from "./views/dashboard";
 
 const App: React.FC = () => {
   return (
@@ -13,6 +14,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<TopBar />} />
         <Route path="/editprofile" Component={ProfileForm} />
+        <Route path='/dashboard' element={<Dashboard />} />
       </Routes>
     </Router>
   );

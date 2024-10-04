@@ -1,0 +1,40 @@
+.statistics-cards {
+    border: 2px solid var(--main-color);
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  .country-campaign-table {
+    border: 2px solid var(--main-color);
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #fff;
+  }
+  .welcome-container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 2px solid var(--main-color);
+    border-radius: 8px;
+    background-color: #fff;
+  }
+  .welcome-container h2, span{
+    font-weight: bold;
+  }
+  .orange-text {
+    color: var(--main-color);
+  }
+  .welcome-image {
+    margin-left: 10px;
+    width: 5px;
+    height: 5px;
+    border-radius: 5%;
+  }
+  .dash{
+    font-weight: bold;
+
+  }
