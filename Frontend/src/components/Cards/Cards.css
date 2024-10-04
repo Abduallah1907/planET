@@ -15,8 +15,9 @@
   }
 
   .review-badge{
+    width: 2.1rem;
     background-color: var(--main-color) !important;
-    padding: 0.5rem 0.3rem !important;
+    padding: 0.5rem 0rem !important;
     border-radius: 5px !important;
     border-bottom-left-radius: 0% !important;
     font-family: Poppins;
