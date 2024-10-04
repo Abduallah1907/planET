@@ -66,7 +66,7 @@ export default class TourGuideService {
     if (tourGuideProfile instanceof Error) throw new InternalServerError("Internal server error");
     if (!tourGuideProfile) throw new HttpError("Tour guide not found", 404);
 
-    return new response(true, tourGuideProfile, "Tour guide profile", 200);
+    return new response(true, tourGuideProfile, "Tour guide profile", 201);
   }
 
   public async updateProfileService(years_of_experience: number, photo: string, tour_guide_user_id: ObjectId): Promise<any> {
@@ -89,7 +89,7 @@ export default class TourGuideService {
     tourGuide.photo = photo;
     tourGuide.years_of_experience = years_of_experience;
     await tourGuide.save();
-    return new response(true, tourGuide, "Profile updated successfully!", 200);
+    return new response(true, tourGuide, "Profile updated successfully!", 201);
   }
 
   public async createItineraryService() {}
