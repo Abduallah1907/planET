@@ -135,4 +135,14 @@ export default class TourGuideService {
 
     return new response(true, deletedItinerary, "Itinerary deleted!", 200);
   }
+
+  // view all itineraries
+
+  public async getAllItinerariesService(tour_guide_user_id: Types.ObjectId) {
+    const tourGuideData = await this.tourGuideModel.findOne({ user_id: tour_guide_user_id });
+    if (tourGuideData instanceof Error) throw new InternalServerError("Internal server error");
+    if (!tourGuideData) throw new HttpError("Tour guide not found", 404);
+    const { itineraries } = await tourGuideData.populate("itineraries");
+    return new response(true, itineraries, "Returning all found itineraries!", 201);
+  }
 }

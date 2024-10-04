@@ -75,4 +75,12 @@ export class TourGuideController {
     const deletedItinerary = await tourGuideService.deleteItineraryService(tour_guide_idObjectId, _idObjectId);
     res.json({ deletedItinerary });
   }
+
+  public async viewAllItineraries(req: Request, res: Response): Promise<any> {
+    const { tour_guide_user_id } = req.params;
+    const tour_guide_idObjectId = new Types.ObjectId(tour_guide_user_id);
+    const tourGuideService: TourGuideService = Container.get(TourGuideService);
+    const itineraries = await tourGuideService.getAllItinerariesService(tour_guide_idObjectId);
+    res.json({ itineraries });
+  }
 }
