@@ -25,7 +25,6 @@ const productSchema = new mongoose.Schema(
     picture: {
       type: String,
       required: true,
-      default: "Kamal_Picture",
     },
     price: {
       type: Number,

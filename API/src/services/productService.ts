@@ -1,3 +1,4 @@
+import { IProduct } from "@/interfaces/IProduct";
 import { InternalServerError } from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Service, Inject } from "typedi";
@@ -8,8 +9,10 @@ export class ProductService {
     @Inject("productModel") private productModel: Models.ProductModel
   ) {}
 
-  public async createProductService(product: Models.ProductModel) {
+  public async createProductService(product: IProduct) {
+    console.log(product);
     const newProduct = new this.productModel(product);
+    console.log("newProduct", newProduct);
     const result = await newProduct.save();
     if (result instanceof Error)
       throw new InternalServerError("Internal Server Error");
