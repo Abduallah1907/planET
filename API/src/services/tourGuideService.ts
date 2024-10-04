@@ -1,16 +1,17 @@
-import Tour_Guide from "@/models/Tour_guide";
 import { ObjectId, Types } from "mongoose";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import { Inject, Service } from "typedi";
 import { HttpError, InternalServerError } from "@/types/Errors";
 import { IPreviousWorkInputDTO, IPreviousWorkUpdateDTO } from "@/interfaces/IPrevious_work";
+import { IItineraryCreateDTO } from "@/interfaces/IItinerary";
 @Service()
 export default class TourGuideService {
   constructor(
     @Inject("userModel") private userModel: Models.UserModel,
     @Inject("tour_guideModel") private tourGuideModel: Models.Tour_guideModel,
-    @Inject("previous_workModel") private previousWorkModel: Models.Previous_workModel
+    @Inject("previous_workModel") private previousWorkModel: Models.Previous_workModel,
+    @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel
   ) {}
   // CUD for work experiences
   // Read is mostly like not needed as it will be viewed along side the profile, so the logic for that is moved down there
@@ -80,7 +81,7 @@ export default class TourGuideService {
       throw new HttpError("This user is not registered to our system?? This error should never be thrown :)", 400);
     }
 
-    const tourGuide = await Tour_Guide.findOne({ user_id: tour_guide_user_id });
+    const tourGuide = await this.tourGuideModel.findOne({ user_id: tour_guide_user_id });
     if (!tourGuide)
       throw new HttpError(
         "For some reason, the tour guide is registered as user and not in the tour guide table. In other words, if this error is thrown, something has gone terribly wrong",
@@ -92,5 +93,22 @@ export default class TourGuideService {
     return new response(true, tourGuide, "Profile updated successfully!", 201);
   }
 
-  public async createItineraryService() {}
+  // side note that somehow we need to get activity ids
+  // we also need timeline object???
+  public async createItineraryService(itineraryData: IItineraryCreateDTO) {
+    const tour_guide = await this.tourGuideModel.findOne({ user_id: itineraryData.tour_guide_user_id });
+    const tour_guide_id = tour_guide._id;
+    const itineraryDataCreation = { ...itineraryData, tour_guide_id, comments: [], active_flag: true, inappropriate_flag: false };
+    const newItinerary = await this.itineraryModel.create(itineraryDataCreation);
+
+    if (newItinerary instanceof Error) throw new InternalServerError("Internal server error");
+
+    tour_guide.itineraries.push(newItinerary._id);
+    await tour_guide.save();
+
+    return new response(true, newItinerary, "Itinerary created successfully!", 201);
+  }
+  public async getItineraryService() {}
+  public async updateItineraryService() {}
+  public async deleteItineraryService() {}
 }

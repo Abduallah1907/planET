@@ -20,3 +20,20 @@ export interface IItinerary extends Document {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface IItineraryCreateDTO extends Document {
+  tour_guide_user_id: ObjectId;
+  name: string;
+  category: ObjectId;
+  activities: ObjectId[];
+  timeline: ObjectId[];
+  locations: Location[];
+  duration: string;
+  languages: string[];
+  price: number;
+  available_dates: Date[];
+  accessibility: boolean;
+  pickup_loc: string;
+  drop_off_loc: string;
+  tags?: string[];
+}
