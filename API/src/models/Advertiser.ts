@@ -37,10 +37,6 @@ const advertiserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    approval: {
-      type: Boolean,
-      required: true,
-    },
   },
   { timestamps: true }
 );

@@ -1,0 +1,27 @@
+.content {
+  display: flex;
+  height: 100vh;
+}
+
+.content-left {
+  background-color: #d76f30;
+  color: white;
+  padding: 0px 100px;
+}
+
+.content-left h1 {
+  text-align: center;
+  padding: 50px 0px;
+}
+
+.content-right {
+  margin: 50px 120px;
+}
+
+.custom-checkbox {
+  border: none;
+}
+
+.terms-link {
+  color: #d76f30;
+}

@@ -1,4 +1,4 @@
-import { IComment_Rating } from '@/interfaces/IComment_Rating';
+import {IComment_Rating} from '../interfaces/IComment_rating';
 import mongoose from 'mongoose';
 
 const commentRatingSchema = new mongoose.Schema({
