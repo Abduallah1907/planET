@@ -6,6 +6,8 @@ import {
 import response from "../types/responses/response";
 import { Inject, Service } from "typedi";
 import { IUserInputDTO } from "@/interfaces/IUser";
+import UserRoles from "@/types/enums/userRoles";
+import UserStatus from "@/types/enums/userStatus";
 
 @Service()
 export default class UserService {
