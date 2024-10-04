@@ -6,7 +6,9 @@ import "./App.css";
 import ProfileForm from "./components/ProfileForm/ProfileForm";
 import CustomFormGroup from "./components/FormGroup";
 import { Placeholder } from "react-bootstrap";
-import Dashboard from "./views/dashboard";
+import TourGuideDashboard from "./views/TourGuideDashboard/TourGuidedashboard";
+import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
+
 
 const App: React.FC = () => {
   return (
@@ -14,10 +16,12 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<TopBar />} />
         <Route path="/editprofile" Component={ProfileForm} />
-        <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='/TourGuidedashboard' element={<TourGuideDashboard />} />
+        <Route path='/AdminDashboard' element={<AdminDashboard />} />
       </Routes>
     </Router>
   );
 };
 
 export default App;
+

@@ -1,12 +1,12 @@
 import React from 'react';
-import TopBar from '../components/TopBar';
+import TopBar from '../../components/TopBar';
 import StatisticsCards from './StatisticsCards';
 import CountryCampaignTable from './CountryCampaignTable';
-import './dashboard.css';
+import './TourGuidedashboard.css';
 import { Container } from 'react-bootstrap';
-import Icon from '../assets/IconCircle.svg';
+import Icon from '../../assets/IconCircle.svg';
 
-const Dashboard = () => {
+const TourGuideDashboard = () => {
     return (
         <div>
             <TopBar />
@@ -35,4 +35,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export default TourGuideDashboard;
