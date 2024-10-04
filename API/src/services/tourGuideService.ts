@@ -1,10 +1,11 @@
 import { ObjectId, Types } from "mongoose";
+import Itinerary from "@/models/Itinerary";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import { Inject, Service } from "typedi";
 import { HttpError, InternalServerError } from "@/types/Errors";
 import { IPreviousWorkInputDTO, IPreviousWorkUpdateDTO } from "@/interfaces/IPrevious_work";
-import { IItineraryCreateDTO, IItineraryUpdateDTO } from "@/interfaces/IItinerary";
+import { IItinerary, IItineraryCreateDTO, IItineraryUpdateDTO } from "@/interfaces/IItinerary";
 @Service()
 export default class TourGuideService {
   constructor(
@@ -137,13 +138,17 @@ export default class TourGuideService {
   }
 
   // view all itineraries
-  // does not show anything about subdocuments (activities, comments, etc...)
-
   public async getAllItinerariesService(tour_guide_user_id: Types.ObjectId) {
-    const { itineraries } = await this.tourGuideModel.findOne({ user_id: tour_guide_user_id }).populate("itineraries");
+    // why not use DTO for output one might ask
+    // it is because i do not want to write all the attributes thanks
+    // this also leaves activities' subdocuments as is, if the front end needs that info i will fix it
+    // otherwise everything is fine
+    const { itineraries } = await this.tourGuideModel.findOne({ user_id: tour_guide_user_id }).populate({
+      path: "itineraries",
+      populate: [{ path: "activities" }, { path: "comments" }, { path: "category" }],
+    });
     if (itineraries instanceof Error) throw new InternalServerError("Internal server error");
     if (!itineraries) throw new HttpError("Tour guide not found", 404);
-
-    return new response(true, tourGuideData, "Returning all found itineraries!", 201);
+    return new response(true, itineraries, "Returning all found itineraries!", 201);
   }
 }

@@ -11,8 +11,8 @@ export interface IItinerary extends Document {
   price: number;
   available_dates: Date[];
   accessibility: boolean;
-  pickup_loc: string;
-  drop_off_loc: string;
+  pickup_loc: Location;
+  drop_off_loc: Location;
   tags?: string[];
   active_flag: boolean;
   inappropriate_flag: boolean;
@@ -33,8 +33,8 @@ export interface IItineraryCreateDTO extends Document {
   price: number;
   available_dates: Date[];
   accessibility: boolean;
-  pickup_loc: string;
-  drop_off_loc: string;
+  pickup_loc: Location;
+  drop_off_loc: Location;
   tags?: string[];
 }
 
