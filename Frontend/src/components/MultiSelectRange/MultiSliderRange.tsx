@@ -1,28 +1,34 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import "./MultiSliderRange.css";
-import PropTypes from "prop-types";
+import {
+  ChangeEvent,
+  FC,
+  useCallback,
+  useEffect,
+  useState,
+  useRef
+} from "react";
 import classnames from "classnames";
+import "./MultiSliderRange.css";
 
-interface SliderOption {
+interface MultiRangeSliderProps {
   min: number;
   max: number;
-  onChange: (values: { min: number; max: number }) => void;
+  onChange: Function;
 }
 
-const MultiRangeSlider = ({ min, max, onChange }: SliderOption) => {
-  //   const MultiRangeSlider = () => {};
-
-  // Set the type of each prop
-
+const MultiRangeSlider: FC<MultiRangeSliderProps> = ({
+  min,
+  max,
+  onChange
+}) => {
   const [minVal, setMinVal] = useState(min);
   const [maxVal, setMaxVal] = useState(max);
   const minValRef = useRef<HTMLInputElement>(null);
   const maxValRef = useRef<HTMLInputElement>(null);
-  const range = useRef<HTMLInputElement>(null);
+  const range = useRef<HTMLDivElement>(null);
 
   // Convert to percentage
   const getPercent = useCallback(
-    (value: any) => Math.round(((value - min) / (max - min)) * 100),
+    (value: number) => Math.round(((value - min) / (max - min)) * 100),
     [min, max]
   );
 
@@ -30,7 +36,7 @@ const MultiRangeSlider = ({ min, max, onChange }: SliderOption) => {
   useEffect(() => {
     if (maxValRef.current) {
       const minPercent = getPercent(minVal);
-      const maxPercent = getPercent(+maxValRef.current.value);
+      const maxPercent = getPercent(+maxValRef.current.value); // Precede with '+' to convert the value from type string to type number
 
       if (range.current) {
         range.current.style.left = `${minPercent}%`;
@@ -57,20 +63,20 @@ const MultiRangeSlider = ({ min, max, onChange }: SliderOption) => {
   }, [minVal, maxVal, onChange]);
 
   return (
-    <>
+    <div className="container">
       <input
         type="range"
         min={min}
         max={max}
         value={minVal}
         ref={minValRef}
-        onChange={(event) => {
+        onChange={(event: ChangeEvent<HTMLInputElement>) => {
           const value = Math.min(+event.target.value, maxVal - 1);
           setMinVal(value);
           event.target.value = value.toString();
         }}
         className={classnames("thumb thumb--zindex-3", {
-          "thumb--zindex-5": minVal > max - 100,
+          "thumb--zindex-5": minVal > max - 100
         })}
       />
       <input
@@ -79,26 +85,22 @@ const MultiRangeSlider = ({ min, max, onChange }: SliderOption) => {
         max={max}
         value={maxVal}
         ref={maxValRef}
-        onChange={(event) => {
+        onChange={(event: ChangeEvent<HTMLInputElement>) => {
           const value = Math.max(+event.target.value, minVal + 1);
           setMaxVal(value);
           event.target.value = value.toString();
         }}
         className="thumb thumb--zindex-4"
       />
+
       <div className="slider">
-        <div className="slider__track" />
-        <div ref={range} className="slider__range" />
+        <div className="slider__track"></div>
+        <div ref={range} className="slider__range"></div>
         <div className="slider__left-value">{minVal}</div>
         <div className="slider__right-value">{maxVal}</div>
       </div>
-    </>
+    </div>
   );
 };
 
-MultiRangeSlider.propTypes = {
-  min: PropTypes.number.isRequired,
-  max: PropTypes.number.isRequired,
-  onChange: PropTypes.func.isRequired,
-};
 export default MultiRangeSlider;
