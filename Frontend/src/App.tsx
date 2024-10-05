@@ -1,10 +1,8 @@
-import React from "react";
+
 import TopBar from "./components/TopBar/TopBar";
 import { Route, Routes } from "react-router-dom";
 import React, { useState } from "react";
-import TopBar from "./components/TopBar";
 import CreateAdmin from "./views/CreateAdmin";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import CreateGoverner from "./views/CreateGoverner";
