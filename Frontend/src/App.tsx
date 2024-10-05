@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import CreateAdmin from "./views/CreateAdmin";
-
 import TopBar from "./components/TopBar/TopBar";
 import { Route, Routes } from "react-router-dom";
-import React, { useState } from "react";
-import CreateAdmin from "./views/CreateAdmin";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import CreateGoverner from "./views/CreateGoverner";
@@ -14,7 +11,6 @@ import TouristReg from "./views/auth/TouristReg/TouristReg";
 import ActivityCard from "./components/Cards/ActivityCard";
 import HistoricalLocationCard from "./components/Cards/HistoricalLocation";
 import ItineraryCard from "./components/Cards/ItineraryCard";
-import TouristReg from "./views/auth/TouristReg/TouristReg";
 import TourGuideDashboard from "./views/TourGuideDashboard/TourGuidedashboard";
 import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
 
