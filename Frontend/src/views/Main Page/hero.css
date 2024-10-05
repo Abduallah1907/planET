@@ -1,24 +1,33 @@
 .hero-section {
   position: relative;
-  overflow: hidden; /* Ensure the image doesn't overflow the container */
-  background: 
-    url('../../assets/Traveller.svg') no-repeat top right, 
+  overflow: hidden;
+  /* Ensure the image doesn't overflow the container */
+  background:
+    url('../../assets/Traveller.svg') no-repeat top right,
     url('../../assets/Plane.svg') no-repeat center right;
-  background-size: contain, contain; /* Resize the plane image to 30% */
-  background-position: top right, center right; /* Adjust positions */
-  z-index: 1; /* Ensure the section is below other elements */
-  padding-top: 120px; /* Adjust this value to match the combined height of your top bar and top bar links */
-  min-height: 100vh; /* Ensure the section has enough height to display the background images */
+  background-size: contain, contain;
+  /* Resize the plane image to 30% */
+  background-position: top right, center right;
+  /* Adjust positions */
+  z-index: 1;
+  /* Ensure the section is below other elements */
+  padding-top: 120px;
+  /* Adjust this value to match the combined height of your top bar and top bar links */
+  min-height: 100vh;
+  /* Ensure the section has enough height to display the background images */
 }
 
 .absolute-image {
   position: absolute;
   top: 0;
   right: 0;
-  width: 100px; /* Adjust the width as needed */
+  width: 100px;
+  /* Adjust the width as needed */
   height: auto;
-  z-index: -1; /* Ensure it is below other elements */
-  pointer-events: none; /* Ensure it doesn't intercept any clicks or events */
+  z-index: -1;
+  /* Ensure it is below other elements */
+  pointer-events: none;
+  /* Ensure it doesn't intercept any clicks or events */
 }
 
 .hero-text h1 {
@@ -46,15 +55,11 @@
 }
 
 
-  .hero-subtitle{
-    font-size: 1.5rem;
-    color: var(--main-color);
-    margin: 20px 0;
-    font-weight: bold ;
-  }
-  img {
-    max-width: 100%;
-    height: auto;
+.hero-subtitle {
+  font-size: 1.5rem;
+  color: var(--main-color);
+  margin: 20px 0;
+  font-weight: bold;
 }
 
 img {
