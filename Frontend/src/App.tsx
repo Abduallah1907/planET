@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+import CreateAdmin from "./views/CreateAdmin";
 
 import TopBar from "./components/TopBar/TopBar";
 import { Route, Routes } from "react-router-dom";
@@ -12,11 +14,18 @@ import TouristReg from "./views/auth/TouristReg/TouristReg";
 import ActivityCard from "./components/Cards/ActivityCard";
 import HistoricalLocationCard from "./components/Cards/HistoricalLocation";
 import ItineraryCard from "./components/Cards/ItineraryCard";
+import TouristReg from "./views/auth/TouristReg/TouristReg";
+import TourGuideDashboard from "./views/TourGuideDashboard/TourGuidedashboard";
+import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
+
+import MainPage from "./views/Main Page/MainPage";
+import { AppProvider } from "./AppContext";
 
 const App: React.FC = () => {
   const [isBooked, setIsBooked] = useState(false); // Manage booking state
 
   return (
+    <AppProvider>
       <Routes>
         <Route path="/" element={<TopBar />} />
         <Route path="/editprofile" element={<ProfileForm />} />
@@ -84,8 +93,18 @@ const App: React.FC = () => {
             />
           }
         />
+        <Route path="/editprofile" element={<ProfileForm />} />
+        <Route path="/tourist" element={<TouristReg />} />
+        <Route path="/editprofile" Component={ProfileForm} />
+        <Route path='/TourGuidedashboard' element={<TourGuideDashboard />} />
+        <Route path='/AdminDashboard' element={<AdminDashboard />} />
+        <Route path="/editprofile" Component={ProfileForm} />
+        <Route path="/" element={<MainPage />} />
+
       </Routes>
+      </AppProvider>
   );
 };
 
 export default App;
+

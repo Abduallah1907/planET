@@ -1,10 +1,11 @@
-import { Document, ObjectId } from 'mongoose';
+import { Location } from "@/types/Location";
+import { Document, ObjectId } from "mongoose";
 
 export interface IItinerary extends Document {
   activities: ObjectId[];
   timeline: ObjectId[];
   comments: ObjectId[];
-  locations: string[];
+  locations: Location[];
   duration: string;
   languages: string[];
   price: number;
@@ -12,7 +13,7 @@ export interface IItinerary extends Document {
   accessibility: boolean;
   pickup_loc: string;
   drop_off_loc: string;
-  tags?: string[];
+  tags?: ObjectId[];
   active_flag: boolean;
   inappropriate_flag: boolean;
   tour_guide_id: ObjectId;

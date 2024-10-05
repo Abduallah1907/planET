@@ -3,6 +3,7 @@
 	background-color: var(--main-color);
 	height: 100px;
     display: flex;
+    position: fixed;
 
 }
 
@@ -41,7 +42,7 @@
 .btn-flag {
     width: 30px; /* Ensure width and height are equal */
     height: 30px; /* Ensure width and height are equal */
-    background-image: url('../assets/UK.webp'); /* Ensure this path is correct */
+    background-image: url('../../assets/UK.webp'); /* Ensure this path is correct */
     background-size: cover;
     background-position: center;
     border: none !important; /* Remove any border */
@@ -57,7 +58,7 @@
     width: 25px; /* Ensure width and height are equal */
     height: 25px; /* Ensure width and height are equal */
     background-color:transparent !important; /* Set background color to white */
-    background-image: url('../assets/Help.svg'); /* Ensure this path is correct */
+    background-image: url('../../assets/Help.svg'); /* Ensure this path is correct */
     background-size: cover;
     background-position: center;
     border: white !important; /* Remove any border */

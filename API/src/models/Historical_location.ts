@@ -1,72 +1,96 @@
-import { IHistorical_location } from '@/interfaces/IHistorical_location';
-import mongoose from 'mongoose';
+import { IHistorical_location } from "../interfaces/IHistorical_Location";
+import { LocationSchema } from "@/types/Location";
+import mongoose from "mongoose";
 
+const historicalLocationSchema = new mongoose.Schema(
+  {
+    governor_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Governor",
+      required: true,
+    },
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment_Rating",
+      },
+    ],
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    date_time: {
+      type: Date,
+      // required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    average_rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      required: true,
+      default: 0,
+    },
+    picture: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
+    location: {
+      type: LocationSchema,
+      required: true,
+    },
+    opening_hours_from: {
+      type: String, // Assuming time is stored as a string
+      required: true,
+    },
+    opening_hours_to: {
+      type: String, // Assuming time is stored as a string
+      required: true,
+    },
+    opening_days: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
+    native_price: {
+      type: Number,
+      required: true,
+    },
+    foreign_price: {
+      type: Number,
+      required: true,
+    },
+    student_price: {
+      type: Number,
+      required: true,
+    },
+    active_flag: {
+      type: Boolean,
+      required: true,
+    },
+    tags: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
+      },
+    ],
+  },
+  { timestamps: true }
+);
 
-const historicalLocationSchema = new mongoose.Schema({
-  
-  governor_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Governor',
-    required: true,
-  },
-  comments: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Comment_Rating',
-  }],
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
-    required: true,
-  },
-  name: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  picture: [{
-    type: String,
-    required: true,
-  }],
-  location: {
-    type: String,
-    required: true,
-  },
-  opening_hours_from: {
-    type: String, // Assuming time is stored as a string
-    required: true,
-  },
-  opening_hours_to: {
-    type: String, // Assuming time is stored as a string
-    required: true,
-  },
-  opening_days: [{
-    type: String,
-    required: true,
-  }],
-  native_price: {
-    type: Number,
-    required: true,
-  },
-  foreign_price: {
-    type: Number,
-    required: true,
-  },
-  student_price: {
-    type: Number,
-    required: true,
-  },
-  active_flag: {
-    type: Boolean,
-    required: true,
-  },
-  tags: [{
-    type: String,
-  }]
-}, { timestamps: true });
-
-const Historical_location = mongoose.model<IHistorical_location & mongoose.Document>('Historical_Location', historicalLocationSchema);
+const Historical_location = mongoose.model<
+  IHistorical_location & mongoose.Document
+>("Historical_Location", historicalLocationSchema);
 
 export default Historical_location;

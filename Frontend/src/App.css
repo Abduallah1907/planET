@@ -1,6 +1,8 @@
 :root{
   --main-color : #d76f30;
   --secondary-color : #ffffff;
+  --text-secondary-color :  #181E4B;
+
   
   
 }
@@ -136,6 +138,8 @@ body {
   background-color: #e9ecef; /* Background color for dropdown items on hover and focus */
   color: #000; /* Text color for dropdown items on hover and focus */
 }
+
+
 
 @keyframes App-logo-spin {
   from {

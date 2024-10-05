@@ -1,8 +1,3 @@
-.content {
-  display: flex;
-  height: 100vh;
-}
-
 .content-left {
   background-color: #d76f30;
   color: white;
@@ -23,5 +18,15 @@
 }
 
 .terms-link {
-  color: #d76f30;
+  color: var(--main-color);
+}
+
+.form-check-input:checked {
+  background-color: var(--main-color);
+  border-color: var(--main-color);
+}
+
+.form-check-input:focus {
+  border-color: #d35400; /* Change border color on focus */
+  box-shadow: 0 0 0 .25rem rgba(211, 84, 0, .25);
 }

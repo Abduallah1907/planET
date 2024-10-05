@@ -1,9 +1,9 @@
 import { IItinerary } from "@/interfaces/IItinerary";
+import { LocationSchema } from "@/types/Location";
 import mongoose from "mongoose";
 
 const itinerarySchema = new mongoose.Schema(
   {
-    
     activities: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -24,7 +24,7 @@ const itinerarySchema = new mongoose.Schema(
     ],
     category: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Category',
+      ref: "Category",
       required: true,
     },
     name: {
@@ -33,7 +33,7 @@ const itinerarySchema = new mongoose.Schema(
     },
     locations: [
       {
-        type: String,
+        type: LocationSchema,
         required: true,
       },
     ],
@@ -50,6 +50,13 @@ const itinerarySchema = new mongoose.Schema(
     price: {
       type: Number,
       required: true,
+    },
+    average_rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      required: true,
+      default: 0,
     },
     available_dates: [
       {
@@ -71,7 +78,8 @@ const itinerarySchema = new mongoose.Schema(
     },
     tags: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
       },
     ],
     active_flag: {
