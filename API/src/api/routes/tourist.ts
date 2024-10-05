@@ -426,7 +426,7 @@ export default (app: Router) => {
   route.get("/getItineraries", touristController.getItinerary);
   route.get(
     "/getHistorical_locations",
-    touristController.getHistorical_locations
+    touristController.getHistorical_location
   );
 
   route.get(

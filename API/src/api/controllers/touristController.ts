@@ -46,11 +46,11 @@ export class TouristController {
     res.status(itineraries.status).json({ itineraries });
   }
 
-  public async getHistorical_locations(req: any, res: any) {
+  public async getHistorical_location(req: any, res: any) {
     const { name, category, tag } = req.query;
     const touristService: TouristService = Container.get(TouristService);
     const historical_locations =
-      await touristService.getHistorical_locationsService(name, category, tag);
+      await touristService.getHistorical_locationService(name, category, tag);
     res.status(historical_locations.status).json({ historical_locations });
   }
 

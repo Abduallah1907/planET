@@ -174,11 +174,7 @@ export default class ActivityService {
     return new response(true, null, "Activity deleted successfully", 200);
   };
 
-  public async getActivitiesService(
-    name: string,
-    category: string,
-    tag: string
-  ) {
+  public async getActivityService(name: string, category: string, tag: string) {
     // const newCategory = new Category({type:category});
     // await newCategory.save();
     // const newActivity = new Activity({

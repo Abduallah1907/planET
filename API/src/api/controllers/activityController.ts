@@ -50,10 +50,10 @@ export class ActivityController {
     res.status(activity.status).json({ activity });
   }
 
-  public async getActivities(req: any, res: any) {
+  public async getActivity(req: any, res: any) {
     const { name, category, tag } = req.query;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activities = await activityService.getActivitiesService(
+    const activities = await activityService.getActivityService(
       name,
       category,
       tag

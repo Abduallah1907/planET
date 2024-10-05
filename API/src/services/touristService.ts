@@ -217,7 +217,7 @@ export default class TouristService {
     return new response(true, itineraries, "Fetched itineraries", 200);
   }
 
-  public async getHistorical_locationsService(
+  public async getHistorical_locationService(
     name: string,
     category: string,
     tag: string

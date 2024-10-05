@@ -9,7 +9,7 @@ export default (app: Router) => {
 
   app.use("/activity", router);
 
- /**
+  /**
    * @swagger
    * tags:
    *   - name: Activity
@@ -378,13 +378,20 @@ export default (app: Router) => {
   router.post("/addActivity", activityController.createActivity);
   router.get("/getAllActivites", activityController.getAllActivities);
   router.get("/getActivityByID/:id", activityController.getActivityByID);
-  router.get("/getActivityByAdvertiserID/:advertiserID",activityController.getActivityByAdvertiserID);
+  router.get(
+    "/getActivityByAdvertiserID/:advertiserID",
+    activityController.getActivityByAdvertiserID
+  );
   router.put("/updateActivity", activityController.updateActivity);
   router.delete("/deleteActivity/:id", activityController.deleteActivity);
-  router.get("/getActivities", activityController.getActivities);
-  router.get("/getUpcomingActivities", activityController.getUpcomingActivities);
+  router.get("/getActivity", activityController.getActivity);
+  router.get(
+    "/getUpcomingActivities",
+    activityController.getUpcomingActivities
+  );
 
-  router.get("/getFilteredActivities", activityController.getFilteredActivities);
-
-
+  router.get(
+    "/getFilteredActivities",
+    activityController.getFilteredActivities
+  );
 };
