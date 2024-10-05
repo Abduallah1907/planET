@@ -51,7 +51,7 @@ export class TourGuideController {
     const itineraryData = req.body as IItineraryCreateDTO;
     const tourGuideService: TourGuideService = Container.get(TourGuideService);
     const newItinerary = await tourGuideService.createItineraryService(itineraryData);
-    res.json({ newItinerary });
+    res.json(newItinerary);
   }
 
   public async getItinerary(req: Request, res: Response): Promise<any> {
@@ -59,13 +59,13 @@ export class TourGuideController {
     const itinerary_idObjectId = new Types.ObjectId(itinerary_id);
     const tourGuideService: TourGuideService = Container.get(TourGuideService);
     const newItinerary = await tourGuideService.getItineraryService(itinerary_idObjectId);
-    res.json({ newItinerary });
+    res.json(newItinerary);
   }
   public async updateItinerary(req: Request, res: Response): Promise<any> {
     const itineraryData = req.body as IItineraryUpdateDTO;
     const tourGuideService: TourGuideService = Container.get(TourGuideService);
     const updatedItinerary = await tourGuideService.updateItineraryService(itineraryData);
-    res.json({ updatedItinerary });
+    res.json(updatedItinerary);
   }
   public async deleteItinerary(req: Request, res: Response): Promise<any> {
     const { tour_guide_user_id, itinerary_id } = req.params;
@@ -73,7 +73,7 @@ export class TourGuideController {
     const tour_guide_idObjectId = new Types.ObjectId(tour_guide_user_id);
     const tourGuideService: TourGuideService = Container.get(TourGuideService);
     const deletedItinerary = await tourGuideService.deleteItineraryService(tour_guide_idObjectId, _idObjectId);
-    res.json({ deletedItinerary });
+    res.json(deletedItinerary);
   }
 
   public async viewAllItineraries(req: Request, res: Response): Promise<any> {
@@ -81,6 +81,6 @@ export class TourGuideController {
     const tour_guide_idObjectId = new Types.ObjectId(tour_guide_user_id);
     const tourGuideService: TourGuideService = Container.get(TourGuideService);
     const itineraries = await tourGuideService.getAllItinerariesService(tour_guide_idObjectId);
-    res.json({ itineraries });
+    res.json(itineraries);
   }
 }

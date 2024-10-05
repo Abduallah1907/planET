@@ -17,11 +17,13 @@ export interface IItinerary extends Document {
   active_flag: boolean;
   inappropriate_flag: boolean;
   tour_guide_id: ObjectId;
+  name: string;
+  category: ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface IItineraryCreateDTO extends Document {
+export interface IItineraryCreateDTO {
   tour_guide_user_id: ObjectId;
   name: string;
   category: ObjectId;
@@ -38,7 +40,7 @@ export interface IItineraryCreateDTO extends Document {
   tags?: string[];
 }
 
-export interface IItineraryUpdateDTO extends Document {
+export interface IItineraryUpdateDTO {
   itinerary_id: ObjectId;
   name: string;
   category: ObjectId;
@@ -50,7 +52,23 @@ export interface IItineraryUpdateDTO extends Document {
   price: number;
   available_dates: Date[];
   accessibility: boolean;
-  pickup_loc: string;
-  drop_off_loc: string;
+  pickup_loc: Location;
+  drop_off_loc: Location;
   tags?: string[];
+}
+
+export interface IItineraryOutputDTO {
+  itinerary_id: ObjectId;
+  activities: ObjectId[];
+  timeline: ObjectId[];
+  comments: ObjectId[];
+  category: ObjectId;
+  name: String;
+  locations: Location[];
+  languages: string[];
+  available_dates: Date[];
+  pickup_loc: Location;
+  drop_off_loc: Location;
+  tags?: string[];
+  tour_guide_id: ObjectId;
 }

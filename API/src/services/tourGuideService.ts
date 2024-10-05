@@ -5,8 +5,10 @@ import UserRoles from "@/types/enums/userRoles";
 import { Inject, Service } from "typedi";
 import { HttpError, InternalServerError } from "@/types/Errors";
 import { IPreviousWorkInputDTO, IPreviousWorkOutputDTO, IPreviousWorkUpdateDTO } from "@/interfaces/IPrevious_work";
-import { IItinerary, IItineraryCreateDTO, IItineraryUpdateDTO } from "@/interfaces/IItinerary";
+import { IItinerary, IItineraryCreateDTO, IItineraryOutputDTO, IItineraryUpdateDTO } from "@/interfaces/IItinerary";
 import { ITourGuideOutput } from "@/interfaces/ITour_guide";
+import { name } from "agenda/dist/agenda/name";
+import { it } from "node:test";
 @Service()
 export default class TourGuideService {
   constructor(
@@ -144,19 +146,35 @@ export default class TourGuideService {
     tour_guide.itineraries.push(newItinerary._id);
     await tour_guide.save();
 
-    return new response(true, newItinerary, "Itinerary created successfully!", 201);
+    return new response(true, { itinerary_id: newItinerary._id }, "Itinerary created successfully!", 201);
   }
   public async getItineraryService(itinerary_id: Types.ObjectId) {
     const itineraryData = await this.itineraryModel.findById(itinerary_id);
     if (itineraryData instanceof Error) throw new InternalServerError("Internal server error");
     if (!itineraryData) throw new HttpError("Itinerary not found", 404);
-    return new response(true, itineraryData, "Itinerary found!", 201);
+
+    const itineraryOutput: IItineraryOutputDTO = {
+      itinerary_id: itineraryData._id,
+      tour_guide_id: itineraryData.tour_guide_id,
+      name: itineraryData.name,
+      activities: itineraryData.activities,
+      category: itineraryData.category,
+      tags: itineraryData.tags,
+      available_dates: itineraryData.available_dates,
+      comments: itineraryData.comments,
+      drop_off_loc: itineraryData.drop_off_loc,
+      languages: itineraryData.languages,
+      locations: itineraryData.locations,
+      pickup_loc: itineraryData.pickup_loc,
+      timeline: itineraryData.timeline,
+    };
+    return new response(true, itineraryOutput, "Itinerary found!", 201);
   }
   public async updateItineraryService(itineraryUpdatedData: IItineraryUpdateDTO) {
     const updatedItinerary = await this.itineraryModel.findByIdAndUpdate(itineraryUpdatedData.itinerary_id, itineraryUpdatedData, { new: true });
     if (!updatedItinerary) throw new HttpError("Itinerary not found", 404);
     if (updatedItinerary instanceof Error) throw new InternalServerError("Internal server error");
-    return new response(true, updatedItinerary, "Itinerary updated!", 201);
+    return new response(true, { itinerary_id: updatedItinerary._id }, "Itinerary updated!", 201);
   }
   public async deleteItineraryService(tour_guide_user_id: Types.ObjectId, itinerary_id: Types.ObjectId) {
     console.log(tour_guide_user_id);
@@ -170,7 +188,7 @@ export default class TourGuideService {
     tourGuide.itineraries.pull(itinerary_id);
     await tourGuide.save();
 
-    return new response(true, deletedItinerary, "Itinerary deleted!", 200);
+    return new response(true, { itinerary_id: deletedItinerary._id }, "Itinerary deleted!", 200);
   }
 
   // view all itineraries
@@ -185,6 +203,7 @@ export default class TourGuideService {
     });
     if (itineraries instanceof Error) throw new InternalServerError("Internal server error");
     if (!itineraries) throw new HttpError("Tour guide not found", 404);
+    const itinerariesOutput: IItineraryOutputDTO[] = itineraries.map((itinearary: {}) => ({}));
     return new response(true, itineraries, "Returning all found itineraries!", 201);
   }
 }
