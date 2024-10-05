@@ -69,7 +69,6 @@ export default class UserService {
       loginData.password,
       user.password
     );
-    console.log(loginData.password + "      " + user.password);
     if (!isPasswordValid) throw new BadRequestError("Password is incorrect");
 
     // if (user == null) throw new NotFoundError("User not found");

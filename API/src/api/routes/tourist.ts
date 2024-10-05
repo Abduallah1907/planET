@@ -421,7 +421,6 @@ export default (app: Router) => {
   route.put("/updateTourist/:searchEmail", touristController.updateTourist);
   route.post("/createTourist", touristController.createTourist);
 
-  route.get("/getSortedActivities", touristController.getSortedActivities);
   route.get("/getSortedItineraries", touristController.getSortedItineraries);
 
   route.get("/getItineraries", touristController.getItinerary);
