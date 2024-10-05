@@ -1,49 +1,4 @@
 .hero-section {
-    background-color: #f9f9f9;
-    padding: 50px 0;
-  }
-  
-  .hero-text h1 {
-    font-size: 4rem;
-    font-weight: 700 !important;
-    line-height: 1.2;
-    font-family: Volkhov, serif;
-    color: var(--text-secondary-color);
-    
-  }
-
-  .hero-buttons .btn {
-    padding: 10px 20px;
-    font-size: 1.2rem;
-  }
-  
-  .hero-text p {
-    font-size: 1rem;
-    color: #666;
-    margin: 20px 0;
-  }
-  
-  .hero-text h5 {
-    font-size: 1.1rem;
-    font-weight: bold;
-  }
-  .hero-subtitle{
-    font-size: 1.5rem;
-    color: var(--main-color);
-    margin: 20px 0;
-    font-weight: bold ;
-  }
-  img {
-    max-width: 100%;
-    height: auto;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-.hero-section {
   position: relative;
   overflow: hidden; /* Ensure the image doesn't overflow the container */
   background: 
@@ -56,34 +11,53 @@ img {
   min-height: 100vh; /* Ensure the section has enough height to display the background images */
 }
 
-.decore1 {
+.absolute-image {
   position: absolute;
   top: 0;
   right: 0;
   width: 100px; /* Adjust the width as needed */
   height: auto;
-  z-index: 3; /* Ensure it is above other elements */
+  z-index: -1; /* Ensure it is below other elements */
+  pointer-events: none; /* Ensure it doesn't intercept any clicks or events */
 }
 
-.hero-text, .hero-buttons {
-  position: relative;
-  z-index: 2; /* Ensure the content is above the background images */
+.hero-text h1 {
+  font-size: 4rem;
+  font-weight: 700 !important;
+  line-height: 1.2;
+  font-family: Volkhov, serif;
+  color: var(--text-secondary-color);
 }
 
-.travel-page {
-  padding: 40px;
-  background-color: #f9f9f9;
-}
-.text-section h1 {
-  font-size: 2.5rem;
-  color: #333;
+.hero-buttons .btn {
+  padding: 10px 20px;
+  font-size: 1.2rem;
 }
 
-.text-section h1 .text-danger {
-  text-decoration: underline;
+.hero-text p {
+  font-size: 1rem;
+  color: #666;
+  margin: 20px 0;
 }
 
-.image-section img {
+.hero-text h5 {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+
+  .hero-subtitle{
+    font-size: 1.5rem;
+    color: var(--main-color);
+    margin: 20px 0;
+    font-weight: bold ;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+}
+
+img {
   max-width: 100%;
   height: auto;
 }

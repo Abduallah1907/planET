@@ -8,7 +8,7 @@ const Hero: React.FC = () => {
   return (
     <>
       <div className="hero-section">
-        <img src={Decore} alt="Decore1" className="decore1" />
+        <img src={Decore} alt="Decore1" className="absolute-image" />
         <Container>
           <Row className="align-items-center">
             <Col md={6}>
