@@ -1,0 +1,14 @@
+.search {
+    border: 1px solid var(--main-color) !important;
+    border-radius: 8px;
+    background-color: rgba(32, 34, 36, 0.05);
+    padding: 0.2rem 5rem;
+    text-align: left;
+
+}
+
+.search imput, .search input:focus {
+    border: 1px solid var(--main-color) !important;
+    border-radius: 8px;
+    background-color:  rgba(32, 34, 36, 0.1);
+}

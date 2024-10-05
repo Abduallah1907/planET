@@ -1,0 +1,85 @@
+.statistics-cards {
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.statistics-cards .cards {
+  font-weight: bold;
+  font-size: 1rem;
+  color: rgba(32, 34, 36, 0.5);
+}
+
+.statistics-cards p {
+  font-weight: bold;
+  font-size: 2rem;
+}
+
+.statistics-cards .chart-time {
+  color: rgba(32, 34, 36, 0.5);
+  font-size: 1.2rem;
+  font-weight: normal;
+}
+
+.statistics-cards small {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.country-campaign-table {
+  border-color: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 1.5rem;
+  background-color: #fff;
+}
+
+.welcome-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 2px solid var(--main-color);
+  border-radius: 1.5rem;
+  background-color: #fff;
+}
+
+.welcome-container h2,
+span {
+  font-weight: bold;
+}
+
+.orange-text {
+  color: var(--main-color);
+}
+
+.welcome-image {
+  margin-left: 10px;
+  width: 5px;
+  height: 5px;
+  border-radius: 5%;
+}
+
+.dash {
+  font-weight: bold;
+
+}
+
+.cards {
+  font-weight: bold;
+  font-size: small;
+}
+
+.dashl {
+  font-weight: bold;
+  text-align: left;
+}
+
+.row-color {
+  background-color: rgba(32, 34, 36, 0.1);
+}
+
+.trip-table {
+  padding: 20px;
+}
