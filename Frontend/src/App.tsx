@@ -1,3 +1,4 @@
+import logo from "./assets/Logo.svg"
 import React, { useState } from "react";
 import CreateAdmin from "./views/CreateAdmin";
 import TopBar from "./components/TopBar/TopBar";
@@ -21,7 +22,9 @@ const App: React.FC = () => {
   const [isBooked, setIsBooked] = useState(false); // Manage booking state
 
   return (
+    
     <AppProvider>
+      
       <Routes>
         <Route path="/admin" element={<CreateAdmin />} />
         <Route path="/governer" element={<CreateGoverner />} />
