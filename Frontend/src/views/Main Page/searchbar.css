@@ -151,3 +151,22 @@
 .form-control:focus{
     box-shadow: none;
 }
+
+.react-datepicker__input-container input{
+    width: 100%;
+    border: none;
+}
+
+.search-container .btn-custom, .counter-container,.search-container .input-group{
+    height: -webkit-fill-available;
+    height: 100%;
+    border-radius: 0.25rem;
+}
+
+.search-wrapper .row, .submit-btn {
+    background-color: var(--main-color) !important;
+}
+
+.search-container .input-group-text{
+    background-color: #fff !important;
+}

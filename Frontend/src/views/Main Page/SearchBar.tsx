@@ -35,12 +35,13 @@ const SearchBar: React.FC = () => {
     };
 
     return (
-        <div className="search-wrapper">
+        <Form className="search-wrapper">
             <Row className='border-2 rounded-2'>
-            <Col className="search-container">
+            <Col className="search-container rounded-1">
                 <InputGroup>
                     <InputGroup.Text id="basic-addon1"><FaSearch color='#aaa'/></InputGroup.Text>
                     <Form.Control
+                    style={{border: 'none'}}
                     placeholder={t('where_are_you_going')}
                     aria-label={t('where_are_you_going')}
                     value={searchTerm}
@@ -49,7 +50,7 @@ const SearchBar: React.FC = () => {
                     />
                 </InputGroup>
             </Col>
-            <Col className="date-container">
+            <Col className="date-container rounded-1">
                 <DatePicker
                     selected={startDate || undefined}  
                     onChange={handleDateChange}
@@ -87,11 +88,11 @@ const SearchBar: React.FC = () => {
                     </button>
                 </div>
             </Col>
-            <div className='col col-auto search-container'>
-            <button className="btn-custom">{t('search')}</button>
+            <div className='col col-auto search-container submit-btn'>
+                <button type='submit' className="btn-custom">{t('search')}</button>
             </div>
             </Row>
-        </div>
+        </Form>
     );
 };
 
