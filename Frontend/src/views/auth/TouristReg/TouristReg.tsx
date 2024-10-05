@@ -1,7 +1,6 @@
 import "./TouristReg.css";
 import TouristForm from "../../../components/TouristForm/TouristForm";
 import { Container, Row, Col } from "react-bootstrap";
-import ButtonWide from "../../../components/ButtonWide/ButtonWide";
 import IconCircle from "../../../assets/IconCircle.svg";
 import TopBar from "../../../components/TopBar/TopBar";
 

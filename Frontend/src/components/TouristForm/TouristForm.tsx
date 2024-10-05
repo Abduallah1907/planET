@@ -100,7 +100,6 @@ export default function TouristForm() {
             onChange={handleChange}
             name={"firstName"}
           />
-
         </Col>
         <Col>
           <CustomFormGroup
@@ -129,7 +128,6 @@ export default function TouristForm() {
             onChange={handleChange}
             name={"username"}
           />
-
         </Col>
         <Col>
           <CustomFormGroup
@@ -146,22 +144,22 @@ export default function TouristForm() {
         </Col>
       </Row>
       <Row>
-      <Col>
-        <CustomFormGroup
-          label={"Password"}
-          type={"password"}
-          placeholder={"password"}
-          id={"password"}
-          disabled={false}
-          required={true}
-          value={regData.password}
-          onChange={handleChange}
-          name={"password"}
-        />
+        <Col>
+          <CustomFormGroup
+            label={"Password"}
+            type={"password"}
+            placeholder={"password"}
+            id={"password"}
+            disabled={false}
+            required={true}
+            value={regData.password}
+            onChange={handleChange}
+            name={"password"}
+          />
         </Col>
         <Col>
-        {/* </CustomFormGroup> */}
-        {/* <input
+          {/* </CustomFormGroup> */}
+          {/* <input
           type={"password"}
           placeholder={"**********"}
           minLength={8} // Minimum length of 8 characters
@@ -170,93 +168,93 @@ export default function TouristForm() {
           title="Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one number, and one special character"
           autoComplete="off" // Prevent browser from automatically filling in password
         /> */}
-        <CustomFormGroup
-          label={"Confirm password"}
-          type={"password"}
-          placeholder={"confirm password"}
-          id={"confirmPassword"}
-          disabled={false}
-          required={true}
-          value={regData.confirmPassword}
-          onChange={handleChange}
-          name={"confirmPassword"}
-        />
+          <CustomFormGroup
+            label={"Confirm password"}
+            type={"password"}
+            placeholder={"confirm password"}
+            id={"confirmPassword"}
+            disabled={false}
+            required={true}
+            value={regData.confirmPassword}
+            onChange={handleChange}
+            name={"confirmPassword"}
+          />
         </Col>
       </Row>
       <Row>
-      <Col>
-        <CustomFormGroup
-          label={"Mobile Number"}
-          type={"string"}
-          placeholder={"+20-123456789"}
-          id={"mobile"}
-          disabled={false}
-          required={true}
-          value={regData.mobile}
-          onChange={handleChange}
-          name={"mobile"}
-        />
+        <Col>
+          <CustomFormGroup
+            label={"Mobile Number"}
+            type={"string"}
+            placeholder={"+20-123456789"}
+            id={"mobile"}
+            disabled={false}
+            required={true}
+            value={regData.mobile}
+            onChange={handleChange}
+            name={"mobile"}
+          />
         </Col>
         <Col>
-        <CustomFormGroup
-          label={"Date of Birth"}
-          type={"date"}
-          placeholder={"dd/mm/yyyy"}
-          id={"dob"}
-          disabled={false}
-          required={true}
-          value={regData.dob}
-          onChange={handleChange}
-          name={"dob"}
-        />
+          <CustomFormGroup
+            label={"Date of Birth"}
+            type={"date"}
+            placeholder={"dd/mm/yyyy"}
+            id={"dob"}
+            disabled={false}
+            required={true}
+            value={regData.dob}
+            onChange={handleChange}
+            name={"dob"}
+          />
         </Col>
       </Row>
       <Row>
-      <Col>
-        <Form.Group className="form-group" id="nationality">
-          <Form.Label>Nationality:</Form.Label>
-          <div className="custom-select-container">
-            <Form.Control
-              as="select"
-              name="nationality"
-              value={regData.nationality}
-              id="nationality"
-              onChange={handleChange}
-              required
-            >
-              <option value="">Select your nationality</option>
-              {nationalityOptions.map((option: NationalityOption) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Form.Control>
-            <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
-          </div>
-        </Form.Group>
+        <Col>
+          <Form.Group className="form-group" id="nationality">
+            <Form.Label>Nationality:</Form.Label>
+            <div className="custom-select-container">
+              <Form.Control
+                as="select"
+                name="nationality"
+                value={regData.nationality}
+                id="nationality"
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select your nationality</option>
+                {nationalityOptions.map((option: NationalityOption) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </Form.Control>
+              <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
+            </div>
+          </Form.Group>
         </Col>
         <Col>
-        <Form.Group className="form-group" id="job">
-          <Form.Label>Job</Form.Label>
-          <div className="custom-select-container">
-            <Form.Control
-              as="select"
-              name="job"
-              value={regData.job}
-              id="job"
-              onChange={handleChange}
-              required
-            >
-              <option value="">Select your job</option>
-              {jobOptions.map((option: JobOption) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Form.Control>
-            <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
-          </div>
-        </Form.Group>
+          <Form.Group className="form-group" id="job">
+            <Form.Label>Job</Form.Label>
+            <div className="custom-select-container">
+              <Form.Control
+                as="select"
+                name="job"
+                value={regData.job}
+                id="job"
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select your job</option>
+                {jobOptions.map((option: JobOption) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </Form.Control>
+              <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
+            </div>
+          </Form.Group>
         </Col>
       </Row>
       <div key="default-checkbox" className="mb-3">
@@ -266,7 +264,7 @@ export default function TouristForm() {
           label="Remember me"
         />
       </div>
-      <div key="default-checkbox" className="mb-4">
+      <div key="default-checkbox1" className="mb-4">
         <Form.Check
           type="checkbox"
           // id="default-checkbox"
