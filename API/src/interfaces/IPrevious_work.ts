@@ -10,7 +10,7 @@ export interface IPrevious_work extends Document {
   updatedAt?: Date;
 }
 
-export interface IPreviousWorkInputDTO extends Document {
+export interface IPreviousWorkInputDTO {
   title: string;
   place: string;
   from: Date;
@@ -18,7 +18,15 @@ export interface IPreviousWorkInputDTO extends Document {
   tour_guide_user_id: ObjectId;
 }
 
-export interface IPreviousWorkUpdateDTO extends Document {
+export interface IPreviousWorkUpdateDTO {
+  previous_work_id: ObjectId;
+  title: string;
+  place: string;
+  from: Date;
+  to: Date;
+}
+
+export interface IPreviousWorkOutputDTO {
   previous_work_id: ObjectId;
   title: string;
   place: string;

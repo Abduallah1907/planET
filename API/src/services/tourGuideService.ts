@@ -4,7 +4,7 @@ import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import { Inject, Service } from "typedi";
 import { HttpError, InternalServerError } from "@/types/Errors";
-import { IPreviousWorkInputDTO, IPreviousWorkUpdateDTO } from "@/interfaces/IPrevious_work";
+import { IPreviousWorkInputDTO, IPreviousWorkOutputDTO, IPreviousWorkUpdateDTO } from "@/interfaces/IPrevious_work";
 import { IItinerary, IItineraryCreateDTO, IItineraryUpdateDTO } from "@/interfaces/IItinerary";
 @Service()
 export default class TourGuideService {
@@ -28,8 +28,14 @@ export default class TourGuideService {
     await tourGuide.save();
 
     if (newWorkExperience instanceof Error) throw new InternalServerError("Internal server error");
-
-    return new response(true, newWorkExperience, "Work experience created successfully!", 201);
+    const previousWorkOutput: IPreviousWorkOutputDTO = {
+      previous_work_id: newWorkExperience._id,
+      title: newWorkExperience.title,
+      place: newWorkExperience.place,
+      from: newWorkExperience.from,
+      to: newWorkExperience.to,
+    };
+    return new response(true, previousWorkOutput, "Work experience created successfully!", 201);
   }
 
   public async updatePreviousWorkService(updatedPreviousWorkInfo: IPreviousWorkUpdateDTO): Promise<any> {
@@ -42,7 +48,14 @@ export default class TourGuideService {
     previousWork.from = updatedPreviousWorkInfo.from;
     previousWork.to = updatedPreviousWorkInfo.to;
     await previousWork.save();
-    return new response(true, previousWork, "Previous work updated!", 201);
+    const previousWorkOutput: IPreviousWorkOutputDTO = {
+      previous_work_id: previousWork._id,
+      title: previousWork.title,
+      place: previousWork.place,
+      from: previousWork.from,
+      to: previousWork.to,
+    };
+    return new response(true, previousWorkOutput, "Previous work updated!", 201);
   }
 
   public async deletePreviousWorkService(previous_work_id: Types.ObjectId, tour_guide_user_id: Types.ObjectId) {
@@ -58,7 +71,8 @@ export default class TourGuideService {
     tourGuide.previous_work_description.pull(deletedPreviousWork._id);
     await tourGuide.save();
 
-    return new response(true, deletedPreviousWork, "Previous work deleted!", 200);
+    const deletedPreviousWorkOutput = { previous_work_id: deletedPreviousWork._id, title: deletedPreviousWork.title };
+    return new response(true, deletedPreviousWorkOutput, "Previous work deleted!", 200);
   }
 
   // CRUD for tour guide profile

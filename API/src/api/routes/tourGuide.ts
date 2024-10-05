@@ -5,6 +5,28 @@ const router = Router();
 // all routes have /api/tourGuide before each route
 
 export default (app: Router) => {
+  /**
+   * @swagger
+   * servers:
+   *   - url: http://localhost:xxxx/api/tourGuide
+   * tags:
+   *   - name: Tour guide
+   *     description: Tour guide account management
+   * /api/tourist/getTourist:
+   *   get:
+   *     tags:
+   *       - Tourist
+   *     summary: Retrieve tourist from system
+   *     description: Retrieve data of tourist by mail
+   *     responses:
+   *       200:
+   *         description: Tourist data.
+   *       400:
+   *         description: Bad request.
+   *       500:
+   *         description: Internal server error.
+   *
+   */
   const tourGuideController: TourGuideController = Container.get(TourGuideController);
   app.use("/tourGuide", router);
   // CRUD for work experience
