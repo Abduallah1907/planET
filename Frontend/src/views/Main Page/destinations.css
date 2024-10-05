@@ -35,3 +35,9 @@
   .dest-container {
     margin-bottom: 20px; /* Add margin to the bottom */
   }
+  .destinations-text{
+    font-size: 2.0rem;
+    font-weight: 700 !important;
+    font-family: Volkhov, serif;
+    color: var(--text-secondary-color);
+  }

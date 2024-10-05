@@ -12,7 +12,7 @@ const MainPage: React.FC = () => {
           <TopBar />
           <TopBarLinks />
         </div>
-        <div className="search-bar">
+        <div className="search-bar-main">
           <SearchBar />
         </div>
         <div>

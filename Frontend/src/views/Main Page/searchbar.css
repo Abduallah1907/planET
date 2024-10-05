@@ -4,7 +4,17 @@
     align-items: center; /* Center the containers vertically */
     margin: 20px auto; /* Center the wrapper and add top margin */
     flex-wrap: wrap; /* Allow wrapping for smaller screens */
+    position: absolute;
+    top: 30%;
+    left: 39%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 800px; /* Limit the width of the wrapper */
+    z-index: 3; /* Ensure the wrapper is above the background image */
+    
 }
+
+
 
 .search-container,
 .date-container,
@@ -160,7 +170,11 @@
 .search-container .btn-custom, .counter-container,.search-container .input-group{
     height: -webkit-fill-available;
     height: 100%;
-    border-radius: 0.25rem;
+    border-radius: 0.25rem; 
+}
+
+.counter-container{
+    height: inherit;
 }
 
 .search-wrapper .row, .submit-btn {
@@ -169,4 +183,8 @@
 
 .search-container .input-group-text{
     background-color: #fff !important;
+}
+
+#travel-options-dropdown, #travel-options-dropdown:hover{
+    color: #595c5f;
 }

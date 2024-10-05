@@ -2,13 +2,16 @@ import React from 'react';
 import { Button, Container, Row, Col } from 'react-bootstrap';
 import { FaPlay } from 'react-icons/fa';
 import './hero.css';
-import Decore from '../../assets/Decore1.svg';
+import Traveller from '../../assets/Traveller.svg';
+import Plane from '../../assets/Plane.svg';
 
 const Hero: React.FC = () => {
   return (
     <>
+   
       <div className="hero-section">
-        <img src={Decore} alt="Decore1" className="absolute-image" />
+        <img src={Traveller} alt="Traveller" className="traveller" />
+        <img src={Plane} alt="Plane" className="plane" />
         <Container>
           <Row className="align-items-center">
             <Col md={6}>
@@ -35,4 +38,4 @@ const Hero: React.FC = () => {
   );
 };
 
-export default Hero;
+        export default Hero;
