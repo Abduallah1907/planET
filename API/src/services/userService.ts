@@ -14,6 +14,7 @@ import {
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
 import { log } from "console";
+import bcrypt from "bcryptjs";
 
 @Service()
 export default class UserService {
@@ -59,7 +60,11 @@ export default class UserService {
 
     if (user == null) throw new NotFoundError("User not found");
     // throw new Error("User not found");
-    if (user.password !== loginData.password)
+    const isPasswordCorrect = await bcrypt.compare(
+      loginData.password,
+      user.password
+    );
+    if (!isPasswordCorrect)
       throw new BadRequestError("Password is incorrect");
 
     const user_id = user._id;
