@@ -11,13 +11,15 @@ import ActivityCard from "./components/Cards/ActivityCard";
 import HistoricalLocationCard from "./components/Cards/HistoricalLocation";
 import ItineraryCard from "./components/Cards/ItineraryCard";
 import TouristReg from "./views/auth/TouristReg/TouristReg";
+import MainPage from "./views/Main Page/MainPage";
+import { AppProvider } from "./AppContext";
 
 const App: React.FC = () => {
   const [isBooked, setIsBooked] = useState(false); // Manage booking state
 
   return (
+    <AppProvider>
       <Routes>
-        <Route path="/" element={<TopBar />} />
         <Route path="/admin" element={<CreateAdmin />} />
         <Route path="/governer" element={<CreateGoverner />} />
         <Route path="/test" element={<BookingLayout />} />
@@ -83,7 +85,11 @@ const App: React.FC = () => {
         />
         <Route path="/editprofile" element={<ProfileForm />} />
         <Route path="/tourist" element={<TouristReg />} />
+        <Route path="/editprofile" Component={ProfileForm} />
+        <Route path="/" element={<MainPage />} />
+
       </Routes>
+      </AppProvider>
   );
 };
 

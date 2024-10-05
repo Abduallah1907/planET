@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import TopBar from "../components/TopBar";
 import "./CreateAdmin.css";
-import AdminFormGroup from "../components/FormGroup";
+import AdminFormGroup from "../components/FormGroup/FormGroup"; // Adjust the path as necessary
 import Logo from "../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import nationalityOptionsData from "../utils/nationalityOptions.json"; // Adjust the path as necessary
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
+import TopBar from "../components/TopBar/TopBar";
 
 interface NationalityOption {
   value: string;
