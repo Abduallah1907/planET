@@ -14,6 +14,8 @@ import {
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
 import { log } from "console";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 @Service()
 export default class UserService {
@@ -35,6 +37,10 @@ export default class UserService {
     // if (!emailRegex.test(userData.email))
     //   throw new BadRequestError("Invalid email");
     const newUser = new this.userModel(userData);
+    newUser.password = await bcrypt.hash(
+      userData.password,
+      parseInt(newUser.salt)
+    );
     if (newUser instanceof Error)
       throw new InternalServerError("Internal server error");
     // throw new Error ("Internal server error");
@@ -57,10 +63,19 @@ export default class UserService {
     if (user instanceof Error)
       throw new InternalServerError("Internal server error");
 
-    if (user == null) throw new NotFoundError("User not found");
-    // throw new Error("User not found");
-    if (user.password !== loginData.password)
-      throw new BadRequestError("Password is incorrect");
+    if (!user) throw new NotFoundError("User not found");
+
+    const isPasswordValid = await bcrypt.compare(
+      loginData.password,
+      user.password
+    );
+    console.log(loginData.password + "      " + user.password);
+    if (!isPasswordValid) throw new BadRequestError("Password is incorrect");
+
+    // if (user == null) throw new NotFoundError("User not found");
+    // // throw new Error("User not found");
+    // if (user.password !== loginData.password)
+    //   throw new BadRequestError("Password is incorrect");
 
     const user_id = user._id;
     const role = user.role;
@@ -106,6 +121,11 @@ export default class UserService {
         stakeholder_id = governor._id;
         break;
     }
+    const token = jwt.sign(
+      { id: user._id, role: user.role, stakesholder_id: stakeholder_id },
+      process.env.JWT_SECRET as string,
+      { expiresIn: "1h" }
+    );
 
     const userOutput: IUserLoginOutputDTO = {
       name: user.name,
@@ -116,6 +136,7 @@ export default class UserService {
       status: user.status,
       first_time_login: user.first_time_login,
       stakeholder_id: stakeholder_id,
+      token: token,
     };
     return new response(true, userOutput, "User found", 200);
   }
