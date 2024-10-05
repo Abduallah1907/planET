@@ -12,14 +12,14 @@ export class TourGuideController {
     const previousWorkData = req.body as IPreviousWorkInputDTO;
     const tourGuideService: TourGuideService = Container.get(TourGuideService);
     const newWorkExperience = await tourGuideService.createPreviousWorkService(previousWorkData);
-    res.json({ newWorkExperience });
+    res.json(newWorkExperience);
   }
 
   public async updatePreviousWork(req: Request, res: Response): Promise<any> {
     const updatedPreviousWorkData = req.body as IPreviousWorkUpdateDTO;
     const tourGuideService: TourGuideService = Container.get(TourGuideService);
     const updatedPreviousWork = await tourGuideService.updatePreviousWorkService(updatedPreviousWorkData);
-    res.json({ updatedPreviousWork });
+    res.json(updatedPreviousWork);
   }
 
   public async deletePreviousWork(req: Request, res: Response): Promise<any> {
@@ -36,13 +36,13 @@ export class TourGuideController {
     const tour_guide_idObjectId = new Types.ObjectId(tour_guide_user_id);
     const tourGuideService: TourGuideService = Container.get(TourGuideService);
     const tourGuideProfile = await tourGuideService.getProfileService(tour_guide_idObjectId);
-    res.json({ tourGuideProfile });
+    res.json(tourGuideProfile);
   }
   public async updateProfile(req: Request, res: Response): Promise<any> {
     const { tour_guide_user_id, years_of_experience, photo } = req.body;
     const tourGuideService: TourGuideService = Container.get(TourGuideService);
     const updatedProfile = await tourGuideService.updateProfileService(years_of_experience, photo, tour_guide_user_id);
-    res.json({ updatedProfile });
+    res.json(updatedProfile);
   }
 
   // --- CRUD ititnerinay ---

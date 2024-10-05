@@ -20,13 +20,15 @@ export default (app: Router) => {
    *     description: Operations related to user management.
    *   - name: Categories
    *     description: Operations related to category management.
+   *   - name: Admin
+   *     description: x
    *
    * paths:
    *   # User Operations
    *   /api/admin/getUsers/{page}:
    *     get:
    *       tags:
-   *         - Users
+   *         - Admin
    *       summary: Retrieve a list of 10 users according to page number.
    *       parameters:
    *         - name: page

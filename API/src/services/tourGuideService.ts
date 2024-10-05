@@ -6,6 +6,7 @@ import { Inject, Service } from "typedi";
 import { HttpError, InternalServerError } from "@/types/Errors";
 import { IPreviousWorkInputDTO, IPreviousWorkOutputDTO, IPreviousWorkUpdateDTO } from "@/interfaces/IPrevious_work";
 import { IItinerary, IItineraryCreateDTO, IItineraryUpdateDTO } from "@/interfaces/IItinerary";
+import { ITourGuideOutput } from "@/interfaces/ITour_guide";
 @Service()
 export default class TourGuideService {
   constructor(
@@ -83,30 +84,51 @@ export default class TourGuideService {
     if (tourGuideProfile instanceof Error) throw new InternalServerError("Internal server error");
     if (!tourGuideProfile) throw new HttpError("Tour guide not found", 404);
 
-    return new response(true, tourGuideProfile, "Tour guide profile", 201);
+    const tourGuideUser = await this.userModel.findById(tour_guide_user_id).select("username name");
+    if (!tourGuideUser) throw new HttpError("Tour guide user not found", 404);
+    const tourGuideOutput: ITourGuideOutput = {
+      comments: tourGuideProfile.comments,
+      itineraries: tourGuideProfile.itineraries,
+      years_of_experience: tourGuideProfile.years_of_experience,
+      previous_work_description: tourGuideProfile.previous_work_description,
+      photo: tourGuideProfile.photo,
+      username: tourGuideUser.username,
+      name: tourGuideUser.name,
+    };
+    return new response(true, tourGuideOutput, "Tour guide profile", 201);
   }
 
   public async updateProfileService(years_of_experience: number, photo: string, tour_guide_user_id: ObjectId): Promise<any> {
-    const user = await this.userModel.findById(tour_guide_user_id).select("status role");
-    if (user) {
-      const isAccepted = user.status;
-      const role = user.role;
+    const tourGuideUser = await this.userModel.findById(tour_guide_user_id).select("status role username name");
+    if (tourGuideUser) {
+      const isAccepted = tourGuideUser.status;
+      const role = tourGuideUser.role;
       if (!isAccepted) throw new HttpError("The tour guide has not been accepted by an admin yet", 403);
       if (role !== UserRoles.TourGuide) throw new HttpError("This user is not a tour guide", 400);
     } else {
       throw new HttpError("This user is not registered to our system?? This error should never be thrown :)", 400);
     }
 
-    const tourGuide = await this.tourGuideModel.findOne({ user_id: tour_guide_user_id });
-    if (!tourGuide)
+    const tourGuideProfile = await this.tourGuideModel.findOne({ user_id: tour_guide_user_id }).populate("previous_work_description");
+    if (!tourGuideProfile)
       throw new HttpError(
         "For some reason, the tour guide is registered as user and not in the tour guide table. In other words, if this error is thrown, something has gone terribly wrong",
         404
       );
-    tourGuide.photo = photo;
-    tourGuide.years_of_experience = years_of_experience;
-    await tourGuide.save();
-    return new response(true, tourGuide, "Profile updated successfully!", 201);
+    tourGuideProfile.photo = photo;
+    tourGuideProfile.years_of_experience = years_of_experience;
+    await tourGuideProfile.save();
+
+    const tourGuideOutput: ITourGuideOutput = {
+      comments: tourGuideProfile.comments,
+      itineraries: tourGuideProfile.itineraries,
+      years_of_experience: tourGuideProfile.years_of_experience,
+      previous_work_description: tourGuideProfile.previous_work_description,
+      photo: tourGuideProfile.photo,
+      username: tourGuideUser.username,
+      name: tourGuideUser.name,
+    };
+    return new response(true, tourGuideOutput, "Profile updated successfully!", 201);
   }
 
   // side note that somehow we need to get activity ids
