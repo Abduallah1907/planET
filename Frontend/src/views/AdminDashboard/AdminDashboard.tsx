@@ -4,7 +4,7 @@ import { Container } from "react-bootstrap";
 import UserCoverageChart from "./UserCoverageChart";
 import TripDetailsTable from "./TripDetailsTable";
 import StatisticsCards from "./StatisticsCards";
-import SearchBar from "./SearchBar";
+import SearchBar from "../../components/SearchBar/SearchBar";
 
 const AdminDashboard = () => {
     return (

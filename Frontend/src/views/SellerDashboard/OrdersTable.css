@@ -1,0 +1,15 @@
+.stat-label.arrived {
+    background-color: #28a745;
+    color: white;
+    
+  }
+  
+  .stat-label.active {
+    background-color: #ffc107;
+    color: black;
+  }
+  
+  .stat-label.cancelled {
+    background-color: #dc3545;
+    color: white;
+  }
