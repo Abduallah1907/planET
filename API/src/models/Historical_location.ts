@@ -1,5 +1,4 @@
 import { IHistorical_location } from "@/interfaces/IHistorical_location";
-import Historical_tagSchema from "@/types/Historical_tags";
 import { LocationSchema } from "@/types/Location";
 import mongoose from "mongoose";
 
@@ -65,8 +64,8 @@ const historicalLocationSchema = new mongoose.Schema(
       type: Boolean,
     },
     tags: {
-      type: Historical_tagSchema,
-      required: true,
+      type: Map,
+      of: String, // Assuming tags are stored as key-value pairs of strings
     },
   },
   { timestamps: true }

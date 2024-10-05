@@ -7,6 +7,7 @@ import historical_location from "./routes/historical_location";
 import activity from "./routes/activity";
 import category from "./routes/category";
 import advertiser from "./routes/advertiser";
+import historical_tag from "./routes/historical_tag";
 export default () => {
   const app = Router();
 
@@ -17,5 +18,6 @@ export default () => {
   activity(app);
   category(app);
   advertiser(app);
+  historical_tag(app);
   return app;
 };

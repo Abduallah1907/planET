@@ -15,8 +15,45 @@ import {
 export default class Historical_locationService {
   constructor(
     @Inject("historical_locationModel")
-    private historical_locationsModel: Models.Historical_locationsModel
+    private historical_locationsModel: Models.Historical_locationsModel,
+    @Inject("historical_tagModel")
+    private historical_tagModel: Models.Historical_tagModel
   ) {}
+
+  //this a function to check if the value corresponds to the key in the object
+  private checkIfValueIsRIght = async (Data: Map<string, string>) => {
+    // we want to get the corresponding value of the key in historical_tag
+    if (Data == null || Data.size == 0 || Data == undefined) {
+      return true;
+    }
+    for (const [key, value] of Data) {
+      if (!Types.ObjectId.isValid(key)) {
+        throw new BadRequestError("Invalid ID format");
+      }
+      if (typeof value !== "string") {
+        throw new BadRequestError("Invalid value format");
+      }
+      const historical_tag = await this.historical_tagModel
+        .findOne({
+          _id: new Types.ObjectId(key),
+        })
+        .exec();
+      if (historical_tag instanceof Error) {
+        throw new InternalServerError("Internal server error");
+      }
+      if (historical_tag == null) {
+        throw new NotFoundError("Tag not found");
+      }
+      //We got the corresponding key to historical_tag
+      //We want to see if the value is in the historical_tag value array
+      if (!historical_tag.Values.includes(value)) {
+        throw new BadRequestError(
+          "Value is not in the tag,choose corresponding Value to the tag"
+        );
+      }
+      return true;
+    }
+  };
   public getAllHistorical_locationService = async () => {
     const Historical_location = await this.historical_locationsModel.find({});
     if (Historical_location instanceof Error) {
@@ -48,6 +85,26 @@ export default class Historical_locationService {
       student_price: historical_locationInput.student_price,
       tags: historical_locationInput.tags,
     };
+    //Code to check if the value corresponds to the key in the object
+    const tags_keys = historical_locationData.tags
+      ? new Map(Object.entries(historical_locationData.tags))
+      : new Map();
+    if (!(tags_keys instanceof Map || tags_keys == null)) {
+      throw new BadRequestError(
+        "Tags should be an object of map key-value pairs"
+      );
+    }
+    if (
+      (tags_keys && tags_keys.size > 0) ||
+      tags_keys == null ||
+      tags_keys == undefined
+    ) {
+      const usetags = await this.checkIfValueIsRIght(tags_keys);
+      if (usetags) {
+        historical_locationData.tags = tags_keys;
+      }
+    }
+    // end of code to check if the value corresponds to the key in the object
     const historical_location = await this.historical_locationsModel.create(
       historical_locationData
     );
@@ -133,6 +190,26 @@ export default class Historical_locationService {
     if (Data.student_price) updateFields.student_price = Data.student_price;
     if (Data.tags) updateFields.tags = Data.tags;
 
+    //Code to check if the value corresponds to the key in the object
+    const tags_keys = Data.tags
+      ? new Map(Object.entries(Data.tags))
+      : new Map();
+    if (!(tags_keys instanceof Map || tags_keys == null)) {
+      throw new BadRequestError(
+        "Tags should be an object of map key-value pairs"
+      );
+    }
+    if (
+      (tags_keys && tags_keys.size > 0) ||
+      tags_keys == null ||
+      tags_keys == undefined
+    ) {
+      const usetags = await this.checkIfValueIsRIght(tags_keys);
+      if (usetags) {
+        Data.tags = tags_keys;
+      }
+    }
+    // end of code to check if the value corresponds to the key in the object
     const Updated_historical_location =
       await this.historical_locationsModel.findByIdAndUpdate(
         new Types.ObjectId(id),
