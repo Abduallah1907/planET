@@ -1,5 +1,6 @@
-import { IHistorical_Location } from '@/interfaces/IHistorical_Location';
+import { IHistorical_location } from '@/interfaces/IHistorical_location';
 import mongoose from 'mongoose';
+
 
 const historicalLocationSchema = new mongoose.Schema({
   
@@ -12,6 +13,11 @@ const historicalLocationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Comment_Rating',
   }],
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+    required: true,
+  },
   name: {
     type: String,
     required: true,
@@ -61,6 +67,6 @@ const historicalLocationSchema = new mongoose.Schema({
   }]
 }, { timestamps: true });
 
-const Historical_Location = mongoose.model<IHistorical_Location & mongoose.Document>('Historical_Location', historicalLocationSchema);
+const Historical_location = mongoose.model<IHistorical_location & mongoose.Document>('Historical_Location', historicalLocationSchema);
 
-export default Historical_Location;
+export default Historical_location;

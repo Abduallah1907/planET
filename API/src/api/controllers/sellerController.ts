@@ -1,7 +1,26 @@
-import {getSellerService,createSellerService,updateSellerService} from "../../services/sellerService";
+import SellerService from "@/services/sellerService";
+import { ISellerInputDTO } from "@/interfaces/ISeller";
+import Container, { Inject, Service } from "typedi";
 
-export const getSeller = async (req: any, res: any) => {getSellerService(req,res);};
-export const createSeller = async (req: any, res: any) => {createSellerService(req,res)};
-export const updateSeller = async (req: any, res: any) => {updateSellerService(req,res)};
+@Service()
+export class SellerController {
 
+    public async getSeller(req: any, res: any) {
+        const sellerService: SellerService = Container.get(SellerService);
+        const seller = await sellerService.getSellerService(req.body.email)
+        res.status(seller.status).json({seller});
+    };
+    
+    public async createSeller(req: any, res: any) {
+        const sellerService: SellerService = Container.get(SellerService);
+        const sellerData = req.body as ISellerInputDTO;
+        const seller = await sellerService.createSellerService(sellerData)
+        res.status(seller.status).json({seller});
+    };
+    public async updateSeller(req: any, res: any) {
+        const sellerService: SellerService = Container.get(SellerService);
+        const seller = await sellerService.updateSellerService(req.body.email,req.body.name,req.body.description)
+        res.status(seller.status).json({seller});
+    }
+}
 

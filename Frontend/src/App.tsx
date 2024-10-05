@@ -1,3 +1,6 @@
+import React from "react";
+import TopBar from "./components/TopBar/TopBar";
+import { Route, Routes } from "react-router-dom";
 import React, { useState } from "react";
 import TopBar from "./components/TopBar";
 import CreateAdmin from "./views/CreateAdmin";
@@ -7,6 +10,7 @@ import "./App.css";
 import CreateGoverner from "./views/CreateGoverner";
 import BookingLayout from "./views/CreateActivities";
 import ProfileForm from "./components/ProfileForm/ProfileForm";
+import TouristReg from "./views/auth/TouristReg/TouristReg";
 import ActivityCard from "./components/Cards/ActivityCard";
 import HistoricalLocationCard from "./components/Cards/HistoricalLocation";
 import ItineraryCard from "./components/Cards/ItineraryCard";
@@ -15,9 +19,10 @@ const App: React.FC = () => {
   const [isBooked, setIsBooked] = useState(false); // Manage booking state
 
   return (
-    <Router>
       <Routes>
         <Route path="/" element={<TopBar />} />
+        <Route path="/editprofile" element={<ProfileForm />} />
+        <Route path="/tourist" element={<TouristReg />} />
         <Route path="/admin" element={<CreateAdmin />} />
         <Route path="/governer" element={<CreateGoverner />} />
         <Route path="/test" element={<BookingLayout />} />
@@ -82,7 +87,6 @@ const App: React.FC = () => {
           }
         />
       </Routes>
-    </Router>
   );
 };
 
