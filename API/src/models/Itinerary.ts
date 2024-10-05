@@ -51,6 +51,13 @@ const itinerarySchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    average_rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      required: true,
+      default: 0,
+    },
     available_dates: [
       {
         type: Date,
@@ -71,7 +78,8 @@ const itinerarySchema = new mongoose.Schema(
     },
     tags: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
       },
     ],
     active_flag: {
