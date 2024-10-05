@@ -5,11 +5,8 @@ const API_URL = 'http://localhost:8000/api'; // Replace with your backend API UR
 // Function to delete user account
 const deleteAccount = async (userId: any, authToken: any) => {
   try {
-    const response = await axios.delete(`${API_URL}/admin/deleteUser/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${authToken}` // Pass authorization token if needed
-      }
-    });
+    const response = await axios.delete(`${API_URL}/admin/deleteUser/${userId}`
+    );
     return response.data;
   } catch (error) {
     throw error;
