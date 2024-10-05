@@ -22,6 +22,8 @@ const nationalityOptions: NationalityOption[] = nationalityOptionsData;
 const jobOptions: JobOption[] = jobOptionsData;
 
 interface RegData {
+  firstName: string;
+  lastName: string;
   username: string;
   email: string;
   mobile: string;
@@ -34,6 +36,8 @@ interface RegData {
 
 export default function TouristForm() {
   const [regData, setRegData] = useState<RegData>({
+    firstName: "",
+    lastName: "",
     username: "",
     email: "",
     mobile: "",
@@ -83,6 +87,35 @@ export default function TouristForm() {
   return (
     <Form className="form-fields" onSubmit={handleSubmit}>
       <h2>Create account</h2>
+      <Row>
+        <Col>
+          <CustomFormGroup
+            label={"First Name"}
+            type={"text"}
+            placeholder={"first name"}
+            id={"firstName"}
+            disabled={false}
+            required={true}
+            value={regData.firstName}
+            onChange={handleChange}
+            name={"firstName"}
+          />
+
+        </Col>
+        <Col>
+          <CustomFormGroup
+            label={"Last Name"}
+            type={"text"}
+            placeholder={"last name"}
+            id={"lastName"}
+            disabled={false}
+            required={true}
+            value={regData.lastName}
+            onChange={handleChange}
+            name={"lastName"}
+          />
+        </Col>
+      </Row>
       <Row>
         <Col>
           <CustomFormGroup
