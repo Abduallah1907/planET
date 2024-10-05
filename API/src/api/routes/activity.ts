@@ -296,6 +296,83 @@ export default (app: Router) => {
    *           description: Activity not found.
    *         '500':
    *           description: Internal Server Error.
+   * /api/activity/getActivities:
+   *   get:
+   *     tags:
+   *       - Activity
+   *     summary: Retrieve activities from system
+   *     description: Retrieve activities data by name, category, and tag
+   *     parameters:
+   *       - in: query
+   *         name: name
+   *         description: Name of the activity
+   *         schema:
+   *           type: string
+   *       - in: query
+   *         name: category
+   *         description: Category of the activity
+   *         schema:
+   *           type: string
+   *       - in: query
+   *         name: tag
+   *         description: Tag of the activity
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: List of Activities.
+   *       400:
+   *         description: Bad request.
+   *       500:
+   *         description: Internal server error.
+   * /api/activity/getUpcomingActivities:
+   *   get:
+   *     tags:
+   *       - Activity
+   *     summary: Retrieve upcoming activities from system
+   *     description: Retrieve upcoming activities data
+   *     responses:
+   *       200:
+   *         description: List of upcoming activities.
+   *       400:
+   *         description: Bad request.
+   *       500:
+   *         description: Internal server error.
+   * /api/activity/getFilteredActivities:
+   *   get:
+   *     tags:
+   *       - Activity
+   *     summary: Retrieve filtered activities from system
+   *     description: Retrieve filtered activities data
+   *     parameters:
+   *       - in: query
+   *         name: budget
+   *         description: Budget for the activity
+   *         schema:
+   *           type: string
+   *       - in: query
+   *         name: rating
+   *         description: Rating of the activity
+   *         schema:
+   *           type: string
+   *       - in: query
+   *         name: date
+   *         description: Date of the activity
+   *         schema:
+   *           type: string
+   *           format: date
+   *       - in: query
+   *         name: category
+   *         description: Category of the activity
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: List of filtered activities.
+   *       400:
+   *         description: Bad request.
+   *       500:
+   *         description: Internal server error.
    */
 
   router.post("/addActivity", activityController.createActivity);
@@ -304,4 +381,10 @@ export default (app: Router) => {
   router.get("/getActivityByAdvertiserID/:advertiserID",activityController.getActivityByAdvertiserID);
   router.put("/updateActivity", activityController.updateActivity);
   router.delete("/deleteActivity/:id", activityController.deleteActivity);
+  router.get("/getActivities", activityController.getActivities);
+  router.get("/getUpcomingActivities", activityController.getUpcomingActivities);
+
+  router.get("/getFilteredActivities", activityController.getFilteredActivities);
+
+
 };
