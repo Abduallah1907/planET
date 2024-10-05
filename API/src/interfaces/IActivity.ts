@@ -15,7 +15,7 @@ export interface IActivity extends Document {
     max: number;
   };
   special_discount?: number;
-  tags?: string[];
+  tags?: ObjectId[];
   booking_flag: boolean;
   inappropriate_flag: boolean;
   active_flag: boolean;
@@ -37,7 +37,7 @@ export interface IActivityDTO {
   };
   category: ObjectId;
   special_discount?: number;
-  tags?: string[];
+  tags?: ObjectId[];
   booking_flag: boolean;
   advertiser_id: ObjectId;
 }

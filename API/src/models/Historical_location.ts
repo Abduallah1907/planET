@@ -1,4 +1,4 @@
-import { IHistorical_location } from "@/interfaces/IHistorical_Location";
+import { IHistorical_location } from "../interfaces/IHistorical_Location";
 import { LocationSchema } from "@/types/Location";
 import mongoose from "mongoose";
 
@@ -24,9 +24,20 @@ const historicalLocationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    date_time: {
+      type: Date,
+      // required: true,
+    },
     description: {
       type: String,
       required: true,
+    },
+    average_rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      required: true,
+      default: 0,
     },
     picture: [
       {
@@ -70,13 +81,16 @@ const historicalLocationSchema = new mongoose.Schema(
     },
     tags: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
       },
     ],
   },
   { timestamps: true }
 );
 
-const Historical_location = mongoose.model<IHistorical_location & mongoose.Document>("Historical_Location", historicalLocationSchema);
+const Historical_location = mongoose.model<
+  IHistorical_location & mongoose.Document
+>("Historical_Location", historicalLocationSchema);
 
 export default Historical_location;

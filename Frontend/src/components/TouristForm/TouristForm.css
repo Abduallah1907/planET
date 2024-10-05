@@ -1,8 +1,18 @@
 .form-fields {
   width: 800px;
   margin: auto;
-  /* display: flex;
-  flex-direction: column;
-  justify-content: space-around; */
   margin-top: 70px;
+}
+
+#firstName,
+#lastName,
+#username,
+#email,
+#password,
+#confirmPassword,
+#mobile,
+#dob,
+#nationality,
+#job {
+  width: 20rem;
 }

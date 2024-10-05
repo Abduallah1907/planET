@@ -11,6 +11,9 @@ import ActivityCard from "./components/Cards/ActivityCard";
 import HistoricalLocationCard from "./components/Cards/HistoricalLocation";
 import ItineraryCard from "./components/Cards/ItineraryCard";
 import TouristReg from "./views/auth/TouristReg/TouristReg";
+import TourGuideDashboard from "./views/TourGuideDashboard/TourGuidedashboard";
+import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
+
 import MainPage from "./views/Main Page/MainPage";
 import { AppProvider } from "./AppContext";
 
@@ -86,6 +89,9 @@ const App: React.FC = () => {
         <Route path="/editprofile" element={<ProfileForm />} />
         <Route path="/tourist" element={<TouristReg />} />
         <Route path="/editprofile" Component={ProfileForm} />
+        <Route path='/TourGuidedashboard' element={<TourGuideDashboard />} />
+        <Route path='/AdminDashboard' element={<AdminDashboard />} />
+        <Route path="/editprofile" Component={ProfileForm} />
         <Route path="/" element={<MainPage />} />
 
       </Routes>
@@ -94,3 +100,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+

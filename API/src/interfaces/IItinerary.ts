@@ -13,7 +13,7 @@ export interface IItinerary extends Document {
   accessibility: boolean;
   pickup_loc: string;
   drop_off_loc: string;
-  tags?: string[];
+  tags?: ObjectId[];
   active_flag: boolean;
   inappropriate_flag: boolean;
   tour_guide_id: ObjectId;

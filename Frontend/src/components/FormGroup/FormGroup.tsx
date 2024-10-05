@@ -26,7 +26,7 @@ function CustomFormGroup({
   name,
 }: InputData) {
   return (
-    <Form.Group className="form-group" controlId={id}>
+    <Form.Group className="form-group" id={id}>
       <Form.Label>{label}</Form.Label>
       <Form.Control
         type={type}

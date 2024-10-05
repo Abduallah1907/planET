@@ -1,3 +1,4 @@
+import { Button } from "react-bootstrap";
 import "./ButtonWide.css";
 
 interface ButtonLargeProps {
@@ -7,7 +8,9 @@ interface ButtonLargeProps {
 export default function ButtonWide({ label }: ButtonLargeProps) {
   return (
     <div>
-      <button className="button">{label}</button>
+      <Button type="submit" className="button">
+        {label}
+      </Button>
     </div>
   );
 }
