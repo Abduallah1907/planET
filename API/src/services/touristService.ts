@@ -76,7 +76,7 @@ export default class TouristService {
     const userService: UserService = Container.get(UserService);
     const newUserResponse = await userService.createUserService(IUserInputDTO);
     const newUser = new this.userModel(newUserResponse.data);
-    newUser.role = UserRoles.Tourist;
+    // newUser.role = UserRoles.Tourist;
     await newUser.save();
     if (newUser instanceof Error)
       throw new InternalServerError("Internal server error");
@@ -113,7 +113,6 @@ export default class TouristService {
       // cart: newTourist.cart,
       // wishlist: newTourist.wishlist,//out of current scope of sprint
     };
-    console.log(touristOutput);
     return new response(true, touristOutput, "Tourist created", 201);
   }
 

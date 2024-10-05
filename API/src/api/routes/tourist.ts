@@ -213,10 +213,6 @@ export default (app: Router) => {
    *               password:
    *                 type: string
    *                 description: Password of the tourist
-   *               role:
-   *                 type: string
-   *                 description: Role of the user
-   *                 enum: [Tourist]
    *               phone_number:
    *                 type: string
    *                 description: Phone number of the tourist
@@ -224,6 +220,13 @@ export default (app: Router) => {
    *                 type: string
    *                 format: date
    *                 description: Date of birth of the tourist
+   *               job:
+   *                 type: string
+   *                 description: Job of the tourist
+   *               nation:
+   *                 type: string
+   *                 description: Nation of the tourist
+   *
    *     responses:
    *       200:
    *         description: Tourist created data.

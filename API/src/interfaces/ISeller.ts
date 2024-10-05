@@ -13,7 +13,6 @@ export interface ISellerOutputDTO {
 
 export interface ISellerInputDTO {
   documents_required: string[];
-  logo: string;
   name: string;
   username: string;
   email: string;

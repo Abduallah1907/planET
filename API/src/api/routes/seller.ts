@@ -18,8 +18,6 @@ export default (app: Router) => {
    *           type: array
    *           items:
    *             type: string
-   *         logo:
-   *           type: string
    *         name:
    *           type: string
    *         username:
@@ -30,9 +28,6 @@ export default (app: Router) => {
    *           type: string
    *         phone_number:
    *           type: string
-   *         date_of_birth:
-   *           type: string
-   *           format: date
    *     ISellerOutputDTO:
    *       type: object
    *       properties:

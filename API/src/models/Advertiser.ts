@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 
 const advertiserSchema = new mongoose.Schema(
   {
-   
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -23,19 +22,19 @@ const advertiserSchema = new mongoose.Schema(
     ],
     link_to_website: {
       type: String,
-      required: true,
+      // required: true,
     },
     hotline: {
       type: String,
-      required: true,
+      // required: true,
     },
     about: {
       type: String,
-      required: true,
+      // required: true,
     },
     logo: {
       type: String,
-      required: true,
+      // required: true,
     },
   },
   { timestamps: true }
