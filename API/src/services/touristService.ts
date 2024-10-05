@@ -413,33 +413,6 @@ export default class TouristService {
       200
     );
   }
-  public async getSortedActivitiesService(sort: string, direction: string) {
-    let sortCriteria = {};
-
-    if (!sort && !direction) {
-      const activities = await this.activityModel.find();
-      return new response(
-        true,
-        activities,
-        "Activities with no sort criteria provided",
-        200
-      );
-    }
-    console.log("direction", direction);
-    if (sort === "price") {
-      sortCriteria = { price: parseInt(direction) };
-    } else if (sort === "ratings") {
-      sortCriteria = { average_rating: parseInt(direction) };
-    } else {
-      throw new BadRequestError("Invalid sort criteria");
-    }
-    console.log("sort criteria", sortCriteria);
-    const activities = await this.activityModel.find().sort(sortCriteria);
-    if (activities instanceof Error)
-      throw new InternalServerError("Internal server error");
-
-    return new response(true, activities, "Sorted activities are fetched", 200);
-  }
 
   public async getSortedItinerariesService(sort: string, direction: string) {
     let sortCriteria = {};

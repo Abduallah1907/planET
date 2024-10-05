@@ -1,5 +1,9 @@
 import { IActivityDTO } from "@/interfaces/IActivity";
-import { BadRequestError, InternalServerError, NotFoundError } from "@/types/Errors";
+import {
+  BadRequestError,
+  InternalServerError,
+  NotFoundError,
+} from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
 import mongoose, { Types } from "mongoose";
@@ -8,7 +12,7 @@ export default class ActivityService {
   constructor(
     @Inject("activityModel") private activityModel: Models.ActivityModel,
     @Inject("categoryModel") private categoryModel: Models.CategoryModel
-  ) { }
+  ) {}
 
   public getAllActivitiesService = async () => {
     const activities = await this.activityModel.find({});
@@ -103,7 +107,9 @@ export default class ActivityService {
       activityData.price_range?.max &&
       activityData.price_range.min
     ) {
-      throw new BadRequestError("Cannot enter both price and price range,choose one of them");
+      throw new BadRequestError(
+        "Cannot enter both price and price range,choose one of them"
+      );
     }
 
     if (activityData.date) updateFields.date = activityData.date;
@@ -321,5 +327,32 @@ export default class ActivityService {
       "Filtered activities are fetched",
       200
     );
+  }
+  public async getSortedActivitiesService(sort: string, direction: string) {
+    let sortCriteria = {};
+
+    if (!sort && !direction) {
+      const activities = await this.activityModel.find();
+      return new response(
+        true,
+        activities,
+        "Activities with no sort criteria provided",
+        200
+      );
+    }
+    console.log("direction", direction);
+    if (sort === "price") {
+      sortCriteria = { price: parseInt(direction) };
+    } else if (sort === "ratings") {
+      sortCriteria = { average_rating: parseInt(direction) };
+    } else {
+      throw new BadRequestError("Invalid sort criteria");
+    }
+    console.log("sort criteria", sortCriteria);
+    const activities = await this.activityModel.find().sort(sortCriteria);
+    if (activities instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    return new response(true, activities, "Sorted activities are fetched", 200);
   }
 }

@@ -1,7 +1,15 @@
-import { expressjwt as jwt} from 'express-jwt';
-import config from '@/config';
-import { Request } from 'express';
-import { Algorithm } from 'jsonwebtoken';
+import { expressjwt as jwt } from "express-jwt";
+import { Request, Response, NextFunction } from "express";
+import { Algorithm } from "jsonwebtoken";
+import dotenv from "dotenv";
+import express from "express";
+import { Router } from "express";
+import { Container } from "typedi";
+import { TouristController } from "../controllers/touristController";
+
+dotenv.config();
+
+const app = express();
 
 /**
  * We are assuming that the JWT will come in a header with the form
@@ -18,18 +26,20 @@ const getTokenFromHeader = (req: Request): string | undefined => {
    * So I believe that this should handle more 'edge' cases ;)
    */
   if (
-    (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Token') ||
-    (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer')
+    (req.headers.authorization &&
+      req.headers.authorization.startsWith("Token")) ||
+    (req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer"))
   ) {
-    return req.headers.authorization.split(' ')[1];
+    return req.headers.authorization.split(" ")[1];
   }
   return undefined;
 };
 
 const isAuth = jwt({
-  secret: config.jwtSecret || 'defaultSecret', // The _secret_ to sign the JWTs
-  algorithms: [config.jwtAlgorithm as Algorithm], // JWT Algorithm
-  requestProperty: 'token', // Use req.token to store the JWT
+  secret: process.env.JWT_SECRET || "defaultSecret", // The _secret_ to sign the JWTs
+  algorithms: [process.env.JWT_ALGORITHM as Algorithm], // JWT Algorithm
+  requestProperty: "token", // Use req.token to store the JWT
   getToken: getTokenFromHeader, // How to extract the JWT from the request
 });
 
