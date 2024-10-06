@@ -6,7 +6,6 @@ import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
 import Sidebar from "../Sidebar";
-import CustomFormGroup from "../FormGroup/FormGroup";
 
 interface NationalityOption {
   value: string;
