@@ -29,7 +29,7 @@ export default class TourGuideService {
     previousWork: IPreviousWorkInputDTO
   ): Promise<any> {
     const tourGuide = await this.tourGuideModel.findOne({
-      tour_guide_id: previousWork.tour_guide_user_id,
+      tour_guide_id: previousWork.tour_guide_id,
     });
     if (!tourGuide)
       throw new HttpError("Tour guide not found. Is the ID correct?", 404);
@@ -92,15 +92,15 @@ export default class TourGuideService {
 
   public async deletePreviousWorkService(
     previous_work_id: Types.ObjectId,
-    tour_guide_user_id: Types.ObjectId
+    tour_guide_id: Types.ObjectId
   ) {
     if (!Types.ObjectId.isValid(previous_work_id.toString()))
       throw new Error("_id is invalid");
-    if (!Types.ObjectId.isValid(tour_guide_user_id.toString()))
+    if (!Types.ObjectId.isValid(tour_guide_id.toString()))
       throw new Error("_id is invalid");
 
-    const tourGuide = await this.tourGuideModel.findOne({
-      user_id: tour_guide_user_id,
+    const tourGuide = await this.tourGuideModel.findById({
+      tour_guide_id,
     });
     if (!tourGuide) throw new HttpError("Tour guide not found", 404);
 
@@ -144,7 +144,7 @@ export default class TourGuideService {
 
     const newTourGuide = await this.tourGuideModel.create({
       user_id: newUserResponse.data._id,
-      photo: "link.png",
+      photo: tourGuideData.photo,
       documents_required: tourGuideData.documents_required,
       approval: true,
     });
@@ -183,7 +183,7 @@ export default class TourGuideService {
       name: tourGuideUser.name,
       phone_number: userProfile.phone_number,
     };
-    return new response(true, tourGuideOutput, "Tour guide profile", 201);
+    return new response(true, tourGuideOutput, "Tour guide profile", 200);
   }
 
   public async updateProfileService(
@@ -242,7 +242,7 @@ export default class TourGuideService {
       true,
       tourGuideOutput,
       "Profile updated successfully!",
-      201
+      200
     );
   }
 }

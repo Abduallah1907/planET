@@ -22,6 +22,7 @@ export interface ITourGuideInput {
   phone_number: string;
   name: string;
   password: string;
+  photo: string;
   documents_required: string[];
 }
 export interface ITourGuideOutput {

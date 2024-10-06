@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { TourGuideController } from "../controllers/tourGuideController";
 import Container from "typedi";
+import authorize from "../middlewares/authorize";
+import UserRoles from "@/types/enums/userRoles";
 const router = Router();
 // all routes have /api/tourGuide before each route
 
@@ -21,11 +23,11 @@ export default (app: Router) => {
    * paths:
    *   /api/tourGuide/createPreviousWork:
    *     post:
-   *      tags:
-   *       - Tour Guide Profile
-   *      summary: Adds previous work for a tour guide
-   *      description: Anytime previous work needs to be added to a profile, this should be called instead of using the API for the update profile. This, given the tour guide USER id and data about the previous work, will automatically create it in the previous work table and add it to the tour guide.
-   *      requestBody:
+   *       tags:
+   *         - Tour Guide Profile
+   *       summary: Adds previous work for a tour guide
+   *       description: Anytime previous work needs to be added to a profile, this should be called instead of using the API for the update profile. This, given the tour guide USER id and data about the previous work, will automatically create it in the previous work table and add it to the tour guide.
+   *       requestBody:
    *         required: true
    *         content:
    *           application/json:
@@ -44,59 +46,58 @@ export default (app: Router) => {
    *                 to:
    *                   type: string
    *                   format: date
-   *                 tour_guide_user_id:
+   *                 tour_guide_id:
    *                   type: string
    *                   format: objectId
    *                   example: 66f9386e34b53f13d6cfefaa
-   *      responses:
-   *        201:
-   *          description: Work experience created successfully
-   *          content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 success:
-   *                   type: boolean
-   *                   example: true
-   *                 data:
-   *                   type: object
-   *                   properties:
-   *                     previous_work_id:
-   *                       type: string
-   *                       example: "6700d80b347ffedb54ee30d2"
-   *                     title:
-   *                       type: string
-   *                       example: "el ektshaf abo el hol"
-   *                     place:
-   *                       type: string
-   *                       example: "Pyramids"
-   *                     from:
-   *                       type: string
-   *                       format: date-time
-   *                       example: "2024-05-15T00:00:00.000Z"
-   *                     to:
-   *                       type: string
-   *                       format: date-time
-   *                       example: "2024-05-17T00:00:00.000Z"
-   *                 message:
-   *                   type: string
-   *                   example: "Work experience created successfully!"
-   *                 status:
-   *                   type: integer
-   *                   example: 201
-   *        404:
-   *          description: Did not find the tour guide using the user ID.
-   *        500:
-   *          description: Internal server error.
-   *
+   *       responses:
+   *         201:
+   *           description: Work experience created successfully
+   *           content:
+   *             application/json:
+   *               schema:
+   *                 type: object
+   *                 properties:
+   *                   success:
+   *                     type: boolean
+   *                     example: true
+   *                   data:
+   *                     type: object
+   *                     properties:
+   *                       previous_work_id:
+   *                         type: string
+   *                         example: "6700d80b347ffedb54ee30d2"
+   *                       title:
+   *                         type: string
+   *                         example: "el ektshaf abo el hol"
+   *                       place:
+   *                         type: string
+   *                         example: "Pyramids"
+   *                       from:
+   *                         type: string
+   *                         format: date-time
+   *                         example: "2024-05-15T00:00:00.000Z"
+   *                       to:
+   *                         type: string
+   *                         format: date-time
+   *                         example: "2024-05-17T00:00:00.000Z"
+   *                   message:
+   *                     type: string
+   *                     example: "Work experience created successfully!"
+   *                   status:
+   *                     type: integer
+   *                     example: 201
+   *         404:
+   *           description: Did not find the tour guide using the user ID.
+   *         500:
+   *           description: Internal server error.
    *   /api/tourGuide/updatePreviousWork:
    *     put:
-   *      tags:
-   *       - Tour Guide Profile
-   *      summary: Updates previous works
-   *      description: This takes in all the information about the previous work and updates them. Note that even old information needs to be sent, otherwise it will be overwritten to be empty
-   *      requestBody:
+   *       tags:
+   *         - Tour Guide Profile
+   *       summary: Updates previous works
+   *       description: This takes in all the information about the previous work and updates them. Note that even old information needs to be sent, otherwise it will be overwritten to be empty
+   *       requestBody:
    *         required: true
    *         content:
    *           application/json:
@@ -119,101 +120,100 @@ export default (app: Router) => {
    *                   type: string
    *                   format: objectId
    *                   example: 66f9386e34b53f13d6cfefaa
-   *      responses:
-   *        201:
-   *          description: Work experience updated succesfully
-   *          content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 success:
-   *                   type: boolean
-   *                   example: true
-   *                 data:
-   *                   type: object
-   *                   properties:
-   *                     previous_work_id:
-   *                       type: string
-   *                       example: "6700d80b347ffedb54ee30d2"
-   *                     title:
-   *                       type: string
-   *                       example: "el sar2 abo el hol"
-   *                     place:
-   *                       type: string
-   *                       example: "Pyramids"
-   *                     from:
-   *                       type: string
-   *                       format: date-time
-   *                       example: "2024-05-15T00:00:00.000Z"
-   *                     to:
-   *                       type: string
-   *                       format: date-time
-   *                       example: "2024-05-17T00:00:00.000Z"
-   *                 message:
-   *                   type: string
-   *                   example: "Previous work updated!"
-   *                 status:
-   *                   type: integer
-   *                   example: 201
-   *        404:
-   *          description: Did not find the previous work using the work ID.
-   *        500:
-   *          description: Internal server error.
-   *
-   *   /api/tourGuide/deletePreviousWork/{tour_guide_user_id}/previousWork/{previous_work_id}:
+   *       responses:
+   *         201:
+   *           description: Work experience updated successfully
+   *           content:
+   *             application/json:
+   *               schema:
+   *                 type: object
+   *                 properties:
+   *                   success:
+   *                     type: boolean
+   *                     example: true
+   *                   data:
+   *                     type: object
+   *                     properties:
+   *                       previous_work_id:
+   *                         type: string
+   *                         example: "6700d80b347ffedb54ee30d2"
+   *                       title:
+   *                         type: string
+   *                         example: "el sar2 abo el hol"
+   *                       place:
+   *                         type: string
+   *                         example: "Pyramids"
+   *                       from:
+   *                         type: string
+   *                         format: date-time
+   *                         example: "2024-05-15T00:00:00.000Z"
+   *                       to:
+   *                         type: string
+   *                         format: date-time
+   *                         example: "2024-05-17T00:00:00.000Z"
+   *                   message:
+   *                     type: string
+   *                     example: "Previous work updated!"
+   *                   status:
+   *                     type: integer
+   *                     example: 201
+   *         404:
+   *           description: Did not find the previous work using the work ID.
+   *         500:
+   *           description: Internal server error.
+   *   /api/tourGuide/deletePreviousWork/{tour_guide_id}/previousWork/{previous_work_id}:
    *     delete:
-   *      tags:
-   *       - Tour Guide Profile
-   *      summary: Deletes previous work
-   *      description: Only needs the ids, and it will delete it from the table and remove object id reference to it in the tour guide
-   *      parameters:
-   *       - name: tour_guide_user_id
-   *         in: path
-   *         description: The owner of the previous work to delete.
-   *         required: true
-   *         schema:
-   *           type: string
-   *           format: objectId
-   *           example: 6700067cce53c3263e1f8e5c
-   *       - name: previous_work_id
-   *         in: path
-   *         description: The previous work we want to delete.
-   *         required: true
-   *         schema:
-   *           type: string
-   *           format: objectId
-   *           example: 6700dc8780d35b7805f1cfd0
-   *      responses:
-   *        201:
-   *          description: Previous work is deleted
-   *          content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 success:
-   *                   type: boolean
-   *                   example: true
-   *                 data:
-   *                   type: object
-   *                   properties:
-   *                     previous_work_id:
-   *                       type: string
-   *                       example: "6700d80b347ffedb54ee30d2"
-   *                     title:
-   *                       type: string
-   *                       example: "el ektshaf abo el hol"
-   *                 message:
-   *                   type: string
-   *                   example: "Previous work deleted"
-   *                 status:
-   *                   type: integer
-   *                   example: 200
-   *        404:
-   *          description: Did not find the previous work/tour guide using the work/tour guide ID.
-   *        500:
-   *          description: Internal server error.
+   *       tags:
+   *         - Tour Guide Profile
+   *       summary: Deletes previous work
+   *       description: Only needs the ids, and it will delete it from the table and remove object id reference to it in the tour guide
+   *       parameters:
+   *         - name: tour_guide_id
+   *           in: path
+   *           description: The owner of the previous work to delete.
+   *           required: true
+   *           schema:
+   *             type: string
+   *             format: objectId
+   *             example: 6700067cce53c3263e1f8e5c
+   *         - name: previous_work_id
+   *           in: path
+   *           description: The previous work we want to delete.
+   *           required: true
+   *           schema:
+   *             type: string
+   *             format: objectId
+   *             example: 6700dc8780d35b7805f1cfd0
+   *       responses:
+   *         201:
+   *           description: Previous work is deleted
+   *           content:
+   *             application/json:
+   *               schema:
+   *                 type: object
+   *                 properties:
+   *                   success:
+   *                     type: boolean
+   *                     example: true
+   *                   data:
+   *                     type: object
+   *                     properties:
+   *                       previous_work_id:
+   *                         type: string
+   *                         example: "6700d80b347ffedb54ee30d2"
+   *                       title:
+   *                         type: string
+   *                         example: "el ektshaf abo el hol"
+   *                   message:
+   *                     type: string
+   *                     example: "Previous work deleted"
+   *                   status:
+   *                     type: integer
+   *                     example: 200
+   *         404:
+   *           description: Did not find the previous work/tour guide using the work/tour guide ID.
+   *         500:
+   *           description: Internal server error.
    *   /api/tourGuide/createProfile:
    *     post:
    *       tags:
@@ -228,50 +228,45 @@ export default (app: Router) => {
    *               properties:
    *                 username:
    *                   type: string
-   *                   example: zeinator
    *                 email:
    *                   type: string
-   *                   example: zeina@gmail.com
    *                 phone_number:
    *                   type: string
-   *                   example: 0111111
    *                 name:
    *                   type: string
-   *                   example: Zeina
    *                 password:
    *                   type: string
-   *                   example: secreetpassword
    *                 documents_required:
    *                   type: array
    *                   items:
    *                     type: string
-   *                     example: "National ID"
-   *
+   *                 photo:
+   *                   type: string
    *       responses:
-   *        201:
-   *          description: Succesful creation of profile
-   *          content:
-   *           application/json:
-   *             schema:
-   *             type: object
-   *             properties:
-   *               success:
-   *                 type: boolean
-   *                 example: true
-   *               data:
+   *         201:
+   *           description: Successful creation of profile
+   *           content:
+   *             application/json:
+   *               schema:
    *                 type: object
    *                 properties:
-   *                   tour_guide_user_id:
+   *                   success:
+   *                     type: boolean
+   *                     example: true
+   *                   data:
+   *                     type: object
+   *                     properties:
+   *                       tour_guide_id:
+   *                         type: string
+   *                         example: "6702481bfe08b9a3f6556ea1"
+   *                   message:
    *                     type: string
-   *                     example: "6702481bfe08b9a3f6556ea1"
-   *               message:
-   *                 type: string
-   *                 example: "Tour guide created"
-   *               status:
-   *                 type: integer
-   *                 example: 201
-   *        500:
-   *          description: Internal server error.
+   *                     example: "Tour guide created"
+   *                   status:
+   *                     type: integer
+   *                     example: 201
+   *         500:
+   *           description: Internal server error.
    *   /api/tourGuide/getProfile/{email}:
    *     get:
    *       tags:
@@ -279,41 +274,32 @@ export default (app: Router) => {
    *       summary: Fetches information about the tour guide's profile
    *       description: This returns everything about the user
    *       parameters:
-   *       - name: email
-   *         in: path
-   *         description: The owner of said profile.
-   *         required: true
-   *         schema:
-   *           type: string
+   *         - name: email
+   *           in: path
+   *           description: The owner of said profile.
+   *           required: true
+   *           schema:
+   *             type: string
    *       responses:
-   *        201:
-   *          description: Succesful reterival of profile
-   *          content:
-   *           application/json:
-   *             schema:
-   *              type: object
-   *              properties:
-   *                 success:
-   *                   type: boolean
-   *                   example: true
-   *                 data:
-   *                   $ref: '#/components/schemas/TourGuideOutput'
-   *                 message:
-   *                   type: string
-   *                 status:
-   *                   type: integer
-   *                   example: 201
-   *        404:
-   *          description: Did not find the tour guide in either the tour_guide table or the user table
-   *        500:
-   *          description: Internal server error.
-   *
+   *         201:
+   *           description: Successful retrieval of profile
+   *         404:
+   *           description: Did not find the tour guide in either the tour_guide table or the user table
+   *         500:
+   *           description: Internal server error.
    *   /api/tourGuide/updateProfile/{email}:
    *     put:
    *       tags:
    *         - Tour Guide Profile
    *       summary: Updates the year and photo of a tour guide.
    *       description: Note that even if the tour guide does not update a field, it should send the old field, otherwise it will be set to be empty. If previous work needs to be updated/created, use their respective apis and not this one
+   *       parameters:
+   *         - name: email
+   *           in: path
+   *           description: The email of the tour guide to update.
+   *           required: true
+   *           schema:
+   *             type: string
    *       requestBody:
    *         required: true
    *         content:
@@ -321,27 +307,19 @@ export default (app: Router) => {
    *             schema:
    *               type: object
    *               properties:
-   *                 tour_guide_user_id:
+   *                 phone_number:
    *                   type: string
-   *                   format: objectId
-   *                   example: 66f9386e34b53f13d6cfefaa
    *                 photo:
    *                   type: string
-   *                   example: somethingLinking.png
    *                 years_of_experience:
    *                   type: number
-   *                   example: 5
    *       responses:
-   *        201:
-   *          description: Succesful updating of profile
-   *          content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/TourGuideOutput'
-   *        404:
-   *          description: Did not find the tour guide in either the tour_guide table or the user table
-   *        500:
-   *          description: Internal server error.
+   *         200:
+   *           description: Successful updating of profile
+   *         404:
+   *           description: Did not find the tour guide in either the tour_guide table or the user table
+   *         500:
+   *           description: Internal server error.
    * components:
    *   schemas:
    *     TourGuideOutput:
@@ -408,17 +386,35 @@ export default (app: Router) => {
     Container.get(TourGuideController);
   app.use("/tourGuide", router);
   // CRUD for work experience
-  router.post("/createPreviousWork", tourGuideController.createPreviousWork);
-  router.put("/updatePreviousWork", tourGuideController.updatePreviousWork);
+  router.post(
+    "/createPreviousWork",
+    authorize([UserRoles.TourGuide]),
+    tourGuideController.createPreviousWork
+  );
+  router.put(
+    "/updatePreviousWork",
+    authorize([UserRoles.TourGuide]),
+    tourGuideController.updatePreviousWork
+  );
   router.delete(
-    "/deletePreviousWork/:tour_guide_user_id/previousWork/:previous_work_id",
+    "/deletePreviousWork/:tour_guide_id/previousWork/:previous_work_id",
+    authorize([UserRoles.TourGuide]),
     tourGuideController.deletePreviousWork
   );
   // Create, Read and update for profile
-  router.post("/createProfile", tourGuideController.createProfile);
-  router.get("/getProfile/:email", tourGuideController.getProfile);
-  router.put("/updateProfile/:email", tourGuideController.updateProfile);
-
-  router.get("/getProfile/:tour_guide_user_id", tourGuideController.getProfile);
-  router.put("/updateProfile", tourGuideController.updateProfile);
+  router.post(
+    "/createProfile",
+    authorize([UserRoles.TourGuide]),
+    tourGuideController.createProfile
+  );
+  router.get(
+    "/getProfile/:email",
+    authorize([UserRoles.TourGuide]),
+    tourGuideController.getProfile
+  );
+  router.put(
+    "/updateProfile/:email",
+    authorize([UserRoles.TourGuide]),
+    tourGuideController.updateProfile
+  );
 };

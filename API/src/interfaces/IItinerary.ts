@@ -24,7 +24,7 @@ export interface IItinerary extends Document {
 }
 
 export interface IItineraryCreateDTO {
-  tour_guide_user_id: ObjectId;
+  tour_guide_id: ObjectId;
   name: string;
   category: ObjectId;
   activities: ObjectId[];

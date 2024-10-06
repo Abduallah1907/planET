@@ -12,7 +12,8 @@ import { IFilterComponents } from "@/interfaces/IFilterComponents";
 export default class ActivityService {
   constructor(
     @Inject("activityModel") private activityModel: Models.ActivityModel,
-    @Inject("categoryModel") private categoryModel: Models.CategoryModel
+    @Inject("categoryModel") private categoryModel: Models.CategoryModel,
+    @Inject("advertiserModel") private advertiserModel: Models.AdvertiserModel
   ) {}
 
   public getAllActivitiesService = async () => {
@@ -59,14 +60,21 @@ export default class ActivityService {
         !activityData.price_range.min ||
         !activityData.price_range.max)
     ) {
-      throw new BadRequestError("You need one of them ");
+      throw new BadRequestError("You can only input price or price range");
     }
     const activity = await this.activityModel.create(activityData);
-
     if (activity instanceof Error)
       throw new InternalServerError("Internal server error");
 
     if (activity == null) throw new NotFoundError("activity not created");
+    const advertiser = await this.advertiserModel.findByIdAndUpdate(
+      activityDatainput.advertiser_id,
+      { $push: { activities: activity._id } },
+      { new: true }
+    );
+    if (advertiser instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (advertiser == null) throw new NotFoundError("Advertiser not found");
 
     return new response(true, activity, "Activity", 201);
   }
@@ -150,10 +158,19 @@ export default class ActivityService {
     if (activity == null) {
       throw new NotFoundError("Activity not found");
     }
-    return new response(true, null, "Activity deleted successfully", 200);
+    await this.advertiserModel.findByIdAndUpdate(
+      activity.advertiser_id,
+      { $pull: { activities: activity._id } },
+      { new: true }
+    );
+    return new response(true, activity, "Activity deleted successfully", 200);
   }
 
-  public async getActivityService(name: string, category: string, tag: string) {
+  public async getSearchActivityService(
+    name: string,
+    category: string,
+    tag: string
+  ) {
     if (!name && !category && !tag) throw new BadRequestError("Invalid input");
 
     const searchCriteria: any = {};
