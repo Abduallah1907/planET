@@ -23,9 +23,10 @@ import ActivityViewEdit from "./views/ProductDetails/ActivityViewEdit";
 import Login from "./views/auth/Login/Login";
 import ProfileForm from "./components/ProfileForm/ProfileFormTourist";
 import SellerProfile from "./components/ProfileForm/SellerProfile";
-import settingSide from "./components/ProfileForm/settingSide";
+import SettingSide from "./components/ProfileForm/settingSide";
 import Advertiser from "./components/ProfileForm/Advertiser";
 import Products from "./components/Products";
+import ProfileFormTourGuide from "./components/ProfileForm/ProfileFormTourGuide";
 
 const App: React.FC = () => {
   const [isBooked, setIsBooked] = useState(false); // Manage booking state
@@ -41,7 +42,6 @@ const App: React.FC = () => {
         <Route path="/admin" element={<CreateAdmin />} />
         <Route path="/governer" element={<CreateGoverner />} />
         <Route path="/test" element={<BookingLayout />} />
-        <Route path="/editprofile" element={<ProfileForm />} />
         <Route
           path="/card"
           element={
@@ -101,25 +101,19 @@ const App: React.FC = () => {
             />
           }
         />
-        <Route path="/editprofile" element={<ProfileForm />} />
         <Route path="/tourist" element={<TouristReg />} />
-        <Route path="/editprofile" Component={ProfileForm} />
         <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/SellerDashboard" element={<SellerDashboard />} />
         <Route path="/ActivityViewEdit" element={<ActivityViewEdit />} />
-        <Route path="/editprofile" Component={ProfileForm} />
         <Route path="/filter" element={<FilterBy />} />
-        <Route path="/" element={<MainPage />} />
-
         <Route path="/delete" element={<Delete />} />
-        <Route path="/SettingSide" Component={settingSide} />
-        <Route path="/editprofile" Component={ProfileForm} />
-        <Route path="/TourGuide" Component={Advertiser} />
-        <Route path="/Advertiser" Component={Advertiser} />
-        <Route path="/Products" Component={Products} />
+        <Route path="/SettingSide" element={<SettingSide />} />
+        <Route path="/TourGuide" element={<ProfileFormTourGuide />} />
+        <Route path="/Advertiser" element={<Advertiser />} />
+        <Route path="/Products" element={<Products />} />
 
-        <Route path="/SellerProfile" Component={SellerProfile} />
+        <Route path="/SellerProfile" element={<SellerProfile />} />
       </Routes>
     </AppProvider>
   );
