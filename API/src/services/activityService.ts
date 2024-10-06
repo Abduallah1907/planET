@@ -16,7 +16,7 @@ export default class ActivityService {
   ) {}
 
   public getAllActivitiesService = async () => {
-    const activitiesData = await this.activityModel.find({});
+    const activitiesData = await this.activityModel.find({}).populate("category").populate("tags").populate("advertiser_id");
     if (activitiesData instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
