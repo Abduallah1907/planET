@@ -17,6 +17,7 @@ import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
 import MainPage from "./views/Main Page/MainPage";
 import { AppProvider } from "./AppContext";
 import FilterBy from "./components/FilterBy/FilterBy";
+import filterOptions from './utils/filterOptions.json'
 
 const App: React.FC = () => {
   const [isBooked, setIsBooked] = useState(false); // Manage booking state
@@ -93,7 +94,7 @@ const App: React.FC = () => {
         <Route path='/TourGuidedashboard' element={<TourGuideDashboard />} />
         <Route path='/AdminDashboard' element={<AdminDashboard />} />
         <Route path="/editprofile" Component={ProfileForm} />
-        <Route path="/filter" element={<FilterBy />} />
+        <Route path="/filter" element={<FilterBy filterOptions={filterOptions}/>} />
         <Route path="/" element={<MainPage />} />
 
       </Routes>
