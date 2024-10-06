@@ -35,7 +35,6 @@ const App: React.FC = () => {
         <Route path="/" element={<MainPage />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/Registeration" element={<TouristReg />} />
-        <Route path="/editprofile" element={<ProfileForm />} />
         <Route path="/admin" element={<CreateAdmin />} />
         <Route path="/governer" element={<CreateGoverner />} />
         <Route path="/test" element={<BookingLayout />} />
@@ -43,7 +42,6 @@ const App: React.FC = () => {
         <Route path="/editprofile" element={<ProfileForm />} />
         <Route path="/Itinerary" element={<Itinerary />} />
         <Route path="/Historical" element={<HistoricalPlaces />} />
-        <Route path="/editprofile" element={<ProfileForm />} />
         <Route path="/tourist" element={<TouristReg />} />
         <Route path='/TourGuidedashboard' element={<TourGuideDashboard />} />
         <Route path='/AdminDashboard' element={<AdminDashboard />} />
