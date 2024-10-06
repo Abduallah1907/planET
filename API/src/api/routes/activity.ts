@@ -392,8 +392,8 @@ export default (app: Router) => {
   );
 
   router.put(
-    "/updateActivity",
-    authorize([UserRoles.Advertiser]),
+    "/updateActivity/:id",
+    // authorize([UserRoles.Advertiser]),
     activityController.updateActivity
   );
 

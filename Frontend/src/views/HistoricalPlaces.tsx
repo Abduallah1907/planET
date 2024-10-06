@@ -6,6 +6,7 @@ import { Col, Row, Container, Form, InputGroup } from "react-bootstrap";
 import { BiSort } from "react-icons/bi";
 
 import { FaSearch } from "react-icons/fa";
+import filterOptions from '../utils/filterOptions.json';
 
 const historicalData = [
   {
@@ -115,7 +116,7 @@ export default function HistoricalLocationsPage() {
 
       <Row>
         <Col md={3} className="border-bottom pb-2">
-          <FilterBy />
+          <FilterBy filterOptions={filterOptions}/>
         </Col>
 
         <Col md={9} className="p-3">

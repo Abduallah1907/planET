@@ -429,11 +429,7 @@ export default (app: Router) => {
     authorize([UserRoles.Tourist]),
     touristController.updateTourist
   );
-  route.post(
-    "/createTourist",
-    authorize([UserRoles.Tourist]),
-    touristController.createTourist
-  );
+  route.post("/createTourist", touristController.createTourist);
 
   route.get("/getSortedItineraries", touristController.getSortedItineraries);
 

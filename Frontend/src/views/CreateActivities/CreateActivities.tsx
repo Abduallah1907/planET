@@ -4,6 +4,7 @@ import FilterBy from "../../components/FilterBy/FilterBy";
 import CustomActivityCard from "../../components/Cards/ActivityCard";
 import { FaSearch } from "react-icons/fa";
 import { BiSort } from "react-icons/bi";
+import filterOptions from '../../utils/filterOptions.json';
 import { ActivityService } from "../../services/ActivityService";
 
 const activityData = [
@@ -122,7 +123,7 @@ export default function ActivitiesPage() {
 
       <Row>
         <Col md={3} className="border-bottom pb-2">
-          <FilterBy />
+          <FilterBy filterOptions={filterOptions}/>
         </Col>
 
         <Col md={9} className="p-3">

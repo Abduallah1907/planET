@@ -26,7 +26,7 @@ export default class ActivityService {
     return new response(true, activities, "All activites are fetched", 200);
   };
 
-  public createActivityService = async (activityDatainput: IActivityDTO) => {
+  public async createActivityService(activityDatainput: IActivityDTO) {
     const activityData: IActivityDTO = {
       name: activityDatainput.name,
       date: activityDatainput.date,
@@ -60,12 +60,12 @@ export default class ActivityService {
     if (activity instanceof Error)
       throw new InternalServerError("Internal server error");
 
-    if (activity == null) throw new NotFoundError("User not found");
+    if (activity == null) throw new NotFoundError("activity not created");
 
     return new response(true, activity, "Activity", 201);
-  };
+  }
 
-  public getActivityByIDService = async (id: string) => {
+  public async getActivityByIDService(id: string) {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID format");
     }
@@ -76,9 +76,9 @@ export default class ActivityService {
 
     if (activity == null) throw new NotFoundError("Activity not found");
     return new response(true, activity, "Activity is found", 200);
-  };
+  }
 
-  public getActivityByAdvertiserIDService = async (advertiserID: string) => {
+  public async getActivityByAdvertiserIDService(advertiserID: string) {
     if (!Types.ObjectId.isValid(advertiserID)) {
       throw new BadRequestError("Invalid Adverstier ID format");
     }
@@ -92,23 +92,15 @@ export default class ActivityService {
       throw new NotFoundError("No Activity with this Adverstier ID");
     }
     return new response(true, activities, "Activity is found", 200);
-  };
+  }
 
-  public updateActivityService = async (
+  public async updateActivityService(
     id: string,
     activityData: UpdateIActivityDTO
-  ) => {
+  ) {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID format");
     }
-    const activity = await this.activityModel.findById(new Types.ObjectId(id));
-    if (activity instanceof Error) {
-      throw new InternalServerError("Internal server error");
-    }
-    if (activity == null) {
-      throw new NotFoundError("No Activity with this ID");
-    }
-    const updateFields: Partial<IActivityDTO> = {};
     if (
       activityData?.price &&
       activityData.price_range?.max &&
@@ -118,53 +110,28 @@ export default class ActivityService {
         "Cannot enter both price and price range,choose one of them"
       );
     }
-
-    if (activityData.date) updateFields.date = activityData.date;
-    if (activityData.time) updateFields.time = activityData.time;
-    if (
-      activityData.location &&
-      activityData.location.latitude &&
-      activityData.location.longitude
-    ) {
-      updateFields.location = activityData.location;
-    }
-    if (activityData.price) updateFields.price = activityData.price;
-    if (activityData.price_range)
-      updateFields.price_range = {
-        min: activityData.price_range.min ?? 0,
-        max: activityData.price_range.max ?? 0,
-      };
-    if (activityData.category) updateFields.category = activityData.category;
-    if (activityData.special_discount)
-      updateFields.special_discount = activityData.special_discount;
-    if (activityData.tags) updateFields.tags = activityData.tags;
-    if (activityData?.booking_flag)
-      updateFields.booking_flag = activityData.booking_flag;
-    if (updateFields.price) {
-      updateFields.price_range = { min: 0, max: 0 };
-    } else if (
-      updateFields.price_range?.min !== undefined &&
-      updateFields.price_range?.max !== undefined
-    ) {
-      updateFields.price = 0;
-    }
-
     const updatedActivity = await this.activityModel.findByIdAndUpdate(
       new Types.ObjectId(id),
-      { $set: updateFields },
-      { new: true } // Returns the updated document
+      activityData,
+      { new: true }
     );
+    if (updatedActivity instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+    if (updatedActivity == null) {
+      throw new NotFoundError("No Activity with this ID");
+    }
 
     return new response(
       true,
       updatedActivity,
-      "Activity is Update Successfully",
+      "Activity is Updated Successfully",
       200
     );
-  };
+  }
 
   //Delete Actitivity
-  public deleteActivityService = async (id: string) => {
+  public async deleteActivityService(id: string) {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID format");
     }
@@ -178,18 +145,9 @@ export default class ActivityService {
       throw new NotFoundError("Activity not found");
     }
     return new response(true, null, "Activity deleted successfully", 200);
-  };
+  }
 
   public async getActivityService(name: string, category: string, tag: string) {
-    // const newCategory = new Category({type:category});
-    // await newCategory.save();
-    // const newActivity = new Activity({
-    //     category: newCategory._id,
-    //     name: name,
-    //     tags: [tag],
-    // });
-    // await newActivity.save();
-
     if (!name && !category && !tag) throw new BadRequestError("Invalid input");
 
     const searchCriteria: any = {};

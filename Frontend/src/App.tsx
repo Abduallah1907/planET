@@ -14,7 +14,6 @@ import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
 
 import MainPage from "./views/Main Page/MainPage";
 import { AppProvider } from "./AppContext";
-import FilterBy from "./components/FilterBy/FilterBy";
 import Delete from "./components/Delete";
 import SellerDashboard from "./views/SellerDashboard/SellerDashboard";
 import ActivityViewEdit from "./views/ProductDetails/ActivityViewEdit";
@@ -31,8 +30,6 @@ import ActivityCard from "./components/Cards/ActivityCard";
 import CreateProduct from "./views/CreateProduct";
 
 const App: React.FC = () => {
-  const [isBooked, setIsBooked] = useState(false); // Manage booking state
-
   return (
     <AppProvider>
       <TopBar/>
@@ -40,7 +37,6 @@ const App: React.FC = () => {
         <Route path="/" element={<MainPage />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/Registeration" element={<TouristReg />} />
-        <Route path="/editprofile" element={<ProfileForm />} />
         <Route path="/admin" element={<CreateAdmin />} />
         <Route path="/governer" element={<CreateGoverner />} />
         <Route path="/test" element={<BookingLayout />} />
@@ -48,13 +44,13 @@ const App: React.FC = () => {
         <Route path="/editprofile" element={<ProfileForm />} />
         <Route path="/Itinerary" element={<Itinerary />} />
         <Route path="/Historical" element={<HistoricalPlaces />} />
-        <Route path="/editprofile" element={<ProfileForm />} />
         <Route path="/tourist" element={<TouristReg />} />
+        <Route path='/TourGuidedashboard' element={<TourGuideDashboard />} />
+        <Route path='/AdminDashboard' element={<AdminDashboard />} />
         <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/SellerDashboard" element={<SellerDashboard />} />
         <Route path="/ActivityViewEdit" element={<ActivityViewEdit />} />
-        <Route path="/filter" element={<FilterBy />} />
         <Route path="/delete" element={<Delete />} />
         <Route path="/SettingSide" element={<SettingSide />} />
         <Route path="/TourGuide" element={<ProfileFormTourGuide />} />

@@ -1,4 +1,4 @@
-import { IHistorical_location } from "../interfaces/IHistorical_location";
+import { IHistorical_location } from "../interfaces/IHistorical_Location";
 import { LocationSchema } from "@/types/Location";
 import mongoose from "mongoose";
 
@@ -82,8 +82,6 @@ const historicalLocationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Historical_location = mongoose.model<
-  IHistorical_location & mongoose.Document
->("Historical_Location", historicalLocationSchema);
+const Historical_location = mongoose.model<IHistorical_location & mongoose.Document>("Historical_Location", historicalLocationSchema);
 
 export default Historical_location;

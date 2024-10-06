@@ -142,6 +142,7 @@ const ProfileForm: React.FC = () => {
                     name="nationality"
                     value={formData.nationality}
                     onChange={handleChange}
+                    className="custom-form-control"
                     required
                   >
                     <option value="">Select your nationality</option>

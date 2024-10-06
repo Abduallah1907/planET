@@ -1,0 +1,14 @@
+{
+  "Category": {
+    "type": "multi-select",
+    "values": ["Text1", "Text2", "Text3"]
+  },
+  "Price": {
+    "type": "slider",
+    "min": 10,
+    "max": 1000
+  },
+  "Date": {
+    "type": "range"
+  }
+}
