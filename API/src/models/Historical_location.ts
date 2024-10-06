@@ -1,4 +1,4 @@
-import { IHistorical_location } from "../interfaces/IHistorical_Location";
+import { IHistorical_location } from "../interfaces/IHistorical_location";
 import { LocationSchema } from "@/types/Location";
 import mongoose from "mongoose";
 

@@ -54,7 +54,7 @@ export interface UpdateIActivityDTO {
   };
   category?: ObjectId;
   special_discount?: number;
-  tags?: string[];
+  tags?: ObjectId[];
   booking_flag?: boolean;
   advertiser_id?: ObjectId;
 }
