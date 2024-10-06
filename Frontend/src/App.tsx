@@ -8,15 +8,16 @@ import "./App.css";
 import CreateGoverner from "./views/CreateGoverner";
 import BookingLayout from "./views/CreateActivities";
 import ProfileForm from "./components/ProfileForm/ProfileForm";
+import TouristReg from "./views/auth/TouristReg/TouristReg";
 import ActivityCard from "./components/Cards/ActivityCard";
 import HistoricalLocationCard from "./components/Cards/HistoricalLocation";
 import ItineraryCard from "./components/Cards/ItineraryCard";
-import TouristReg from "./views/auth/TouristReg/TouristReg";
 import TourGuideDashboard from "./views/TourGuideDashboard/TourGuidedashboard";
 import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
 
 import MainPage from "./views/Main Page/MainPage";
 import { AppProvider } from "./AppContext";
+import Delete from "./components/Delete";
 import SellerDashboard from "./views/SellerDashboard/SellerDashboard";
 import ActivityViewEdit from "./views/ActivityViewEdit";
 import Login from "./views/auth/Login/Login";
@@ -29,6 +30,9 @@ const App: React.FC = () => {
     <AppProvider>
       
       <Routes>
+        <Route path="/" element={<TopBar />} />
+        <Route path="/editprofile" element={<ProfileForm />} />
+        <Route path="/tourist" element={<TouristReg />} />
         <Route path="/admin" element={<CreateAdmin />} />
         <Route path="/governer" element={<CreateGoverner />} />
         <Route path="/test" element={<BookingLayout />} />
@@ -100,6 +104,7 @@ const App: React.FC = () => {
         <Route path="/SellerDashboard" element={<SellerDashboard />} />
         <Route path="/ActivityViewEdit" element={<ActivityViewEdit />} />
         <Route path="/editprofile" Component={ProfileForm} />
+        <Route path="/delete" element={<Delete/>} />
         <Route path="/" element={<MainPage />} />
         <Route path="/Login" element={<Login />} />
 
