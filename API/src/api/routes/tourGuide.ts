@@ -161,7 +161,7 @@ export default (app: Router) => {
    *        500:
    *          description: Internal server error.
    *
-   *   /deletePreviousWork/{tour_guide_user_id}/previousWork/{previous_work_id}:
+   *   /api/tourGuide/deletePreviousWork/{tour_guide_user_id}/previousWork/{previous_work_id}:
    *     delete:
    *      tags:
    *       - Tour Guide Profile
@@ -266,7 +266,7 @@ export default (app: Router) => {
    *                 example: 201
    *        500:
    *          description: Internal server error.
-   *   /getProfile/{tour_guide_user_id}:
+   *   /api/tourGuide/getProfile/{tour_guide_user_id}:
    *     get:
    *       tags:
    *         - Tour Guide Profile
@@ -377,7 +377,7 @@ export default (app: Router) => {
    *                   example: 201
    *        500:
    *          description: Internal server error.
-   *   /getItinerary/{itinerary_id}:
+   *   /api/tourGuide/getItinerary/{itinerary_id}:
    *     get:
    *      tags:
    *       - Itinerary
@@ -455,7 +455,7 @@ export default (app: Router) => {
    *          description: Itinerary not found.
    *        500:
    *          description: Internal server error.
-   *   /deleteItinerary/{tour_guide_user_id}/itinerary/{itinerary_id}:
+   *   /api/tourGuide/deleteItinerary/{tour_guide_user_id}/itinerary/{itinerary_id}:
    *     delete:
    *      tags:
    *       - Itinerary
