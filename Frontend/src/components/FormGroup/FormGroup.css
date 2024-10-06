@@ -1,13 +1,11 @@
-
-
 /* Form Group Styles */
 .form-group {
-    margin-bottom: 0.6rem; /* Adjust spacing between form groups */
+  margin-bottom: 0.6rem; /* Adjust spacing between form groups */
 }
 
 .form-group label {
-    font-weight: bold;
-    font-size: 20px; 
+  font-weight: bold;
+  font-size: 20px;
 }
 
 /* Input & Select Styles */
@@ -32,12 +30,12 @@
 
 /* Disabled Input Styles */
 .disabled-input {
-    background-color: #c1b5b5;
-    color: #110f0f;
-    border: 1px solid #b39696; /* Fixed the border style */
-    cursor: not-allowed;
+  background-color: #c1b5b5;
+  color: #110f0f;
+  border: 1px solid #b39696; /* Fixed the border style */
+  cursor: not-allowed;
 }
 
 .disabled-input:focus {
-    outline: none;
+  outline: none;
 }

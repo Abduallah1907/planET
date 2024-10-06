@@ -97,7 +97,6 @@ export default function TouristForm() {
             onChange={handleChange}
             name={"firstName"}
           />
-
         </Col>
         <Col>
           <CustomFormGroup
@@ -126,7 +125,6 @@ export default function TouristForm() {
             onChange={handleChange}
             name={"username"}
           />
-
         </Col>
         <Col>
           <CustomFormGroup
@@ -143,22 +141,22 @@ export default function TouristForm() {
         </Col>
       </Row>
       <Row>
-      <Col>
-        <CustomFormGroup
-          label={"Password"}
-          type={"password"}
-          placeholder={"password"}
-          id={"password"}
-          disabled={false}
-          required={true}
-          value={regData.password}
-          onChange={handleChange}
-          name={"password"}
-        />
+        <Col>
+          <CustomFormGroup
+            label={"Password"}
+            type={"password"}
+            placeholder={"password"}
+            id={"password"}
+            disabled={false}
+            required={true}
+            value={regData.password}
+            onChange={handleChange}
+            name={"password"}
+          />
         </Col>
         <Col>
-        {/* </CustomFormGroup> */}
-        {/* <input
+          {/* </CustomFormGroup> */}
+          {/* <input
           type={"password"}
           placeholder={"**********"}
           minLength={8} // Minimum length of 8 characters
@@ -167,45 +165,45 @@ export default function TouristForm() {
           title="Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one number, and one special character"
           autoComplete="off" // Prevent browser from automatically filling in password
         /> */}
-        <CustomFormGroup
-          label={"Confirm password"}
-          type={"password"}
-          placeholder={"confirm password"}
-          id={"confirmPassword"}
-          disabled={false}
-          required={true}
-          value={regData.confirmPassword}
-          onChange={handleChange}
-          name={"confirmPassword"}
-        />
+          <CustomFormGroup
+            label={"Confirm password"}
+            type={"password"}
+            placeholder={"confirm password"}
+            id={"confirmPassword"}
+            disabled={false}
+            required={true}
+            value={regData.confirmPassword}
+            onChange={handleChange}
+            name={"confirmPassword"}
+          />
         </Col>
       </Row>
       <Row>
-      <Col>
-        <CustomFormGroup
-          label={"Mobile Number"}
-          type={"string"}
-          placeholder={"+20-123456789"}
-          id={"mobile"}
-          disabled={false}
-          required={true}
-          value={regData.mobile}
-          onChange={handleChange}
-          name={"mobile"}
-        />
+        <Col>
+          <CustomFormGroup
+            label={"Mobile Number"}
+            type={"string"}
+            placeholder={"+20-123456789"}
+            id={"mobile"}
+            disabled={false}
+            required={true}
+            value={regData.mobile}
+            onChange={handleChange}
+            name={"mobile"}
+          />
         </Col>
         <Col>
-        <CustomFormGroup
-          label={"Date of Birth"}
-          type={"date"}
-          placeholder={"dd/mm/yyyy"}
-          id={"dob"}
-          disabled={false}
-          required={true}
-          value={regData.dob}
-          onChange={handleChange}
-          name={"dob"}
-        />
+          <CustomFormGroup
+            label={"Date of Birth"}
+            type={"date"}
+            placeholder={"dd/mm/yyyy"}
+            id={"dob"}
+            disabled={false}
+            required={true}
+            value={regData.dob}
+            onChange={handleChange}
+            name={"dob"}
+          />
         </Col>
       </Row>
       <Row>
@@ -265,7 +263,7 @@ export default function TouristForm() {
           label="Remember me"
         />
       </div>
-      <div key="default-checkbox" className="mb-4">
+      <div key="default-checkbox1" className="mb-4">
         <Form.Check
           type="checkbox"
           // id="default-checkbox"

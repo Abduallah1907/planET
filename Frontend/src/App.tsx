@@ -17,6 +17,7 @@ import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
 
 import MainPage from "./views/Main Page/MainPage";
 import { AppProvider } from "./AppContext";
+import FilterBy from "./components/FilterBy/FilterBy";
 import Delete from "./components/Delete";
 import SellerDashboard from "./views/SellerDashboard/SellerDashboard";
 import ActivityViewEdit from "./views/ProductDetails/ActivityViewEdit";
@@ -105,6 +106,9 @@ const App: React.FC = () => {
         <Route path="/SellerDashboard" element={<SellerDashboard />} />
         <Route path="/ActivityViewEdit" element={<ActivityViewEdit />} />
         <Route path="/editprofile" Component={ProfileForm} />
+        <Route path="/filter" element={<FilterBy />} />
+        <Route path="/" element={<MainPage />} />
+
         <Route path="/delete" element={<Delete/>} />
       </Routes>
       </AppProvider>
