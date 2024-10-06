@@ -1,16 +1,17 @@
+import axiosInstance from '@/utils/axiosInstance';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api'; // Replace with your backend API URL
+class AdminService {
 
-// Function to delete user account
-const deleteAccount = async (userId: any, authToken: any) => {
-  try {
-    const response = await axios.delete(`${API_URL}/admin/deleteUser/${userId}`
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+  // Function to delete user account
+  public static deleteAccount = async (userId: any, authToken: any) => {
+    try {
+      const response = await axiosInstance.delete(`/admin/deleteUser/${userId}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+}
 
-export { deleteAccount };
+export { AdminService };

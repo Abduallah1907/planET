@@ -1,7 +1,7 @@
 import { Button, Form } from "react-bootstrap"
 import CustomFormGroup from "./FormGroup/FormGroup"
 import { useState } from "react"
-import { deleteAccount } from "../services/AdminService"
+import { AdminService } from "../services/AdminService"
 
 const Delete:React.FC = () =>{
     const[userId,setUserId]=useState("")
@@ -15,7 +15,7 @@ const Delete:React.FC = () =>{
       };
       const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        deleteAccount(userId,"")
+        AdminService.deleteAccount(userId,"")
       };
     return(
         <Form>

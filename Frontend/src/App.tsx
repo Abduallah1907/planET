@@ -1,12 +1,12 @@
 import logo from "./assets/Logo.svg"
 import React, { useState } from "react";
-import CreateAdmin from "./views/CreateAdmin";
+import CreateAdmin from "./views/CreateAdmin/CreateAdmin";
 import TopBar from "./components/TopBar/TopBar";
 import { Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import CreateGoverner from "./views/CreateGoverner";
-import BookingLayout from "./views/CreateActivities";
+import CreateGoverner from "./views/CreateGoverner/CreateGoverner";
+import BookingLayout from "./views/CreateActivities/CreateActivities";
 import ProfileForm from "./components/ProfileForm/ProfileForm";
 import TouristReg from "./views/auth/TouristReg/TouristReg";
 import ActivityCard from "./components/Cards/ActivityCard";
@@ -19,7 +19,7 @@ import MainPage from "./views/Main Page/MainPage";
 import { AppProvider } from "./AppContext";
 import Delete from "./components/Delete";
 import SellerDashboard from "./views/SellerDashboard/SellerDashboard";
-import ActivityViewEdit from "./views/ActivityViewEdit";
+import ActivityViewEdit from "./views/ProductDetails/ActivityViewEdit";
 import Login from "./views/auth/Login/Login";
 
 const App: React.FC = () => {
