@@ -25,7 +25,7 @@ export default function FilterBy() {
 
   return (
     <Row className="m-5">
-      <Col md={2} className="filterby">
+      <Col  className="filterby">
         <Row className="border-bottom py-2">
           <span>Filter By:</span>
         </Row>
@@ -49,7 +49,7 @@ export default function FilterBy() {
           />
           <Form.Check
             inline
-            label="Booking In"
+            label="Booking On"
             name="group1"
             type="checkbox"
             id="inline-checkbox-3"
@@ -60,7 +60,7 @@ export default function FilterBy() {
           <span className="py-2">Category</span>
           <Form.Check
             inline
-            label="Category 1"
+            label="Sports"
             name="group1"
             type="checkbox"
             id="inline-checkbox-4"
@@ -68,7 +68,7 @@ export default function FilterBy() {
           />
           <Form.Check
             inline
-            label="Category 2"
+            label="Adventure"
             name="group1"
             type="checkbox"
             id="inline-checkbox-5"
@@ -76,7 +76,7 @@ export default function FilterBy() {
           />
           <Form.Check
             inline
-            label="Category 3"
+            label="NightLife"
             name="group1"
             type="checkbox"
             id="inline-checkbox-6"

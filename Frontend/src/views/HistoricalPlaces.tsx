@@ -1,49 +1,47 @@
+import HistoricalLocationCard from "../components/Cards/HistoricalLocationCard";
+import FilterBy from "../components/FilterBy/FilterBy";
 import React from "react";
 import { Col, Row, Container, Form, InputGroup } from "react-bootstrap";
-import FilterBy from "../../components/FilterBy/FilterBy";
-import CustomActivityCard from "../../components/Cards/ActivityCard";
-import { FaSearch } from "react-icons/fa"; 
 
-const activityData = [
+import { FaSearch } from "react-icons/fa";
+
+const historicalData = [
   {
-    Name: "Hiking Adventure",
-    location: "Mountain View",
-    category: "Adventure",
+    Name: "The Great Wall of China",
+    location: "China",
+    category: "Historical Landmark",
     imageUrl: "https://via.placeholder.com/250x250",
-    RatingVal: 4.5,
-    Reviews: 120,
-    Price: 150.0,
-    Date_Time: new Date(),
+    RatingVal: 4.8,
+    Reviews: 1500,
+    Description: "A historic wall that stretches across northern China.",
+    isActive: true,
+    isBooked: false,
+  },
+  {
+    Name: "The Pyramids of Giza",
+    location: "Egypt",
+    category: "Historical Wonder",
+    imageUrl: "https://via.placeholder.com/250x250",
+    RatingVal: 4.9,
+    Reviews: 1200,
+    Description: "One of the Seven Wonders of the Ancient World.",
+    isActive: true,
+    isBooked: false,
+  },
+  {
+    Name: "Machu Picchu",
+    location: "Peru",
+    category: "Historical Site",
+    imageUrl: "https://via.placeholder.com/250x250",
+    RatingVal: 4.7,
+    Reviews: 800,
+    Description: "An Incan citadel set high in the Andes Mountains.",
     isActive: true,
     isBooked: true,
   },
-  {
-    Name: "City Night Tour",
-    location: "Downtown",
-    category: "Nightlife",
-    imageUrl: "https://via.placeholder.com/250x250",
-    RatingVal: 4.8,
-    Reviews: 95,
-    Price: 100.0,
-    Date_Time: new Date(),
-    isActive: true,
-    isBooked: false,
-  },
-  {
-    Name: "Football Match",
-    location: "Cairo International Stadium",
-    category: "Sports",
-    imageUrl: "https://via.placeholder.com/250x250",
-    RatingVal: 4.0,
-    Reviews: 50,
-    Price: 70.0,
-    Date_Time: new Date(),
-    isActive: true,
-    isBooked: false,
-  },
 ];
 
-export default function ActivitiesPage() {
+export default function HistoricalLocationsPage() {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
 
@@ -55,29 +53,29 @@ export default function ActivitiesPage() {
     setSortBy(e.target.value);
   };
 
-  // Function to sort activities based on selected criteria
-  const sortedActivities = [...activityData].sort((a, b) => {
+  // Function to sort historical locations based on selected criteria
+  const sortedLocations = [...historicalData].sort((a, b) => {
     switch (sortBy) {
       case "topPicks":
-        return b.RatingVal - a.RatingVal; 
-      case "priceLowToHigh":
-        return a.Price - b.Price; 
-      case "priceHighToLow":
-        return b.Price - a.Price; 
+        return b.RatingVal - a.RatingVal;
+      case "reviewsLowToHigh":
+        return a.Reviews - b.Reviews;
+      case "reviewsHighToLow":
+        return b.Reviews - a.Reviews;
       default:
         return 0;
     }
   });
 
-  const filteredActivities = sortedActivities.filter((activity) =>
-    activity.Name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredLocations = sortedLocations.filter((location) =>
+    location.Name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <Container fluid>
       <Row className="justify-content-center my-4">
         <Col md={6} className="text-center">
-          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>Explore Activities</h1>
+          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>Explore Historical Locations</h1>
         </Col>
       </Row>
 
@@ -129,8 +127,8 @@ export default function ActivitiesPage() {
             <span style={{ fontSize: "0.9rem", marginRight: "10px" }}>Sort By:</span>
             <Form.Select value={sortBy} onChange={handleSortChange} style={{ border: "none", backgroundColor: "transparent", color: "#D76F30", fontSize: "0.9rem" }}>
               <option value="topPicks">Our Top Picks</option>
-              <option value="priceLowToHigh">Price: Low to High</option>
-              <option value="priceHighToLow">Price: High to Low</option>
+              <option value="reviewsLowToHigh">Reviews: Low to High</option>
+              <option value="reviewsHighToLow">Reviews: High to Low</option>
             </Form.Select>
           </div>
 
@@ -140,21 +138,19 @@ export default function ActivitiesPage() {
 
         <Col md={9} className="p-4">
           <Row>
-            {filteredActivities.map((activity, index) => (
-              <Col key={index} xs={12} className="mb-4"> {/* Full-width stacking */}
-                <CustomActivityCard
-                  Name={activity.Name}
-                  location={activity.location}
-                  category={activity.category}
-                  imageUrl={activity.imageUrl}
-                  RatingVal={activity.RatingVal}
-                  Reviews={activity.Reviews}
-                  Price={activity.Price}
-                  Date_Time={activity.Date_Time}
-                  isActive={activity.isActive}
-                  isBooked={activity.isBooked}
-                  onChange={() => console.log(`${activity.Name} booking status changed`)}
-                />
+            {filteredLocations.map((location, index) => (
+              <Col key={index} xs={12} className="mb-4">
+                <HistoricalLocationCard
+                        Name={location.Name}
+                        location={location.location}
+                        category={location.category}
+                        imageUrl={location.imageUrl}
+                        RatingVal={location.RatingVal}
+                        Reviews={location.Reviews}
+                        Description={location.Description}
+                        isActive={location.isActive}
+                        isBooked={location.isBooked}
+                        onChange={() => console.log(`${location.Name} booking status changed`)} NativePrice={0} ForeignPrice={0} StudentPrice={0} OpeningHourFrom={""} OpeningHourTo={""} OpeningDays={""}                />
               </Col>
             ))}
           </Row>

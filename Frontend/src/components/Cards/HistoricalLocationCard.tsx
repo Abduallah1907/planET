@@ -11,6 +11,7 @@ interface InputData {
   NativePrice: number;
   ForeignPrice: number;
   StudentPrice: number;
+  imageUrl:string;
   OpeningHourFrom: string; // Using string for time representation
   OpeningHourTo: string; // Using string for time representation
   OpeningDays: string; // New property for opening days
@@ -35,6 +36,7 @@ const HistoricalLocationCard = ({
   Description,
   isActive,
   isBooked,
+  imageUrl,
   onChange,
 }: InputData) => {
   // Manage the state for the rating

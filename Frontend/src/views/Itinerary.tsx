@@ -1,43 +1,49 @@
 import React from "react";
 import { Col, Row, Container, Form, InputGroup } from "react-bootstrap";
-import FilterBy from "../../components/FilterBy/FilterBy";
-import CustomActivityCard from "../../components/Cards/ActivityCard";
-import { FaSearch } from "react-icons/fa"; 
+import ItineraryCard from "../components/Cards/ItineraryCard";
+import FilterBy from "../components/FilterBy/FilterBy";
+ import { FaSearch } from "react-icons/fa"; 
 
 const activityData = [
   {
-    Name: "Hiking Adventure",
-    location: "Mountain View",
-    category: "Adventure",
-    imageUrl: "https://via.placeholder.com/250x250",
+    locations: "Hiking Adventure",
+    pickup: "Mountain Base",
+    dropoff: "Mountain Peak",
+    Languages: "English, Spanish",
+    accessibility: true,
     RatingVal: 4.5,
     Reviews: 120,
     Price: 150.0,
-    Date_Time: new Date(),
+    Duration: "3 hours",
+    Available_Dates: new Date(),
     isActive: true,
     isBooked: true,
   },
   {
-    Name: "City Night Tour",
-    location: "Downtown",
-    category: "Nightlife",
-    imageUrl: "https://via.placeholder.com/250x250",
+    locations: "City Night Tour",
+    pickup: "Downtown",
+    dropoff: "Central Park",
+    Languages: "English, French",
+    accessibility: false,
     RatingVal: 4.8,
     Reviews: 95,
     Price: 100.0,
-    Date_Time: new Date(),
+    Duration: "2 hours",
+    Available_Dates: new Date(),
     isActive: true,
     isBooked: false,
   },
   {
-    Name: "Football Match",
-    location: "Cairo International Stadium",
-    category: "Sports",
-    imageUrl: "https://via.placeholder.com/250x250",
+    locations: "Football Match",
+    pickup: "Stadium Entrance",
+    dropoff: "Stadium Exit",
+    Languages: "English, Arabic",
+    accessibility: true,
     RatingVal: 4.0,
     Reviews: 50,
     Price: 70.0,
-    Date_Time: new Date(),
+    Duration: "4 hours",
+    Available_Dates: new Date(),
     isActive: true,
     isBooked: false,
   },
@@ -70,7 +76,7 @@ export default function ActivitiesPage() {
   });
 
   const filteredActivities = sortedActivities.filter((activity) =>
-    activity.Name.toLowerCase().includes(searchQuery.toLowerCase())
+    activity.locations.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -134,7 +140,6 @@ export default function ActivitiesPage() {
             </Form.Select>
           </div>
 
-          {/* Filter By Component */}
           <FilterBy />
         </Col>
 
@@ -142,18 +147,20 @@ export default function ActivitiesPage() {
           <Row>
             {filteredActivities.map((activity, index) => (
               <Col key={index} xs={12} className="mb-4"> {/* Full-width stacking */}
-                <CustomActivityCard
-                  Name={activity.Name}
-                  location={activity.location}
-                  category={activity.category}
-                  imageUrl={activity.imageUrl}
+                <ItineraryCard
+                  locations={activity.locations}
+                  pickup={activity.pickup}
+                  dropoff={activity.dropoff}
+                  Languages={activity.Languages}
+                  accessibility={activity.accessibility}
                   RatingVal={activity.RatingVal}
                   Reviews={activity.Reviews}
                   Price={activity.Price}
-                  Date_Time={activity.Date_Time}
+                  Duration={activity.Duration}
+                  Available_Dates={activity.Available_Dates}
                   isActive={activity.isActive}
                   isBooked={activity.isBooked}
-                  onChange={() => console.log(`${activity.Name} booking status changed`)}
+                  onChange={() => console.log(`${activity.locations} booking status changed`)}
                 />
               </Col>
             ))}
