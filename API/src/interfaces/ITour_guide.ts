@@ -12,13 +12,20 @@ export interface ITour_Guide extends Document {
   updatedAt?: Date;
 }
 
+export interface ITourGuideInput {
+  username: string;
+  email: string;
+  phone_number: string;
+  name: string;
+  password: string;
+}
 export interface ITourGuideOutput {
   itineraries: ObjectId[];
   comments: ObjectId[];
   years_of_experience?: number;
   previous_work_description: ObjectId[];
   photo: string;
-  // the attributes below must be taken from user
+  // the attributes below must be taken from user table
   username: string;
   name: string;
 }

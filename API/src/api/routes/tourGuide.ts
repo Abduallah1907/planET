@@ -874,7 +874,7 @@ export default (app: Router) => {
    * unneccessary. We could have a create profile as a helper api call to the main register api call, or
    * move documents to user, or just leave it out commented as is.
    */
-  //router.post("/createProfile");
+  router.post("/createProfile", tourGuideController.createProfile);
   router.get("/getProfile/:tour_guide_user_id", tourGuideController.getProfile);
   router.put("/updateProfile", tourGuideController.updateProfile);
 

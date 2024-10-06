@@ -2,13 +2,15 @@ import { ObjectId, Types } from "mongoose";
 import Itinerary from "@/models/Itinerary";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
-import { Inject, Service } from "typedi";
-import { HttpError, InternalServerError } from "@/types/Errors";
+import Container, { Inject, Service } from "typedi";
+import { HttpError, InternalServerError, NotFoundError } from "@/types/Errors";
 import { IPreviousWorkInputDTO, IPreviousWorkOutputDTO, IPreviousWorkUpdateDTO } from "@/interfaces/IPrevious_work";
 import { IItinerary, IItineraryCreateDTO, IItineraryOutputDTO, IItineraryUpdateDTO } from "@/interfaces/IItinerary";
-import { ITourGuideOutput } from "@/interfaces/ITour_guide";
+import { ITourGuideInput, ITourGuideOutput } from "@/interfaces/ITour_guide";
 import { name } from "agenda/dist/agenda/name";
 import { it } from "node:test";
+import UserService from "./userService";
+import { IUserInputDTO } from "@/interfaces/IUser";
 @Service()
 export default class TourGuideService {
   constructor(
@@ -79,6 +81,26 @@ export default class TourGuideService {
   }
 
   // CRUD for tour guide profile
+
+  public async createProfileService(tourGuideData: ITourGuideInput) {
+    const userData: IUserInputDTO = {
+      email: tourGuideData.email,
+      name: tourGuideData.name,
+      username: tourGuideData.username,
+      password: tourGuideData.password,
+      role: UserRoles.TourGuide,
+      phone_number: tourGuideData.phone_number,
+    };
+    const userService: UserService = Container.get(UserService);
+    const newUserResponse = await userService.createUserService(userData);
+
+    if (newUserResponse.data instanceof Error) throw new InternalServerError("Internal server error");
+
+    if (newUserResponse == null) throw new NotFoundError("User not found");
+
+    const newTourGuide = await this.tourGuideModel.create({ user_id: newUserResponse.data._id, photo: "link.png", approval: true });
+    return new response(true, { tour_guide_user_id: newTourGuide.user_id }, "Tour guide created", 201);
+  }
   public async getProfileService(tour_guide_user_id: Types.ObjectId): Promise<any> {
     if (!Types.ObjectId.isValid(tour_guide_user_id.toString())) throw new HttpError("_id is invalid", 400);
     const tourGuideProfile = await this.tourGuideModel.findOne({ user_id: tour_guide_user_id }).populate("previous_work_description");
