@@ -96,8 +96,6 @@ export default class TourGuideService {
 
     if (newUserResponse.data instanceof Error) throw new InternalServerError("Internal server error");
 
-    if (newUserResponse == null) throw new NotFoundError("User not found");
-
     const newTourGuide = await this.tourGuideModel.create({ user_id: newUserResponse.data._id, photo: "link.png", approval: true });
     return new response(true, { tour_guide_user_id: newTourGuide.user_id }, "Tour guide created", 201);
   }

@@ -14,15 +14,15 @@ export default (app: Router) => {
    * servers:
    *   - url: http://localhost:xxxx/api/tourGuide
    * tags:
-   *   - name: Profile
+   *   - name: Tour Guide Profile
    *     description: Tour guide account management
-   *   - name: Itineraries
+   *   - name: Itinerary
    *     description: CRUD for itineraries
    * paths:
-   *   /createPreviousWork:
+   *   /api/tourGuide/createPreviousWork:
    *     post:
    *      tags:
-   *       - Profile
+   *       - Tour Guide Profile
    *      summary: Adds previous work for a tour guide
    *      description: Anytime previous work needs to be added to a profile, this should be called instead of using the API for the update profile. This, given the tour guide USER id and data about the previous work, will automatically create it in the previous work table and add it to the tour guide.
    *      requestBody:
@@ -90,10 +90,10 @@ export default (app: Router) => {
    *        500:
    *          description: Internal server error.
    *
-   *   /updatePreviousWork:
+   *   /api/tourGuide/updatePreviousWork:
    *     put:
    *      tags:
-   *       - Profile
+   *       - Tour Guide Profile
    *      summary: Updates previous works
    *      description: This takes in all the information about the previous work and updates them. Note that even old information needs to be sent, otherwise it will be overwritten to be empty
    *      requestBody:
@@ -164,7 +164,7 @@ export default (app: Router) => {
    *   /deletePreviousWork/{tour_guide_user_id}/previousWork/{previous_work_id}:
    *     delete:
    *      tags:
-   *       - Profile
+   *       - Tour Guide Profile
    *      summary: Deletes previous work
    *      description: Only needs the ids, and it will delete it from the table and remove object id reference to it in the tour guide
    *      parameters:
@@ -214,10 +214,62 @@ export default (app: Router) => {
    *          description: Did not find the previous work/tour guide using the work/tour guide ID.
    *        500:
    *          description: Internal server error.
+   *   /api/tourGuide/createProfile:
+   *     put:
+   *       tags:
+   *         - Tour Guide Profile
+   *       summary: Registers and creates the tour guide profile
+   *       requestBody:
+   *         required: true
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 username:
+   *                   type: string
+   *                   example: zeinator
+   *                 email:
+   *                   type: string
+   *                   example: zeina@gmail.com
+   *                 phone_number:
+   *                   type: string
+   *                   example: 0111111
+   *                 name:
+   *                   type: string
+   *                   example: Zeina
+   *                 password:
+   *                   type: string
+   *                   example: secreetpassword
+   *       responses:
+   *        201:
+   *          description: Succesful creation of profile
+   *          content:
+   *           application/json:
+   *             schema:
+   *             type: object
+   *             properties:
+   *               success:
+   *                 type: boolean
+   *                 example: true
+   *               data:
+   *                 type: object
+   *                 properties:
+   *                   tour_guide_user_id:
+   *                     type: string
+   *                     example: "6702481bfe08b9a3f6556ea1"
+   *               message:
+   *                 type: string
+   *                 example: "Tour guide created"
+   *               status:
+   *                 type: integer
+   *                 example: 201
+   *        500:
+   *          description: Internal server error.
    *   /getProfile/{tour_guide_user_id}:
    *     get:
    *       tags:
-   *         - Profile
+   *         - Tour Guide Profile
    *       summary: Fetches information about the tour guide's profile
    *       description: This returns everything about the user
    *       parameters:
@@ -253,10 +305,10 @@ export default (app: Router) => {
    *        500:
    *          description: Internal server error.
    *
-   *   /updateProfile:
+   *   /api/tourGuide/updateProfile:
    *     put:
    *       tags:
-   *         - Profile
+   *         - Tour Guide Profile
    *       summary: Updates the year and photo of a tour guide.
    *       description: Note that even if the tour guide does not update a field, it should send the old field, otherwise it will be set to be empty. If previous work needs to be updated/created, use their respective apis and not this one
    *       requestBody:
@@ -287,10 +339,11 @@ export default (app: Router) => {
    *          description: Did not find the tour guide in either the tour_guide table or the user table
    *        500:
    *          description: Internal server error.
-   *   /createItinerary:
+   *   /api/tourGuide/createItinerary:
    *     post:
    *      tags:
    *       - Itinerary
+   *       - Tour Guide Profile
    *      summary: Create a new itinerary for a tour guide
    *      description: Automatically adds it to the tour guide's profile too.
    *      requestBody:
@@ -328,6 +381,7 @@ export default (app: Router) => {
    *     get:
    *      tags:
    *       - Itinerary
+   *       - Tour Guide Profile
    *      summary: Fetches an itinerary information using the itinerary id
    *      parameters:
    *       - name: itinerary_id
@@ -361,10 +415,11 @@ export default (app: Router) => {
    *          description: Itinerary was not found.
    *        500:
    *          description: Internal server error.
-   *   /updateItinerary:
+   *   /api/tourGuide/updateItinerary:
    *     put:
    *      tags:
    *       - Itinerary
+   *       - Tour Guide Profile
    *      summary: Update a new itinerary for a tour guide
    *      description: Note that even information not updated should be sent inside the request body, as anything missing will become empty
    *      requestBody:
@@ -404,6 +459,7 @@ export default (app: Router) => {
    *     delete:
    *      tags:
    *       - Itinerary
+   *       - Tour Guide Profile
    *      summary: Delete an itinerary depending on the id
    *      parameters:
    *       - name: tour_guide_user_id
@@ -455,6 +511,7 @@ export default (app: Router) => {
    *     get:
    *       tags:
    *         - Itinerary
+   *         - Tour Guide Profile
    *       summary: Fetches information about the tour guide's profile
    *       description: This returns everything about the user
    *       parameters:
@@ -865,15 +922,7 @@ export default (app: Router) => {
   router.post("/createPreviousWork", tourGuideController.createPreviousWork);
   router.put("/updatePreviousWork", tourGuideController.updatePreviousWork);
   router.delete("/deletePreviousWork/:tour_guide_user_id/previousWork/:previous_work_id", tourGuideController.deletePreviousWork);
-  // Read and update for profile
-  /**
-   * The reason we do not have a create profile (only update/view) is due to the fact
-   * that when the tour guide registers, we create a document for him inside the User table AND
-   * the tour guide table. This is because in sprint 2, tour guide has documents he is
-   * required to add, which is only avaliable in the tour guide table. This makes creating a profile
-   * unneccessary. We could have a create profile as a helper api call to the main register api call, or
-   * move documents to user, or just leave it out commented as is.
-   */
+  // Create, Read and update for profile
   router.post("/createProfile", tourGuideController.createProfile);
   router.get("/getProfile/:tour_guide_user_id", tourGuideController.getProfile);
   router.put("/updateProfile", tourGuideController.updateProfile);
