@@ -9,6 +9,7 @@ import UKFlag from '../../assets/UK.webp';
 import DeutschFlag from '../../assets/Deutsch.webp';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../../AppContext';
+import { MdHelpOutline } from 'react-icons/md';
 
 const TopBar: React.FC = () => {
     const navigate = useNavigate();
@@ -94,7 +95,7 @@ const TopBar: React.FC = () => {
                             </Dropdown.Menu>
                         </Dropdown>
 
-                        <Button variant="" onClick={handleHelp} className="btn-help btn-margin"></Button>
+                        <Button variant="" onClick={handleHelp} className="btn-help btn-margin"><MdHelpOutline/></Button>
                         <Button variant="" className="btn-text" onClick={handleJoinUs}>{t('join_us')}</Button>
                         <Button variant="" onClick={handleRegister} className="btn-main">{t('register')}</Button>
                         <Button variant="" onClick={handleLogin} className="btn-main btn-margin">{t('sign_in')}</Button>

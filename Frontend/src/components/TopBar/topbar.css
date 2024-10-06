@@ -55,18 +55,17 @@
 }
 
 .btn-help {
-    width: 25px; /* Ensure width and height are equal */
-    height: 25px; /* Ensure width and height are equal */
-    background-color:transparent !important; /* Set background color to white */
-    background-image: url('../../assets/Help.svg'); /* Ensure this path is correct */
-    background-size: cover;
-    background-position: center;
     border: white !important; /* Remove any border */
     cursor: pointer;
     margin-right: 15px; /* Space between buttons */
     scale: 0.75; /* Set initial scale */
-    filter: invert(1); /* Invert the color of the icon */
 }
+
+.btn-help svg{
+    font-size: 1.75rem !important;
+    color: white !important;
+}
+
 .btn-help:hover {
     scale: 0.85; /* Adjust as needed */
     
@@ -88,5 +87,24 @@
     margin-right: 15px !important;
     font-weight: bold !important; /* Adjust font weight as needed */
     cursor: pointer; /* Change cursor to pointer */
+}
+
+@media (max-width: 768px) {
+    .navbar-collapse{
+        background-color: #ffffff;
+        border: 2px solid var(--main-color);
+        z-index: 99;
+        border-radius: 1rem;
+    }
+
+    .navbar-collapse .btn{
+        color: var(--main-color) !important;
+        border: 2px solid var(--main-color) !important;
+        margin: 0 !important;
+    }
+
+    .navbar-collapse .btn-help svg{
+        color: var(--main-color) !important;
+    }
 }
 
