@@ -36,9 +36,10 @@ export class ActivityController {
   public async updateActivity(req: any, res: any) {
     const { id } = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
+    const activityData = req.body as IActivityDTO;
     const activity = await activityService.updateActivityService(
       id,
-      req.body.activityData
+      activityData
     );
     res.status(activity.status).json({ activity });
   }

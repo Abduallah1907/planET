@@ -215,7 +215,7 @@ export default (app: Router) => {
    *        500:
    *          description: Internal server error.
    *   /api/tourGuide/createProfile:
-   *     put:
+   *     post:
    *       tags:
    *         - Tour Guide Profile
    *       summary: Registers and creates the tour guide profile
@@ -241,6 +241,12 @@ export default (app: Router) => {
    *                 password:
    *                   type: string
    *                   example: secreetpassword
+   *                 documents_required:
+   *                   type: array
+   *                   items:
+   *                     type: string
+   *                     example: "National ID"
+   *
    *       responses:
    *        201:
    *          description: Succesful creation of profile
@@ -266,21 +272,19 @@ export default (app: Router) => {
    *                 example: 201
    *        500:
    *          description: Internal server error.
-   *   /api/tourGuide/getProfile/{tour_guide_user_id}:
+   *   /api/tourGuide/getProfile/{email}:
    *     get:
    *       tags:
    *         - Tour Guide Profile
    *       summary: Fetches information about the tour guide's profile
    *       description: This returns everything about the user
    *       parameters:
-   *       - name: tour_guide_user_id
+   *       - name: email
    *         in: path
    *         description: The owner of said profile.
    *         required: true
    *         schema:
    *           type: string
-   *           format: objectId
-   *           example: 6700067cce53c3263e1f8e5c
    *       responses:
    *        201:
    *          description: Succesful reterival of profile
@@ -305,7 +309,7 @@ export default (app: Router) => {
    *        500:
    *          description: Internal server error.
    *
-   *   /api/tourGuide/updateProfile:
+   *   /api/tourGuide/updateProfile/{email}:
    *     put:
    *       tags:
    *         - Tour Guide Profile
@@ -916,23 +920,33 @@ export default (app: Router) => {
    *             - "60c72b2f9b1d4c2e88f6f6a8"
    *
    */
-  const tourGuideController: TourGuideController = Container.get(TourGuideController);
+  const tourGuideController: TourGuideController =
+    Container.get(TourGuideController);
   app.use("/tourGuide", router);
   // CRUD for work experience
   router.post("/createPreviousWork", tourGuideController.createPreviousWork);
   router.put("/updatePreviousWork", tourGuideController.updatePreviousWork);
-  router.delete("/deletePreviousWork/:tour_guide_user_id/previousWork/:previous_work_id", tourGuideController.deletePreviousWork);
+  router.delete(
+    "/deletePreviousWork/:tour_guide_user_id/previousWork/:previous_work_id",
+    tourGuideController.deletePreviousWork
+  );
   // Create, Read and update for profile
   router.post("/createProfile", tourGuideController.createProfile);
-  router.get("/getProfile/:tour_guide_user_id", tourGuideController.getProfile);
-  router.put("/updateProfile", tourGuideController.updateProfile);
+  router.get("/getProfile/:email", tourGuideController.getProfile);
+  router.put("/updateProfile/:email", tourGuideController.updateProfile);
 
   // CRUD for itinerary
   router.post("/createItinerary", tourGuideController.createItinerary);
   router.get("/getItinerary/:itinerary_id", tourGuideController.getItinerary);
   router.put("/updateItinerary", tourGuideController.updateItinerary);
-  router.delete("/deleteItinerary/:tour_guide_user_id/itinerary/:itinerary_id", tourGuideController.deleteItinerary);
+  router.delete(
+    "/deleteItinerary/:tour_guide_user_id/itinerary/:itinerary_id",
+    tourGuideController.deleteItinerary
+  );
 
   // get all itineraries
-  router.get("/getItineraries/:tour_guide_user_id", tourGuideController.viewAllItineraries);
+  router.get(
+    "/getItineraries/:tour_guide_user_id",
+    tourGuideController.viewAllItineraries
+  );
 };

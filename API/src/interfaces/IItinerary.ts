@@ -41,7 +41,6 @@ export interface IItineraryCreateDTO {
 }
 
 export interface IItineraryUpdateDTO {
-  itinerary_id: ObjectId;
   name: string;
   category: ObjectId;
   activities: ObjectId[];

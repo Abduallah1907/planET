@@ -497,7 +497,7 @@ export default (app: Router) => {
 
   // Given an ID, it deletes the user if the id is valid and returns
   // the deleted user information (excluding information about the salt and password)
-  router.delete("/deleteUser/:id", adminController.deleteUser);
+  router.delete("/deleteUser/:email", adminController.deleteUser);
 
   // Given an email, name, phone number, username, and password,
   // automatically creates the account and returns the newly created governor

@@ -1,3 +1,4 @@
+import { IFilterComponents } from "@/interfaces/IFilterComponents";
 import { IProduct, IProductInputDTO } from "@/interfaces/IProduct";
 import {
   BadRequestError,
@@ -131,5 +132,43 @@ export class ProductService {
       throw new InternalServerError("Internal Server Error");
     if (!product) throw new NotFoundError("Product not found");
     return new response(true, product, "Product is fetched", 200);
+  }
+  public async getFilterComponentsService() {
+    const cheapestProduct = await this.productModel
+      .findOne()
+      .sort({ price: 1 })
+      .limit(1)
+      .select("price");
+    if (cheapestProduct instanceof Error)
+      throw new InternalServerError(
+        "Internal Server Error fetching cheapest product"
+      );
+
+    const highestProduct = await this.productModel
+      .findOne()
+      .sort({ price: -1 })
+      .limit(1)
+      .select("price");
+    if (highestProduct instanceof Error)
+      throw new InternalServerError(
+        "Internal Server Error fetching highest product"
+      );
+
+    if (!cheapestProduct) throw new NotFoundError("Cheapest product not found");
+    if (!highestProduct) throw new NotFoundError("Highest product not found");
+
+    const filterComponents: IFilterComponents = {
+      Price: {
+        min: cheapestProduct.price,
+        max: highestProduct.price,
+        type: "slider",
+      },
+    };
+    return new response(
+      true,
+      filterComponents,
+      "Cheapest and highest products are fetched",
+      200
+    );
   }
 }

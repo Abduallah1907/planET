@@ -13,6 +13,10 @@ export default (app: Router) => {
     advertiserController.createAdvertiserController
   );
   router.get(
+    "/getAdvertiserByEmail/:email",
+    advertiserController.getAdvertiserByEmailController
+  );
+  router.get(
     "/getAllAdvertisers",
     advertiserController.getAllAdvertisersController
   );
@@ -29,7 +33,7 @@ export default (app: Router) => {
     advertiserController.getAdvertiserByActivityIDController
   );
   router.put(
-    "/updateAdvertiser/:id",
+    "/updateAdvertiser/:email",
     advertiserController.updateAdvertiserController
   );
   router.delete(

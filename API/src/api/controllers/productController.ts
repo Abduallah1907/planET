@@ -71,4 +71,9 @@ export class ProductController {
     const product = await productService.getProductByNameService(product_name);
     res.status(product.status).json({ product });
   }
+  public async getFilterComponents(req: any, res: any) {
+    const productService: ProductService = Container.get(ProductService);
+    const filterComponent = await productService.getFilterComponentsService();
+    res.status(filterComponent.status).json({ filterComponent });
+  }
 }
