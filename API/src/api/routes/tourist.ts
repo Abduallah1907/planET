@@ -1,6 +1,8 @@
 import { Router } from "express";
 import Container from "typedi";
 import { TouristController } from "../controllers/touristController";
+import authorize from "../middlewares/authorize";
+import UserRoles from "@/types/enums/userRoles";
 const route = Router();
 
 export default (app: Router) => {
@@ -213,10 +215,6 @@ export default (app: Router) => {
    *               password:
    *                 type: string
    *                 description: Password of the tourist
-   *               role:
-   *                 type: string
-   *                 description: Role of the user
-   *                 enum: [Tourist]
    *               phone_number:
    *                 type: string
    *                 description: Phone number of the tourist
@@ -224,6 +222,13 @@ export default (app: Router) => {
    *                 type: string
    *                 format: date
    *                 description: Date of birth of the tourist
+   *               job:
+   *                 type: string
+   *                 description: Job of the tourist
+   *               nation:
+   *                 type: string
+   *                 description: Nation of the tourist
+   *
    *     responses:
    *       200:
    *         description: Tourist created data.
@@ -414,17 +419,28 @@ export default (app: Router) => {
    *       500:
    *         description: Internal server error.
    */
-  route.get("/getTourist/:email", touristController.getTourist);
-  route.put("/updateTourist/:searchEmail", touristController.updateTourist);
-  route.post("/createTourist", touristController.createTourist);
+  route.get(
+    "/getTourist/:email",
+    authorize([UserRoles.Tourist]),
+    touristController.getTourist
+  );
+  route.put(
+    "/updateTourist/:searchEmail",
+    authorize([UserRoles.Tourist]),
+    touristController.updateTourist
+  );
+  route.post(
+    "/createTourist",
+    authorize([UserRoles.Tourist]),
+    touristController.createTourist
+  );
 
-  route.get("/getSortedActivities", touristController.getSortedActivities);
   route.get("/getSortedItineraries", touristController.getSortedItineraries);
 
   route.get("/getItineraries", touristController.getItinerary);
   route.get(
     "/getHistorical_locations",
-    touristController.getHistorical_locations
+    touristController.getHistorical_location
   );
 
   route.get(

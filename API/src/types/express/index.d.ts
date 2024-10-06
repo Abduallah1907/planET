@@ -20,6 +20,7 @@ import { ITicket } from "@/interfaces/ITicket";
 import { ITour_guide } from "@/interfaces/ITour_guide";
 import { ITourist } from "@/interfaces/ITourist";
 import { IWishlist } from "@/interfaces/IWishlist";
+import { ITag } from "@/interfaces/ITag";
 import { IHistorical_tag } from "@/interfaces/IHistorical_tag";
 
 declare global {
@@ -28,7 +29,6 @@ declare global {
       currentUser: IUser & Document;
     }
   }
-
   namespace Models {
     export type UserModel = Model<IUser & Document>;
     export type ActivityModel = Model<IActivity & Document>;
@@ -52,6 +52,8 @@ declare global {
     export type Tour_guideModel = Model<ITour_guide & Document>;
     export type TouristModel = Model<ITourist & Document>;
     export type WishlistModel = Model<IWishlist & Document>;
+    export type TagModel = Model<ITag & Document>;
     export type Historical_tagModel = Model<IHistorical_tag & Document>;
   }
 }
+

@@ -85,4 +85,5 @@ export interface IUserLoginOutputDTO {
   status: UserStatus;
   first_time_login: boolean;
   stakeholder_id: ObjectId;
+  token: string;
 }

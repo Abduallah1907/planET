@@ -1,12 +1,14 @@
 import { Router } from "express";
 import { ActivityController } from "../controllers/activityController";
+import express from "express";
 import Container from "typedi";
+import authorize from "../middlewares/authorize";
+import UserRoles from "@/types/enums/userRoles";
 const router = Router();
 
 export default (app: Router) => {
   const activityController: ActivityController =
     Container.get(ActivityController);
-
   app.use("/activity", router);
 
   /**
@@ -14,7 +16,6 @@ export default (app: Router) => {
    * tags:
    *   - name: Activity
    *     description: Activity management and retrieval
-   *
    * paths:
    *   /api/activity/addActivity:
    *     post:
@@ -296,7 +297,7 @@ export default (app: Router) => {
    *           description: Activity not found.
    *         '500':
    *           description: Internal Server Error.
-   * /api/activity/getActivities:
+   * /api/activity/getActivity:
    *   get:
    *     tags:
    *       - Activity
@@ -375,19 +376,45 @@ export default (app: Router) => {
    *         description: Internal server error.
    */
 
-  router.post("/addActivity", activityController.createActivity);
+  router.post(
+    "/addActivity",
+    authorize([UserRoles.Advertiser]),
+    activityController.createActivity
+  );
   router.get("/getAllActivites", activityController.getAllActivities);
+
   router.get("/getActivityByID/:id", activityController.getActivityByID);
+
   router.get(
     "/getActivityByAdvertiserID/:advertiserID",
+    authorize([UserRoles.Advertiser]),
     activityController.getActivityByAdvertiserID
   );
-  router.put("/updateActivity/:id", activityController.updateActivity);
-  router.delete("/deleteActivity/:id", activityController.deleteActivity);
-  router.get("/getActivities", activityController.getActivities);
-  router.get("/getUpcomingActivities", activityController.getUpcomingActivities);
 
-  router.get("/getFilteredActivities", activityController.getFilteredActivities);
+  router.put(
+    "/updateActivity",
+    authorize([UserRoles.Advertiser]),
+    activityController.updateActivity
+  );
 
+  router.delete(
+    "/deleteActivity/:id",
+    authorize([UserRoles.Advertiser]),
+    activityController.deleteActivity
+  );
 
+  router.get(
+    "/getActivity",
+    authorize([UserRoles.Tourist]),
+    activityController.getActivity
+  );
+  router.get(
+    "/getUpcomingActivities",
+    activityController.getUpcomingActivities
+  );
+
+  router.get(
+    "/getFilteredActivities",
+    activityController.getFilteredActivities
+  );
 };

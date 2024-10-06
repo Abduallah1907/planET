@@ -57,7 +57,7 @@ export default class SellerService {
     const newUserResponse = await userService.createUserService(userData);
 
     const newUser = new this.userModel(newUserResponse.data);
-    newUser.role = UserRoles.Seller;
+    // newUser.role = UserRoles.Seller;
     newUser.save();
     if (newUser instanceof Error)
       throw new InternalServerError("Internal server error");
@@ -66,7 +66,6 @@ export default class SellerService {
     const newSeller = new this.sellerModel({
       user_id: newUser._id,
       documents_required: newSellerData.documents_required,
-      logo: newSellerData.logo,
     });
 
     await newSeller.save();

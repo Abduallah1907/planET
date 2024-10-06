@@ -12,7 +12,7 @@ export default class ActivityService {
   constructor(
     @Inject("activityModel") private activityModel: Models.ActivityModel,
     @Inject("categoryModel") private categoryModel: Models.CategoryModel
-  ) { }
+  ) {}
 
   public getAllActivitiesService = async () => {
     const activities = await this.activityModel.find({});
@@ -82,16 +82,16 @@ export default class ActivityService {
     if (!Types.ObjectId.isValid(advertiserID)) {
       throw new BadRequestError("Invalid Adverstier ID format");
     }
-    const activity = await this.activityModel.findOne({
-      adverstier_id: new Types.ObjectId(advertiserID),
+    const activities = await this.activityModel.find({
+      advertiser_id: advertiserID,
     });
-    if (activity instanceof Error) {
+    if (activities instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
-    if (activity == null) {
+    if (activities == null) {
       throw new NotFoundError("No Activity with this Adverstier ID");
     }
-    return new response(true, activity, "Activity is found", 200);
+    return new response(true, activities, "Activity is found", 200);
   };
 
   public updateActivityService = async (
@@ -180,11 +180,7 @@ export default class ActivityService {
     return new response(true, null, "Activity deleted successfully", 200);
   };
 
-  public async getActivitiesService(
-    name: string,
-    category: string,
-    tag: string
-  ) {
+  public async getActivityService(name: string, category: string, tag: string) {
     // const newCategory = new Category({type:category});
     // await newCategory.save();
     // const newActivity = new Activity({
@@ -197,23 +193,14 @@ export default class ActivityService {
     // console.log(newCategory);
     // console.log(newActivity);
 
-    const newCategory = await new this.categoryModel({ type: category });
-    await newCategory.save();
-    const newActivity = await new this.activityModel({
-      category: newCategory._id,
-      name: name,
-      tags: [tag],
-      date: new Date(),
-      price: 3000,
-    });
-    await newActivity.save();
-    console.log(newCategory);
-    console.log(newActivity);
-
     if (!name && !category && !tag) throw new BadRequestError("Invalid input");
 
+    const searchCriteria: any = {};
+    if (name) searchCriteria.name = name;
+    if (tag) searchCriteria.tags = tag;
+
     const activities = await this.activityModel
-      .find({ name: name, tags: tag })
+      .find(searchCriteria)
       .populate({ path: "category", match: { type: category } })
       .populate("comments")
       .populate({ path: "advertiser_id", select: "name" });
@@ -333,5 +320,32 @@ export default class ActivityService {
       "Filtered activities are fetched",
       200
     );
+  }
+  public async getSortedActivitiesService(sort: string, direction: string) {
+    let sortCriteria = {};
+
+    if (!sort && !direction) {
+      const activities = await this.activityModel.find();
+      return new response(
+        true,
+        activities,
+        "Activities with no sort criteria provided",
+        200
+      );
+    }
+    console.log("direction", direction);
+    if (sort === "price") {
+      sortCriteria = { price: parseInt(direction) };
+    } else if (sort === "ratings") {
+      sortCriteria = { average_rating: parseInt(direction) };
+    } else {
+      throw new BadRequestError("Invalid sort criteria");
+    }
+    console.log("sort criteria", sortCriteria);
+    const activities = await this.activityModel.find().sort(sortCriteria);
+    if (activities instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    return new response(true, activities, "Sorted activities are fetched", 200);
   }
 }

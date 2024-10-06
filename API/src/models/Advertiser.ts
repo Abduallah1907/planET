@@ -22,19 +22,19 @@ const advertiserSchema = new mongoose.Schema(
     ],
     link_to_website: {
       type: String,
-      required: true,
+      // required: true,
     },
     hotline: {
       type: String,
-      required: true,
+      // required: true,
     },
     about: {
       type: String,
-      required: true,
+      // required: true,
     },
     logo: {
       type: String,
-      required: true,
+      // required: true,
     },
     company_profile: {
       type: String,

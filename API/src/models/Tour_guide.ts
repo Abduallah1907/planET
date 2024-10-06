@@ -8,10 +8,6 @@ const tourGuideSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    approval: {
-      type: Boolean,
-      required: true,
-    },
     itineraries: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -41,12 +37,15 @@ const tourGuideSchema = new mongoose.Schema(
     ],
     photo: {
       type: String,
-      required: true,
+      // required: true,
     },
   },
   { timestamps: true }
 );
 
-const Tour_Guide = mongoose.model<ITour_Guide & mongoose.Document>("Tour_Guide", tourGuideSchema);
+const Tour_Guide = mongoose.model<ITour_Guide & mongoose.Document>(
+  "Tour_Guide",
+  tourGuideSchema
+);
 
 export default Tour_Guide;

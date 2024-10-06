@@ -1,6 +1,8 @@
 import { Router } from "express";
 import Container from "typedi";
 import { SellerController } from "@/api/controllers/sellerController";
+import authorize from "../middlewares/authorize";
+import UserRoles from "@/types/enums/userRoles";
 const route = Router();
 
 export default (app: Router) => {
@@ -18,8 +20,6 @@ export default (app: Router) => {
    *           type: array
    *           items:
    *             type: string
-   *         logo:
-   *           type: string
    *         name:
    *           type: string
    *         username:
@@ -30,9 +30,6 @@ export default (app: Router) => {
    *           type: string
    *         phone_number:
    *           type: string
-   *         date_of_birth:
-   *           type: string
-   *           format: date
    *     ISellerOutputDTO:
    *       type: object
    *       properties:
@@ -125,7 +122,19 @@ export default (app: Router) => {
    *         description: Internal server error.
    */
 
-  route.post("/createSeller", sellerController.createSeller);
-  route.get("/getSeller/:email", sellerController.getSeller);
-  route.put("/updateSeller/:searchEmail", sellerController.updateSeller);
+  route.post(
+    "/createSeller",
+    authorize([UserRoles.Seller]),
+    sellerController.createSeller
+  );
+  route.get(
+    "/getSeller/:email",
+    authorize([UserRoles.Seller]),
+    sellerController.getSeller
+  );
+  route.put(
+    "/updateSeller/:searchEmail",
+    authorize([UserRoles.Seller]),
+    sellerController.updateSeller
+  );
 };
