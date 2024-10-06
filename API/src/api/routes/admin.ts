@@ -287,7 +287,7 @@ export default (app: Router) => {
    *                   properties:
    *                     id:
    *                       type: string
-   *                     name:
+   *                     type:
    *                       type: string
    *         '500':
    *           description: Internal Server Error.
@@ -304,9 +304,9 @@ export default (app: Router) => {
    *             schema:
    *               type: object
    *               properties:
-   *                 oldName:
+   *                 oldType:
    *                   type: string
-   *                 newName:
+   *                 newType:
    *                   type: string
    *       responses:
    *         '200':
@@ -347,6 +347,132 @@ export default (app: Router) => {
    *                     type: string
    *         '404':
    *           description: Category not found.
+   *   # Tag Operations
+   *   /api/admin/createTag:
+   *     post:
+   *       tags:
+   *         - Tags
+   *       summary: Create a new tag.
+   *       requestBody:
+   *         required: true
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 type:
+   *                   type: string
+   *       responses:
+   *         '201':
+   *           description: Tag created successfully.
+   *           content:
+   *             application/json:
+   *               schema:
+   *                 type: object
+   *                 properties:
+   *                   tag:
+   *                     type: object
+   *                     properties:
+   *                       _id:
+   *                         type: string
+   *                         format: ObjectId
+   *                       name:
+   *                         type: string
+   *         '400':
+   *           description: Invalid input.
+   *
+   *   /api/admin/getTags/{page}:
+   *     get:
+   *       tags:
+   *         - Tags
+   *       summary: Retrieve a paginated list of tags.
+   *       parameters:
+   *         - name: page
+   *           in: path
+   *           description: Page number to retrieve (default is 1).
+   *           required: false
+   *           schema:
+   *             type: integer
+   *             default: 1
+   *       responses:
+   *         '200':
+   *           description: A list of tags.
+   *           content:
+   *             application/json:
+   *               schema:
+   *                 type: array
+   *                 items:
+   *                   type: object
+   *                   properties:
+   *                     _id:
+   *                       type: string
+   *                       format: ObjectId
+   *                     type:
+   *                       type: string
+   *         '500':
+   *           description: Internal Server Error.
+   *
+   *   /api/admin/updateTag:
+   *     put:
+   *       tags:
+   *         - Tags
+   *       summary: Update an existing tag name.
+   *       requestBody:
+   *         required: true
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 oldType:
+   *                   type: string
+   *                 newType:
+   *                   type: string
+   *       responses:
+   *         '200':
+   *           description: Tag updated successfully.
+   *           content:
+   *             application/json:
+   *               schema:
+   *                 type: object
+   *                 properties:
+   *                   type:
+   *                     type: string
+   *                   _id:
+   *                     type: string
+   *                     format: ObjectId
+   *         '404':
+   *           description: Tag not found.
+   *         '400':
+   *           description: Invalid input.
+   *
+   *   /api/admin/deleteTag/{type}:
+   *     delete:
+   *       tags:
+   *         - Tags
+   *       summary: Delete a tag by name.
+   *       parameters:
+   *         - name: type
+   *           in: path
+   *           description: Name of the tag to be deleted.
+   *           required: true
+   *           schema:
+   *             type: string
+   *       responses:
+   *         '200':
+   *           description: Tag deleted successfully.
+   *           content:
+   *             application/json:
+   *               schema:
+   *                 type: object
+   *                 properties:
+   *                   type:
+   *                     type: string
+   *                   _id:
+   *                     type: string
+   *                     format: ObjectId
+   *         '404':
+   *           description: Tag not found.
    */
   // This returns all users given a page number
   // Each page has 10 users
