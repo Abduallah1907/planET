@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import user from "./routes/user";
 import seller from "./routes/seller";
+import tourGuide from "./routes/tourGuide";
 import admin from "./routes/admin";
 import tourist from "./routes/tourist";
 import historical_location from "./routes/historical_location";
@@ -17,6 +18,7 @@ export default () => {
 
   user(app);
   seller(app);
+  tourGuide(app);
   admin(app);
   tourist(app);
   historical_location(app);
