@@ -17,6 +17,7 @@ import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
 import MainPage from "./views/Main Page/MainPage";
 import { AppProvider } from "./AppContext";
 import FilterBy from "./components/FilterBy/FilterBy";
+import filterOptions from './utils/filterOptions.json'
 import Delete from "./components/Delete";
 import SellerDashboard from "./views/SellerDashboard/SellerDashboard";
 import ActivityViewEdit from "./views/ProductDetails/ActivityViewEdit";
@@ -102,6 +103,13 @@ const App: React.FC = () => {
           }
         />
         <Route path="/tourist" element={<TouristReg />} />
+        <Route path="/editprofile" Component={ProfileForm} />
+        <Route path='/TourGuidedashboard' element={<TourGuideDashboard />} />
+        <Route path='/AdminDashboard' element={<AdminDashboard />} />
+        <Route path="/editprofile" Component={ProfileForm} />
+        <Route path="/filter" element={<FilterBy filterOptions={filterOptions}/>} />
+        <Route path="/" element={<MainPage />} />
+
         <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/SellerDashboard" element={<SellerDashboard />} />
