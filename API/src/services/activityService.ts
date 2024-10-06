@@ -7,6 +7,7 @@ import {
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
 import mongoose, { Types } from "mongoose";
+import { IFilterComponents } from "@/interfaces/IFilterComponents";
 @Service()
 export default class ActivityService {
   constructor(
@@ -298,5 +299,56 @@ export default class ActivityService {
       throw new InternalServerError("Internal server error");
 
     return new response(true, activities, "Sorted activities are fetched", 200);
+  }
+  public async getFilterComponentsService() {
+    const categories = await this.categoryModel.find().select("type").lean();
+
+    const Dates = await this.activityModel
+      .find()
+      .sort({ date: 1 }) // Sort dates in ascending order
+      .select("date") // Select only the date field
+      .lean(); // Convert to plain JavaScript object
+
+    const prices = await this.activityModel
+      .find()
+      .select("price")
+      .sort({ price: 1 })
+      .lean();
+
+    const categoryTypes = categories.map((category) => category.type);
+
+    const earliestDate = Dates[0].date;
+    const latestDate = Dates[Dates.length - 1].date;
+
+    const lowestPrice = prices[0]?.price ?? 0;
+    const highestPrice = prices[prices.length - 1]?.price ?? 0;
+
+    const filterComponents: IFilterComponents = {
+      Category: {
+        type: "multi-select",
+        values: categoryTypes,
+      },
+      Date: {
+        type: "date-range",
+        start: earliestDate,
+        end: latestDate,
+      },
+      Price: {
+        type: "slider",
+        min: lowestPrice,
+        max: highestPrice,
+      },
+      Rating: {
+        type: "slider",
+        min: 0,
+        max: 5,
+      },
+    };
+    return new response(
+      true,
+      filterComponents,
+      "Filter components fetched",
+      200
+    );
   }
 }
