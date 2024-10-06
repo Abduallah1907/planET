@@ -51,7 +51,7 @@ const TopBar: React.FC = () => {
     return (
         <Navbar expand="lg" className="top-bar" variant="dark">
             <Container fluid>
-                <Navbar.Brand href="#home" className="brand-container">
+                <Navbar.Brand onClick={()=>navigate('/')} className="brand-container">
                     <img
                         src={Logo}
                         width="150"

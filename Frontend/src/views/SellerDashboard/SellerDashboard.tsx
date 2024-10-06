@@ -10,7 +10,7 @@ import Icon1 from '../../assets/IconCircle.svg';
 const SellerDashboard = () => {
     return (
         <div>
-            <TopBar />
+            
             <Container className='text-center'>
             <div className="welcome-container mt-5">
                     <h2>Welcome to <span className="orange-text">PlanET</span></h2>

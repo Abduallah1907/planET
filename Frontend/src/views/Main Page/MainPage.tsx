@@ -9,7 +9,7 @@ const MainPage: React.FC = () => {
     return (
       <>
         <div>
-          <TopBar />
+          
           <TopBarLinks />
         </div>
         <div className="search-bar-main">

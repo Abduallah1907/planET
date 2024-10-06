@@ -222,6 +222,7 @@ export default function TouristForm() {
               value={regData.nationality}
               id="nationality"
               onChange={handleChange}
+              className="custom-form-control"
               required
             >
               <option value="">Select your nationality</option>
@@ -245,6 +246,7 @@ export default function TouristForm() {
               value={regData.job}
               id="job"
               onChange={handleChange}
+              className="custom-form-control"
               required
             >
               <option value="">Select your job</option>

@@ -28,11 +28,12 @@ const App: React.FC = () => {
   return (
     
     <AppProvider>
-      
+      <TopBar />
       <Routes>
-        <Route path="/" element={<TopBar />} />
+        <Route path="/" element={<MainPage />} />
+        <Route path="/Login" element={<Login />} />
+        <Route path="/Registeration" element={<TouristReg />} />
         <Route path="/editprofile" element={<ProfileForm />} />
-        <Route path="/tourist" element={<TouristReg />} />
         <Route path="/admin" element={<CreateAdmin />} />
         <Route path="/governer" element={<CreateGoverner />} />
         <Route path="/test" element={<BookingLayout />} />
@@ -105,9 +106,6 @@ const App: React.FC = () => {
         <Route path="/ActivityViewEdit" element={<ActivityViewEdit />} />
         <Route path="/editprofile" Component={ProfileForm} />
         <Route path="/delete" element={<Delete/>} />
-        <Route path="/" element={<MainPage />} />
-        <Route path="/Login" element={<Login />} />
-
       </Routes>
       </AppProvider>
   );

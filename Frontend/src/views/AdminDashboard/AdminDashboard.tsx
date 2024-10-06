@@ -9,7 +9,7 @@ import SearchBar from "../../components/SearchBar/SearchBar";
 const AdminDashboard = () => {
     return (
         <div>
-            <TopBar />
+            
             <Container className='text-center'>
                 <h1 className='dash mt-3'>Dashboard</h1>
                 <div>

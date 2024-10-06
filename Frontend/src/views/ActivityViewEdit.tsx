@@ -7,7 +7,6 @@ import TopBar from "../components/TopBar/TopBar";
 const ActivityViewEdit: React.FC = () => {
   return (
     <div>
-      <TopBar/>
       <ActivityCard />
       <LatestReviews />
     </div>

@@ -11,7 +11,7 @@
 }
 
 /* Input & Select Styles */
-.form-control {
+.custom-form-control {
     width: 100% !important; /* Full width of the column */
     height: auto !important; /* Let content dictate height */
     padding: 0.5rem !important;
@@ -21,12 +21,12 @@
     transition: border-color 0.3s !important; /* Add transition for better UX */
 }
 
-.form-control:focus {
+.custom-form-control:focus {
     border-color: #d35400 !important; /* Change border color on focus */
     box-shadow: 0 0 0 .25rem rgba(211, 84, 0, .25) !important;
 }
 
-.form-control {
+.custom-form-control {
     background-color: var(--secondary-color) !important;
 }
 

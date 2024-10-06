@@ -28,7 +28,7 @@ export default function Login() {
 
     return (
         <>
-            <TopBar />
+            
             <Container>
                 <Row className="justify-content-center mt-5">
                     <Col xs={12} md={4}>

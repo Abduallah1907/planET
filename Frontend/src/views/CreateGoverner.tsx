@@ -70,7 +70,7 @@ const CreateGoverner: React.FC = () => {
 
   return (
     <div className="profile-form-container">
-      <TopBar />
+      
       <Row className="align-items-center mb-4">
         <Col xs={7} className="text-left">
           <h2 className="my-profile-heading">Create governer account</h2>
