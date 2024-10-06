@@ -255,9 +255,10 @@ export default (app: Router) => {
    *                   category:
    *                     type: object
    *                     properties:
-   *                       id:
+   *                       _id:
    *                         type: string
-   *                       name:
+   *                         format: ObjectId
+   *                       type:
    *                         type: string
    *         '400':
    *           description: Invalid input.
@@ -285,8 +286,9 @@ export default (app: Router) => {
    *                 items:
    *                   type: object
    *                   properties:
-   *                     id:
+   *                     _id:
    *                       type: string
+   *                       format: ObjectId
    *                     type:
    *                       type: string
    *         '500':
@@ -316,8 +318,12 @@ export default (app: Router) => {
    *               schema:
    *                 type: object
    *                 properties:
-   *                   message:
+   *                   _id:
    *                     type: string
+   *                     format: ObjectId
+   *                   type:
+   *                     type: string
+   *
    *         '404':
    *           description: Category not found.
    *         '400':
@@ -343,8 +349,11 @@ export default (app: Router) => {
    *               schema:
    *                 type: object
    *                 properties:
-   *                   message:
-   *                     type: string
+   *                   type:
+   *                    type: string
+   *                   _id:
+   *                    type: string
+   *                    format: ObjectId
    *         '404':
    *           description: Category not found.
    *   # Tag Operations
