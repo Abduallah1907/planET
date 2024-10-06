@@ -27,6 +27,8 @@ import SettingSide from "./components/ProfileForm/settingSide";
 import Advertiser from "./components/ProfileForm/Advertiser";
 import Products from "./components/Products";
 import ProfileFormTourGuide from "./components/ProfileForm/ProfileFormTourGuide";
+import AdvertiserCreate from "./views/AdvertiserCreate";
+import AdvertiserCreateUpdate from "./views/AdvertiserCreateUpdate";
 
 const App: React.FC = () => {
   const [isBooked, setIsBooked] = useState(false); // Manage booking state
@@ -112,6 +114,8 @@ const App: React.FC = () => {
         <Route path="/TourGuide" element={<ProfileFormTourGuide />} />
         <Route path="/Advertiser" element={<Advertiser />} />
         <Route path="/Products" element={<Products />} />
+        <Route path="/AdvertiserCreate" element={<AdvertiserCreate />} />
+        <Route path="/AdvertiserCreateUpdate" element={<AdvertiserCreateUpdate />} />
 
         <Route path="/SellerProfile" element={<SellerProfile />} />
       </Routes>

@@ -1,6 +1,7 @@
 import React from 'react';
 import './ActivityCard.css';
 import { Container } from 'react-bootstrap';
+import { FaRegHeart } from 'react-icons/fa';
 
 const ActivityCard: React.FC = () => {
   return (
@@ -8,7 +9,7 @@ const ActivityCard: React.FC = () => {
     <div className="activity-card">
       <div className="activity-details">
         <div className="image-placeholder">
-          <i className="heart-icon">❤️</i>
+          <i className="heart-icon"><FaRegHeart /></i>
         </div>
         <div className="details">
           <h2>Activity Name</h2>

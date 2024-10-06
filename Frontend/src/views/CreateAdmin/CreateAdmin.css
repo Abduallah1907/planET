@@ -50,11 +50,12 @@ h2.my-profile-heading {
 .dropdown-icon {
     margin-left: 8px;
     font-size: 1.2rem; /* Adjust size if needed */
-    color: #333; /* Adjust color */
+    color: #881818; /* Adjust color */
     display: inline-block; /* Ensure it is treated as a block-level element */
 }
 .custom-select-container {
     position: relative;
+    color: #881818; /* Adjust color */
   }
   
   .dropdown-icon {
