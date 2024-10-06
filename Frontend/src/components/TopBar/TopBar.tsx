@@ -10,8 +10,12 @@ import DeutschFlag from "../../assets/Deutsch.webp";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "../../AppContext";
 import { MdHelpOutline } from "react-icons/md";
+import { FaBars } from "react-icons/fa";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { toggleSidebar } from "../../store/sidebarSlice";
 
-const TopBar: React.FC = () => {
+
+const TopBar: React.FC= () => {
   const navigate = useNavigate();
   const { currentFlag, setCurrentFlag, currency, setCurrency } =
     useAppContext();
@@ -54,9 +58,17 @@ const TopBar: React.FC = () => {
     navigate("/JoinUs");
   };
 
+  const sidebarState = useAppSelector((state) => state.sidebar.isActive)
+  const dispatch = useAppDispatch();
+
   return (
     <Navbar expand="lg" className="top-bar" variant="dark">
       <Container fluid>
+        {sidebarState ?
+          <div className="sidebar-toggle-icon" onClick={()=>dispatch(toggleSidebar())}>
+            <FaBars size={24} color="white" />
+          </div>: null
+        }
         <Navbar.Brand onClick={() => navigate("/")} className="brand-container">
           <img
             src={Logo}

@@ -23,10 +23,7 @@ import ActivityViewEdit from "./views/ProductDetails/ActivityViewEdit";
 import Login from "./views/auth/Login/Login";
 import ProfileForm from "./components/ProfileForm/ProfileFormTourist";
 import SellerProfile from "./components/ProfileForm/SellerProfile";
-import ProfileFormTourGuide from "./components/ProfileForm/ProfileFormTourGuide";
-import CustomFormGroup from "../components/FormGroup";
 import settingSide from "./components/ProfileForm/settingSide";
-import { Placeholder } from "react-bootstrap";
 import Advertiser from "./components/ProfileForm/Advertiser";
 import Products from "./components/Products";
 
@@ -35,7 +32,7 @@ const App: React.FC = () => {
 
   return (
     <AppProvider>
-      <TopBar />
+      <TopBar/>
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/Login" element={<Login />} />
@@ -116,16 +113,6 @@ const App: React.FC = () => {
         <Route path="/" element={<MainPage />} />
 
         <Route path="/delete" element={<Delete />} />
-        <Route
-          path="/"
-          element={
-            <TopBar
-              onToggleSidebar={function (): void {
-                throw new Error("Function not implemented.");
-              }}
-            />
-          }
-        />
         <Route path="/SettingSide" Component={settingSide} />
         <Route path="/editprofile" Component={ProfileForm} />
         <Route path="/TourGuide" Component={Advertiser} />

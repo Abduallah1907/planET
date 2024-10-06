@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import TopBar from "./TopBar"; // Adjust the path as necessary
 import "./Products.css"; // Make sure this includes your CSS
 import Logo from "./../assets/person-circle.svg";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
-import Sidebar from "./Sidebar";
+import Sidebar from "./SideBar/Sidebar";
+import { useAppSelector,useAppDispatch } from "../store/hooks";
+import { toggleSidebar } from "../store/sidebarSlice";
+
 
 interface Product {
   id: number;
@@ -14,8 +16,6 @@ interface Product {
 }
 
 const Advertiser: React.FC = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
   // Dummy product data
   const products: Product[] = [
     {
@@ -41,17 +41,15 @@ const Advertiser: React.FC = () => {
     },
   ];
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => !prev);
-  };
+  const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen)
+  const dispatch = useAppDispatch()
 
   return (
     <div className="product-cards-container">
-      <TopBar onToggleSidebar={toggleSidebar} />
       <div className={`sidebar-wrapper ${isSidebarOpen ? "open" : ""}`}>
         <Sidebar
           isOpen={isSidebarOpen}
-          onClose={toggleSidebar}
+          onClose={()=>dispatch(toggleSidebar())}
           navItems={[
             { path: "/dashboard", label: "Dashboard" },
             { path: "/products", label: "Products" },

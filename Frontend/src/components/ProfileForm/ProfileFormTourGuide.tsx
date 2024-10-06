@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import TopBar from "../TopBar"; // Adjust the path as necessary
 import "./ProfileFormTourist.css"; // Make sure this includes your CSS
 
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
-import Sidebar from "../Sidebar";
+import Sidebar from "../SideBar/Sidebar";
+import CustomFormGroup from "../FormGroup/FormGroup";
+import { useAppSelector,useAppDispatch } from "../../store/hooks";
+import { toggleSidebar } from "../../store/sidebarSlice";
 
 interface NationalityOption {
   value: string;
@@ -34,8 +36,6 @@ const ProfileFormTourGuide: React.FC = () => {
     nationality: "",
     dob: "",
   });
-
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Navigation items for the tour guide form
   const tourGuideNavItems = [
@@ -75,17 +75,15 @@ const ProfileFormTourGuide: React.FC = () => {
     });
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => !prev);
-  };
+  const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen)
+  const dispatch = useAppDispatch()
 
   return (
     <div className="profile-form-container">
-      <TopBar onToggleSidebar={toggleSidebar} />
       <div className={`sidebar-wrapper ${isSidebarOpen ? "open" : ""}`}>
         <Sidebar
           isOpen={isSidebarOpen}
-          onClose={toggleSidebar}
+          onClose={()=>dispatch(toggleSidebar())}
           navItems={tourGuideNavItems} // Pass the dynamic nav items
         />
       </div>

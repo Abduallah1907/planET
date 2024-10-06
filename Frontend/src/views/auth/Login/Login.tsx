@@ -1,9 +1,11 @@
 import "./Login.css";
-import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import { Container, Row, Col, Button, Form, Alert } from "react-bootstrap";
 import CustomFormGroup from "../../../components/FormGroup/FormGroup";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import AuthService from "../../../services/authService";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../../store/hooks";
+import { activateSidebar } from "../../../store/sidebarSlice";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -12,6 +14,16 @@ export default function Login() {
         passwordLogin: "",
     });
 
+    const [error, setError] = useState("");
+    const [showAlert, setShowAlert] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowAlert(false);
+        }, 5000);
+        return () => clearTimeout(timer);
+    }, [showAlert]);
+
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setUserData({
@@ -19,10 +31,18 @@ export default function Login() {
             [name]: value,
         });
     };
+    
+    const dispatch = useAppDispatch()
 
     const handleLogin = async () => {
-        await AuthService.login(userData.usernameOrEmail, userData.passwordLogin)
-        navigate('/');
+        try{
+            await AuthService.login(userData.usernameOrEmail, userData.passwordLogin)
+            navigate('/');
+            dispatch(activateSidebar())
+        }catch(err : any){
+            setError(err.message);
+            setShowAlert(true);
+        }
     };
 
     return (
@@ -30,9 +50,14 @@ export default function Login() {
             
             <Container>
                 <Row className="justify-content-center mt-5">
-                    <Col xs={12} md={4}>
+                    <Col sm={12}>
                         <h1 className="LOGIN">Login</h1>
                         <h2 className="LOGIN">New to planET? <span className="orange-text">SignUp</span></h2>
+                        {showAlert ? <Alert variant="danger" className="text-center">
+                            <p style={{margin:0}}>
+                                {error}
+                            </p>
+                        </Alert> : null}
                         <Form className="mt-3">
                             <CustomFormGroup
                                 label="Username or Email"

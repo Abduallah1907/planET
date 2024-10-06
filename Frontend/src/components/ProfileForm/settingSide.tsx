@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import TopBar from "../TopBar"; // Adjust the path as necessary
 import "./SellerProfile.css"; // Make sure this includes your CSS
 
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import Sidebar from "../Sidebar";
+import Sidebar from "../SideBar/Sidebar";
 import CustomFormGroup from "../FormGroup/FormGroup";
+import { useAppSelector,useAppDispatch } from "../../store/hooks";
+import { toggleSidebar } from "../../store/sidebarSlice";
 
 interface FormData {
   email: string;
@@ -29,8 +30,6 @@ const SettingSide: React.FC = () => {
     nationality: "",
     dob: "",
   });
-
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Define the navigation items for the Settings page
   const settingsNavItems = [
@@ -71,17 +70,15 @@ const SettingSide: React.FC = () => {
     });
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => !prev);
-  };
+  const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen)
+  const dispatch = useAppDispatch()
 
   return (
     <div className="profile-form-container">
-      <TopBar onToggleSidebar={toggleSidebar} />
       <div className={`sidebar-wrapper ${isSidebarOpen ? "open" : ""}`}>
         <Sidebar
           isOpen={isSidebarOpen}
-          onClose={toggleSidebar}
+          onClose={()=>dispatch(toggleSidebar())}
           navItems={settingsNavItems} // Pass the settings nav items
         />
       </div>
