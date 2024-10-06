@@ -385,4 +385,9 @@ export default (app: Router) => {
 
   // Given a category name, it will delete the category
   router.delete("/deleteCategory/:type", adminController.deleteCategory);
+
+  router.post("/createTag", adminController.createTag);
+  router.get("/getTags/:page", adminController.getTags);
+  router.put("/updateTag", adminController.updateTag);
+  router.delete("/deleteTag/:type", adminController.deleteTag);
 };

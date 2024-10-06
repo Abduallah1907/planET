@@ -70,9 +70,38 @@ export class AdminController {
   }
 
   public async deleteCategory(req: Request, res: Response): Promise<any> {
-    const { type } = req.body;
+    const { type } = req.params;
     const adminService: AdminService = Container.get(AdminService);
     const deletedCategory = await adminService.deleteCategoryService(type);
     res.status(deletedCategory.status).json({ deletedCategory });
+  }
+
+  public async createTag(req: Request, res: Response): Promise<any> {
+    const { type } = req.body;
+    const adminService: AdminService = Container.get(AdminService);
+    const newTag = await adminService.createTagService(type);
+    res.json(newTag);
+  }
+
+  public async getTags(req: Request, res: Response): Promise<any> {
+    const { page } = req.params;
+    const pageNum: number = parseInt(page);
+    const adminService: AdminService = Container.get(AdminService);
+    const tags = await adminService.getTagsService(pageNum);
+    res.json(tags);
+  }
+
+  public async updateTag(req: Request, res: Response): Promise<any> {
+    const { oldType, newType } = req.body;
+    const adminService: AdminService = Container.get(AdminService);
+    const updatedTag = await adminService.updateTagService(oldType, newType);
+    res.json(updatedTag);
+  }
+
+  public async deleteTag(req: Request, res: Response): Promise<any> {
+    const { type } = req.params;
+    const adminService: AdminService = Container.get(AdminService);
+    const deletedTag = await adminService.deleteTagService(type);
+    res.status(deletedTag.status).json(deletedTag);
   }
 }
