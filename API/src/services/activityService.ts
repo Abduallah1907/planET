@@ -16,13 +16,18 @@ export default class ActivityService {
   ) {}
 
   public getAllActivitiesService = async () => {
-    const activities = await this.activityModel.find({});
-    if (activities instanceof Error) {
+    const activitiesData = await this.activityModel.find({});
+    if (activitiesData instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
-    if (activities == null) {
+    if (activitiesData == null) {
       throw new NotFoundError("No Activities Found");
     }
+
+    const activities = activitiesData.map(activity => ({
+      ...activity.toObject(),
+      reviewsCount: activity.comments ? activity.comments.length : 0
+    }));
 
     return new response(true, activities, "All activites are fetched", 200);
   };
