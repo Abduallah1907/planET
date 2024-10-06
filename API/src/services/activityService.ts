@@ -75,16 +75,16 @@ export default class ActivityService {
     if (!Types.ObjectId.isValid(advertiserID)) {
       throw new BadRequestError("Invalid Adverstier ID format");
     }
-    const activity = await this.activityModel.findOne({
-      adverstier_id: new mongoose.Schema.Types.ObjectId(advertiserID),
+    const activities = await this.activityModel.find({
+      advertiser_id: advertiserID,
     });
-    if (activity instanceof Error) {
+    if (activities instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
-    if (activity == null) {
+    if (activities == null) {
       throw new NotFoundError("No Activity with this Adverstier ID");
     }
-    return new response(true, activity, "Activity is found", 200);
+    return new response(true, activities, "Activity is found", 200);
   };
 
   public updateActivityService = async (
@@ -187,23 +187,14 @@ export default class ActivityService {
     // console.log(newCategory);
     // console.log(newActivity);
 
-    const newCategory = await new this.categoryModel({ type: category });
-    await newCategory.save();
-    const newActivity = await new this.activityModel({
-      category: newCategory._id,
-      name: name,
-      tags: [tag],
-      date: new Date(),
-      price: 3000,
-    });
-    await newActivity.save();
-    console.log(newCategory);
-    console.log(newActivity);
-
     if (!name && !category && !tag) throw new BadRequestError("Invalid input");
 
+    const searchCriteria: any = {};
+    if (name) searchCriteria.name = name;
+    if (tag) searchCriteria.tags = tag;
+
     const activities = await this.activityModel
-      .find({ name: name, tags: tag })
+      .find(searchCriteria)
       .populate({ path: "category", match: { type: category } })
       .populate("comments")
       .populate({ path: "advertiser_id", select: "name" });

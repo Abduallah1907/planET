@@ -16,6 +16,7 @@ import UserStatus from "@/types/enums/userStatus";
 import { log } from "console";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import config from "@/config";
 
 @Service()
 export default class UserService {
@@ -120,10 +121,21 @@ export default class UserService {
         stakeholder_id = governor._id;
         break;
     }
+
+    console.log(config.jwtSecret);
+
+    console.log("User ID:", user._id);
+    console.log("Role:", user.role);
+    console.log("Stakeholder ID:", stakeholder_id);
+
     const token = jwt.sign(
-      { id: user._id, role: user.role, stakesholder_id: stakeholder_id },
-      process.env.JWT_SECRET as string,
-      { expiresIn: "1h" }
+      {
+        id: user._id?.toString(), // Ensure _id is a string
+        role: user.role,
+        stakeholder_id: stakeholder_id?.toString(), // Ensure stakeholder_id is a string
+      },
+      config.jwtSecret as string,
+      { expiresIn: "1h", algorithm: config.jwtAlgorithm as jwt.Algorithm }
     );
 
     const userOutput: IUserLoginOutputDTO = {
@@ -137,6 +149,9 @@ export default class UserService {
       stakeholder_id: stakeholder_id,
       token: token,
     };
+    user.first_time_login = false;
+    await user.save();
+
     return new response(true, userOutput, "User found", 200);
   }
 }

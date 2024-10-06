@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { Container } from "typedi";
 import { ProductController } from "../controllers/productController";
+import authorize from "../middlewares/authorize";
+import UserRoles from "@/types/enums/userRoles";
 
 const route = Router();
 export default (app: Router) => {
@@ -178,14 +180,36 @@ export default (app: Router) => {
    *         description: Internal Server Error
    */
 
-  route.post("/createProduct/:user_id", productController.createProduct);
+  route.post(
+    "/createProduct/:user_id",
+    authorize([UserRoles.Seller]),
+    productController.createProduct
+  );
 
-  route.put("/updateProduct/:product_id", productController.updateProduct);
-  route.get("/getFilteredProducts", productController.getFilteredProducts);
-  route.get("/getSortedProducts", productController.getSortedProducts);
-  route.get("/getAllProducts", productController.getAllProducts);
+  route.put(
+    "/updateProduct/:product_id",
+    authorize([UserRoles.Seller]),
+    productController.updateProduct
+  );
+
+  route.get(
+    "/getFilteredProducts",
+    authorize([UserRoles.Tourist, UserRoles.Seller]),
+    productController.getFilteredProducts
+  );
+  route.get(
+    "/getSortedProducts",
+    authorize([UserRoles.Tourist, UserRoles.Seller]),
+    productController.getSortedProducts
+  );
+  route.get(
+    "/getAllProducts",
+    authorize([UserRoles.Tourist, UserRoles.Seller]),
+    productController.getAllProducts
+  );
   route.get(
     "/getProductByName/:product_name",
+    authorize([UserRoles.Tourist, UserRoles.Seller]),
     productController.getProductByName
   );
 };

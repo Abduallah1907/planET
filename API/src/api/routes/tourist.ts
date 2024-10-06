@@ -1,6 +1,8 @@
 import { Router } from "express";
 import Container from "typedi";
 import { TouristController } from "../controllers/touristController";
+import authorize from "../middlewares/authorize";
+import UserRoles from "@/types/enums/userRoles";
 const route = Router();
 
 export default (app: Router) => {
@@ -417,9 +419,21 @@ export default (app: Router) => {
    *       500:
    *         description: Internal server error.
    */
-  route.get("/getTourist/:email", touristController.getTourist);
-  route.put("/updateTourist/:searchEmail", touristController.updateTourist);
-  route.post("/createTourist", touristController.createTourist);
+  route.get(
+    "/getTourist/:email",
+    authorize([UserRoles.Tourist]),
+    touristController.getTourist
+  );
+  route.put(
+    "/updateTourist/:searchEmail",
+    authorize([UserRoles.Tourist]),
+    touristController.updateTourist
+  );
+  route.post(
+    "/createTourist",
+    authorize([UserRoles.Tourist]),
+    touristController.createTourist
+  );
 
   route.get("/getSortedItineraries", touristController.getSortedItineraries);
 

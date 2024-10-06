@@ -1,11 +1,11 @@
 import { expressjwt as jwt } from "express-jwt";
 import { Request, Response, NextFunction } from "express";
-import { Algorithm } from "jsonwebtoken";
+import { Algorithm, verify } from "jsonwebtoken";
 import dotenv from "dotenv";
 import express from "express";
-import { Router } from "express";
-import { Container } from "typedi";
-import { TouristController } from "../controllers/touristController";
+import config from "@/config";
+import User from "@/models/user";
+import UserRoles from "@/types/enums/userRoles";
 
 dotenv.config();
 
@@ -43,4 +43,4 @@ const isAuth = jwt({
   getToken: getTokenFromHeader, // How to extract the JWT from the request
 });
 
-export default isAuth;
+export default { isAuth, getTokenFromHeader };
