@@ -1,4 +1,4 @@
-import logo from "./assets/Logo.svg"
+import logo from "./assets/Logo.svg";
 import React, { useState } from "react";
 import CreateAdmin from "./views/CreateAdmin/CreateAdmin";
 import TopBar from "./components/TopBar/TopBar";
@@ -7,7 +7,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import CreateGoverner from "./views/CreateGoverner/CreateGoverner";
 import BookingLayout from "./views/CreateActivities/CreateActivities";
-import ProfileForm from "./components/ProfileForm/ProfileForm";
 import TouristReg from "./views/auth/TouristReg/TouristReg";
 import ActivityCard from "./components/Cards/ActivityCard";
 import HistoricalLocationCard from "./components/Cards/HistoricalLocation";
@@ -22,12 +21,19 @@ import Delete from "./components/Delete";
 import SellerDashboard from "./views/SellerDashboard/SellerDashboard";
 import ActivityViewEdit from "./views/ProductDetails/ActivityViewEdit";
 import Login from "./views/auth/Login/Login";
+import ProfileForm from "./components/ProfileForm/ProfileFormTourist";
+import SellerProfile from "./components/ProfileForm/SellerProfile";
+import ProfileFormTourGuide from "./components/ProfileForm/ProfileFormTourGuide";
+import CustomFormGroup from "../components/FormGroup";
+import settingSide from "./components/ProfileForm/settingSide";
+import { Placeholder } from "react-bootstrap";
+import Advertiser from "./components/ProfileForm/Advertiser";
+import Products from "./components/Products";
 
 const App: React.FC = () => {
   const [isBooked, setIsBooked] = useState(false); // Manage booking state
 
   return (
-    
     <AppProvider>
       <TopBar />
       <Routes>
@@ -101,19 +107,35 @@ const App: React.FC = () => {
         <Route path="/editprofile" element={<ProfileForm />} />
         <Route path="/tourist" element={<TouristReg />} />
         <Route path="/editprofile" Component={ProfileForm} />
-        <Route path='/TourGuidedashboard' element={<TourGuideDashboard />} />
-        <Route path='/AdminDashboard' element={<AdminDashboard />} />
+        <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
+        <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/SellerDashboard" element={<SellerDashboard />} />
         <Route path="/ActivityViewEdit" element={<ActivityViewEdit />} />
         <Route path="/editprofile" Component={ProfileForm} />
         <Route path="/filter" element={<FilterBy />} />
         <Route path="/" element={<MainPage />} />
 
-        <Route path="/delete" element={<Delete/>} />
+        <Route path="/delete" element={<Delete />} />
+        <Route
+          path="/"
+          element={
+            <TopBar
+              onToggleSidebar={function (): void {
+                throw new Error("Function not implemented.");
+              }}
+            />
+          }
+        />
+        <Route path="/SettingSide" Component={settingSide} />
+        <Route path="/editprofile" Component={ProfileForm} />
+        <Route path="/TourGuide" Component={Advertiser} />
+        <Route path="/Advertiser" Component={Advertiser} />
+        <Route path="/Products" Component={Products} />
+
+        <Route path="/SellerProfile" Component={SellerProfile} />
       </Routes>
-      </AppProvider>
+    </AppProvider>
   );
 };
 
 export default App;
-

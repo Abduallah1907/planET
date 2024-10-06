@@ -1,0 +1,39 @@
+/* Sidebar */
+.sidebar {
+    width: 250px; /* Width of the sidebar */
+    background-color: var(--main-color); /* Background color */
+    position: fixed; /* Fix to the side */
+    height: 100%; /* Full height of the viewport */
+    top: 0; /* Stick to the top of the viewport */
+    padding-top: 120px; /* Adjust for the top bar space */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    overflow-y: auto; /* Allow scrolling within the sidebar */
+    transform: translateX(-100%); /* Initially hidden */
+    transition: transform 0.3s ease; /* Smooth transition */
+    z-index: 1000; /* Ensure it is above other content */
+}
+
+/* Sidebar open state */
+.sidebar.open {
+    transform: translateX(0); /* Show the sidebar */
+}
+
+/* Close button styles */
+.close-btn {
+    background: none; /* Remove default button styles */
+    border: none; /* Remove border */
+    cursor: pointer; /* Cursor pointer */
+    padding: 1rem; /* Padding */
+    font-size: 16px; /* Font size */
+}
+
+/* Navigation link styles */
+.sidebar .nav-link {
+    color: rgb(247, 243, 235); /* Change text color */
+}
+
+.sidebar .nav-link:hover {
+    color: rgb(238, 236, 233); /* Optional: Change color on hover */
+}
+
+
