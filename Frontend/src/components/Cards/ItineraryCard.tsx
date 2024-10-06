@@ -18,6 +18,7 @@ interface InputData {
   Available_Dates: Date;
   isActive: boolean;
   isBooked: boolean;
+  tags?: string[]; // Add tags property
   onChange?: (newStatus: boolean) => void; // Pass new booking status as parameter
 }
 
@@ -34,6 +35,7 @@ const ItineraryCard = ({
   Available_Dates,
   isActive,
   isBooked,
+  tags,
   onChange,
 }: InputData) => {
   // Manage the state for the rating
@@ -53,14 +55,13 @@ const ItineraryCard = ({
       className="p-3 shadow-sm"
       style={{ borderRadius: "10px", height: "100%" }}
     >
-      <Row className="h-100 d-flex align-items-stretch justify-content-between">
+      <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
         {/* Image Section */}
         <Col md={2} className="p-0 d-flex align-items-stretch">
           <Image
             src="https://via.placeholder.com/250x250"
             rounded
             alt="Activity Image"
-            style={{ objectFit: "cover", height: "100%", width: "100%" }}
           />
         </Col>
 
@@ -70,12 +71,11 @@ const ItineraryCard = ({
             <div>
               <div className="d-flex align-items-center mb-1">
                 {/* Badges next to Activity Name */}
-                <Badge pill bg="tag" className="me-2 custom-badge">
-                  Outdoor
-                </Badge>
-                <Badge pill bg="tag" className="custom-badge">
-                  Nightlife
-                </Badge>
+                {tags?.map((tag, index) => (
+                  <Badge pill bg="tag" className="me-2 custom-badge" key={index}>
+                    {tag}
+                  </Badge>
+                ))}
               </div>
               <Card.Text>
                 <a

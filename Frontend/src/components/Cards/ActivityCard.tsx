@@ -12,6 +12,7 @@ interface InputData {
   Date_Time: Date;
   isActive: boolean;
   isBooked: boolean; // Added isBooked prop
+  imageUrl: string;
   onChange?: () => void; // Change onChange to a function that does not take parameters
 }
 
