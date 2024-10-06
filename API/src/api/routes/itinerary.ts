@@ -16,5 +16,5 @@ export default (app: Router) => {
 
   // get all itineraries
   router.get("/getItineraryByTourGuideID/:tour_guide_user_id", itineraryController.getAllItinerariesByTourGuideID);
-  router.get("/getAllItineraries/:", itineraryController.getAllItineraries);
+  router.get("/getAllItineraries/:page", itineraryController.getAllItineraries);
 };

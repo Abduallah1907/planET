@@ -90,6 +90,6 @@ export default class ItineraryService {
       throw new InternalServerError("Internal server error");
     }
 
-    return new response(true, itineraries, "", 200);
+    return new response(true, itineraries, "Page " + page + " of itineraries", 200);
   }
 }
