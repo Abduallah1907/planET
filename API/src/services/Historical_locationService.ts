@@ -68,6 +68,7 @@ export default class Historical_locationService {
       foreign_price: historical_locationInput.foreign_price,
       student_price: historical_locationInput.student_price,
       tags: historical_locationInput.tags,
+      active_flag:  true
     };
     //Code to check if the value corresponds to the key in the object
     const tags_keys = historical_locationData.tags ? new Map(Object.entries(historical_locationData.tags)) : new Map();

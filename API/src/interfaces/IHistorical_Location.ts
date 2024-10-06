@@ -34,6 +34,7 @@ export interface IHistorical_locationDTO {
   student_price: number;
   tags?: Map<string, string>;
   average_rating?:Number;
+  active_flag?: boolean;
 }
 
 export interface Update_IHistorical_locationDTO {
