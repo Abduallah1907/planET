@@ -1,37 +1,35 @@
-import { Document, Model } from 'mongoose';
-import { IUser } from '@/interfaces/IUser';
-import { ICart } from '@/interfaces/ICart';
-import { IGovernor } from '@/interfaces/IGovernor';
-import { IActivity } from '@/interfaces/IActivity';
-import { IAdvertiser } from '@/interfaces/IAdvertiser';
-import { IBookmark_notify } from '@/interfaces/IBookmark_notify';
-import { ICategory } from '@/interfaces/ICategory';
-import { IComment_rating } from '@/interfaces/IComment_rating';
-import { IComplaint } from '@/interfaces/IComplaint';
-import { IHistorical_locations } from '@/interfaces/IHistorical_locations';
-import { IItinerary } from '@/interfaces/IItinerary';
-import { IOrder } from '@/interfaces/IOrder';
-import { IPrevious_work } from '@/interfaces/IPrevious_work';
-import { IProduct } from '@/interfaces/IProduct';
-import { IPromo_code } from '@/interfaces/IPromo_code';
-import { ISeller } from '@/interfaces/ISeller';
-import { ISlot } from '@/interfaces/ISlot';
-import { ITicket } from '@/interfaces/ITicket';
-import { ITour_guide } from '@/interfaces/ITour_guide';
-import { ITourist } from '@/interfaces/ITourist';
-import { IWishlist } from '@/interfaces/IWishlist';
-
+import { Document, Model } from "mongoose";
+import { IUser } from "@/interfaces/IUser";
+import { ICart } from "@/interfaces/ICart";
+import { IGovernor } from "@/interfaces/IGovernor";
+import { IActivity } from "@/interfaces/IActivity";
+import { IAdvertiser } from "@/interfaces/IAdvertiser";
+import { IBookmark_notify } from "@/interfaces/IBookmark_notify";
+import { ICategory } from "@/interfaces/ICategory";
+import { IComment_rating } from "@/interfaces/IComment_rating";
+import { IComplaint } from "@/interfaces/IComplaint";
+import { IHistorical_locations } from "@/interfaces/IHistorical_locations";
+import { IItinerary } from "@/interfaces/IItinerary";
+import { IOrder } from "@/interfaces/IOrder";
+import { IPrevious_work } from "@/interfaces/IPrevious_work";
+import { IProduct } from "@/interfaces/IProduct";
+import { IPromo_code } from "@/interfaces/IPromo_code";
+import { ISeller } from "@/interfaces/ISeller";
+import { ISlot } from "@/interfaces/ISlot";
+import { ITicket } from "@/interfaces/ITicket";
+import { ITour_guide } from "@/interfaces/ITour_guide";
+import { ITourist } from "@/interfaces/ITourist";
+import { IWishlist } from "@/interfaces/IWishlist";
+import { ITag } from "@/interfaces/ITag";
 
 declare global {
   namespace Express {
     export interface Request {
       currentUser: IUser & Document;
-    }    
+    }
   }
 
-
-
-    namespace Models {
+  namespace Models {
     export type UserModel = Model<IUser & Document>;
     export type ActivityModel = Model<IActivity & Document>;
     export type AdvertiserModel = Model<IAdvertiser & Document>;
@@ -52,6 +50,6 @@ declare global {
     export type Tour_guideModel = Model<ITour_guide & Document>;
     export type TouristModel = Model<ITourist & Document>;
     export type WishlistModel = Model<IWishlist & Document>;
-
+    export type TagModel = Model<ITag & Document>;
   }
 }
