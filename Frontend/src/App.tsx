@@ -114,7 +114,7 @@ const App: React.FC = () => {
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/SellerDashboard" element={<SellerDashboard />} />
         <Route path="/ActivityViewEdit" element={<ActivityViewEdit />} />
-        <Route path="/filter" element={<FilterBy />} />
+        <Route path="/filter" element={<FilterBy filterOptions={filterOptions} />} />
         <Route path="/delete" element={<Delete />} />
         <Route path="/SettingSide" element={<SettingSide />} />
         <Route path="/TourGuide" element={<ProfileFormTourGuide />} />
