@@ -7,6 +7,8 @@ import { BiSort } from "react-icons/bi";
 
 import { FaSearch } from "react-icons/fa";
 import filterOptions from '../utils/filterOptions.json';
+import { HistoricalService } from "../services/HistoricalService";
+import { IHistorical_location } from "../types/IHistoricalLocation";
 
 const historicalData = [
   {
@@ -18,7 +20,6 @@ const historicalData = [
     Reviews: 1500,
     Description: "A historic wall that stretches across northern China.",
     isActive: true,
-    isBooked: false,
     tags: ["Historical", "Landmark"],
   },
   {
@@ -30,7 +31,6 @@ const historicalData = [
     Reviews: 1200,
     Description: "One of the Seven Wonders of the Ancient World.",
     isActive: true,
-    isBooked: false,
     tags: ["Historical", "Wonder"],
   },
   {
@@ -42,13 +42,14 @@ const historicalData = [
     Reviews: 800,
     Description: "An Incan citadel set high in the Andes Mountains.",
     isActive: true,
-    isBooked: true,
     tags: ["Historical", "Site"],
   },
 ];
 
 export default function HistoricalLocationsPage() {
+
   const [searchQuery, setSearchQuery] = React.useState("");
+  const [ historical, setHistorical] = React.useState<IHistorical_location[]>([])
   const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,6 +59,13 @@ export default function HistoricalLocationsPage() {
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value);
   };
+  const getHistorical = async () => {
+    let HistoricalData = await HistoricalService.getAllHistorical_Location();
+    HistoricalData=HistoricalData.historical_location.data;
+    setHistorical(HistoricalData);
+    console.log(HistoricalData);
+  };
+  getHistorical();
 
   // Function to sort historical locations based on selected criteria
   const sortedLocations = [...historicalData].sort((a, b) => {
@@ -130,20 +138,18 @@ export default function HistoricalLocationsPage() {
                 <option value="priceHighToLow">Price: High to Low</option>
               </Form.Select>
             </div>
-            {filteredLocations.map((location, index) => (
+            {historical.map((location:IHistorical_location, index) => (
               <Col key={index} xs={12} className="mb-4 ps-0">
                 <HistoricalLocationCard
-                        Name={location.Name}
-                        location={location.location}
-                        category={location.category}
-                        imageUrl={location.imageUrl}
-                        RatingVal={location.RatingVal}
-                        Reviews={location.Reviews}
-                        Description={location.Description}
-                        isActive={location.isActive}
-                        isBooked={location.isBooked}
-                        tags={location.tags}
-                        onChange={() => console.log(`${location.Name} booking status changed`)} NativePrice={0} ForeignPrice={0} StudentPrice={0} OpeningHourFrom={""} OpeningHourTo={""} OpeningDays={""}                />
+                  Name={location.name}
+                  location={"cairo"}
+                  imageUrl={""}
+                  RatingVal={location.average_rating}
+                  Reviews={100}
+                  Description={location.description}
+                  isActive={location.active_flag}
+                  tags={location.tags ? Object.values(location.tags) : []}
+                  onChange={() => console.log(`${location.name} booking status changed`)} Price={location.native_price}  OpeningHourFrom={location.opening_hours_from} OpeningHourTo={location.opening_hours_to} OpeningDays={location.opening_days.join(",")}                 />
               </Col>
             ))}
           </Row>

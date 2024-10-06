@@ -5,19 +5,16 @@ import "./Cards.css";
 interface InputData {
   Name: string;
   location: string;
-  category: string;
   RatingVal: number; // Initial Rating
   Reviews: number;
-  NativePrice: number;
-  ForeignPrice: number;
-  StudentPrice: number;
+  Price: number;
   imageUrl:string;
   OpeningHourFrom: string; // Using string for time representation
   OpeningHourTo: string; // Using string for time representation
   OpeningDays: string; // New property for opening days
   Description: string; // Fixed typo from Descripition to Description
   isActive: boolean;
-  isBooked: boolean; // Added isBooked prop
+
   tags?: string[];
   onChange?: () => void; // Change onChange to a function that does not take parameters
 }
@@ -25,18 +22,14 @@ interface InputData {
 const HistoricalLocationCard = ({
   Name,
   location,
-  category,
   RatingVal,
   Reviews,
-  NativePrice,
-  ForeignPrice,
-  StudentPrice,
+  Price,
   OpeningHourFrom,
   OpeningHourTo,
   OpeningDays, // New property
   Description,
   isActive,
-  isBooked,
   imageUrl,
   tags,
   onChange,
@@ -88,7 +81,6 @@ const HistoricalLocationCard = ({
               </Card.Text>
 
               {/* Category, Opening Hours, and Opening Days */}
-              <Card.Text className="text-muted">Category: {category}</Card.Text>
               <Card.Text className="text-muted">
                 Opening Hours: {OpeningHourFrom} - {OpeningHourTo}
               </Card.Text>
@@ -126,23 +118,18 @@ const HistoricalLocationCard = ({
             {Reviews.toLocaleString()} Reviews
           </p>
 
-          {/* Price Display */}
-          <div className="text-right">
-            <h6 style={{ fontWeight: "bold" }}>Prices:</h6>
-            <p className="mb-1">Native Price: ${NativePrice.toFixed(2)}</p>
-            <p className="mb-1">Foreign Price: ${ForeignPrice.toFixed(2)}</p>
-            <p className="mb-1">Student Price: ${StudentPrice.toFixed(2)}</p>
-          </div>
+         
+          
 
           {/* Booking Badge */}
           <div className="text-right">
+          <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
             <Badge
-              bg={isBooked ? "danger" : "success"} // Change color based on booking status
-              className="mt-2 clickable-badge"
-              style={{ cursor: "pointer", fontSize: "1.2rem" }}
+              bg={isActive ? "active" : "inactive"} // Change color based on booking status
+              className="mt-2 custom-status-badge rounded-4 text-center"
               onClick={onChange} // Call onChange when clicked
             >
-              {isBooked ? "Booking Off" : "Book Now"}
+              {isActive ? "Active" : "InActive"}
             </Badge>
           </div>
         </Col>

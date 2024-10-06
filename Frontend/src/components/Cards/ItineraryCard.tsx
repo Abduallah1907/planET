@@ -142,7 +142,7 @@ const ItineraryCard = ({
           <div className="text-end">
             <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
             <Badge
-              bg={bookingStatus ? "success" : "danger"} // Change color based on booking status
+              bg={bookingStatus ? "active" : "inactive"} // Change color based on booking status
               className="mt-2 custom-status-badge rounded-4 text-center"
               onClick={handleBookingToggle} // Toggle booking status
             >
