@@ -1,35 +1,35 @@
 .custom-badge {
-    font-size: 0.8rem !important;
-    font-weight: 500 !important;
-    font-family: Poppins !important;
-    margin-right: 5px !important;
-    color: rgba(0, 0, 0, 0.5);
-  }
-  
-  .card-title {
-    font-weight: bold;
-  }
-  
-  .card-text {
-    color: #6c757d;
-  }
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+  font-family: Poppins !important;
+  margin-right: 5px !important;
+  color: rgba(0, 0, 0, 0.5);
+}
 
-  .review-badge{
-    width: 2.1rem;
-    background-color: var(--main-color) !important;
-    padding: 0.5rem 0rem !important;
-    border-radius: 5px !important;
-    border-bottom-left-radius: 0% !important;
-    font-family: Poppins;
-    font-size: 1rem !important;
-    font-weight: 500 !important;
-  }
-  
+.card-title {
+  font-weight: bold;
+}
 
-  .custom-status-badge{
-    font-size: 1rem !important;
-    font-weight: 500 !important;
-    font-family: Poppins !important;
-    padding: 0.5rem 1rem;
-    color: rgba(0, 0, 0, 0.5);
-  }
+.card-text {
+  color: #6c757d;
+}
+
+.review-badge {
+  width: 2.1rem;
+  background-color: var(--main-color) !important;
+  padding: 0.5rem 0rem !important;
+  border-radius: 5px !important;
+  border-bottom-left-radius: 0% !important;
+  font-family: Poppins;
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+}
+
+
+.custom-status-badge {
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  font-family: Poppins !important;
+  padding: 0.5rem 1rem;
+  color: rgba(0, 0, 0, 0.5);
+}

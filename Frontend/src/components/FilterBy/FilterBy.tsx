@@ -24,7 +24,7 @@ export default function FilterBy() {
   };
 
   return (
-    <Row className="m-5">
+    <Row className="m-5 mt-3">
       <Col  className="filterby">
         <Row className="border-bottom py-2">
           <span>Filter By:</span>

@@ -1,7 +1,9 @@
+import { t } from "i18next";
 import HistoricalLocationCard from "../components/Cards/HistoricalLocationCard";
 import FilterBy from "../components/FilterBy/FilterBy";
 import React from "react";
 import { Col, Row, Container, Form, InputGroup } from "react-bootstrap";
+import { BiSort } from "react-icons/bi";
 
 import { FaSearch } from "react-icons/fa";
 
@@ -16,6 +18,7 @@ const historicalData = [
     Description: "A historic wall that stretches across northern China.",
     isActive: true,
     isBooked: false,
+    tags: ["Historical", "Landmark"],
   },
   {
     Name: "The Pyramids of Giza",
@@ -27,6 +30,7 @@ const historicalData = [
     Description: "One of the Seven Wonders of the Ancient World.",
     isActive: true,
     isBooked: false,
+    tags: ["Historical", "Wonder"],
   },
   {
     Name: "Machu Picchu",
@@ -38,6 +42,7 @@ const historicalData = [
     Description: "An Incan citadel set high in the Andes Mountains.",
     isActive: true,
     isBooked: true,
+    tags: ["Historical", "Site"],
   },
 ];
 
@@ -109,37 +114,23 @@ export default function HistoricalLocationsPage() {
       </Row>
 
       <Row>
-        <Col md={3} className="border-bottom pb-2" style={{ height: "100vh", overflowY: "auto" }}>
-          {/* Sort By Section */}
-          <div
-            style={{
-              border: "1px solid #D76F30",
-              borderRadius: "50px",
-              padding: "5px",
-              marginBottom: "20px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              backgroundColor: "#F7F7F7",
-              color: "#6c757d",
-            }}
-          >
-            <span style={{ fontSize: "0.9rem", marginRight: "10px" }}>Sort By:</span>
-            <Form.Select value={sortBy} onChange={handleSortChange} style={{ border: "none", backgroundColor: "transparent", color: "#D76F30", fontSize: "0.9rem" }}>
-              <option value="topPicks">Our Top Picks</option>
-              <option value="reviewsLowToHigh">Reviews: Low to High</option>
-              <option value="reviewsHighToLow">Reviews: High to Low</option>
-            </Form.Select>
-          </div>
-
-          {/* Filter By Component */}
+        <Col md={3} className="border-bottom pb-2">
           <FilterBy />
         </Col>
 
-        <Col md={9} className="p-4">
+        <Col md={9} className="p-3">
           <Row>
+            {/* Sort By Section */}
+            <div className="sort-btn w-auto d-flex align-items-center">
+              <BiSort />
+              <Form.Select value={sortBy} onChange={handleSortChange}>
+                <option value="topPicks">Our Top Picks</option>
+                <option value="priceLowToHigh">Price: Low to High</option>
+                <option value="priceHighToLow">Price: High to Low</option>
+              </Form.Select>
+            </div>
             {filteredLocations.map((location, index) => (
-              <Col key={index} xs={12} className="mb-4">
+              <Col key={index} xs={12} className="mb-4 ps-0">
                 <HistoricalLocationCard
                         Name={location.Name}
                         location={location.location}
@@ -150,6 +141,7 @@ export default function HistoricalLocationsPage() {
                         Description={location.Description}
                         isActive={location.isActive}
                         isBooked={location.isBooked}
+                        tags={location.tags}
                         onChange={() => console.log(`${location.Name} booking status changed`)} NativePrice={0} ForeignPrice={0} StudentPrice={0} OpeningHourFrom={""} OpeningHourTo={""} OpeningDays={""}                />
               </Col>
             ))}

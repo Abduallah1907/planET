@@ -2,7 +2,8 @@ import React from "react";
 import { Col, Row, Container, Form, InputGroup } from "react-bootstrap";
 import ItineraryCard from "../components/Cards/ItineraryCard";
 import FilterBy from "../components/FilterBy/FilterBy";
- import { FaSearch } from "react-icons/fa"; 
+import { FaSearch } from "react-icons/fa";
+import { BiSort } from "react-icons/bi";
 
 const activityData = [
   {
@@ -18,6 +19,7 @@ const activityData = [
     Available_Dates: new Date(),
     isActive: true,
     isBooked: true,
+    tags: ["Adventure", "Nature"],
   },
   {
     locations: "City Night Tour",
@@ -32,6 +34,7 @@ const activityData = [
     Available_Dates: new Date(),
     isActive: true,
     isBooked: false,
+    tags: ["NightLife", "City"],
   },
   {
     locations: "Football Match",
@@ -46,6 +49,7 @@ const activityData = [
     Available_Dates: new Date(),
     isActive: true,
     isBooked: false,
+    tags: ["Sports", "Entertainment"],
   },
 ];
 
@@ -65,11 +69,11 @@ export default function ActivitiesPage() {
   const sortedActivities = [...activityData].sort((a, b) => {
     switch (sortBy) {
       case "topPicks":
-        return b.RatingVal - a.RatingVal; 
+        return b.RatingVal - a.RatingVal;
       case "priceLowToHigh":
-        return a.Price - b.Price; 
+        return a.Price - b.Price;
       case "priceHighToLow":
-        return b.Price - a.Price; 
+        return b.Price - a.Price;
       default:
         return 0;
     }
@@ -117,36 +121,24 @@ export default function ActivitiesPage() {
       </Row>
 
       <Row>
-        <Col md={3} className="border-bottom pb-2" style={{ height: "100vh", overflowY: "auto" }}>
-          {/* Sort By Section */}
-          <div
-            style={{
-              border: "1px solid #D76F30",
-              borderRadius: "50px",
-              padding: "5px",
-              marginBottom: "20px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              backgroundColor: "#F7F7F7",
-              color: "#6c757d",
-            }}
-          >
-            <span style={{ fontSize: "0.9rem", marginRight: "10px" }}>Sort By:</span>
-            <Form.Select value={sortBy} onChange={handleSortChange} style={{ border: "none", backgroundColor: "transparent", color: "#D76F30", fontSize: "0.9rem" }}>
-              <option value="topPicks">Our Top Picks</option>
-              <option value="priceLowToHigh">Price: Low to High</option>
-              <option value="priceHighToLow">Price: High to Low</option>
-            </Form.Select>
-          </div>
-
+        <Col md={3} className="border-bottom pb-2">
           <FilterBy />
         </Col>
 
-        <Col md={9} className="p-4">
+        <Col md={9} className="p-3">
           <Row>
+            {/* Sort By Section */}
+            <div className="sort-btn w-auto d-flex align-items-center">
+              <BiSort />
+              <Form.Select value={sortBy} onChange={handleSortChange}>
+                <option value="topPicks">Our Top Picks</option>
+                <option value="priceLowToHigh">Price: Low to High</option>
+                <option value="priceHighToLow">Price: High to Low</option>
+              </Form.Select>
+            </div>
+
             {filteredActivities.map((activity, index) => (
-              <Col key={index} xs={12} className="mb-4"> {/* Full-width stacking */}
+              <Col key={index} xs={12} className="mb-4 ps-0"> {/* Full-width stacking */}
                 <ItineraryCard
                   locations={activity.locations}
                   pickup={activity.pickup}
@@ -160,6 +152,7 @@ export default function ActivitiesPage() {
                   Available_Dates={activity.Available_Dates}
                   isActive={activity.isActive}
                   isBooked={activity.isBooked}
+                  tags={activity.tags}
                   onChange={() => console.log(`${activity.locations} booking status changed`)}
                 />
               </Col>
