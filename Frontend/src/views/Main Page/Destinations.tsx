@@ -29,19 +29,28 @@ const destinations = [
 const Destinations: React.FC = () => {
   return (
     <Container className='dest-container'>
+      <h2 className="text-center font-weight-bold destinations-text">Top Destinations</h2>
       <Row>
         {destinations.map((destination, index) => (
           <Col md={4} key={index}>
             <Card className="mb-4 border-0">
-             <Card.Img variant="top" className='rounded-4' src={destination.image} />
-                <Card.Body className="card-content rounded-4">
-                  <Card.Title>{destination.city}</Card.Title>
-                  <Card.Text>
-                    {destination.duration}
+              <Card.Img variant="top" className='rounded-4' src={destination.image} />
+              <Card.Body className="card-content rounded-4">
+                <Card.Title>
+                  {destination.city}
 
-                    {destination.price}
-                  </Card.Text>
-                </Card.Body>
+                </Card.Title>
+
+                <Card.Title>
+
+                  {destination.price}
+
+                </Card.Title>
+                <Card.Text>
+                  {destination.duration}
+
+                </Card.Text>
+              </Card.Body>
             </Card>
           </Col>
         ))}

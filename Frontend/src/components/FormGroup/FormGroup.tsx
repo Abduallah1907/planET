@@ -12,6 +12,7 @@ interface InputData {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   name: string;
+  className?: string;
 }
 
 function CustomFormGroup({
@@ -36,7 +37,7 @@ function CustomFormGroup({
         value={value}
         onChange={onChange}
         name={name}
-        className={disabled ? "disabled-input" : ""}
+        className={disabled ? "disabled-input custom-form-control" : " custom-form-control"}
       />
     </Form.Group>
   );

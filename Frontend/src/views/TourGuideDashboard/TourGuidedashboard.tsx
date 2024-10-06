@@ -1,5 +1,3 @@
-import React from 'react';
-import TopBar from '../../components/TopBar/TopBar';
 import StatisticsCards from './StatisticsCards';
 import CountryCampaignTable from './CountryCampaignTable';
 import './TourGuidedashboard.css';
@@ -9,7 +7,7 @@ import Icon from '../../assets/IconCircle.svg';
 const TourGuideDashboard = () => {
     return (
         <div>
-            <TopBar />
+            
             <Container className='text-center'>
                 <h1 className='dash mt-2'>Dashboard</h1>
                 <div className="welcome-container mt-5">

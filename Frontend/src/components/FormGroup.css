@@ -1,0 +1,39 @@
+
+
+/* Form Group Styles */
+.form-group {
+    margin-bottom: 0.6rem; /* Adjust spacing between form groups */
+}
+
+.form-group label {
+    font-weight: bold;
+    font-size: 20px; 
+}
+
+/* Input & Select Styles */
+.form-control {
+    
+    width: 100%; /* Full width of the column */
+    height: auto; /* Let content dictate height */
+    padding: 0.5rem;
+    border: 1px solid #e67e22; /* Bootstrap's default border color */
+    border-radius: 10px;
+    box-sizing: border-box;
+    transition: border-color 0.3s; /* Add transition for better UX */
+}
+
+.form-control:focus {
+    border-color: #d35400; /* Change border color on focus */
+}
+
+/* Disabled Input Styles */
+.disabled-input {
+    background-color: #c1b5b5;
+    color: #110f0f;
+    border: 1px solid #b39696; /* Fixed the border style */
+    cursor: not-allowed;
+}
+
+.disabled-input:focus {
+    outline: none;
+}

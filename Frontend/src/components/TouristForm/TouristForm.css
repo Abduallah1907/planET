@@ -4,15 +4,6 @@
   margin-top: 70px;
 }
 
-#firstName,
-#lastName,
-#username,
-#email,
-#password,
-#confirmPassword,
-#mobile,
-#dob,
-#nationality,
-#job {
+.tourist-form .form-group{
   width: 20rem;
 }

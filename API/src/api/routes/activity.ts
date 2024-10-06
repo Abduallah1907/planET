@@ -1,20 +1,21 @@
 import { Router } from "express";
 import { ActivityController } from "../controllers/activityController";
+import express from "express";
 import Container from "typedi";
+import authorize from "../middlewares/authorize";
+import UserRoles from "@/types/enums/userRoles";
 const router = Router();
 
 export default (app: Router) => {
   const activityController: ActivityController =
     Container.get(ActivityController);
-
   app.use("/activity", router);
 
- /**
+  /**
    * @swagger
    * tags:
    *   - name: Activity
    *     description: Activity management and retrieval
-   *
    * paths:
    *   /api/activity/addActivity:
    *     post:
@@ -296,12 +297,124 @@ export default (app: Router) => {
    *           description: Activity not found.
    *         '500':
    *           description: Internal Server Error.
+   * /api/activity/getActivity:
+   *   get:
+   *     tags:
+   *       - Activity
+   *     summary: Retrieve activities from system
+   *     description: Retrieve activities data by name, category, and tag
+   *     parameters:
+   *       - in: query
+   *         name: name
+   *         description: Name of the activity
+   *         schema:
+   *           type: string
+   *       - in: query
+   *         name: category
+   *         description: Category of the activity
+   *         schema:
+   *           type: string
+   *       - in: query
+   *         name: tag
+   *         description: Tag of the activity
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: List of Activities.
+   *       400:
+   *         description: Bad request.
+   *       500:
+   *         description: Internal server error.
+   * /api/activity/getUpcomingActivities:
+   *   get:
+   *     tags:
+   *       - Activity
+   *     summary: Retrieve upcoming activities from system
+   *     description: Retrieve upcoming activities data
+   *     responses:
+   *       200:
+   *         description: List of upcoming activities.
+   *       400:
+   *         description: Bad request.
+   *       500:
+   *         description: Internal server error.
+   * /api/activity/getFilteredActivities:
+   *   get:
+   *     tags:
+   *       - Activity
+   *     summary: Retrieve filtered activities from system
+   *     description: Retrieve filtered activities data
+   *     parameters:
+   *       - in: query
+   *         name: budget
+   *         description: Budget for the activity
+   *         schema:
+   *           type: string
+   *       - in: query
+   *         name: rating
+   *         description: Rating of the activity
+   *         schema:
+   *           type: string
+   *       - in: query
+   *         name: date
+   *         description: Date of the activity
+   *         schema:
+   *           type: string
+   *           format: date
+   *       - in: query
+   *         name: category
+   *         description: Category of the activity
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: List of filtered activities.
+   *       400:
+   *         description: Bad request.
+   *       500:
+   *         description: Internal server error.
    */
 
-  router.post("/addActivity", activityController.createActivity);
+  router.post(
+    "/addActivity",
+    authorize([UserRoles.Advertiser]),
+    activityController.createActivity
+  );
   router.get("/getAllActivites", activityController.getAllActivities);
+
   router.get("/getActivityByID/:id", activityController.getActivityByID);
-  router.get("/getActivityByAdvertiserID/:advertiserID",activityController.getActivityByAdvertiserID);
-  router.put("/updateActivity", activityController.updateActivity);
-  router.delete("/deleteActivity/:id", activityController.deleteActivity);
+
+  router.get(
+    "/getActivityByAdvertiserID/:advertiserID",
+    authorize([UserRoles.Advertiser]),
+    activityController.getActivityByAdvertiserID
+  );
+
+  router.put(
+    "/updateActivity",
+    authorize([UserRoles.Advertiser]),
+    activityController.updateActivity
+  );
+
+  router.delete(
+    "/deleteActivity/:id",
+    authorize([UserRoles.Advertiser]),
+    activityController.deleteActivity
+  );
+
+  router.get(
+    "/getActivity",
+    authorize([UserRoles.Tourist]),
+    activityController.getActivity
+  );
+  router.get(
+    "/getUpcomingActivities",
+    activityController.getUpcomingActivities
+  );
+
+  router.get(
+    "/getFilteredActivities",
+    activityController.getFilteredActivities
+  );
 };

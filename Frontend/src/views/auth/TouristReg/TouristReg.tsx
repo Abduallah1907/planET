@@ -2,13 +2,11 @@ import "./TouristReg.css";
 import TouristForm from "../../../components/TouristForm/TouristForm";
 import { Container, Row, Col } from "react-bootstrap";
 import IconCircle from "../../../assets/IconCircle.svg";
-import TopBar from "../../../components/TopBar/TopBar";
 
 export default function TouristReg() {
   return (
     <>
-      <TopBar />
-        <Row>
+        <Row className="w-100">
           <Col md={4} className="content-left">
             <h1>
               Book your trip in minute

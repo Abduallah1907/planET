@@ -22,7 +22,8 @@ export default class AdminService {
     @Inject("activityModel") private activityModel: Models.ActivityModel,
     @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel,
     @Inject("historical_locationModel") private historicalLocationsModel: Models.Historical_locationsModel,
-    @Inject("productModel") private productModel: Models.ProductModel
+    @Inject("productModel") private productModel: Models.ProductModel,
+    @Inject("tagModel") private tagModel: Models.TagModel
   ) {}
 
   public async getUsersService(page: number): Promise<any> {
@@ -116,7 +117,6 @@ export default class AdminService {
       updatedAt: user.updatedAt,
     };
     if (deletedRole) userOutput = { ...userOutput, ...deletedRole._doc };
-    console.log(deletedRole);
     return new response(true, { ...userOutput }, "User deleted", 200);
   }
 
@@ -213,5 +213,40 @@ export default class AdminService {
     if (!deletedCategory) throw new HttpError("Category not found", 404);
 
     return new response(true, deletedCategory, "Category deleted!", 200);
+  }
+
+  public async createTagService(type: string): Promise<any> {
+    const tag = await this.tagModel.create({ type });
+    if (tag instanceof Error) throw new InternalServerError("Internal server error");
+
+    return new response(true, tag, "Created new tag!", 201);
+  }
+
+  public async getTagsService(page: number): Promise<any> {
+    const tags = await this.tagModel
+      .find({})
+      .sort({ type: 1 })
+      .limit(10)
+      .skip((page - 1) * 10);
+    if (tags instanceof Error) throw new InternalServerError("Internal server error");
+
+    return new response(true, tags, "Page " + page + " of tags", 200);
+  }
+
+  public async updateTagService(oldType: string, newType: string): Promise<any> {
+    const updatedTag = await this.tagModel.findOneAndUpdate({ type: oldType }, { type: newType }, { new: true });
+    if (updatedTag instanceof Error) throw new InternalServerError("Internal server error");
+    if (!updatedTag) throw new HttpError("Tag not found", 404);
+
+    return new response(true, updatedTag, "Tag updated!", 200);
+  }
+
+  public async deleteTagService(type: String): Promise<any> {
+    const deletedTag = await this.tagModel.findOneAndDelete({ type });
+
+    if (deletedTag instanceof Error) throw new InternalServerError("Internal server error");
+    if (!deletedTag) throw new HttpError("Tag not found", 404);
+
+    return new response(true, deletedTag, "Tag deleted!", 200);
   }
 }

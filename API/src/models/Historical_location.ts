@@ -1,4 +1,4 @@
-import { IHistorical_location } from "@/interfaces/IHistorical_Location";
+import { IHistorical_location } from "../interfaces/IHistorical_location";
 import { LocationSchema } from "@/types/Location";
 import mongoose from "mongoose";
 
@@ -18,15 +18,26 @@ const historicalLocationSchema = new mongoose.Schema(
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: true,
+      required: false,
     },
     name: {
       type: String,
       required: true,
     },
+    date_time: {
+      type: Date,
+      // required: true,
+    },
     description: {
       type: String,
       required: true,
+    },
+    average_rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      required: true,
+      default: 0,
     },
     picture: [
       {
@@ -49,34 +60,30 @@ const historicalLocationSchema = new mongoose.Schema(
     opening_days: [
       {
         type: String,
-        required: true,
       },
     ],
     native_price: {
       type: Number,
-      required: true,
     },
     foreign_price: {
       type: Number,
-      required: true,
     },
     student_price: {
       type: Number,
-      required: true,
     },
     active_flag: {
       type: Boolean,
-      required: true,
     },
-    tags: [
-      {
-        type: String,
-      },
-    ],
+    tags: {
+      type: Map,
+      of: String, // Assuming tags are stored as key-value pairs of strings
+    },
   },
   { timestamps: true }
 );
 
-const Historical_location = mongoose.model<IHistorical_location & mongoose.Document>("Historical_Location", historicalLocationSchema);
+const Historical_location = mongoose.model<
+  IHistorical_location & mongoose.Document
+>("Historical_Location", historicalLocationSchema);
 
 export default Historical_location;

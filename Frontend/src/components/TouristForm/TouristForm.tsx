@@ -57,8 +57,6 @@ export default function TouristForm() {
   //   const mobileNumber = event.target.value;
   //   if (!validateMobileNumber(mobileNumber)) {
   //     console.error("Invalid mobile number");
-  //   } else {
-  //     console.log("Valid mobile number");
   //   }
   // }
   const handleChange = (
@@ -81,11 +79,10 @@ export default function TouristForm() {
       console.error("Invalid mobile number");
       return;
     }
-    console.log("Form submitted:", regData);
   };
 
   return (
-    <Form className="form-fields" onSubmit={handleSubmit}>
+    <Form className="tourist-form form-fields" onSubmit={handleSubmit}>
       <h2>Create account</h2>
       <Row>
         <Col>
@@ -210,51 +207,53 @@ export default function TouristForm() {
         </Col>
       </Row>
       <Row>
-        <Col>
-          <Form.Group className="form-group" id="nationality">
-            <Form.Label>Nationality:</Form.Label>
-            <div className="custom-select-container">
-              <Form.Control
-                as="select"
-                name="nationality"
-                value={regData.nationality}
-                id="nationality"
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select your nationality</option>
-                {nationalityOptions.map((option: NationalityOption) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </Form.Control>
-              <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
-            </div>
-          </Form.Group>
+      <Col>
+        <Form.Group className="form-group" id="nationality">
+          <Form.Label>Nationality:</Form.Label>
+          <div className="custom-select-container">
+            <Form.Control
+              as="select"
+              name="nationality"
+              value={regData.nationality}
+              id="nationality"
+              onChange={handleChange}
+              className="custom-form-control"
+              required
+            >
+              <option value="">Select your nationality</option>
+              {nationalityOptions.map((option: NationalityOption) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Form.Control>
+            <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
+          </div>
+        </Form.Group>
         </Col>
         <Col>
-          <Form.Group className="form-group" id="job">
-            <Form.Label>Job</Form.Label>
-            <div className="custom-select-container">
-              <Form.Control
-                as="select"
-                name="job"
-                value={regData.job}
-                id="job"
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select your job</option>
-                {jobOptions.map((option: JobOption) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </Form.Control>
-              <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
-            </div>
-          </Form.Group>
+        <Form.Group className="form-group" id="job">
+          <Form.Label>Job</Form.Label>
+          <div className="custom-select-container">
+            <Form.Control
+              as="select"
+              name="job"
+              value={regData.job}
+              id="job"
+              onChange={handleChange}
+              
+              required
+            >
+              <option value="">Select your job</option>
+              {jobOptions.map((option: JobOption) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Form.Control>
+            <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
+          </div>
+        </Form.Group>
         </Col>
       </Row>
       <div key="default-checkbox" className="mb-3">

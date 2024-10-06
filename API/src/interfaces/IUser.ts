@@ -53,7 +53,6 @@ export interface IUserInputDTO {
   password: string;
   role: UserRoles;
   phone_number: string;
-  date_of_birth?: Date;
 }
 
 export interface IUserCreateDTO {
@@ -63,7 +62,6 @@ export interface IUserCreateDTO {
   password: string;
   role: UserRoles;
   phone_number: string;
-  date_of_birth: Date;
 }
 
 export interface IUserOutputDTO {
@@ -72,5 +70,20 @@ export interface IUserOutputDTO {
   email: string;
   role: UserRoles;
   phone_number: string;
-  date_of_birth: Date;
+}
+export interface IUserLoginDTO {
+  email?: string;
+  username?: string;
+  password: string;
+}
+export interface IUserLoginOutputDTO {
+  name: string;
+  username: string;
+  email: string;
+  role: UserRoles;
+  phone_number: string;
+  status: UserStatus;
+  first_time_login: boolean;
+  stakeholder_id: ObjectId;
+  token: string;
 }

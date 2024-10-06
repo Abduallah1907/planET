@@ -30,7 +30,7 @@ const touristSchema = new mongoose.Schema({
   },
   loyality_points: {
     type: Number,
-    
+    default: 0,
   },
   date_of_birth: {
     type: Date,
@@ -40,6 +40,7 @@ const touristSchema = new mongoose.Schema({
   badge: {
     type: String,
     enum: Object.values(TouristBadge),
+    default: TouristBadge.LEVEL1,
   },
   addresses: [{
     type: String,

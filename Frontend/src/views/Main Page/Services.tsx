@@ -33,7 +33,7 @@ const Services: React.FC = () => {
         {servicesData.map((service, index) => (
           <Col md={3} key={index}>
             <Card className="card-shadow">
-              <Card.Body className="card-body">
+              <Card.Body className="card-body rounded-4">
                 <div className="card-icon">{service.icon}</div>
                 <Card.Title>{service.title}</Card.Title>
                 <Card.Text>{service.description}</Card.Text>

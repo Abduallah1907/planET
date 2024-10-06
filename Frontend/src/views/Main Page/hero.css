@@ -1,89 +1,78 @@
 .hero-section {
-    background-color: #f9f9f9;
-    padding: 50px 0;
-  }
-  
-  .hero-text h1 {
-    font-size: 4rem;
-    font-weight: 700 !important;
-    line-height: 1.2;
-    font-family: Volkhov, serif;
-    color: var(--text-secondary-color);
-    
-  }
-
-  .hero-buttons .btn {
-    padding: 10px 20px;
-    font-size: 1.2rem;
-  }
-  
-  .hero-text p {
-    font-size: 1rem;
-    color: #666;
-    margin: 20px 0;
-  }
-  
-  .hero-text h5 {
-    font-size: 1.1rem;
-    font-weight: bold;
-  }
-  .hero-subtitle{
-    font-size: 1.5rem;
-    color: var(--main-color);
-    margin: 20px 0;
-    font-weight: bold ;
-  }
-  img {
-    max-width: 100%;
-    height: auto;
+  position: relative;
+  overflow: hidden;
+  background-image : url('../../assets/Decore1.svg');
+  background-repeat: no-repeat;
+  background-position: right;
+  z-index: 1;
+  padding-top: 120px;
+  min-height: 100vh;
 }
 
-img {
-  max-width: 100%;
+.hero-section img {
+  position: absolute;
+}
+
+.hero-section .traveller {
+  top: 0;
+  right: 0;
+  width: auto;
   height: auto;
 }
 
-.hero-section {
-  position: relative;
-  overflow: hidden; /* Ensure the image doesn't overflow the container */
-  background: 
-    url('../../assets/Traveller.svg') no-repeat top right, 
-    url('../../assets/Plane.svg') no-repeat center right;
-  background-size: contain, contain; /* Resize the plane image to 30% */
-  background-position: top right, center right; /* Adjust positions */
-  z-index: 1; /* Ensure the section is below other elements */
-  padding-top: 120px; /* Adjust this value to match the combined height of your top bar and top bar links */
-  min-height: 100vh; /* Ensure the section has enough height to display the background images */
+.hero-section .plane {
+  top: 30%;
+  right: 30%;
+  width: 30%;
+  height: 6rem;
+  transform: translateY(-50%);
 }
-
-.decore1 {
+ .absolute-image {
   position: absolute;
   top: 0;
   right: 0;
-  width: 100px; /* Adjust the width as needed */
+  width: 700px;
+  /* Adjust the width as needed */
   height: auto;
-  z-index: 3; /* Ensure it is above other elements */
+  z-index: 2;
+  /* Ensure it is below other elements */
+  pointer-events: none;
+  /* Ensure it doesn't intercept any clicks or events */
 }
 
-.hero-text, .hero-buttons {
-  position: relative;
-  z-index: 2; /* Ensure the content is above the background images */
+.hero-text h1 {
+  font-size: 4rem;
+  font-weight: 700 !important;
+  line-height: 1.2;
+  font-family: Volkhov, serif;
+  color: var(--text-secondary-color);
 }
 
-.travel-page {
-  padding: 40px;
-  background-color: #f9f9f9;
-}
-.text-section h1 {
-  font-size: 2.5rem;
-  color: #333;
+.hero-buttons .btn {
+  padding: 10px 20px;
+  font-size: 1.2rem;
 }
 
-.text-section h1 .text-danger {
-  text-decoration: underline;
+.hero-text p {
+  font-size: 1rem;
+  color: #666;
+  margin: 20px 0;
 }
 
-.image-section img {
+.hero-text h5 {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  color: var(--main-color);
+  margin: 20px 0;
+  font-weight: bold;
+}
+
+img {
   max-width: 100%;
   height: auto;
 }

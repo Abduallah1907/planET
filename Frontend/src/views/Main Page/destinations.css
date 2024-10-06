@@ -1,37 +1,54 @@
-.card {
-    border: none;
-    box-shadow: none;
-    position: relative; /* Ensure the card is positioned relative to its container */
-  }
-  
-  .card-background {
-    background-size: cover; /* Ensure the image covers the entire card */
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 100%; /* Ensure the background covers the entire card */
-    width: 100%; /* Ensure the card takes full width of the column */
-    }
-  
-  .card-content {
-    background: white; /* Set the background color to white */
-    color: black; /* Set the text color to black */
-    padding: 10px;
-    width: 100%;
-    border-top-left-radius: 0 !important; /* Add a border radius to the top */
-    border-top-right-radius: 0 !important;
-    height: 25%;
-    position: absolute; /* Position the content absolutely */
-    bottom: 0;
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-  }
+.dest-container .card {
+  border: none;
+  box-shadow: none;
+  position: relative;
+  /* Ensure the card is positioned relative to its container */
+}
 
-  .card-img-top{
-    width: 100%;
-    height: 30rem;
-    object-fit: cover;
-    clip-path: polygon(0 0, 100% 0, 100% 80%, 0 80%);
-  }
-  
-  .dest-container {
-    margin-bottom: 20px; /* Add margin to the bottom */
-  }
+.dest-container .card-background {
+  background-size: cover;
+  /* Ensure the image covers the entire card */
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100%;
+  /* Ensure the background covers the entire card */
+  width: 100%;
+  /* Ensure the card takes full width of the column */
+}
+
+.dest-container .card-content {
+  background: white;
+  /* Set the background color to white */
+  color: black;
+  /* Set the text color to black */
+  padding: 10px;
+  width: 100%;
+  border-top-left-radius: 0 !important;
+  /* Add a border radius to the top */
+  border-top-right-radius: 0 !important;
+  height: 25%;
+  position: absolute;
+  /* Position the content absolutely */
+  bottom: 0;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+  /* Add a subtle shadow */
+}
+
+.dest-container .card-img-top {
+  width: 100%;
+  height: 30rem;
+  object-fit: cover;
+  clip-path: polygon(0 0, 100% 0, 100% 80%, 0 80%);
+}
+
+.dest-container {
+  margin-bottom: 20px;
+  /* Add margin to the bottom */
+}
+
+.destinations-text {
+  font-size: 2.0rem;
+  font-weight: 700 !important;
+  font-family: Volkhov, serif;
+  color: var(--text-secondary-color);
+}

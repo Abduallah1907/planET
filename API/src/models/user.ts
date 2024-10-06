@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
-import { IUser } from '@/interfaces/IUser';
-import UserRoles from '@/types/enums/userRoles';
-import UserStatus from '@/types/enums/userStatus';
+import mongoose from "mongoose";
+import { IUser } from "@/interfaces/IUser";
+import UserRoles from "@/types/enums/userRoles";
+import UserStatus from "@/types/enums/userStatus";
 
 const UserSchema = new mongoose.Schema(
   {
@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema(
     },
     username: {
       type: String,
-      required: [true, 'Please enter a username'],
+      required: [true, "Please enter a username"],
       unique: true,
       index: true,
       immutable: (user: any) => user.role !== UserRoles.Admin,
@@ -28,12 +28,13 @@ const UserSchema = new mongoose.Schema(
     },
     salt: {
       type: String,
+      default: "10",
     },
     role: {
       type: String,
       enum: Object.values(UserRoles),
       default: UserRoles.Tourist,
-      required:true,
+      required: true,
     },
     phone_number: {
       type: String,
@@ -50,9 +51,9 @@ const UserSchema = new mongoose.Schema(
       default: UserStatus.WAITING_FOR_APPROVAL,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-const User=mongoose.model<IUser & mongoose.Document>('User', UserSchema);
+const User = mongoose.model<IUser & mongoose.Document>("User", UserSchema);
 
 export default User;

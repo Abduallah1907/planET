@@ -1,7 +1,7 @@
 .card-shadow {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adjust the shadow as needed */
     transition: box-shadow 0.3s ease-in-out; /* Smooth transition for shadow */
-    height: 200px; /* Set a fixed height */
+    
     width: 100%; /* Ensure the card takes full width of the column */
     display: flex;
     flex-direction: column;
@@ -9,6 +9,7 @@
     align-items: center;
     border: none;
     border-radius: 5%;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
   }
   
   .card-shadow:hover {
@@ -21,6 +22,9 @@
     justify-content: center;
     align-items: center;
     text-align: center;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    height:25% ;
+    padding: 10px;
   }
   
   .card-icon {
