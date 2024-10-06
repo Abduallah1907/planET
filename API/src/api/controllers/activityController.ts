@@ -65,7 +65,6 @@ export class ActivityController {
     const activityService: ActivityService = Container.get(ActivityService);
     const upcomingActivities =
       await activityService.getUpcomingActivitiesService();
-    console.log(upcomingActivities);
 
     res.status(upcomingActivities.status).json({ upcomingActivities });
   }

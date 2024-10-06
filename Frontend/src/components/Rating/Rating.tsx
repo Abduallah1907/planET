@@ -18,7 +18,6 @@ const Rating: React.FC<RatingProps> = ({ rating = 0, totalStars = 5, onChange, r
     const clickX = event.clientX - left; // Get the X position relative to the star
     const halfStar = clickX < width / 2 ? 0.5 : 1; // Determine if it's left or right side of the star
     const newRating = index - 1 + halfStar; // Calculate the new rating based on index and half-star
-    console.log(newRating);
     setHoverRating(newRating); // Set the hover rating when a star is clicked
     onChange(newRating); // Call the onChange callback with the selected rating
   };

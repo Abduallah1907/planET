@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import TopBar from "../components/TopBar/TopBar"; // Ensure this path is correct or adjust it to the correct location
-import "./CreateAdmin.css";
-import AdminFormGroup from "../components/FormGroup/FormGroup";
+import "../CreateAdmin/CreateAdmin.css";
+import AdminFormGroup from "../../components/FormGroup/FormGroup";
 import Logo from "../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import nationalityOptionsData from "../utils/nationalityOptions.json"; // Adjust the path as necessary
+import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
 
 interface NationalityOption {
@@ -52,7 +51,6 @@ const CreateGoverner: React.FC = () => {
       alert("Passwords don't match!");
       return;
     }
-    console.log("Form submitted:", formData);
   };
 
   const handleCancel = () => {

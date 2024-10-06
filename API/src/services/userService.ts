@@ -121,13 +121,7 @@ export default class UserService {
         stakeholder_id = governor._id;
         break;
     }
-
-    console.log(config.jwtSecret);
-
-    console.log("User ID:", user._id);
-    console.log("Role:", user.role);
-    console.log("Stakeholder ID:", stakeholder_id);
-
+    
     const token = jwt.sign(
       {
         id: user._id?.toString(), // Ensure _id is a string

@@ -57,8 +57,6 @@ export default function TouristForm() {
   //   const mobileNumber = event.target.value;
   //   if (!validateMobileNumber(mobileNumber)) {
   //     console.error("Invalid mobile number");
-  //   } else {
-  //     console.log("Valid mobile number");
   //   }
   // }
   const handleChange = (
@@ -81,7 +79,6 @@ export default function TouristForm() {
       console.error("Invalid mobile number");
       return;
     }
-    console.log("Form submitted:", regData);
   };
 
   return (
@@ -246,7 +243,7 @@ export default function TouristForm() {
               value={regData.job}
               id="job"
               onChange={handleChange}
-              className="custom-form-control"
+              
               required
             >
               <option value="">Select your job</option>

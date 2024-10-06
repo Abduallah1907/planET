@@ -348,8 +348,6 @@ export default class TouristService {
         },
       });
     }
-    console.log("Agg", aggregationPipeline);
-    console.log("Match", matchStage);
     const itineraries = await this.itineraryModel.aggregate(
       aggregationPipeline
     );
@@ -399,7 +397,6 @@ export default class TouristService {
         },
       });
     }
-    console.log("Agg", aggregationPipeline);
     const historical_locations = await this.historical_locationsModel.aggregate(
       aggregationPipeline
     );
@@ -433,7 +430,6 @@ export default class TouristService {
     } else {
       throw new BadRequestError("Invalid sort criteria");
     }
-    console.log("sort criteria", sortCriteria);
 
     const itineraries = await this.itineraryModel.find().sort(sortCriteria);
     if (itineraries instanceof Error)

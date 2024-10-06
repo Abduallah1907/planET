@@ -1,4 +1,4 @@
-import axiosInstance from '@/utils/axiosInstance';
+import axiosInstance from '../utils/axiosInstance';
 import axios from 'axios';
 
 class AdminService {

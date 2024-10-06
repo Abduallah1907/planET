@@ -3,7 +3,6 @@ import SearchBar from './SearchBar';
 import HeroSection from './Hero'
 import Services from './Services'
 import Destinations from './Destinations'
-import TopBar from '../../components/TopBar/TopBar';
 
 const MainPage: React.FC = () => {
     return (

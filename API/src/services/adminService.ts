@@ -117,7 +117,6 @@ export default class AdminService {
       updatedAt: user.updatedAt,
     };
     if (deletedRole) userOutput = { ...userOutput, ...deletedRole._doc };
-    console.log(deletedRole);
     return new response(true, { ...userOutput }, "User deleted", 200);
   }
 

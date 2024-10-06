@@ -197,8 +197,6 @@ export default class TourGuideService {
     return new response(true, { itinerary_id: updatedItinerary._id }, "Itinerary updated!", 201);
   }
   public async deleteItineraryService(tour_guide_user_id: Types.ObjectId, itinerary_id: Types.ObjectId) {
-    console.log(tour_guide_user_id);
-    console.log(itinerary_id);
     const tourGuide = await this.tourGuideModel.findOne({ user_id: tour_guide_user_id });
     if (!tourGuide) throw new HttpError("Tour guide not found", 404);
 

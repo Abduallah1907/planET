@@ -25,7 +25,7 @@ export default {
    * Your secret sauce
    */
   jwtSecret: process.env.JWT_SECRET,
-  jwtAlgorithm: process.env.JWT_ALGO,
+  jwtAlgorithm: process.env.JWT_ALGORITHM,
 
   /**
    * Used by winston logger

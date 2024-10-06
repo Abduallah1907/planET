@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import TopBar from "../TopBar/TopBar"; // Adjust the path as necessary
 import "./ProfileForm.css";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import Logo from "../../assets/person-circle.svg";
@@ -52,7 +51,6 @@ const ProfileForm: React.FC = () => {
       alert("Passwords don't match!");
       return;
     }
-    console.log("Form submitted:", formData);
   };
 
   const handleCancel = () => {

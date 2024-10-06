@@ -48,13 +48,11 @@ export class ProductService {
     product_id: string,
     product: IProductInputDTO
   ) {
-    console.log("product", product);
     const updatedProduct = await this.productModel.findByIdAndUpdate(
       product_id,
       { ...product },
       { new: true }
     );
-    console.log("updatedProduct", updatedProduct);
     if (updatedProduct instanceof Error)
       throw new InternalServerError("Internal Server Error");
 
@@ -90,9 +88,6 @@ export class ProductService {
         $match: matchStage,
       },
     ]);
-    console.log("result", products);
-    console.log("match", matchStage);
-
     if (products instanceof Error)
       throw new InternalServerError("Internal Server Error");
     return new response(true, products, "Filtered products are fetched", 200);
@@ -115,7 +110,6 @@ export class ProductService {
     } else {
       throw new BadRequestError("Invalid sort criteria");
     }
-    console.log("sortCriteria", sortCriteria);
     const products = await this.productModel.find().sort(sortCriteria);
     if (products instanceof Error)
       throw new InternalServerError("Internal Server Error");
@@ -133,7 +127,6 @@ export class ProductService {
 
   public async getProductByNameService(product_name: string) {
     const product = await this.productModel.findOne({ name: product_name });
-    console.log(product_name);
     if (product instanceof Error)
       throw new InternalServerError("Internal Server Error");
     if (!product) throw new NotFoundError("Product not found");

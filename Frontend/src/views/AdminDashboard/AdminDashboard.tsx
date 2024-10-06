@@ -1,4 +1,3 @@
-import TopBar from "../../components/TopBar/TopBar";
 import Icon from "../../assets/icon.png"; // Add this line to import the Icon
 import { Container } from "react-bootstrap";
 import UserCoverageChart from "./UserCoverageChart";

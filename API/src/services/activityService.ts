@@ -190,9 +190,6 @@ export default class ActivityService {
     // });
     // await newActivity.save();
 
-    // console.log(newCategory);
-    // console.log(newActivity);
-
     if (!name && !category && !tag) throw new BadRequestError("Invalid input");
 
     const searchCriteria: any = {};
@@ -309,8 +306,6 @@ export default class ActivityService {
         },
       });
     }
-    console.log(aggregationPipeline);
-    console.log(matchStage);
     const activities = await this.activityModel.aggregate(aggregationPipeline);
     if (activities instanceof Error)
       throw new InternalServerError("Internal server error");
@@ -333,7 +328,6 @@ export default class ActivityService {
         200
       );
     }
-    console.log("direction", direction);
     if (sort === "price") {
       sortCriteria = { price: parseInt(direction) };
     } else if (sort === "ratings") {
@@ -341,7 +335,6 @@ export default class ActivityService {
     } else {
       throw new BadRequestError("Invalid sort criteria");
     }
-    console.log("sort criteria", sortCriteria);
     const activities = await this.activityModel.find().sort(sortCriteria);
     if (activities instanceof Error)
       throw new InternalServerError("Internal server error");

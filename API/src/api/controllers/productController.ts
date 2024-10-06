@@ -10,7 +10,6 @@ export class ProductController {
     const product: IProduct = req.body;
     const { user_id } = req.params;
     const result = await productService.createProductService(user_id, product);
-    console.log("result", result);
     res.status(result.status).json({ result });
   }
 
@@ -69,7 +68,6 @@ export class ProductController {
   public async getProductByName(req: any, res: any) {
     const productService: ProductService = Container.get(ProductService);
     const { product_name } = req.params;
-    console.log("name", product_name);
     const product = await productService.getProductByNameService(product_name);
     res.status(product.status).json({ product });
   }
