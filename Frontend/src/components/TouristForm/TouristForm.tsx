@@ -82,7 +82,7 @@ export default function TouristForm() {
   };
 
   return (
-    <Form className="form-fields" onSubmit={handleSubmit}>
+    <Form className="tourist-form form-fields" onSubmit={handleSubmit}>
       <h2>Create account</h2>
       <Row>
         <Col>

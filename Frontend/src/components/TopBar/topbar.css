@@ -1,57 +1,49 @@
-.top-bar{
-	/* Add some properties here */
-	background-color: var(--main-color);
-	height: 100px;
-    display: flex;
-    position: fixed;
 
+
+.top-bar {
+    background-color: var(--main-color);
+    height: 100px;
+    display: flex;
+    align-items: center; 
+    position: fixed; /* Fix the top bar at the top */
+    width: 100%; /* Full width of the screen */
+    z-index: 1100; /* Ensure the top bar is above the sidebar */
 }
 
-/* topbar.css */
+.sidebar-toggle-icon {
+    cursor: pointer;
+    margin-left: 20px; 
+}
+
 .brand-container {
     display: flex;
     flex-direction: column;
-    align-items: flex-end; /* Align items to the end of the flex container */
-    margin-left: 100px; /* Push the logo to the right */
+    align-items: flex-start; 
+    margin-left: 40px;
 }
 
 .logo {
-    margin-right: 5px; /* Adjust this value to shift the logo to the right */
-}
-
-.nav-links {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* Align items to the start of the flex container */
-    margin-top: 2px;
-    margin-left: 20px; /* Adjust this value to shift the nav links to the right */
-}
-
-.nav-links .nav-link {
-    color: white; /* Adjust as needed */
-    margin: 5px 0; /* Adjust as needed */
-    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .button-container {
     display: flex;
     align-items: center;
-    margin-left: auto; /* Push the buttons to the right */
+    margin-left: auto;
 }
 
 .btn-flag {
     width: 30px; /* Ensure width and height are equal */
     height: 30px; /* Ensure width and height are equal */
     background-image: url('../../assets/UK.webp'); /* Ensure this path is correct */
+    width: 30px;
+    height: 30px;
     background-size: cover;
     background-position: center;
-    border: none !important; /* Remove any border */
+    border: none !important;
     cursor: pointer;
-    margin-right: 15px; /* Space between buttons */
-    border-radius: 50% !important; /* Ensure this is set to 50% */
-}
-.btn-flag:hover {
-    scale: 1.05; /* Adjust as needed */
+    margin-right: 15px;
+    border-radius: 50% !important;
 }
 
 .btn-help {
@@ -69,21 +61,33 @@
 .btn-help:hover {
     scale: 0.85; /* Adjust as needed */
     
+    width: 25px;
+    height: 25px;
+    background-color: transparent !important;
+    background-size: cover;
+    background-position: center;
+    border: white !important;
+    cursor: pointer;
+    margin-right: 15px;
+    scale: 0.75;
+    filter: invert(1);
 }
 
 .btn-margin {
     margin-right: 60px !important;
 }
+
 .btn-text {
-    border: none; /* Remove border */
-    color: #ffffff !important; /* Set text color */
-    font-weight: bold !important; /* Adjust font weight as needed */
+    border: none;
+    color: #ffffff !important;
+    font-weight: bold !important;
     margin-right: 15px;
-    cursor: pointer; /* Change cursor to pointer */
+    cursor: pointer;
 }
+
 .btn-text:hover {
     background-color: rgba(192, 192, 192, 0.3) !important; 
-    color: #ffffff !important; /* Set text color */
+    color: #ffffff !important;
     margin-right: 15px !important;
     font-weight: bold !important; /* Adjust font weight as needed */
     cursor: pointer; /* Change cursor to pointer */
@@ -107,4 +111,6 @@
         color: var(--main-color) !important;
     }
 }
+
+
 

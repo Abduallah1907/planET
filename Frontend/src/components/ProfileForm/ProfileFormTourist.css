@@ -1,0 +1,89 @@
+h2.my-profile-heading {
+    text-indent: 15rem; 
+    text-align: left;
+    margin-bottom: 0rem; 
+    font-weight: bold;
+    margin-top: 30px; 
+    font-size: 40px; 
+}
+
+
+.wallet-card {
+    background-color: #fff;
+    border: 1.5px solid #e67e22;
+    border-radius: 20px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 2rem auto;
+    max-width: 320px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 70px; 
+}
+
+.wallet-card h3,
+.wallet-card p {
+    margin: 0;
+    font-weight: bold;
+    font-size: 1.25rem;
+    margin-right: 40px;
+}
+
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+    width: 100%; 
+    margin-top: 1rem;
+    margin-bottom: 1rem; 
+}
+
+.update-btn,
+.cancel-btn {
+    padding: 0.5rem 1rem; 
+    flex: 1; 
+    max-width: 150px; 
+    margin: 0 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.update-btn {
+    background-color: #e67e22;
+    color: white;
+    border: none;
+}
+
+.update-btn:hover {
+    background-color: #d35400; 
+}
+
+.cancel-btn {
+    background-color: white;
+    color: #e67e22;
+    border: 1px solid #e67e22;
+}
+
+.cancel-btn:hover {
+    background-color: #f2f2f2;
+}
+.dropdown-icon {
+    margin-left: 8px;
+    font-size: 1.2rem; 
+    color: #333; 
+    display: inline-block; 
+}
+.custom-select-container {
+    position: relative;
+  }
+  
+  .dropdown-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none; 
+  }
+  

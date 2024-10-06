@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "./ProfileForm.css";
 import CustomFormGroup from "../FormGroup/FormGroup";
+import "./ProfileFormTourist.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
@@ -68,7 +68,6 @@ const ProfileForm: React.FC = () => {
 
   return (
     <div className="profile-form-container">
-      
       <Row className="align-items-center mb-4">
         <Col xs={7} className="text-left">
           <h2 className="my-profile-heading">My Profile</h2>
