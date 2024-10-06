@@ -926,13 +926,4 @@ export default (app: Router) => {
   router.post("/createProfile", tourGuideController.createProfile);
   router.get("/getProfile/:tour_guide_user_id", tourGuideController.getProfile);
   router.put("/updateProfile", tourGuideController.updateProfile);
-
-  // CRUD for itinerary
-  router.post("/createItinerary", tourGuideController.createItinerary);
-  router.get("/getItinerary/:itinerary_id", tourGuideController.getItinerary);
-  router.put("/updateItinerary", tourGuideController.updateItinerary);
-  router.delete("/deleteItinerary/:tour_guide_user_id/itinerary/:itinerary_id", tourGuideController.deleteItinerary);
-
-  // get all itineraries
-  router.get("/getItineraries/:tour_guide_user_id", tourGuideController.viewAllItineraries);
 };
