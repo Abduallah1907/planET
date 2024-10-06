@@ -37,16 +37,21 @@ export default class UserService {
     // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     // if (!emailRegex.test(userData.email))
     //   throw new BadRequestError("Invalid email");
+
     const newUser = new this.userModel(userData);
     newUser.password = await bcrypt.hash(
       userData.password,
       parseInt(newUser.salt)
     );
+
     if (newUser instanceof Error)
       throw new InternalServerError("Internal server error");
     // throw new Error ("Internal server error");
     if (newUser == null) throw new HttpError("User not created", 404);
     // throw new Error("User not created");
+    if (userData.role == UserRoles.Admin) {
+      newUser.status = UserStatus.APPROVED;
+    }
     await newUser.save();
     return new response(true, newUser, "User created", 201);
   }
@@ -121,7 +126,7 @@ export default class UserService {
         stakeholder_id = governor._id;
         break;
     }
-    
+
     const token = jwt.sign(
       {
         id: user._id?.toString(), // Ensure _id is a string

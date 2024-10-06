@@ -46,7 +46,7 @@ export default (app: Router) => {
    *                       type: number
    *                   description: JSON object with longitude and latitude
    *                 price:
-   *                   type: number
+   *                   type: string
    *                 price_range:
    *                   type: string
    *                 category:
@@ -235,8 +235,6 @@ export default (app: Router) => {
    *             schema:
    *               type: object
    *               properties:
-   *                 id:
-   *                   type: string
    *                 name:
    *                   type: string
    *                 date:
@@ -267,8 +265,6 @@ export default (app: Router) => {
    *                   type: number
    *                 booking_flag:
    *                   type: boolean
-   *                 advertiser_id:
-   *                   type: string
    *       responses:
    *         '200':
    *           description: Activity updated successfully.
@@ -297,83 +293,120 @@ export default (app: Router) => {
    *           description: Activity not found.
    *         '500':
    *           description: Internal Server Error.
-   * /api/activity/getActivity:
-   *   get:
-   *     tags:
-   *       - Activity
-   *     summary: Retrieve activities from system
-   *     description: Retrieve activities data by name, category, and tag
-   *     parameters:
-   *       - in: query
-   *         name: name
-   *         description: Name of the activity
-   *         schema:
-   *           type: string
-   *       - in: query
-   *         name: category
-   *         description: Category of the activity
-   *         schema:
-   *           type: string
-   *       - in: query
-   *         name: tag
-   *         description: Tag of the activity
-   *         schema:
-   *           type: string
-   *     responses:
-   *       200:
-   *         description: List of Activities.
-   *       400:
-   *         description: Bad request.
-   *       500:
-   *         description: Internal server error.
-   * /api/activity/getUpcomingActivities:
-   *   get:
-   *     tags:
-   *       - Activity
-   *     summary: Retrieve upcoming activities from system
-   *     description: Retrieve upcoming activities data
-   *     responses:
-   *       200:
-   *         description: List of upcoming activities.
-   *       400:
-   *         description: Bad request.
-   *       500:
-   *         description: Internal server error.
-   * /api/activity/getFilteredActivities:
-   *   get:
-   *     tags:
-   *       - Activity
-   *     summary: Retrieve filtered activities from system
-   *     description: Retrieve filtered activities data
-   *     parameters:
-   *       - in: query
-   *         name: budget
-   *         description: Budget for the activity
-   *         schema:
-   *           type: string
-   *       - in: query
-   *         name: rating
-   *         description: Rating of the activity
-   *         schema:
-   *           type: string
-   *       - in: query
-   *         name: date
-   *         description: Date of the activity
-   *         schema:
-   *           type: string
-   *           format: date
-   *       - in: query
-   *         name: category
-   *         description: Category of the activity
-   *         schema:
-   *           type: string
-   *     responses:
-   *       200:
-   *         description: List of filtered activities.
-   *       400:
-   *         description: Bad request.
-   *       500:
-   *         description: Internal server error.
+   *
+   *   /api/activity/getSearchActivity:
+   *     get:
+   *       tags:
+   *         - Activity
+   *       summary: Retrieve activities from system
+   *       description: Retrieve activities data by name, category, and tag
+   *       parameters:
+   *         - in: query
+   *           name: name
+   *           description: Name of the activity
+   *           schema:
+   *             type: string
+   *         - in: query
+   *           name: category
+   *           description: Category of the activity
+   *           schema:
+   *             type: string
+   *         - in: query
+   *           name: tag
+   *           description: Tag of the activity
+   *           schema:
+   *             type: string
+   *       responses:
+   *         '200':
+   *           description: List of Activities.
+   *         '400':
+   *           description: Bad request.
+   *         '500':
+   *           description: Internal server error.
+   *
+   *   /api/activity/getUpcomingActivities:
+   *     get:
+   *       tags:
+   *         - Activity
+   *       summary: Retrieve upcoming activities from system
+   *       description: Retrieve upcoming activities data
+   *       responses:
+   *         '200':
+   *           description: List of upcoming activities.
+   *         '400':
+   *           description: Bad request.
+   *         '500':
+   *           description: Internal server error.
+   *
+   *   /api/activity/getFilteredActivities:
+   *     get:
+   *       tags:
+   *         - Activity
+   *       summary: Retrieve filtered activities from system
+   *       description: Retrieve filtered activities data
+   *       parameters:
+   *         - in: query
+   *           name: budget
+   *           description: Budget for the activity
+   *           schema:
+   *             type: string
+   *         - in: query
+   *           name: rating
+   *           description: Rating of the activity
+   *           schema:
+   *             type: string
+   *         - in: query
+   *           name: date
+   *           description: Date of the activity
+   *           schema:
+   *             type: string
+   *             format: date
+   *         - in: query
+   *           name: category
+   *           description: Category of the activity
+   *           schema:
+   *             type: string
+   *       responses:
+   *         '200':
+   *           description: List of filtered activities.
+   *         '400':
+   *           description: Bad request.
+   *         '500':
+   *           description: Internal server error.
+   *
+   *   /api/activity/getSortedActivities:
+   *     get:
+   *       tags:
+   *         - Activity
+   *       summary: Retrieve sorted activities from system
+   *       description: Retrieve sorted activities data
+   *       parameters:
+   *         - in: query
+   *           name: sort
+   *           description: Sort the activities
+   *           schema:
+   *             type: string
+   *       responses:
+   *         '200':
+   *           description: List of sorted activities.
+   *         '400':
+   *           description: Bad request.
+   *         '500':
+   *           description: Internal server error.
+   *
+   *   /api/activity/getFilterComponents:
+   *     get:
+   *       tags:
+   *         - Activity
+   *       summary: Retrieve filter components from system
+   *       description: Retrieve filter components data
+   *       responses:
+   *         '200':
+   *           description: List of filter components.
+   *         '400':
+   *           description: Bad request.
+   *         '500':
+   *           description: Internal server error.
    */
 
   router.post(
@@ -383,7 +416,11 @@ export default (app: Router) => {
   );
   router.get("/getAllActivites", activityController.getAllActivities);
 
-  router.get("/getActivityByID/:id", activityController.getActivityByID);
+  router.get(
+    "/getActivityByID/:id",
+    authorize([UserRoles.Advertiser]),
+    activityController.getActivityByID
+  );
 
   router.get(
     "/getActivityByAdvertiserID/:advertiserID",
@@ -393,7 +430,7 @@ export default (app: Router) => {
 
   router.put(
     "/updateActivity/:id",
-    // authorize([UserRoles.Advertiser]),
+    authorize([UserRoles.Advertiser]),
     activityController.updateActivity
   );
 
@@ -404,9 +441,9 @@ export default (app: Router) => {
   );
 
   router.get(
-    "/getActivity",
+    "/getSearchActivity",
     authorize([UserRoles.Tourist]),
-    activityController.getActivity
+    activityController.getSearchActivity
   );
   router.get(
     "/getUpcomingActivities",
@@ -417,5 +454,6 @@ export default (app: Router) => {
     "/getFilteredActivities",
     activityController.getFilteredActivities
   );
+  router.get("/getSortedActivities", activityController.getSortedActivities);
   router.get("/getFilterComponents", activityController.getFilterComponents);
 };

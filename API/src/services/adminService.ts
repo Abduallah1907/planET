@@ -145,6 +145,8 @@ export default class AdminService {
         deletedRole = await this.touristModel.findOneAndDelete({ user_id });
         break;
     }
+    if (deletedRole instanceof Error)
+      throw new InternalServerError("Internal server error");
 
     let userOutput: IUserAdminViewDTO = {
       _id: user._id,
