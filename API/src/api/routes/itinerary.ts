@@ -570,16 +570,29 @@ export default (app: Router) => {
    *             - "60c72b2f9b1d4c2e88f6f6a8"
    *
    */
-  const itineraryController: ItineraryController = Container.get(ItineraryController);
+  const itineraryController: ItineraryController =
+    Container.get(ItineraryController);
   app.use("/itinerary", router);
 
   // CRUD for itinerary
   router.post("/createItinerary", itineraryController.createItinerary);
-  router.get("/getItineraryByID/:itinerary_id", itineraryController.getItineraryByID);
-  router.put("/updateItinerary", itineraryController.updateItinerary);
-  router.delete("/deleteItinerary/:tour_guide_user_id/itinerary/:itinerary_id", itineraryController.deleteItinerary);
+  router.get(
+    "/getItineraryByID/:itinerary_id",
+    itineraryController.getItineraryByID
+  );
+  router.put(
+    "/updateItinerary/:itinerary_id",
+    itineraryController.updateItinerary
+  );
+  router.delete(
+    "/deleteItinerary/:tour_guide_user_id/itinerary/:itinerary_id",
+    itineraryController.deleteItinerary
+  );
 
   // get all itineraries
-  router.get("/getItineraryByTourGuideID/:tour_guide_user_id", itineraryController.getAllItinerariesByTourGuideID);
+  router.get(
+    "/getItineraryByTourGuideID/:tour_guide_user_id",
+    itineraryController.getAllItinerariesByTourGuideID
+  );
   router.get("/getAllItineraries/:page", itineraryController.getAllItineraries);
 };

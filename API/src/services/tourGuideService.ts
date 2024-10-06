@@ -3,30 +3,13 @@ import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import Container, { Inject, Service } from "typedi";
 import { HttpError, InternalServerError, NotFoundError } from "@/types/Errors";
-import {
-  IPreviousWorkInputDTO,
-  IPreviousWorkOutputDTO,
-  IPreviousWorkUpdateDTO,
-} from "@/interfaces/IPrevious_work";
-import {
-  IItinerary,
-  IItineraryCreateDTO,
-  IItineraryOutputDTO,
-  IItineraryUpdateDTO,
-} from "@/interfaces/IItinerary";
-import {
-  ITour_GuideUpdateDTO,
-  ITourGuideInput,
-  ITourGuideOutput,
-} from "@/interfaces/ITour_guide";
+import { ITour_GuideUpdateDTO } from "@/interfaces/ITour_guide";
 import {
   IPreviousWorkInputDTO,
   IPreviousWorkOutputDTO,
   IPreviousWorkUpdateDTO,
 } from "@/interfaces/IPrevious_work";
 import { ITourGuideInput, ITourGuideOutput } from "@/interfaces/ITour_guide";
-import { name } from "agenda/dist/agenda/name";
-import { it } from "node:test";
 import UserService from "./userService";
 import { IUserInputDTO } from "@/interfaces/IUser";
 @Service()
