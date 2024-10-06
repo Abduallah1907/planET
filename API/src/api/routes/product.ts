@@ -212,4 +212,5 @@ export default (app: Router) => {
     authorize([UserRoles.Tourist, UserRoles.Seller]),
     productController.getProductByName
   );
+  route.get("/getFilterComponents", productController.getFilterComponents);
 };

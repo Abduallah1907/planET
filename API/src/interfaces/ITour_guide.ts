@@ -11,13 +11,18 @@ export interface ITour_Guide extends Document {
   createdAt?: Date;
   updatedAt?: Date;
 }
-
+export interface ITour_GuideUpdateDTO {
+  years_of_experience?: number;
+  photo?: string;
+  phone_number?: string;
+}
 export interface ITourGuideInput {
   username: string;
   email: string;
   phone_number: string;
   name: string;
   password: string;
+  documents_required: string[];
 }
 export interface ITourGuideOutput {
   itineraries: ObjectId[];
@@ -28,4 +33,5 @@ export interface ITourGuideOutput {
   // the attributes below must be taken from user table
   username: string;
   name: string;
+  phone_number: string;
 }
