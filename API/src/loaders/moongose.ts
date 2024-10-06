@@ -1,9 +1,9 @@
-import mongoose from 'mongoose';
-import { Db } from 'mongodb';
-import config from '@/config';
+import mongoose from "mongoose";
+import { Db } from "mongodb";
+import config from "@/config";
 
 export default async (): Promise<Db> => {
-  const databaseURL : string | undefined = config.databaseURL;
+  const databaseURL: string | undefined = config.databaseURL;
   if (!databaseURL) {
     throw new Error("⚠️  Database URL not found in configuration  ⚠️");
   }
@@ -22,10 +22,10 @@ export default async (): Promise<Db> => {
   //   /** Set to `true` to make Mongoose automatically call `createCollection()` on every model created on this connection. */
   //   autoCreate?: boolean;
   // }
-
+  mongoose.set("strictQuery", false);
   const connection = await mongoose.connect(databaseURL.concat("planET"), {
     autoIndex: true,
-    autoCreate: true
+    autoCreate: true,
   });
   return connection.connection.db;
 };

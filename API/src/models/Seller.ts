@@ -11,13 +11,11 @@ const sellerSchema = new mongoose.Schema(
     documents_required: [
       {
         type: String,
-        default: [],
         required: true,
       },
     ],
     logo: {
       type: String,
-      default: "NONE",
     },
     description: {
       type: String,

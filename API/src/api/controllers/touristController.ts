@@ -46,11 +46,11 @@ export class TouristController {
     res.status(itineraries.status).json({ itineraries });
   }
 
-  public async getHistorical_locations(req: any, res: any) {
+  public async getHistorical_location(req: any, res: any) {
     const { name, category, tag } = req.query;
     const touristService: TouristService = Container.get(TouristService);
     const historical_locations =
-      await touristService.getHistorical_locationsService(name, category, tag);
+      await touristService.getHistorical_locationService(name, category, tag);
     res.status(historical_locations.status).json({ historical_locations });
   }
 
@@ -117,15 +117,6 @@ export class TouristController {
       await touristService.getFilteredHistorical_locationsService(filters);
 
     res.status(historical_locations.status).json({ historical_locations });
-  }
-  public async getSortedActivities(req: any, res: any) {
-    const { sort, direction } = req.query;
-    const touristService: TouristService = Container.get(TouristService);
-    const activities = await touristService.getSortedActivitiesService(
-      sort,
-      direction
-    );
-    res.status(activities.status).json({ activities });
   }
   public async getSortedItineraries(req: any, res: any) {
     const { sort, direction } = req.query;

@@ -1,5 +1,9 @@
-import { IActivityDTO } from "@/interfaces/IActivity";
-import { BadRequestError, InternalServerError, NotFoundError } from "@/types/Errors";
+import { IActivityDTO, UpdateIActivityDTO } from "@/interfaces/IActivity";
+import {
+  BadRequestError,
+  InternalServerError,
+  NotFoundError,
+} from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
 import mongoose, { Types } from "mongoose";
@@ -8,10 +12,17 @@ export default class ActivityService {
   constructor(
     @Inject("activityModel") private activityModel: Models.ActivityModel,
     @Inject("categoryModel") private categoryModel: Models.CategoryModel
-  ) { }
+  ) {}
 
   public getAllActivitiesService = async () => {
     const activities = await this.activityModel.find({});
+    if (activities instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+    if (activities == null) {
+      throw new NotFoundError("No Activities Found");
+    }
+
     return new response(true, activities, "All activites are fetched", 200);
   };
 
@@ -71,21 +82,21 @@ export default class ActivityService {
     if (!Types.ObjectId.isValid(advertiserID)) {
       throw new BadRequestError("Invalid Adverstier ID format");
     }
-    const activity = await this.activityModel.findOne({
-      adverstier_id: new mongoose.Schema.Types.ObjectId(advertiserID),
+    const activities = await this.activityModel.find({
+      advertiser_id: advertiserID,
     });
-    if (activity instanceof Error) {
+    if (activities instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
-    if (activity == null) {
+    if (activities == null) {
       throw new NotFoundError("No Activity with this Adverstier ID");
     }
-    return new response(true, activity, "Activity is found", 200);
+    return new response(true, activities, "Activity is found", 200);
   };
 
   public updateActivityService = async (
     id: string,
-    activityData: IActivityDTO
+    activityData: UpdateIActivityDTO
   ) => {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID format");
@@ -99,11 +110,13 @@ export default class ActivityService {
     }
     const updateFields: Partial<IActivityDTO> = {};
     if (
-      activityData.price &&
+      activityData?.price &&
       activityData.price_range?.max &&
-      activityData.price_range.min
+      activityData.price_range?.min
     ) {
-      throw new BadRequestError("Cannot enter both price and price range,choose one of them");
+      throw new BadRequestError(
+        "Cannot enter both price and price range,choose one of them"
+      );
     }
 
     if (activityData.date) updateFields.date = activityData.date;
@@ -115,20 +128,19 @@ export default class ActivityService {
     ) {
       updateFields.location = activityData.location;
     }
-    if (activityData.price !== undefined)
-      updateFields.price = activityData.price;
+    if (activityData.price) updateFields.price = activityData.price;
     if (activityData.price_range)
       updateFields.price_range = {
-        min: activityData.price_range.min,
-        max: activityData.price_range.max,
+        min: activityData.price_range.min ?? 0,
+        max: activityData.price_range.max ?? 0,
       };
     if (activityData.category) updateFields.category = activityData.category;
-    if (activityData.special_discount !== undefined)
+    if (activityData.special_discount)
       updateFields.special_discount = activityData.special_discount;
     if (activityData.tags) updateFields.tags = activityData.tags;
-    if (activityData.booking_flag !== undefined)
+    if (activityData?.booking_flag)
       updateFields.booking_flag = activityData.booking_flag;
-    if (updateFields.price !== undefined) {
+    if (updateFields.price) {
       updateFields.price_range = { min: 0, max: 0 };
     } else if (
       updateFields.price_range?.min !== undefined &&
@@ -168,11 +180,7 @@ export default class ActivityService {
     return new response(true, null, "Activity deleted successfully", 200);
   };
 
-  public async getActivitiesService(
-    name: string,
-    category: string,
-    tag: string
-  ) {
+  public async getActivityService(name: string, category: string, tag: string) {
     // const newCategory = new Category({type:category});
     // await newCategory.save();
     // const newActivity = new Activity({
@@ -185,23 +193,14 @@ export default class ActivityService {
     // console.log(newCategory);
     // console.log(newActivity);
 
-    const newCategory = await new this.categoryModel({ type: category });
-    await newCategory.save();
-    const newActivity = await new this.activityModel({
-      category: newCategory._id,
-      name: name,
-      tags: [tag],
-      date: new Date(),
-      price: 3000,
-    });
-    await newActivity.save();
-    console.log(newCategory);
-    console.log(newActivity);
-
     if (!name && !category && !tag) throw new BadRequestError("Invalid input");
 
+    const searchCriteria: any = {};
+    if (name) searchCriteria.name = name;
+    if (tag) searchCriteria.tags = tag;
+
     const activities = await this.activityModel
-      .find({ name: name, tags: tag })
+      .find(searchCriteria)
       .populate({ path: "category", match: { type: category } })
       .populate("comments")
       .populate({ path: "advertiser_id", select: "name" });
@@ -321,5 +320,32 @@ export default class ActivityService {
       "Filtered activities are fetched",
       200
     );
+  }
+  public async getSortedActivitiesService(sort: string, direction: string) {
+    let sortCriteria = {};
+
+    if (!sort && !direction) {
+      const activities = await this.activityModel.find();
+      return new response(
+        true,
+        activities,
+        "Activities with no sort criteria provided",
+        200
+      );
+    }
+    console.log("direction", direction);
+    if (sort === "price") {
+      sortCriteria = { price: parseInt(direction) };
+    } else if (sort === "ratings") {
+      sortCriteria = { average_rating: parseInt(direction) };
+    } else {
+      throw new BadRequestError("Invalid sort criteria");
+    }
+    console.log("sort criteria", sortCriteria);
+    const activities = await this.activityModel.find().sort(sortCriteria);
+    if (activities instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    return new response(true, activities, "Sorted activities are fetched", 200);
   }
 }

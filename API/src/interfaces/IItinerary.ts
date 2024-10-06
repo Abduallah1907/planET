@@ -11,12 +11,64 @@ export interface IItinerary extends Document {
   price: number;
   available_dates: Date[];
   accessibility: boolean;
-  pickup_loc: string;
-  drop_off_loc: string;
-  tags?: ObjectId[];
+  pickup_loc: Location;
+  drop_off_loc: Location;
+  tags?: string[];
   active_flag: boolean;
   inappropriate_flag: boolean;
   tour_guide_id: ObjectId;
+  name: string;
+  category: ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+export interface IItineraryCreateDTO {
+  tour_guide_user_id: ObjectId;
+  name: string;
+  category: ObjectId;
+  activities: ObjectId[];
+  timeline: ObjectId[];
+  locations: Location[];
+  duration: string;
+  languages: string[];
+  price: number;
+  available_dates: Date[];
+  accessibility: boolean;
+  pickup_loc: Location;
+  drop_off_loc: Location;
+  tags?: string[];
+}
+
+export interface IItineraryUpdateDTO {
+  itinerary_id: ObjectId;
+  name: string;
+  category: ObjectId;
+  activities: ObjectId[];
+  timeline: ObjectId[];
+  locations: Location[];
+  duration: string;
+  languages: string[];
+  price: number;
+  available_dates: Date[];
+  accessibility: boolean;
+  pickup_loc: Location;
+  drop_off_loc: Location;
+  tags?: string[];
+}
+
+export interface IItineraryOutputDTO {
+  itinerary_id: ObjectId;
+  activities: ObjectId[];
+  timeline: ObjectId[];
+  comments: ObjectId[];
+  category: ObjectId;
+  name: String;
+  locations: Location[];
+  languages: string[];
+  available_dates: Date[];
+  pickup_loc: Location;
+  drop_off_loc: Location;
+  tags?: string[];
+  tour_guide_id: ObjectId;
 }

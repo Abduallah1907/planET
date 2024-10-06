@@ -76,7 +76,7 @@ export default class TouristService {
     const userService: UserService = Container.get(UserService);
     const newUserResponse = await userService.createUserService(IUserInputDTO);
     const newUser = new this.userModel(newUserResponse.data);
-    newUser.role = UserRoles.Tourist;
+    // newUser.role = UserRoles.Tourist;
     await newUser.save();
     if (newUser instanceof Error)
       throw new InternalServerError("Internal server error");
@@ -113,7 +113,6 @@ export default class TouristService {
       // cart: newTourist.cart,
       // wishlist: newTourist.wishlist,//out of current scope of sprint
     };
-    console.log(touristOutput);
     return new response(true, touristOutput, "Tourist created", 201);
   }
 
@@ -218,7 +217,7 @@ export default class TouristService {
     return new response(true, itineraries, "Fetched itineraries", 200);
   }
 
-  public async getHistorical_locationsService(
+  public async getHistorical_locationService(
     name: string,
     category: string,
     tag: string
@@ -413,33 +412,6 @@ export default class TouristService {
       "Filtered itineraries are fetched",
       200
     );
-  }
-  public async getSortedActivitiesService(sort: string, direction: string) {
-    let sortCriteria = {};
-
-    if (!sort && !direction) {
-      const activities = await this.activityModel.find();
-      return new response(
-        true,
-        activities,
-        "Activities with no sort criteria provided",
-        200
-      );
-    }
-    console.log("direction", direction);
-    if (sort === "price") {
-      sortCriteria = { price: parseInt(direction) };
-    } else if (sort === "ratings") {
-      sortCriteria = { average_rating: parseInt(direction) };
-    } else {
-      throw new BadRequestError("Invalid sort criteria");
-    }
-    console.log("sort criteria", sortCriteria);
-    const activities = await this.activityModel.find().sort(sortCriteria);
-    if (activities instanceof Error)
-      throw new InternalServerError("Internal server error");
-
-    return new response(true, activities, "Sorted activities are fetched", 200);
   }
 
   public async getSortedItinerariesService(sort: string, direction: string) {

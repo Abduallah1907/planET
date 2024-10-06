@@ -26,15 +26,20 @@ export class ActivityController {
     res.status(activity.status).json({ activity });
   }
   public async getActivityByAdvertiserID(req: any, res: any) {
-    const { advertiserID } = req.params
+    const { advertiserID } = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activity = await activityService.getActivityByAdvertiserIDService(advertiserID);
+    const activity = await activityService.getActivityByAdvertiserIDService(
+      advertiserID
+    );
     res.status(activity.status).json({ activity });
   }
   public async updateActivity(req: any, res: any) {
-    const { id} = req.params;
+    const { id } = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activity = await activityService.updateActivityService(id,req.body.activityData);
+    const activity = await activityService.updateActivityService(
+      id,
+      req.body.activityData
+    );
     res.status(activity.status).json({ activity });
   }
 
@@ -45,10 +50,14 @@ export class ActivityController {
     res.status(activity.status).json({ activity });
   }
 
-  public async getActivities(req: any, res: any) {
+  public async getActivity(req: any, res: any) {
     const { name, category, tag } = req.query;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activities = await activityService.getActivitiesService(name,category,tag);
+    const activities = await activityService.getActivityService(
+      name,
+      category,
+      tag
+    );
     res.status(activities.status).json({ activities });
   }
 
@@ -108,6 +117,15 @@ export class ActivityController {
     }
     const activities = await activityService.getFilteredActivitiesService(
       filters
+    );
+    res.status(activities.status).json({ activities });
+  }
+  public async getSortedActivities(req: any, res: any) {
+    const { sort, direction } = req.query;
+    const activityService: ActivityService = Container.get(ActivityService);
+    const activities = await activityService.getSortedActivitiesService(
+      sort,
+      direction
     );
     res.status(activities.status).json({ activities });
   }
