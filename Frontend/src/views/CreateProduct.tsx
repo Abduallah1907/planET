@@ -114,7 +114,7 @@ export default function ProductsPage() {
 
       <Row>
         <Col md={3} className="border-bottom pb-2">
-          <FilterBy />
+          <FilterBy filterOptions={{}} />
         </Col>
 
         <Col md={9} className="p-3">
