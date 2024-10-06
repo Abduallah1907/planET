@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import TopBar from "../TopBar"; // Adjust the path as necessary
-import "./ProfileForm.css";
+import "./ProfileFormTourist.css";
 import CustomFormGroup from "../FormGroup";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
@@ -70,7 +70,11 @@ const ProfileForm: React.FC = () => {
 
   return (
     <div className="profile-form-container">
-      <TopBar />
+      <TopBar
+        onToggleSidebar={function (): void {
+          throw new Error("Function not implemented.");
+        }}
+      />
       <Row className="align-items-center mb-4">
         <Col xs={7} className="text-left">
           <h2 className="my-profile-heading">My Profile</h2>

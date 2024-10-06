@@ -12,6 +12,7 @@ interface InputData {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   name: string;
+  className?: string;
 }
 
 function CustomFormGroup({

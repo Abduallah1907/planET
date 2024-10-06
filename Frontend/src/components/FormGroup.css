@@ -12,6 +12,7 @@
 
 /* Input & Select Styles */
 .form-control {
+    
     width: 100%; /* Full width of the column */
     height: auto; /* Let content dictate height */
     padding: 0.5rem;
