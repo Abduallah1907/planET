@@ -3,6 +3,7 @@ import { Col, Row, Container, Form, InputGroup } from "react-bootstrap";
 import FilterBy from "../../components/FilterBy/FilterBy";
 import CustomActivityCard from "../../components/Cards/ActivityCard";
 import { FaSearch } from "react-icons/fa"; 
+import { BiSort } from "react-icons/bi";
 
 const activityData = [
   {
@@ -111,51 +112,37 @@ export default function ActivitiesPage() {
       </Row>
 
       <Row>
-        <Col md={3} className="border-bottom pb-2" style={{ height: "100vh", overflowY: "auto" }}>
-          {/* Sort By Section */}
-          <div
-            style={{
-              border: "1px solid #D76F30",
-              borderRadius: "50px",
-              padding: "5px",
-              marginBottom: "20px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              backgroundColor: "#F7F7F7",
-              color: "#6c757d",
-            }}
-          >
-            <span style={{ fontSize: "0.9rem", marginRight: "10px" }}>Sort By:</span>
-            <Form.Select value={sortBy} onChange={handleSortChange} style={{ border: "none", backgroundColor: "transparent", color: "#D76F30", fontSize: "0.9rem" }}>
-              <option value="topPicks">Our Top Picks</option>
-              <option value="priceLowToHigh">Price: Low to High</option>
-              <option value="priceHighToLow">Price: High to Low</option>
-            </Form.Select>
-          </div>
-
-          {/* Filter By Component */}
+        <Col md={3} className="border-bottom pb-2">
           <FilterBy />
         </Col>
 
-        <Col md={9} className="p-4">
+        <Col md={9} className="p-3">
           <Row>
+            {/* Sort By Section */}
+            <div className="sort-btn w-auto d-flex align-items-center">
+              <BiSort />
+              <Form.Select value={sortBy} onChange={handleSortChange}>
+                <option value="topPicks">Our Top Picks</option>
+                <option value="priceLowToHigh">Price: Low to High</option>
+                <option value="priceHighToLow">Price: High to Low</option>
+              </Form.Select>
+            </div>
             {filteredActivities.map((activity, index) => (
-              <Col key={index} xs={12} className="mb-4"> {/* Full-width stacking */}
-                <CustomActivityCard
-                  Name={activity.Name}
-                  location={activity.location}
-                  category={activity.category}
-                  imageUrl={activity.imageUrl}
-                  RatingVal={activity.RatingVal}
-                  Reviews={activity.Reviews}
-                  Price={activity.Price}
-                  Date_Time={activity.Date_Time}
-                  isActive={activity.isActive}
-                  isBooked={activity.isBooked}
-                  onChange={() => console.log(`${activity.Name} booking status changed`)}
-                />
-              </Col>
+               <Col key={index} xs={12} className="mb-4"> {/* Full-width stacking */}
+               <CustomActivityCard
+                 Name={activity.Name}
+                 location={activity.location}
+                 category={activity.category}
+                 imageUrl={activity.imageUrl}
+                 RatingVal={activity.RatingVal}
+                 Reviews={activity.Reviews}
+                 Price={activity.Price}
+                 Date_Time={activity.Date_Time}
+                 isActive={activity.isActive}
+                 isBooked={activity.isBooked}
+                 onChange={() => console.log(`${activity.Name} booking status changed`)}
+               />
+             </Col>
             ))}
           </Row>
         </Col>
