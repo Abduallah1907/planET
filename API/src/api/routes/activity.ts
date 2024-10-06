@@ -417,4 +417,5 @@ export default (app: Router) => {
     "/getFilteredActivities",
     activityController.getFilteredActivities
   );
+  router.get("/getFilterComponents", activityController.getFilterComponents);
 };

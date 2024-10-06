@@ -41,18 +41,18 @@ export interface IItineraryCreateDTO {
 }
 
 export interface IItineraryUpdateDTO {
-  name: string;
-  category: ObjectId;
-  activities: ObjectId[];
-  timeline: ObjectId[];
-  locations: Location[];
-  duration: string;
-  languages: string[];
-  price: number;
-  available_dates: Date[];
-  accessibility: boolean;
-  pickup_loc: Location;
-  drop_off_loc: Location;
+  name?: string;
+  category?: ObjectId;
+  activities?: ObjectId[];
+  timeline?: ObjectId[];
+  locations?: Location[];
+  duration?: string;
+  languages?: string[];
+  price?: number;
+  available_dates?: Date[];
+  accessibility?: boolean;
+  pickup_loc?: Location;
+  drop_off_loc?: Location;
   tags?: string[];
 }
 

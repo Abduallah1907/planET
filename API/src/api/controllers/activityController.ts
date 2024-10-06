@@ -129,4 +129,9 @@ export class ActivityController {
     );
     res.status(activities.status).json({ activities });
   }
+  public async getFilterComponents(req: any, res: any) {
+    const activityService: ActivityService = Container.get(ActivityService);
+    const filterComponents = await activityService.getFilterComponentsService();
+    res.status(filterComponents.status).json({ filterComponents });
+  }
 }
