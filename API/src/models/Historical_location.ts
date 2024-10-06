@@ -18,7 +18,7 @@ const historicalLocationSchema = new mongoose.Schema(
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: true,
+      required: false,
     },
     name: {
       type: String,
@@ -60,31 +60,24 @@ const historicalLocationSchema = new mongoose.Schema(
     opening_days: [
       {
         type: String,
-        required: true,
       },
     ],
     native_price: {
       type: Number,
-      required: true,
     },
     foreign_price: {
       type: Number,
-      required: true,
     },
     student_price: {
       type: Number,
-      required: true,
     },
     active_flag: {
       type: Boolean,
-      required: true,
     },
-    tags: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Tag",
-      },
-    ],
+    tags: {
+      type: Map,
+      of: String, // Assuming tags are stored as key-value pairs of strings
+    },
   },
   { timestamps: true }
 );

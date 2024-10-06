@@ -26,15 +26,17 @@ export class ActivityController {
     res.status(activity.status).json({ activity });
   }
   public async getActivityByAdvertiserID(req: any, res: any) {
-    const { advertiserID } = req.params
+    const { advertiserID } = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activity = await activityService.getActivityByAdvertiserIDService(advertiserID);
+    const activity = await activityService.getActivityByAdvertiserIDService(
+      advertiserID
+    );
     res.status(activity.status).json({ activity });
   }
   public async updateActivity(req: any, res: any) {
-    const { id} = req.params;
+    const { id } = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activity = await activityService.updateActivityService(id,req.body.activityData);
+    const activity = await activityService.updateActivityService(id, req.body);
     res.status(activity.status).json({ activity });
   }
 

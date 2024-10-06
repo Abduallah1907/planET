@@ -41,3 +41,20 @@ export interface IActivityDTO {
   booking_flag: boolean;
   advertiser_id: ObjectId;
 }
+export interface UpdateIActivityDTO {
+  name?: string;
+  date?: Date;
+  time?: string;
+  location?: Location; // [longitude, latitude];
+  price?: number; // Single price (optional)
+  price_range?: {
+    // Price range (optional)
+    min?: number;
+    max?: number;
+  };
+  category?: ObjectId;
+  special_discount?: number;
+  tags?: string[];
+  booking_flag?: boolean;
+  advertiser_id?: ObjectId;
+}

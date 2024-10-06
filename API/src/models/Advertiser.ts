@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 
 const advertiserSchema = new mongoose.Schema(
   {
-   
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -34,6 +33,10 @@ const advertiserSchema = new mongoose.Schema(
       required: true,
     },
     logo: {
+      type: String,
+      required: true,
+    },
+    company_profile: {
       type: String,
       required: true,
     },

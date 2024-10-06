@@ -1,5 +1,9 @@
-import { IActivityDTO } from "@/interfaces/IActivity";
-import { BadRequestError, InternalServerError, NotFoundError } from "@/types/Errors";
+import { IActivityDTO, UpdateIActivityDTO } from "@/interfaces/IActivity";
+import {
+  BadRequestError,
+  InternalServerError,
+  NotFoundError,
+} from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
 import mongoose, { Types } from "mongoose";
@@ -12,6 +16,13 @@ export default class ActivityService {
 
   public getAllActivitiesService = async () => {
     const activities = await this.activityModel.find({});
+    if (activities instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+    if (activities == null) {
+      throw new NotFoundError("No Activities Found");
+    }
+
     return new response(true, activities, "All activites are fetched", 200);
   };
 
@@ -72,7 +83,7 @@ export default class ActivityService {
       throw new BadRequestError("Invalid Adverstier ID format");
     }
     const activity = await this.activityModel.findOne({
-      adverstier_id: new mongoose.Schema.Types.ObjectId(advertiserID),
+      adverstier_id: new Types.ObjectId(advertiserID),
     });
     if (activity instanceof Error) {
       throw new InternalServerError("Internal server error");
@@ -85,7 +96,7 @@ export default class ActivityService {
 
   public updateActivityService = async (
     id: string,
-    activityData: IActivityDTO
+    activityData: UpdateIActivityDTO
   ) => {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID format");
@@ -99,11 +110,13 @@ export default class ActivityService {
     }
     const updateFields: Partial<IActivityDTO> = {};
     if (
-      activityData.price &&
+      activityData?.price &&
       activityData.price_range?.max &&
-      activityData.price_range.min
+      activityData.price_range?.min
     ) {
-      throw new BadRequestError("Cannot enter both price and price range,choose one of them");
+      throw new BadRequestError(
+        "Cannot enter both price and price range,choose one of them"
+      );
     }
 
     if (activityData.date) updateFields.date = activityData.date;
@@ -115,20 +128,19 @@ export default class ActivityService {
     ) {
       updateFields.location = activityData.location;
     }
-    if (activityData.price !== undefined)
-      updateFields.price = activityData.price;
+    if (activityData.price) updateFields.price = activityData.price;
     if (activityData.price_range)
       updateFields.price_range = {
-        min: activityData.price_range.min,
-        max: activityData.price_range.max,
+        min: activityData.price_range.min ?? 0,
+        max: activityData.price_range.max ?? 0,
       };
     if (activityData.category) updateFields.category = activityData.category;
-    if (activityData.special_discount !== undefined)
+    if (activityData.special_discount)
       updateFields.special_discount = activityData.special_discount;
     if (activityData.tags) updateFields.tags = activityData.tags;
-    if (activityData.booking_flag !== undefined)
+    if (activityData?.booking_flag)
       updateFields.booking_flag = activityData.booking_flag;
-    if (updateFields.price !== undefined) {
+    if (updateFields.price) {
       updateFields.price_range = { min: 0, max: 0 };
     } else if (
       updateFields.price_range?.min !== undefined &&
