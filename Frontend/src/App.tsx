@@ -17,6 +17,9 @@ import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
 
 import MainPage from "./views/Main Page/MainPage";
 import { AppProvider } from "./AppContext";
+import SellerDashboard from "./views/SellerDashboard/SellerDashboard";
+import ActivityViewEdit from "./views/ActivityViewEdit";
+import Login from "./views/auth/Login/Login";
 
 const App: React.FC = () => {
   const [isBooked, setIsBooked] = useState(false); // Manage booking state
@@ -94,8 +97,11 @@ const App: React.FC = () => {
         <Route path="/editprofile" Component={ProfileForm} />
         <Route path='/TourGuidedashboard' element={<TourGuideDashboard />} />
         <Route path='/AdminDashboard' element={<AdminDashboard />} />
+        <Route path="/SellerDashboard" element={<SellerDashboard />} />
+        <Route path="/ActivityViewEdit" element={<ActivityViewEdit />} />
         <Route path="/editprofile" Component={ProfileForm} />
         <Route path="/" element={<MainPage />} />
+        <Route path="/Login" element={<Login />} />
 
       </Routes>
       </AppProvider>

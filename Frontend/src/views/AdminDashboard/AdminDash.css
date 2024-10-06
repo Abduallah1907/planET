@@ -16,12 +16,12 @@
 }
 
 .stat-card {
-  background-color: white;
-  border: none;
-  border-radius: 1.5rem;
-  padding: 20px;
+  background-color: white !important;
+  border: none !important;
+  border-radius: 1.5rem !important;
+  padding: 20px !important;
   text-align: left;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) !important;
   width: 25% !important;
 
 }
