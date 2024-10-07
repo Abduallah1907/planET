@@ -10,7 +10,6 @@ interface InputData {
   comments: string;
   timeline: string;
   locations: string;
-  category: string;
   pickup_loc: string;
   drop_off_loc: string;
   Languages: string;
@@ -21,7 +20,7 @@ interface InputData {
   Duration: string;
   Available_Dates: Date[];
   isActive: boolean;
-  tags?: string[]; // Add tags property
+  tags?: any; // Add tags property
   onChange?: (newStatus: boolean) => void; // Pass new booking status as parameter
 }
 
@@ -30,7 +29,6 @@ const ItineraryCard = ({
   comments,
   timeline,
   locations,
-  category,
   pickup_loc,
   drop_off_loc,
   Languages,
@@ -78,9 +76,9 @@ const ItineraryCard = ({
               <div className="d-flex align-items-center mb-1">
                 <h5>{name}</h5>
                 {/* Badges next to Activity Name */}
-                {tags?.map((tag, index) => (
+                {tags?.map((tag:any, index:any) => (
                   <Badge pill bg="tag" className="me-2 custom-badge" key={index}>
-                    {tag}
+                    {tag.type}
                   </Badge>
                 ))}
               </div>

@@ -4,24 +4,30 @@ import ItineraryCard from "../../components/Cards/ItineraryCard";
 import FilterBy from "../../components/FilterBy/FilterBy";
 import { FaSearch } from "react-icons/fa";
 import { BiSort } from "react-icons/bi";
-import filterOptions from '../../utils/filterOptions.json';
 import { ItineraryService } from "../../services/ItineraryService";
 import { IItinerary } from "../../types/IItinerary";
+import { useNavigate } from "react-router-dom";
 
 export default function ItinerariesPage() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [itineraries, setItineraries] = useState<IItinerary[]>([]);
+  const [filtercomponent, setfilterComponents] = useState({});
   const [sortBy, setSortBy] = useState("topPicks"); // State for sort by selection
 
-  useEffect(() => {
-    const getItinerary = async () => {
-      let ItinerariesData = await ItineraryService.getAllItineraries(1);
-      ItinerariesData = ItinerariesData.itineraries.data;
-      setItineraries(ItinerariesData);
-      console.log(ItinerariesData);
-    };
+  const getFilterComponents = async () => {
+    const filterData = await ItineraryService.getFilterComponents();
+    setfilterComponents(filterData.data);
+  };
+  const getItinerary = async () => {
+    const ItinerariesData = await ItineraryService.getAllItineraries(1);
+    setItineraries(ItinerariesData.data);
+  };
 
-    getItinerary();
+  useEffect(() => {
+    
+     getItinerary();
+    getFilterComponents();
   }, []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +42,7 @@ export default function ItinerariesPage() {
   const sortedActivities = [...itineraries].sort((a, b) => {
     switch (sortBy) {
       case "topPicks":
-        return b.average_rating - a.average_rating;
+        return b.rating_value - a.rating_value;
       case "priceLowToHigh":
         return a.price - b.price;
       case "priceHighToLow":
@@ -45,6 +51,9 @@ export default function ItinerariesPage() {
         return 0;
     }
   });
+  const onItineraryClick = (id : string) => {
+    navigate(`/itinerary/${id}`);
+  }
 
   const filteredActivities = sortedActivities.filter((activity) =>
     activity.locations.toString().toLowerCase().includes(searchQuery.toLowerCase())
@@ -89,7 +98,7 @@ export default function ItinerariesPage() {
 
       <Row>
         <Col md={3} className="border-bottom pb-2">
-          <FilterBy filterOptions={filterOptions}/>
+          <FilterBy filterOptions={filtercomponent}/>
         </Col>
 
         <Col md={9} className="p-3">
@@ -105,7 +114,7 @@ export default function ItinerariesPage() {
             </div>
 
             {/* Display Itinerary Cards */}
-            {filteredActivities.map((activity, index) => (
+            {itineraries.map((activity, index) => (
               <Col key={index} xs={12} className="mb-4 ps-0"> {/* Full-width stacking */}
                 <ItineraryCard
                   name={activity.name}
@@ -116,14 +125,14 @@ export default function ItinerariesPage() {
                   drop_off_loc={""}
                   Languages={activity.languages.join(",")}
                   accessibility={activity.accessibility}
-                  RatingVal={activity.average_rating}
+                  RatingVal={activity.rating_value}
                   Reviews={activity.Reviews}
                   Price={activity.price}
                   Duration={activity.duration}
                   Available_Dates={activity.available_dates}
                   isActive={activity.active_flag}
                   tags={activity.tags}
-                  onChange={() => console.log(`${activity.locations} booking status changed`)} category={""}                />
+                  onChange={() => console.log(`${activity.locations} booking status changed`)}                />
               </Col>
             ))}
           </Row>

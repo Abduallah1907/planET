@@ -4,38 +4,46 @@ import Rating from "../Rating/Rating";
 
 interface InputData {
   Name: string;
-  id: number;
-  RatingVal: number;
+  id: string;
+  average_rating: number;
   Reviews: number;
-  Price: number;
+  sales: number;
+  quantity: number;
+  price: number;
   description: string;
-  seller: string;
-  isActive: boolean;
-  isBooked: boolean;
+  isActiveArchive: boolean;
   imageUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
   onChange?: () => void;
-  isSeller: boolean; // New prop to check if the user is the seller
+  isSeller: boolean; // Check if the user is the seller
 }
 
 const ProductCard = ({
   Name,
-  RatingVal,
+  average_rating,
   Reviews,
-  Price,
+  price,
   description,
-  seller,
-  isBooked,
+  quantity,
+  sales,
+  isActiveArchive,
   imageUrl,
+  createdAt,
+  updatedAt,
   onChange,
-  isSeller, // Check if the user is the seller
+  isSeller,
 }: InputData) => {
+  // Determine if the product is active or archived
+  const isBooked = isActiveArchive;
+
   return (
     <Card className="p-3 shadow-sm" style={{ borderRadius: "10px", height: "100%" }}>
       <Row className="h-100 d-flex align-items-stretch justify-content-between">
         {/* Image Section */}
         <Col md={2} className="p-0 d-flex align-items-stretch">
           <Image
-            src={imageUrl || "https://via.placeholder.com/250x250"} // Display imageUrl or a placeholder
+            src={imageUrl || "https://via.placeholder.com/250x250"} 
             rounded
             alt="Product Image"
             style={{ objectFit: "cover", height: "100%", width: "100%" }}
@@ -54,9 +62,14 @@ const ProductCard = ({
               </div>
 
               {/* Product Description */}
-              <Card.Text className="mt-2">{description}</Card.Text>
-              <Card.Text className="text-muted">Seller: {seller}</Card.Text>
+              <Card.Text className="mt-2">Description: {description}</Card.Text>
+              <Card.Text className="text-muted">
+                Sales: {sales} | Quantity: {quantity}
+              </Card.Text>
             </div>
+            <Card.Text className="text-muted">
+              Created: {createdAt.toLocaleDateString()} | Updated: {updatedAt.toLocaleDateString()}
+            </Card.Text>
           </Card.Body>
         </Col>
 
@@ -65,25 +78,26 @@ const ProductCard = ({
           {/* Rating and Reviews */}
           <div className="d-flex align-items-center justify-content-end mb-1">
             {/* Rating Stars */}
-            <Rating rating={RatingVal} readOnly={true} />
+            <Rating rating={average_rating} readOnly={true} />
             <Badge className="ms-2 review-badge text-center" style={{ fontSize: "1rem" }}>
-              {RatingVal.toFixed(1)}
+              {average_rating.toFixed(1)}
             </Badge>
           </div>
           <p className="text-muted text-right" style={{ fontSize: "1.1rem", fontWeight: "500" }}>
-            {Reviews.toLocaleString()} Reviews
+            {Reviews} Reviews
           </p>
 
-          {/* Price and Status Button for Seller Only */}
+          
           <div className="text-end">
-            <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
+            <h4 style={{ fontWeight: "bold" }}>${price.toFixed(2)}</h4>
 
             {/* Show Active/Archive button if the user is the seller */}
             {isSeller && (
               <Badge
-                bg={isBooked ? "success" : "danger"} // Change color based on booking status
+                bg={isBooked ? "success" : "danger"}
                 className="mt-2 custom-status-badge rounded-4 text-center"
-                onClick={onChange} // Call onChange when clicked
+                onClick={onChange} 
+                style={{ cursor: "pointer" }}
               >
                 {isBooked ? "Active" : "Archive"}
               </Badge>

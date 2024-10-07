@@ -1,10 +1,12 @@
-import React, { useState } from "react";
-import "./CreateAdmin.css";
-import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Adjust the path as necessary
+import React, { useEffect, useState } from "react";
+import "../CreateAdmin/CreateAdmin.css";
+import AdminFormGroup from "../../components/FormGroup/FormGroup";
 import Logo from "../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
+import { AdminService } from "../../services/AdminService";
+
 
 interface NationalityOption {
   value: string;
@@ -14,26 +16,24 @@ interface NationalityOption {
 const nationalityOptions: NationalityOption[] = nationalityOptionsData;
 
 interface FormData {
+  fname: string;
+  lname: string;
   email: string;
   mobile: string;
-  age: string;
   password: string;
   retypePassword: string;
   username: string;
-  nationality: string;
-  dob: string;
 }
 
 const CreateAdmin: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
+    fname:"",
+    lname:"",
     email: "",
     mobile: "",
-    age: "",
     password: "",
     retypePassword: "",
     username: "",
-    nationality: "",
-    dob: "",
   });
 
   const handleChange = (
@@ -55,17 +55,23 @@ const CreateAdmin: React.FC = () => {
 
   const handleCancel = () => {
     setFormData({
+      fname:"",
+      lname:"",
       email: "",
       mobile: "",
-      age: "",
       password: "",
       retypePassword: "",
       username: "",
-      nationality: "",
-      dob: "",
     });
   };
+  
 
+  
+  const OnClick = async () => {
+    await AdminService.CreateAdmin(formData);
+      
+  
+  };
   return (
     <div className="profile-form-container">
       
@@ -87,7 +93,7 @@ const CreateAdmin: React.FC = () => {
                 name="fname"
                 disabled={false}
                 required={true}
-                value={formData.email}
+                value={formData.fname}
                 onChange={handleChange}
               />
             </Col>
@@ -96,11 +102,11 @@ const CreateAdmin: React.FC = () => {
                 label="Last name"
                 type="text"
                 placeholder="Enter your last name"
-                id="dob"
-                name="dob"
+                id="lname"
+                name="lname"
                 disabled={false}
                 required={true}
-                value={formData.dob}
+                value={formData.lname}
                 onChange={handleChange}
               />
             </Col>
@@ -121,19 +127,7 @@ const CreateAdmin: React.FC = () => {
                 onChange={handleChange}
               />
             </Col>
-            <Col>
-              <AdminFormGroup
-                label="Date of Birth (MM/DD/YY):"
-                type="text"
-                placeholder="Enter your date of birth"
-                id="dob"
-                name="dob"
-                disabled={false}
-                required={true}
-                value={formData.dob}
-                onChange={handleChange}
-              />
-            </Col>
+            
           </Row>
 
           <Row>
@@ -145,8 +139,8 @@ const CreateAdmin: React.FC = () => {
                 id="username"
                 name="username"
                 disabled={false}
-                required={false}
-                value={formData.age}
+                required={true}
+                value={formData.username}
                 onChange={handleChange}
               />
             </Col>
@@ -194,8 +188,8 @@ const CreateAdmin: React.FC = () => {
             </Col>
           </Row>
           <Row>
-      <Col xs={6}>
-     <Form.Check
+  <Col xs={6}>
+    <Form.Check
       type="checkbox"
       id="checkbox1"
       label="Remember me"
@@ -213,7 +207,7 @@ const CreateAdmin: React.FC = () => {
 </Row>
 
           <div className="form-actions">
-            <Button type="submit" className="update-btn">
+            <Button type="submit" className="update-btn" onClick={OnClick}>
               Create admin
             </Button>
           </div>
