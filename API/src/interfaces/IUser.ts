@@ -77,6 +77,7 @@ export interface IUserLoginDTO {
   password: string;
 }
 export interface IUserLoginOutputDTO {
+  _id: ObjectId;
   name: string;
   username: string;
   email: string;
@@ -84,6 +85,6 @@ export interface IUserLoginOutputDTO {
   phone_number: string;
   status: UserStatus;
   first_time_login: boolean;
-  stakeholder_id: ObjectId;
+  stakeholder_id: any ;
   token: string;
 }
