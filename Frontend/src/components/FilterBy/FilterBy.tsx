@@ -25,6 +25,7 @@ const FilterBy: React.FC<FilterByProps> = ({ filterOptions }) => {
   ) => {
     const { name, value } = e.target;
     setFilter({ ...filter, [name]: value });
+    console.log(filter);
   };
   const renderFilterFields = () => {
     return (Object.keys(filterOptions)).map(
