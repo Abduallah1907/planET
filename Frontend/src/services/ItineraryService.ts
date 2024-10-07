@@ -41,5 +41,48 @@ class ItineraryService{
     }
   }
 
+public static getSearchItinerary=async () => {
+  try{
+    const response=await axiosInstance.get("/itinerary/getSearchItinerary")
+    return response.data;
+  }
+  catch(error){
+   throw error;
+  }
+    
+};
+
+public static getUpcomingItineraries=async () => {
+  try{
+    const response=await axiosInstance.get("/itinerary/getUpcomingItineraries")
+    return response.data;
+  }
+  catch(error){
+   throw error;
+  }
+    
+};
+
+public static getFilteredItineraries=async () => {
+  try{
+    const response=await axiosInstance.get("/itinerary/getFilteredItineraries")
+    return response.data;
+  }
+  catch(error){
+   throw error;
+  }
+    
+};
+
+public static getSortedItineraries=async () => {
+  try{
+    const response=await axiosInstance.get("/itinerary/getSortedItineraries")
+    return response.data;
+  }
+  catch(error){
+   throw error;
+  }
+    
+};
 }
 export{ItineraryService};

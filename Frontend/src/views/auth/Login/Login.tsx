@@ -130,8 +130,10 @@ export default function Login() {
           navigate("/");
           break;
             return;
+          
+          
+          break;
       }
-
       dispatch(activateSidebar());
     } catch (err: any) {
       setError(err.message);
