@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import "./ProfileFormTourist.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
+import { AdvertiserService } from "../../services/AdvertiserService";
+import { useAppSelector } from "../../store/hooks";
 
 interface FormData {
   firstName: string;
@@ -38,6 +40,34 @@ const AdvertiserFirst: React.FC = () => {
     logo: null, // Initialize logo as null
     about: "", // Initialize about section
   });
+  const Advertiser = useAppSelector((state) => state.user);
+
+  useEffect(() => {
+    setFormData({
+      firstName: Advertiser.name?.split(" ")[0] || "",
+      lastName: Advertiser.name?.split(" ")[1] || "", // Adding fallback if there's no last name
+      email: Advertiser.email || "",
+      mobile: Advertiser.phone_number || "",
+      profession: Advertiser.stakeholder_id?.job || "", // Optional chaining to prevent errors
+      password: "",
+      retypePassword: "",
+      username: Advertiser.username || "",
+      nationality: Advertiser.stakeholder_id?.nation || "", // Optional chaining
+      dob: Advertiser.stakeholder_id?.date_of_birth || "", // Optional chaining
+      description: formData.description || "",
+      logo: formData.logo || null,
+      about: Advertiser.stakeholder_id?.about || formData.about || "", // Fallback to formData.about if unavailable
+    });
+  }, [Advertiser, formData.description, formData.logo, formData.about]);
+
+  const OnClick = async () => {
+    await AdvertiserService.updateAdvertiser(Advertiser.email, {
+      name: formData.firstName + " " + formData.lastName,
+      newEmail: formData.email,
+      /*password: formData.password,*/
+      About: formData.about,
+    });
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -209,7 +239,7 @@ const AdvertiserFirst: React.FC = () => {
           {/* New row for 'About' section */}
 
           <div className="form-actions">
-            <Button type="submit" className="update-btn">
+            <Button type="submit" className="update-btn" onClick={OnClick}>
               Confirm
             </Button>
             <Button type="button" className="cancel-btn" onClick={handleCancel}>
