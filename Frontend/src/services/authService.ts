@@ -67,7 +67,7 @@ class AuthService {
   public static async registerAdvertiser(StakeData: any) {
     try {
       const response = await axiosInstance.post(
-        "/advertiser/createAdvertiser",
+        "/advertiser/createAdvertiserMain",
         StakeData
       );
       return response.data;
@@ -75,10 +75,10 @@ class AuthService {
       if (error.response && error.response.data) {
         console.error("API Error: ", error.response.data);
         throw new Error(
-          error.response.data.message || "Seller registration failed"
+          error.response.data.message || "Advertiser registration failed"
         );
       } else {
-        throw new Error("Seller registration failed");
+        throw new Error("Advertiser registration failed");
       }
     }
   }
