@@ -1,3 +1,4 @@
+import { useAppSelector } from "../store/hooks";
 import axios from "axios"; 
 
 const axiosInstance = axios.create({
@@ -8,6 +9,17 @@ const axiosInstance = axios.create({
     timeout : 1000,
   }, 
   // .. other options
+});
+axios.interceptors.request.use(request => {
+  const User = useAppSelector((state) => state.user);
+  const isLoggedIn = User?.token;
+
+
+  if (isLoggedIn ) {
+      request.headers.common.Authorization = `Bearer ${User.token}`;
+  }
+
+  return request;
 });
 
 // axiosInstance.interceptors.request.use(

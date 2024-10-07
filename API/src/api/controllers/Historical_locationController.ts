@@ -29,12 +29,11 @@ export class Historical_locationController {
     res.status(historical_location.status).json(historical_location);
   }
   public async getHistorical_locationByIDController(req: any, res: any) {
-    const { historical_location_id } = req.params;
     const historical_locationService: Historical_locationService =
       Container.get(Historical_locationService);
     const historical_location =
       await historical_locationService.getHistorical_locationByIDService(
-        historical_location_id
+        req.query
       );
     res.status(historical_location.status).json(historical_location);
   }
