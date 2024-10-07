@@ -39,12 +39,26 @@ import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
 import StakeholderReg from "./views/auth/StakeholderReg/StakeholderReg";
 import ItineraryCardd from "./views/ItineraryCardd";
 import TopBarLinks from "./views/Main Page/TopBarLinks";
+import { useAppDispatch, useAppSelector } from "./store/hooks";
+import { toggleSidebar } from "./store/sidebarSlice";
+import Sidebar from "./components/SideBar/Sidebar";
+import { use } from "i18next";
 
 const App: React.FC = () => {
+  const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen)
+  const dispatch = useAppDispatch()
+  const navItems = useAppSelector((state) => state.sidebar.navItems)
   return (
     <AppProvider>
       <TopBar />
       <TopBarLinks/>
+      <div className={`sidebar-wrapper ${isSidebarOpen ? "open" : ""}`}>
+        <Sidebar
+          isOpen={isSidebarOpen}
+          onClose={()=>dispatch(toggleSidebar())}
+          navItems={navItems} // Pass the settings nav items
+        />
+      </div>
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/Login" element={<Login />} />

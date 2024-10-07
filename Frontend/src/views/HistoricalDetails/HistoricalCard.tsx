@@ -27,8 +27,8 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
   const [showAdvertiserModal, setShowAdvertiserModal] = useState(false);
   const [localHistoricalData, setLocalHistoricalData] = useState<ILocalHistoricalLocationTourist | null>(null);
   const [showModal, setShowModal] = useState(false);
-
-
+  
+  
 
   const toggleBookmark = () => {
     setIsBookmarked(!isBookmarked);
@@ -53,12 +53,12 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
     }
   };
 
-  const getHistoricalLocationById = async (id: string) => {
-    const historicalLocation = await HistoricalService.getHistoricalLocationById(id);
+  const getHistoricalLocationById = async (id:string,nation:string,job:string) => {
+    const historicalLocation = await HistoricalService.getHistoricalLocationById(nation,job,id);
     setLocalHistoricalData(historicalLocation.data);
   };
   useEffect(() => {
-    getHistoricalLocationById(id);
+    getHistoricalLocationById("masry","Engineer",id);
       }, [id]);
 
   return (
