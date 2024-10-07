@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import "./ProfileFormTourist.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
+import axios from "axios"; // Assuming you're using axios for API calls
 
 interface NationalityOption {
   value: string;
@@ -40,6 +41,19 @@ const ProfileForm: React.FC = () => {
     dob: "",
   });
 
+  // Fetch user profile data from the backend when the component mounts
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("/api/tourist/getTourist/{email}");
+        setFormData(response.data);
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -49,11 +63,19 @@ const ProfileForm: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.retypePassword) {
       alert("Passwords don't match!");
       return;
+    }
+
+    try {
+      await axios.put("/api/profile", formData); // Replace with actual backend endpoint
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Error updating profile");
     }
   };
 
@@ -186,7 +208,7 @@ const ProfileForm: React.FC = () => {
                       </option>
                     ))}
                   </Form.Control>
-                  <BiChevronDown className="dropdown-icon" />{" "}
+                  <BiChevronDown className="dropdown-icon" />
                   {/* Dropdown icon */}
                 </div>
               </Form.Group>
