@@ -3,6 +3,7 @@ import { BadRequestError, HttpError, InternalServerError, NotFoundError } from "
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
 import { ObjectId, Types } from "mongoose";
+import { IFilterComponents } from "@/interfaces/IFilterComponents";
 
 @Service()
 export default class ItineraryService {
@@ -237,5 +238,57 @@ export default class ItineraryService {
     if (itineraries instanceof Error) throw new InternalServerError("Internal server error");
 
     return new response(true, itineraries, "Sorted activities are fetched", 200);
+  }
+  public async getFilterComponentsService() {
+    const preferences = await this.itineraryModel.find().select("tags").lean();
+
+    const prices = await this.itineraryModel
+      .find()
+      .select("price")
+      .sort({ price: 1 })
+      .lean();
+
+    const dates = await this.itineraryModel
+      .find()
+      .select("available_dates")
+      .lean();
+
+    const allDates = dates.flatMap(
+      (itinerary: any) => itinerary.available_dates
+    );
+    allDates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
+
+    const languages = await this.itineraryModel
+      .find()
+      .select("languages")
+      .lean();
+
+    const preferencesList = preferences.map(
+      (preference: any) => preference.tags
+    );
+
+    const lowestPrice = prices[0].price;
+    const highestPrice = prices[prices.length - 1].price;
+
+    const earliestDate = allDates[0];
+    const latestDate = allDates[allDates.length - 1];
+
+    const languagesList = languages.map((language: any) => language.languages);
+
+    const filterComponents: IFilterComponents = {
+      Tag: { type: "multi-select", values: preferencesList },
+
+      Language: { type: "multi-select", values: languagesList },
+
+      Price: { type: "slider", min: lowestPrice, max: highestPrice },
+
+      Date: { type: "date-range", start: earliestDate, end: latestDate },
+    };
+    return new response(
+      true,
+      filterComponents,
+      "Filter components fetched",
+      200
+    );
   }
 }
