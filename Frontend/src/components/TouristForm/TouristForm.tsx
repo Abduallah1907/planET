@@ -30,8 +30,8 @@ interface RegData {
   mobile: string;
   password: string;
   confirmPassword: string;
-  nationality: string;
-  dob: string;
+  nation: string;
+  date_of_birth: string;
   job: string;
 }
 
@@ -45,8 +45,8 @@ export default function TouristForm() {
     job: "",
     password: "",
     confirmPassword: "",
-    nationality: "",
-    dob: "",
+    nation: "",
+    date_of_birth: "",
   });
 
   function validateMobileNumber(mobileNumber: string): boolean {
@@ -205,25 +205,25 @@ export default function TouristForm() {
             label={"Date of Birth"}
             type={"date"}
             placeholder={"dd/mm/yyyy"}
-            id={"dob"}
+            id={"date_of_birth"}
             disabled={false}
             required={true}
-            value={regData.dob}
+            value={regData.date_of_birth}
             onChange={handleChange}
-            name={"dob"}
+            name={"date_of_birth"}
           />
         </Col>
       </Row>
       <Row>
         <Col>
-          <Form.Group className="form-group" id="nationality">
+          <Form.Group className="form-group" id="nation">
             <Form.Label>Nationality:</Form.Label>
             <div className="custom-select-container">
               <Form.Control
                 as="select"
-                name="nationality"
-                value={regData.nationality}
-                id="nationality"
+                name="nation"
+                value={regData.nation}
+                id="nation"
                 onChange={handleChange}
                 className="custom-form-control"
                 required
