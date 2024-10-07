@@ -12,6 +12,7 @@ import {
   Update_IHistorical_locationDTO,
 } from "@/interfaces/IHistorical_Location";
 import Governor from "@/models/Governor";
+import historical_location from "@/api/routes/historical_location";
 @Service()
 export default class Historical_locationService {
   constructor(
@@ -56,7 +57,7 @@ export default class Historical_locationService {
       return true;
     }
   };
-  public getAllHistorical_locationService = async () => {
+  public getAllHistorical_locationsService = async () => {
     const Historical_location = await this.historical_locationsModel.find({});
     if (Historical_location instanceof Error) {
       throw new InternalServerError("Internal server error");
@@ -67,7 +68,7 @@ export default class Historical_locationService {
     return new response(
       true,
       Historical_location,
-      "All activites are fetched",
+      "All historical Locations are fetched",
       200
     );
   };
@@ -117,21 +118,34 @@ export default class Historical_locationService {
     if (historical_location == null)
       throw new NotFoundError("Cannot be created");
 
-    const Governor = await this.governorModel.findOneAndUpdate(
-      { _id: historical_location.governor_id },
+    const Governor = await this.governorModel.findByIdAndUpdate(
+      historical_locationInput.governor_id,
       { $push: { historical_locations: historical_location._id } },
       { new: true }
     );
+    if (Governor instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+    if (Governor == null) {
+      throw new NotFoundError("Governer not found");
+    }
 
-    return new response(true, historical_location, "Activity", 201);
+    return new response(
+      true,
+      historical_location,
+      "Historical location created",
+      201
+    );
   };
 
-  public getHistorical_locationByIDService = async (id: string) => {
-    if (!Types.ObjectId.isValid(id)) {
+  public getHistorical_locationByIDService = async (
+    historical_location_id: string
+  ) => {
+    if (!Types.ObjectId.isValid(historical_location_id)) {
       throw new BadRequestError("Invalid ID format");
     }
     const Historical_location = await this.historical_locationsModel.findById(
-      new Types.ObjectId(id)
+      new Types.ObjectId(historical_location_id)
     );
     if (Historical_location instanceof Error)
       throw new InternalServerError("Internal server error");
@@ -147,38 +161,38 @@ export default class Historical_locationService {
     );
   };
   //Get Historical_location by Governer_id
-  public getHistorical_locationByGovernerIDService = async (
+  public getHistorical_locationsByGovernerIDService = async (
     Governer_id: string
   ) => {
     if (!Types.ObjectId.isValid(Governer_id)) {
       throw new BadRequestError("Invalid Governer ID format");
     }
-    const Historical_location = await this.historical_locationsModel.findOne({
+    const Historical_locations = await this.historical_locationsModel.find({
       governor_id: new Types.ObjectId(Governer_id),
     });
-    if (Historical_location instanceof Error)
+    if (Historical_locations instanceof Error)
       throw new InternalServerError("Internal server error");
     // throw new Error ("Internal server error");
 
-    if (Historical_location == null)
+    if (Historical_locations == null)
       throw new NotFoundError("Historical Location not found");
     return new response(
       true,
-      Historical_location,
+      Historical_locations,
       "Historical Location is found",
       200
     );
   };
   //Update Historical_location
   public updateHistorical_locationService = async (
-    id: string,
+    historical_location_id: string,
     updated_historical_location: Update_IHistorical_locationDTO
   ) => {
-    if (!Types.ObjectId.isValid(id)) {
+    if (!Types.ObjectId.isValid(historical_location_id)) {
       throw new BadRequestError("Invalid ID format");
     }
     const Historical_location = await this.historical_locationsModel.findById(
-      new Types.ObjectId(id)
+      new Types.ObjectId(historical_location_id)
     );
     if (Historical_location instanceof Error) {
       throw new InternalServerError("Internal server error");
@@ -209,7 +223,7 @@ export default class Historical_locationService {
     // end of code to check if the value corresponds to the key in the object
     const Updated_historical_location_response =
       await this.historical_locationsModel.findByIdAndUpdate(
-        new Types.ObjectId(id),
+        new Types.ObjectId(historical_location_id),
         updated_historical_location,
         { new: true } // Returns the updated document
       );
@@ -227,12 +241,16 @@ export default class Historical_locationService {
     );
   };
   //Delete Historical_location
-  public async deleteHistorical_locationService(historical_id: Types.ObjectId) {
-    if (!Types.ObjectId.isValid(historical_id)) {
+  public async deleteHistorical_locationService(
+    historical_location_id: Types.ObjectId
+  ) {
+    if (!Types.ObjectId.isValid(historical_location_id)) {
       throw new BadRequestError("Invalid historical location ID format");
     }
     const Historical_location =
-      await this.historical_locationsModel.findByIdAndDelete(historical_id);
+      await this.historical_locationsModel.findByIdAndDelete(
+        historical_location_id
+      );
     if (Historical_location instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
@@ -241,8 +259,8 @@ export default class Historical_locationService {
     }
 
     const Governor = await this.governorModel.findOneAndUpdate(
-      { historical_locations: historical_id },
-      { $pull: { historical_locations: historical_id } },
+      { historical_locations: historical_location_id },
+      { $pull: { historical_locations: historical_location_id } },
       { new: true }
     );
     if (Governor instanceof Error) {
@@ -251,6 +269,114 @@ export default class Historical_locationService {
     if (Governor == null) {
       throw new NotFoundError("Governer not found");
     }
-    return new response(true, null, "Historical Location is deleted", 200);
+    return new response(
+      true,
+      Historical_location,
+      "Historical Location is deleted",
+      200
+    );
+  }
+
+  public async getSearchHistorical_locationService(
+    name: string,
+    category: string,
+    tag: string
+  ) {
+    if (!name && !category && !tag) throw new BadRequestError("Invalid input");
+
+    const historical_locations = await this.historical_locationsModel
+      .find({ name: name, tags: tag })
+      .populate({ path: "category", match: { type: category } })
+      .populate("comments")
+      .populate({ path: "governor_id", select: "name" });
+    if (historical_locations instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (historical_locations == null)
+      throw new NotFoundError("Historical locations not found");
+
+    if (historical_locations.length == 0)
+      throw new NotFoundError("No Historical locations with this search data");
+
+    return new response(
+      true,
+      historical_locations,
+      "Fetched historical locations",
+      200
+    );
+  }
+  public async getUpcomingHistorical_locationsService() {
+    const today = Date.now();
+    const historical_locations = await this.historical_locationsModel
+      .find({ date_time: { $gte: today } })
+      .populate("category")
+      .populate("comments")
+      .populate({ path: "governor_id", select: "name" });
+
+    if (historical_locations instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (historical_locations == null)
+      throw new NotFoundError("Historical locations not found");
+
+    if (historical_locations.length == 0)
+      throw new NotFoundError(
+        "No upcoming historical locations with searched data"
+      );
+    return new response(
+      true,
+      historical_locations,
+      "Fetched upcoming historical locations",
+      200
+    );
+  }
+  public async getFilteredHistorical_locationsService(filters: {
+    tags?: string[];
+  }) {
+    if (!filters) {
+      const historical_locations = await this.historical_locationsModel.find();
+      return new response(
+        true,
+        historical_locations,
+        "All historical locations are fetched no filter applied",
+        200
+      );
+    }
+    const matchStage: any = {};
+    var aggregationPipeline: any[] = [
+      {
+        $lookup: {
+          from: "tags", // The name of the tag collection
+          localField: "tags", // The field in the tags collection
+          foreignField: "_id", // The field in the tags collection
+          as: "tagDetails",
+        },
+      },
+      {
+        $unwind: "$tagDetails",
+      },
+      {
+        $match: matchStage,
+      },
+    ];
+    if (filters.tags) {
+      aggregationPipeline.push({
+        $match: {
+          "tagDetails.type": { $in: filters.tags },
+        },
+      });
+    }
+    const historical_locations = await this.historical_locationsModel.aggregate(
+      aggregationPipeline
+    );
+    if (historical_locations instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    return new response(
+      true,
+      historical_locations,
+      "Filtered itineraries are fetched",
+      200
+    );
   }
 }

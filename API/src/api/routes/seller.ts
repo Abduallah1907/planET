@@ -122,7 +122,11 @@ export default (app: Router) => {
    *         description: Internal server error.
    */
 
-  route.post("/createSeller", sellerController.createSeller);
+  route.post(
+    "/createSeller",
+    authorize([UserRoles.Seller]),
+    sellerController.createSeller
+  );
   route.get(
     "/getSeller/:email",
     authorize([UserRoles.Seller]),
