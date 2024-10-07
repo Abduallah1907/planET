@@ -24,13 +24,13 @@ export default (app: Router) => {
    *       summary: Get all Historical_locations
    *       parameters:
    *         - in: query
-   *           name: Nation
+   *           name: nation
    *           required: true
    *           description: Nationality of the tourist
    *           schema:
    *             type: string
    *         - in: query
-   *           name: Job
+   *           name: job
    *           required: true
    *           description: Job of the tourist
    *           schema:
