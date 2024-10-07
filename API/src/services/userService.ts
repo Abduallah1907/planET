@@ -91,7 +91,7 @@ export default class UserService {
         if (seller instanceof Error)
           throw new InternalServerError("Internal server error");
         if (seller == null) throw new NotFoundError("Seller not found");
-        stakeholder_id = seller._id;
+        stakeholder_id = seller;
         break;
 
       case UserRoles.Tourist:
@@ -99,7 +99,7 @@ export default class UserService {
         if (tourist instanceof Error)
           throw new InternalServerError("Internal server error");
         if (tourist == null) throw new NotFoundError("Tourist not found");
-        stakeholder_id = tourist._id;
+        stakeholder_id = tourist;
         break;
 
       case UserRoles.Advertiser:
@@ -107,7 +107,7 @@ export default class UserService {
         if (advertiser instanceof Error)
           throw new InternalServerError("Internal server error");
         if (advertiser == null) throw new NotFoundError("Advertiser not found");
-        stakeholder_id = advertiser._id;
+        stakeholder_id = advertiser;
         break;
 
       case UserRoles.TourGuide:
@@ -115,7 +115,7 @@ export default class UserService {
         if (tourGuide instanceof Error)
           throw new InternalServerError("Internal server error");
         if (tourGuide == null) throw new NotFoundError("Tour Guide not found");
-        stakeholder_id = tourGuide._id;
+        stakeholder_id = tourGuide;
         break;
 
       case UserRoles.Governor:
@@ -123,7 +123,7 @@ export default class UserService {
         if (governor instanceof Error)
           throw new InternalServerError("Internal server error");
         if (governor == null) throw new NotFoundError("Governor not found");
-        stakeholder_id = governor._id;
+        stakeholder_id = governor;
         break;
     }
 
@@ -141,6 +141,7 @@ export default class UserService {
     );
 
     const userOutput: IUserLoginOutputDTO = {
+      _id: user._id,
       name: user.name,
       username: user.username,
       email: user.email,
