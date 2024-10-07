@@ -1,13 +1,15 @@
+import { ILocation } from "./ILocation";
 
 
 export interface IActivity  {
+  _id: string;
   average_rating: number;
-  category: string;
+  category: any;
   comments: string[];
   name: string;
   date: Date;
   time: string;
-  location: Location; // [longitude, latitude];
+  location: ILocation; // [longitude, latitude];
   price?: number; // Single price (optional)
   price_range?: {
     // Price range (optional) check the users story 21 in azure
@@ -15,11 +17,11 @@ export interface IActivity  {
     max: number;
   };
   special_discount?: number;
-  tags?: string[];
+  tags?: any;
   booking_flag: boolean;
   inappropriate_flag: boolean;
   active_flag: boolean;
-  advertiser_id: string;
+  advertiser_id: any;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -28,7 +30,7 @@ export interface IActivityDTO {
   name: string;
   date: Date;
   time: string;
-  location: Location; // [longitude, latitude];
+  location: ILocation; // [longitude, latitude];
   price?: number; // Single price (optional)
   price_range?: {
     // Price range (optional)
@@ -45,7 +47,7 @@ export interface UpdateIActivityDTO {
   name?: string;
   date?: Date;
   time?: string;
-  location?: Location; // [longitude, latitude];
+  location?: ILocation; // [longitude, latitude];
   price?: number; // Single price (optional)
   price_range?: {
     // Price range (optional)

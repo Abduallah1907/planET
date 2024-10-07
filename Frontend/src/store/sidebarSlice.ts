@@ -7,7 +7,7 @@ interface SidebarState {
 }
 
 const initialState: SidebarState = {
-    isActive: false,
+    isActive: true,
     isOpen: false,
 };
 
