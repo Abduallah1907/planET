@@ -45,6 +45,63 @@ class AuthService {
     }
   }
 
+  public static async registerSeller(StakeData: any) {
+    try {
+      const response = await axiosInstance.post(
+        "/seller/createSeller",
+        StakeData
+      );
+      return response.data;
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        console.error("API Error: ", error.response.data);
+        throw new Error(
+          error.response.data.message || "Seller registration failed"
+        );
+      } else {
+        throw new Error("Seller registration failed");
+      }
+    }
+  }
+
+  public static async registerAdvertiser(StakeData: any) {
+    try {
+      const response = await axiosInstance.post(
+        "/advertiser/createAdvertiser",
+        StakeData
+      );
+      return response.data;
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        console.error("API Error: ", error.response.data);
+        throw new Error(
+          error.response.data.message || "Seller registration failed"
+        );
+      } else {
+        throw new Error("Seller registration failed");
+      }
+    }
+  }
+
+  public static async registerTourGuide(StakeData: any) {
+    try {
+      const response = await axiosInstance.post(
+        "/tourGuide/createProfile",
+        StakeData
+      );
+      return response.data;
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        console.error("API Error: ", error.response.data);
+        throw new Error(
+          error.response.data.message || "Seller registration failed"
+        );
+      } else {
+        throw new Error("Seller registration failed");
+      }
+    }
+  }
+
   private setToken(token: string) {
     localStorage.setItem("authToken", token);
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
