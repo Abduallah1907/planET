@@ -38,7 +38,7 @@ const advertiserSchema = new mongoose.Schema(
     },
     company_profile: {
       type: String,
-      required: true,
+      // required: true,
     },
   },
   { timestamps: true }

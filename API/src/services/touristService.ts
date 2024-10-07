@@ -119,23 +119,23 @@ export default class TouristService {
     searchEmail: string,
     touristUpdateData: ITouristUpdateDTO
   ) {
-    const phoneNumRegex =
-      /^\+\d{1,3}[\s-]?(\d{1,4}[\s-]?\d{1,4}[\s-]?\d{1,9})$/;
-    if (
-      !touristUpdateData.phone_number ||
-      !phoneNumRegex.test(touristUpdateData.phone_number)
-    )
-      throw new BadRequestError("Invalid phone number");
+    // const phoneNumRegex =
+    //   /^\+\d{1,3}[\s-]?(\d{1,4}[\s-]?\d{1,4}[\s-]?\d{1,9})$/;
+    // if (
+    //   !touristUpdateData.phone_number ||
+    //   !phoneNumRegex.test(touristUpdateData.phone_number)
+    // )
+    //   throw new BadRequestError("Invalid phone number");
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (searchEmail || !emailRegex.test(searchEmail))
-      throw new BadRequestError("Invalid inputted email");
+    // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    // if (searchEmail || !emailRegex.test(searchEmail))
+    //   throw new BadRequestError("Invalid inputted email");
 
-    if (
-      !touristUpdateData.newEmail ||
-      !emailRegex.test(touristUpdateData.newEmail)
-    )
-      throw new BadRequestError("Invalid new email");
+    // if (
+    //   !touristUpdateData.newEmail ||
+    //   !emailRegex.test(touristUpdateData.newEmail)
+    // )
+    //   throw new BadRequestError("Invalid new email");
 
     const updatedUserData = {
       name: touristUpdateData.name,

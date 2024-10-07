@@ -192,4 +192,9 @@ export default (app: Router) => {
     authorize([UserRoles.Advertiser]),
     advertiserController.deleteAdvertiserController
   );
+  router.post(
+    "/createAdvertiserMain",
+    // authorize([UserRoles.Advertiser]),
+    advertiserController.createAdvertiserMainController
+  );
 };
