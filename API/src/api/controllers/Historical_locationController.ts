@@ -17,6 +17,8 @@ export class Historical_locationController {
         req.query
       );
     res.status(historical_location.status).json(historical_location);
+      await historical_locationService.getAllHistorical_locationsService();
+    res.status(historical_location.status).json(historical_location);
   }
   public async createHistorical_locationController(req: any, res: any) {
     const historical_locationService: Historical_locationService =
@@ -113,12 +115,5 @@ export class Historical_locationController {
       );
 
     res.status(historical_locations.status).json(historical_locations);
-  }
-  public async getFilterComponents(req: any, res: any) {
-    const historical_locationService: Historical_locationService =
-      Container.get(Historical_locationService);
-    const filterComponents =
-      await historical_locationService.getFilterComponentsService();
-    res.status(filterComponents.status).json(filterComponents);
   }
 }

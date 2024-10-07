@@ -9,8 +9,11 @@ export class ProductController {
     const productService: ProductService = Container.get(ProductService);
     const product: IProduct = req.body;
     const { user_id } = req.params;
-    const result = await productService.createProductService(user_id, product);
-    res.status(result.status).json(result);
+    const newProduct = await productService.createProductService(
+      user_id,
+      product
+    );
+    res.status(newProduct.status).json(newProduct);
   }
 
   public async updateProduct(req: any, res: any) {
