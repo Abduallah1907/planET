@@ -39,11 +39,12 @@ function authorize(roles: string[] = []) {
       const { role } = decoded;
       if (role === UserRoles.Admin) {
         next();
+      } else {
+        if (roles.indexOf(role) === -1) {
+          throw new UnauthorizedError("Unauthorized role");
+        }
+        next();
       }
-      if (roles.indexOf(role) === -1) {
-        throw new UnauthorizedError("Unauthorized role");
-      }
-      next();
     });
   };
 }

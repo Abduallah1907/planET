@@ -1,7 +1,6 @@
 import { Document, ObjectId } from "mongoose";
 
 export interface IProduct extends Document {
-  user_id: ObjectId;
   comments: ObjectId[];
   name: string;
   description: string;

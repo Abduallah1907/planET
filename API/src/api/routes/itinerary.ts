@@ -30,7 +30,73 @@ export default (app: Router) => {
    *         content:
    *           application/json:
    *             schema:
-   *               $ref: '#/components/schemas/ItineraryCreationData'
+   *               type: object
+   *               properties:
+   *                 tour_guide_id:
+   *                   type: string
+   *                   format: objectId
+   *                 name:
+   *                   type: string
+   *                   example: "Tour of the city"
+   *                 category:
+   *                   type: string
+   *                   format: objectId
+   *                 activities:
+   *                   type: array
+   *                   items:
+   *                     type: string
+   *                     format: objectId
+   *                 timeline:
+   *                   type: array
+   *                   items:
+   *                     type: string
+   *                     format: objectId
+   *                 locations:
+   *                   type: array
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       longitude:
+   *                         type: number
+   *                       latitude:
+   *                         type: number
+   *                 duration:
+   *                   type: string
+   *                 languages:
+   *                   type: array
+   *                   items:
+   *                     type: string
+   *                 price:
+   *                   type: number
+   *                 available_dates:
+   *                   type: array
+   *                   items:
+   *                     type: string
+   *                     format: date
+   *                 accessibility:
+   *                   type: boolean
+   *                 pickup_loc:
+   *                   type: object
+   *                   properties:
+   *                     longitude:
+   *                       type: number
+   *                     latitude:
+   *                       type: number
+   *                 drop_off_loc:
+   *                   type: object
+   *                   properties:
+   *                     longitude:
+   *                       type: number
+   *                     latitude:
+   *                       type: number
+   *                 tags:
+   *                   type: array
+   *                   items:
+   *                     type: string
+   *                 active_flag:
+   *                   type: boolean
+   *                 inappropriate_flag:
+   *                   type: boolean
    *       responses:
    *         201:
    *           description: Itinerary created successfully
