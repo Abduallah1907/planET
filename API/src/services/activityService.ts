@@ -14,13 +14,22 @@ export default class ActivityService {
     @Inject("activityModel") private activityModel: Models.ActivityModel,
     @Inject("categoryModel") private categoryModel: Models.CategoryModel,
     @Inject("advertiserModel") private advertiserModel: Models.AdvertiserModel
-  ) {}
+  ) { }
+
+
 
   public getAllActivitiesService = async () => {
-    const activitiesData = await this.activityModel
-      .find({})
+    const activitiesData = await this.activityModel.find({})
       .populate("category")
-      .populate("tags");
+      .populate("tags")
+      .populate({
+        path: "advertiser_id",
+        model: "Advertiser",
+        populate: {
+          path: "user_id",
+          model: "User" // Ensure this matches the name of your user model
+        }
+      });
 
     if (activitiesData instanceof Error) {
       throw new InternalServerError("Internal server error");
@@ -87,7 +96,18 @@ export default class ActivityService {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID format");
     }
-    const activity = await this.activityModel.findById(new Types.ObjectId(id));
+    const activity = await this.activityModel.findById(new Types.ObjectId(id))
+      .populate("category")
+      .populate("tags")
+      .populate({
+        path: "advertiser_id",
+        model: "Advertiser",
+        populate: {
+          path: "user_id",
+          model: "User" // Ensure this matches the name of your user model
+        }
+      });
+
     if (activity instanceof Error)
       throw new InternalServerError("Internal server error");
     // throw new Error ("Internal server error");
