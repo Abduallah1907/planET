@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import './ActivityCard.css';
+import { Container } from 'react-bootstrap';
+import { FaRegHeart } from 'react-icons/fa';
+
+const ActivityCard: React.FC = () => {
 import { Container, Badge, Modal, Button } from 'react-bootstrap';
 import { FaRegHeart, FaHeart, FaBookmark, FaRegBookmark } from 'react-icons/fa';
 import Rating from '../../components/Rating/Rating';
@@ -90,6 +94,17 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
     setShowAdvertiserModal(false);
   };
   return (
+    <Container className='mt-5'>
+    <div className="activity-card">
+      <div className="activity-details">
+        <div className="image-placeholder">
+          <i className="heart-icon"><FaRegHeart /></i>
+        </div>
+        <div className="details">
+          <h2>Activity Name</h2>
+          <p className="price">$50</p>
+          <textarea className="description" placeholder="Title"></textarea>
+          <button className="reserve-button">Reserve</button>
     <Container className='activity-card-container mt-5'>
       <div className="activity-card">
         <div className="activity-details">

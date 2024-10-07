@@ -23,6 +23,11 @@ import SellerProfile from "./components/ProfileForm/SellerProfile";
 import SettingSide from "./components/ProfileForm/settingSide";
 import Advertiser from "./components/ProfileForm/Advertiser";
 import ProfileFormTourGuide from "./components/ProfileForm/ProfileFormTourGuide";
+import AdvertiserCreate from "./views/AdvertiserCreate";
+import AdvertiserCreateUpdate from "./views/AdvertiserCreateUpdate";
+import AddNewProduct from "./views/AddNewProduct";
+import AddHistoricalLocation from "./views/AddHistoricalLocation";
+import AddItinerary from "./views/AddItinerary";
 import Itinerary from "./views/ViewingPages/Itinerary";
 import HistoricalPlaces from "./views/ViewingPages/HistoricalPlaces";
 import Products from "./views/ViewingPages/Products";
@@ -55,6 +60,12 @@ const App: React.FC = () => {
         <Route path="/TourGuide" element={<ProfileFormTourGuide />} />
         <Route path="/Advertiser" element={<Advertiser />} />
         <Route path="/Products" element={<Products />} />
+        <Route path="/AdvertiserCreate" element={<AdvertiserCreate />} />
+        <Route path="/AdvertiserCreateUpdate" element={<AdvertiserCreateUpdate />} />
+        <Route path="/AddNewProduct" element={<AddNewProduct />} />
+        <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
+        <Route path="/AddItinerary" element={<AddItinerary />} />
+
         <Route path="/SellerProfile" element={<SellerProfile />} />
         <Route path="/HistoricalDetails/:id" element={<HistoricalDetails />} />
       </Routes>
