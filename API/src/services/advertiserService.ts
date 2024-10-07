@@ -6,7 +6,11 @@ import {
 import response from "@/types/responses/response";
 import Container, { Inject, Service } from "typedi";
 import { Types } from "mongoose";
-import { IAdvertiser, IAdvertiserUpdateDTO } from "@/interfaces/IAdvertiser";
+import {
+  IAdvertiser,
+  IAdvertiserMain,
+  IAdvertiserUpdateDTO,
+} from "@/interfaces/IAdvertiser";
 import User from "@/models/user";
 import UserRoles from "@/types/enums/userRoles";
 import UserService from "./userService";
@@ -44,12 +48,41 @@ export default class AdvertiserService {
       logo: advertiserData.logo,
       company_profile: advertiserData.company_profile,
     };
+    const advertiser = await this.advertiserModel.create(IAdvertiserCreateDTO);
+    if (advertiser instanceof Error)
+      throw new InternalServerError("Internal server error");
+    return new response(true, advertiser, "Advertiser created", 201);
+  };
+
+  public createAdvertiserMainDataService = async (
+    advertiserData: IAdvertiserMain
+  ) => {
+    const IUserInputDTO = {
+      email: advertiserData.email,
+      name: advertiserData.name,
+      username: advertiserData.username,
+      password: advertiserData.password,
+      role: UserRoles.Advertiser,
+      phone_number: advertiserData.phone_number,
+    };
+    const userService: UserService = Container.get(UserService);
+    const newUserResponse = await userService.createUserService(IUserInputDTO);
+    const newUser = new this.userModel(newUserResponse.data);
+    const user = await newUser.save();
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    const IAdvertiserCreateDTO = {
+      user_id: user._id,
+      documents_required: advertiserData.documents_required,
+    };
 
     const advertiser = await this.advertiserModel.create(IAdvertiserCreateDTO);
     if (advertiser instanceof Error)
       throw new InternalServerError("Internal server error");
     return new response(true, advertiser, "Advertiser created", 201);
   };
+
   //Get all Advertisers
   public getAllAdvertisersService = async () => {
     const advertisers = await this.advertiserModel.find({});
