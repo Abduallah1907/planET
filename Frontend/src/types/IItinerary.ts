@@ -1,10 +1,10 @@
-import { Location } from "@/types/Location";
-import { Document, ObjectId } from "mongoose";
 
-export interface IItinerary extends Document {
-  activities: ObjectId[];
-  timeline: ObjectId[];
-  comments: ObjectId[];
+export interface IItinerary {
+  Reviews: number;
+  average_rating: number;
+  activities: string[];
+  timeline: string[];
+  comments: string[];
   locations: Location[];
   duration: string;
   languages: string[];
@@ -16,19 +16,19 @@ export interface IItinerary extends Document {
   tags?: string[];
   active_flag: boolean;
   inappropriate_flag: boolean;
-  tour_guide_id: ObjectId;
+  tour_guide_id: string;
   name: string;
-  category: ObjectId;
+  category: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 export interface IItineraryCreateDTO {
-  tour_guide_id: ObjectId;
+  tour_guide_user_id: string;
   name: string;
-  category: ObjectId;
-  activities: ObjectId[];
-  timeline: ObjectId[];
+  category: string;
+  activities: string[];
+  timeline: string[];
   locations: Location[];
   duration: string;
   languages: string[];
@@ -41,33 +41,33 @@ export interface IItineraryCreateDTO {
 }
 
 export interface IItineraryUpdateDTO {
-  name?: string;
-  category?: ObjectId;
-  activities?: ObjectId[];
-  timeline?: ObjectId[];
-  locations?: Location[];
-  duration?: string;
-  languages?: string[];
-  price?: number;
-  available_dates?: Date[];
-  accessibility?: boolean;
-  pickup_loc?: Location;
-  drop_off_loc?: Location;
+  name: string;
+  category: string;
+  activities: string[];
+  timeline: string[];
+  locations: Location[];
+  duration: string;
+  languages: string[];
+  price: number;
+  available_dates: Date[];
+  accessibility: boolean;
+  pickup_loc: Location;
+  drop_off_loc: Location;
   tags?: string[];
 }
 
 export interface IItineraryOutputDTO {
-  itinerary_id: ObjectId;
-  activities: ObjectId[];
-  timeline: ObjectId[];
-  comments: ObjectId[];
-  category: ObjectId;
+  itinerary_id: string;
+  activities: string[];
+  timeline: string[];
+  comments: string[];
+  category: string;
   name: String;
-  locations: Location[];
+  locations: string[];
   languages: string[];
   available_dates: Date[];
   pickup_loc: Location;
   drop_off_loc: Location;
   tags?: string[];
-  tour_guide_id: ObjectId;
+  tour_guide_id: string;
 }
