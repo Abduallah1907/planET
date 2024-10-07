@@ -6,6 +6,7 @@ import "./CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
 import "./tagsinput.css";
 import tagsData from "./tags.json"; // Ensure this path is correct
 import { BiChevronDown } from "react-icons/bi";
+import { HistoricalService } from "../services/HistoricalService";
 
 const HistoricalPlaceForm: React.FC = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -59,7 +60,7 @@ const HistoricalPlaceForm: React.FC = () => {
     }
   }, [inputValue]);
 
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Add form submission logic here
     const formData = {
@@ -78,11 +79,22 @@ const HistoricalPlaceForm: React.FC = () => {
       isActive,
     };
     console.log("Form submitted:", formData);
+    try {
+      const historicalLocation = await HistoricalService.addHistoricalLocation(
+        formData
+      ); // Call the API
+      console.log(
+        "Historical Location added successfully: ",
+        historicalLocation
+      );
+    } catch (error) {
+      console.error("Historical Location failed: ", error);
+    }
   };
 
   return (
     <div className="profile-form-container">
-        <Row className="align-items-center mb-4">
+      <Row className="align-items-center mb-4">
         <Col xs={7} className="text-left">
           <h2 className="my-profile-heading">Add Historical Place</h2>
         </Col>
@@ -90,7 +102,7 @@ const HistoricalPlaceForm: React.FC = () => {
       <Container className="mt-4">
         <Form onSubmit={handleFormSubmit}>
           <Row>
-            <Col>
+            {/* <Col>
               <Form.Group className="form-group" controlId="category">
                 <Form.Label>Category</Form.Label>
                 <div className="custom-select-container">
@@ -107,30 +119,41 @@ const HistoricalPlaceForm: React.FC = () => {
                   </Form.Control>
                   <BiChevronDown className="dropdown-icon" />
                 </div>
-              </Form.Group >
-            </Col>
+              </Form.Group>
+            </Col> */}
             <Col>
-              <AdminFormGroup className="form-group"
-                              label="Name"
-                              type="text"
-                              placeholder="Enter Name"
-                              value={name}
-                              onChange={(e) => setName(e.target.value)}
-                              required id={""} disabled={false} name={""}              />
+              <AdminFormGroup
+                className="form-group"
+                label="Name"
+                type="text"
+                placeholder="Enter Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                id={""}
+                disabled={false}
+                name={""}
+              />
             </Col>
           </Row>
 
           <Row>
             <Col>
-              <AdminFormGroup className="form-group"
-                              label="Date"
-                              type="date"
-                              value={date}
-                              onChange={(e) => setDate(e.target.value)}
-                              required placeholder={""} id={""} disabled={false} name={""}              />
+              <AdminFormGroup
+                className="form-group"
+                label="Date"
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                required
+                placeholder={""}
+                id={""}
+                disabled={false}
+                name={""}
+              />
             </Col>
             <Col>
-              <Form.Group  className="form-group" controlId="picture">
+              <Form.Group className="form-group" controlId="picture">
                 <Form.Label>Picture</Form.Label>
                 <Form.Control
                   type="file"
@@ -145,79 +168,117 @@ const HistoricalPlaceForm: React.FC = () => {
 
           <Row>
             <Col>
-              <AdminFormGroup className="form-group"
-                              label="Description"
-                              type="textarea"
-                              value={description}
-                              onChange={(e) => setDescription(e.target.value)}
-                              required placeholder={""} id={""} disabled={false} name={""}              />
+              <AdminFormGroup
+                className="form-group"
+                label="Description"
+                type="textarea"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+                placeholder={""}
+                id={""}
+                disabled={false}
+                name={""}
+              />
             </Col>
           </Row>
 
           <Row>
             <Col>
-              <AdminFormGroup className="form-group"
-                              label="Location"
-                              type="text"
-                              placeholder="Enter Location"
-                              value={location}
-                              onChange={(e) => setLocation(e.target.value)}
-                              required id={""} disabled={false} name={""}              />
+              <AdminFormGroup
+                className="form-group"
+                label="Location"
+                type="text"
+                placeholder="Enter Location"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                required
+                id={""}
+                disabled={false}
+                name={""}
+              />
             </Col>
           </Row>
 
           <Row>
             <Col>
-              <AdminFormGroup className="form-group"
-                              label="Opening Hours (From)"
-                              type="time"
-                              value={openingFrom}
-                              onChange={(e) => setOpeningFrom(e.target.value)}
-                              required placeholder={""} id={""} disabled={false} name={""}              />
+              <AdminFormGroup
+                className="form-group"
+                label="Opening Hours (From)"
+                type="time"
+                value={openingFrom}
+                onChange={(e) => setOpeningFrom(e.target.value)}
+                required
+                placeholder={""}
+                id={""}
+                disabled={false}
+                name={""}
+              />
             </Col>
             <Col>
-              <AdminFormGroup className="form-group"
-                              label="Opening Hours (To)"
-                              type="time"
-                              value={openingTo}
-                              onChange={(e) => setOpeningTo(e.target.value)}
-                              required placeholder={""} id={""} disabled={false} name={""}              />
+              <AdminFormGroup
+                className="form-group"
+                label="Opening Hours (To)"
+                type="time"
+                value={openingTo}
+                onChange={(e) => setOpeningTo(e.target.value)}
+                required
+                placeholder={""}
+                id={""}
+                disabled={false}
+                name={""}
+              />
             </Col>
           </Row>
 
           <Row>
             <Col>
-              <AdminFormGroup className="form-group"
-                              label="Native Price"
-                              type="number"
-                              placeholder="Enter Native Price"
-                              value={nativePrice}
-                              onChange={(e) => setNativePrice(e.target.value)}
-                              required id={""} disabled={false} name={""}              />
+              <AdminFormGroup
+                className="form-group"
+                label="Native Price"
+                type="number"
+                placeholder="Enter Native Price"
+                value={nativePrice}
+                onChange={(e) => setNativePrice(e.target.value)}
+                required
+                id={""}
+                disabled={false}
+                name={""}
+              />
             </Col>
             <Col>
-              <AdminFormGroup className="form-group"
-                              label="Foreign Price"
-                              type="number"
-                              placeholder="Enter Foreign Price"
-                              value={foreignPrice}
-                              onChange={(e) => setForeignPrice(e.target.value)}
-                              required id={""} disabled={false} name={""}              />
+              <AdminFormGroup
+                className="form-group"
+                label="Foreign Price"
+                type="number"
+                placeholder="Enter Foreign Price"
+                value={foreignPrice}
+                onChange={(e) => setForeignPrice(e.target.value)}
+                required
+                id={""}
+                disabled={false}
+                name={""}
+              />
             </Col>
-            <Col> 
-              <AdminFormGroup className="form-group"
-                              label="Student Price"
-                              type="number"
-                              placeholder="Enter Student Price"
-                              value={studentPrice}
-                              onChange={(e) => setStudentPrice(e.target.value)}
-                              required id={""} disabled={false} name={""}              />
+            <Col>
+              <AdminFormGroup
+                className="form-group"
+                label="Student Price"
+                type="number"
+                placeholder="Enter Student Price"
+                value={studentPrice}
+                onChange={(e) => setStudentPrice(e.target.value)}
+                required
+                id={""}
+                disabled={false}
+                name={""}
+              />
             </Col>
           </Row>
 
           <Row>
             <Col>
-              <Form.Group className="form-group"  controlId="tags">
+              <Form.Group className="form-group" controlId="tags">
                 <Form.Label>Tags</Form.Label>
                 <div className="tags-input">
                   {selectedTags.map((tag) => (

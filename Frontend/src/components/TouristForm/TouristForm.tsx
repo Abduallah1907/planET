@@ -54,12 +54,7 @@ export default function TouristForm() {
       /^\+?\d{1,3}[-\s.]?\(?\d{1,3}\)?[-\s.]?\d{1,4}[-\s.]?\d{1,9}$/;
     return mobileNumberRegex.test(mobileNumber);
   }
-  // function handleNumberChange(event: React.ChangeEvent<HTMLInputElement>) {
-  //   const mobileNumber = event.target.value;
-  //   if (!validateMobileNumber(mobileNumber)) {
-  //     console.error("Invalid mobile number");
-  //   }
-  // }
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
