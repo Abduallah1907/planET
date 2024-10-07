@@ -17,6 +17,7 @@ export default function HistoricalLocationsPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [ historical, setHistorical] = React.useState<IHistorical_location_tourist[]>([])
+  const [filtercomponent, setfilterComponents] = React.useState({});
   const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,8 +32,13 @@ export default function HistoricalLocationsPage() {
     setHistorical(HistoricalData.data);
     console.log(HistoricalData);
   };
+  const getFilterComponents = async () => {
+    const filterData = await HistoricalService.getFilterComponents();
+    setfilterComponents(filterData.data);
+  };
   useEffect(() => {
     getHistorical();
+    getFilterComponents();
   }, []);
   const onHistoricalClick = (id : string) => {
     navigate(`/Historical/${id}`);
@@ -95,7 +101,7 @@ export default function HistoricalLocationsPage() {
 
       <Row>
         <Col md={3} className="border-bottom pb-2">
-          <FilterBy filterOptions={filterOptions}/>
+          <FilterBy filterOptions={filtercomponent}/>
         </Col>
 
         <Col md={9} className="p-3">

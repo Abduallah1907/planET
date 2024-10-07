@@ -1,10 +1,10 @@
 import axiosInstance from '../utils/axiosInstance';
 import axios from 'axios';
 
-class ActivityService{
- public static getAllActivities=async () => {
+class ProductService{
+ public static getAllProducts=async () => {
     try{
-      const response=await axiosInstance.get("/activity/getAllActivities");
+      const response=await axiosInstance.get("/product/getAllProducts");
       return response.data;
     }
     catch(error){
@@ -12,9 +12,9 @@ class ActivityService{
     }
       
  };
-  public static getActivityById=async (id:string) => {
+  public static getProductByName=async (name:string) => {
       try{
-        const response=await axiosInstance.get(`/activity/getActivityByID/${id}`);
+        const response=await axiosInstance.get(`/product/getProductByName/${name}`);
         return response.data;
       }
       catch(error){
@@ -24,7 +24,7 @@ class ActivityService{
   };
   public static getFilterComponents=async () => {
     try{
-      const response=await axiosInstance.get("/activity/getFilterComponents/");
+      const response=await axiosInstance.get("/product/getFilterComponents/");
       return response.data;
     }
     catch(error){
@@ -33,4 +33,4 @@ class ActivityService{
       
 };
 }
-export{ActivityService};
+export{ProductService};

@@ -4,7 +4,6 @@ import FilterBy from "../../components/FilterBy/FilterBy";
 import CustomActivityCard from "../../components/Cards/ActivityCard";
 import { FaSearch } from "react-icons/fa";
 import { BiSort } from "react-icons/bi";
-import filterOptions from '../../utils/filterOptions.json';
 import { ActivityService } from "../../services/ActivityService";
 import { IActivity } from "../../types/IActivity";
 import { newDate } from "react-datepicker/dist/date_utils";
@@ -17,6 +16,7 @@ export default function ActivitiesPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [ activities, setActivities] = React.useState<IActivity[]>([])
+  const [ filtercomponent, setfilterComponents] = React.useState({})
   const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,13 +27,16 @@ export default function ActivitiesPage() {
     setSortBy(e.target.value);
   };
   const getActivities = async () => {
-    let activitiesData = await ActivityService.getAllActivities();
-    activitiesData=activitiesData.data;
-    setActivities(activitiesData);
-    console.log(activitiesData);
+    const activitiesData = await ActivityService.getAllActivities();
+    setActivities(activitiesData.data);
+  };
+  const getFilterComponents = async () => {
+    const filterData = await ActivityService.getFilterComponents();
+    setfilterComponents(filterData.data);
   };
   useEffect(() => {
     getActivities();
+    getFilterComponents();
   }, []);
   // Function to sort activities based on selected criteria
   const sortedActivities = [...activities].sort((a, b) => {
@@ -98,7 +101,7 @@ export default function ActivitiesPage() {
 
       <Row>
         <Col md={3} className="border-bottom pb-2">
-          <FilterBy filterOptions={filterOptions}/>
+          <FilterBy filterOptions={filtercomponent}/>
         </Col>
 
         <Col md={9} className="p-3">
