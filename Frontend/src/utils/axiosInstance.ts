@@ -1,38 +1,34 @@
-import { useAppSelector } from "../store/hooks";
-import axios from "axios"; 
+import store from "../store/store"; // Import your store
+import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL : 'http://localhost:8000/api',
+  baseURL: "http://localhost:8000/api",
   headers: {
-//  Authorization: <Your Auth Token>,
     "Content-Type": "application/json",
-    timeout : 1000,
-  }, 
-  // .. other options
+    timeout: 1000,
+  },
 });
-axios.interceptors.request.use(request => {
-  const User = useAppSelector((state) => state.user);
-  const isLoggedIn = User?.token;
 
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const state = store.getState(); // Access the state directly
+    const User = state.user;
+    if (User?.token) {
+      config.headers.Authorization = `Bearer ${User.token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-  if (isLoggedIn ) {
-      request.headers.common.Authorization = `Bearer ${User.token}`;
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      console.error("Unauthorized! Redirecting to login...");
+    }
+    return Promise.reject(error);
   }
-
-  return request;
-});
-
-// axiosInstance.interceptors.request.use(
-//   (config) => {
-//     // Do something before request is sent
-//     const token = window.localStorage.getItem('token') //do not store token on localstorage!!!
-//     config.headers.Authorization = token
-//     return config;
-//   },
-//   (error) => {
-//     // Do something with request error
-//     return Promise.reject(error);
-//   }
-// );
+);
 
 export default axiosInstance;
