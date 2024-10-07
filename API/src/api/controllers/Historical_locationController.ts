@@ -13,7 +13,9 @@ export class Historical_locationController {
     const historical_locationService: Historical_locationService =
       Container.get(Historical_locationService);
     const historical_location =
-      await historical_locationService.getAllHistorical_locationsService();
+      await historical_locationService.getAllHistorical_locationsService(
+        req.query
+      );
     res.status(historical_location.status).json(historical_location);
   }
   public async createHistorical_locationController(req: any, res: any) {
@@ -27,12 +29,11 @@ export class Historical_locationController {
     res.status(historical_location.status).json(historical_location);
   }
   public async getHistorical_locationByIDController(req: any, res: any) {
-    const { historical_location_id } = req.params;
     const historical_locationService: Historical_locationService =
       Container.get(Historical_locationService);
     const historical_location =
       await historical_locationService.getHistorical_locationByIDService(
-        historical_location_id
+        req.query
       );
     res.status(historical_location.status).json(historical_location);
   }
@@ -111,5 +112,12 @@ export class Historical_locationController {
       );
 
     res.status(historical_locations.status).json(historical_locations);
+  }
+  public async getFilterComponents(req: any, res: any) {
+    const historical_locationService: Historical_locationService =
+      Container.get(Historical_locationService);
+    const filterComponents =
+      await historical_locationService.getFilterComponentsService();
+    res.status(filterComponents.status).json(filterComponents);
   }
 }

@@ -20,7 +20,7 @@
  *           type: string
  *         description: An array of values associated with the historical tag
  *
- * /historical_tag/getAllHistorical_tag:
+ * /api/historical_tag/getAllHistorical_tag:
  *   get:
  *     tags: [HistoricalTag]
  *     summary: Get all historical tags
@@ -32,7 +32,7 @@
  *           items:
  *             $ref: '#/definitions/HistoricalTag'
  *
- * /historical_tag/createHistorical_tag:
+ * /api/historical_tag/createHistorical_tag:
  *   post:
  *     tags: [HistoricalTag]
  *     summary: Create a new historical tag
@@ -48,7 +48,7 @@
  *         schema:
  *           $ref: '#/definitions/HistoricalTag'
  *
- * /historical_tag/getHistorical_tagByID/{id}:
+ * /api/historical_tag/getHistorical_tagByID/{id}:
  *   get:
  *     tags: [HistoricalTag]
  *     summary: Get a historical tag by ID
@@ -64,7 +64,7 @@
  *         schema:
  *           $ref: '#/definitions/HistoricalTag'
  *
- * /historical_tag/updateHistorical_tag/{id}:
+ * /api/historical_tag/updateHistorical_tag/{id}:
  *   put:
  *     tags: [HistoricalTag]
  *     summary: Update a historical tag by ID
@@ -85,7 +85,7 @@
  *         schema:
  *           $ref: '#/definitions/HistoricalTag'
  *
- * /historical_tag/deleteHistorical_tag/{id}:
+ * /api/historical_tag/deleteHistorical_tag/{id}:
  *   delete:
  *     tags: [HistoricalTag]
  *     summary: Delete a historical tag by ID

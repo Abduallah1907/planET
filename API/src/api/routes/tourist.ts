@@ -120,14 +120,14 @@ export default (app: Router) => {
    * tags:
    *   - name: Tourist
    *     description: Tourist management and retrieval
-   * /api/tourist/getTourist:
+   * /api/tourist/getTourist/{email}:
    *   get:
    *     tags:
    *       - Tourist
    *     summary: Retrieve tourist from system
    *     description: Retrieve data of tourist by email
    *     parameters:
-   *       - in: query
+   *       - in: path
    *         name: email
    *         required: true
    *         description: Email of the tourist
@@ -248,7 +248,6 @@ export default (app: Router) => {
   );
   route.post(
     "/createTourist",
-    authorize([UserRoles.Tourist]),
     touristController.createTourist
   );
 };

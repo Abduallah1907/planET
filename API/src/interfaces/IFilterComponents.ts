@@ -18,4 +18,12 @@ export interface IFilterComponents {
     start: Date;
     end: Date;
   };
+  Tag?: {
+    type: string;
+    values: string[];
+  };
+  Language?: {
+    type: string;
+    values: string[];
+  };
 }

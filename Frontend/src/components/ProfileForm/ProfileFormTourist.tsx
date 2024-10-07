@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import "./ProfileFormTourist.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
+import { TouristService } from "../../services/TouristService";
+import { useAppSelector } from "../../store/hooks";
+import { json } from "stream/consumers";
 
 interface NationalityOption {
   value: string;
@@ -56,7 +59,31 @@ const ProfileForm: React.FC = () => {
       return;
     }
   };
+  const Tourist = useAppSelector((state) => state.user);
 
+  useEffect(() => {
+    setFormData({
+      firstName: Tourist.name.split(" ")[0],
+      lastName: Tourist.name.split(" ")[1] || "", // Adding a fallback for lastName in case there's no space
+      email: Tourist.email,
+      mobile: Tourist.phone_number,
+      profession: Tourist.stakeholder_id?.job || "", // Optional chaining in case stakeholder_id is undefined
+      password: "",
+      retypePassword: "",
+      username: Tourist.username,
+      nationality: Tourist.stakeholder_id?.nation || "", // Optional chaining
+      dob: Tourist.stakeholder_id?.date_of_birth || "", // Optional chaining
+    });
+  }, [Tourist]); // Dependency array to rerun this effect when Tourist data changes
+  const OnClick = async () => {
+    await TouristService.updateTourist(Tourist.email, {
+      name: formData.firstName + " " + formData.lastName,
+      newEmail: formData.email,
+      /*password: formData.password,*/
+      job: formData.profession,
+      nation: formData.nationality,
+    });
+  };
   const handleCancel = () => {
     setFormData({
       firstName: "",
@@ -252,7 +279,7 @@ const ProfileForm: React.FC = () => {
           </Row>
 
           <div className="form-actions">
-            <Button type="submit" className="update-btn">
+            <Button type="submit" className="update-btn" onClick={OnClick}>
               Update
             </Button>
             <Button type="button" className="cancel-btn" onClick={handleCancel}>

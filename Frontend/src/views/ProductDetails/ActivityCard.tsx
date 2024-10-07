@@ -10,6 +10,7 @@ import { use } from 'i18next';
 
 
 interface ActivityCardProps {
+
   id: string;
 }
 interface Advertiser {
@@ -31,7 +32,8 @@ interface ActivityData {
   booking_flag: boolean;
 }
 
-const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
+
+const ActivityCard: React.FC<ActivityCardProps> = ({id}) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [activityData, setActivityData] = useState<IActivity | null>(null);
@@ -58,7 +60,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
   const getActivityById = async (id: string) => {
     // Fetch activity data by id
     const activity = await ActivityService.getActivityById(id);
-    setActivityData(activity.activity.data);
+    setActivityData(activity.data);
 
   }
   useEffect(() => {
@@ -86,9 +88,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
           <div className="details">
             <div className="d-flex align-items-center">
               <h2 className="me-3">{activityData ? activityData.name : ''}</h2>
-              {activityData && (activityData.tags ?? []).map((tag: string, index: number) => (
+              {activityData && (activityData.tags ?? []).map((tag: any, index: number) => (
                 <Badge key={index} pill bg="tag" className="me-2 custom-badge">
-                  {tag}
+                  {tag.type}
                 </Badge>
               ))}
 
@@ -143,6 +145,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
           </Button>
         </Modal.Footer>
       </Modal>
+      
       <Modal show={showAdvertiserModal} onHide={handleCloseAdvertiserModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>Advertiser Details</Modal.Title>
@@ -150,11 +153,10 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
         <Modal.Body>
           <img src={activityData?.advertiser_id.logo} alt="Advertiser" />
           <p><strong>Name:</strong> {activityData?.advertiser_id.user_id.name}</p>
-          <p><strong>ID:</strong> {activityData?.advertiser_id.user_id.email}</p>
-          <p><strong>Phone:</strong> {activityData?.advertiser_id.user_id.phone}</p>
+          <p><strong>Email:</strong> {activityData?.advertiser_id.user_id.email}</p>
+          <p><strong>Phone:</strong> {activityData?.advertiser_id.user_id.phone_number}</p>
           <p><strong>Location:</strong> {activityData?.location.latitude}, {activityData?.location.longitude}</p>
-
-
+          
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseAdvertiserModal}>

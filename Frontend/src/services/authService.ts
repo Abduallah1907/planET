@@ -1,13 +1,11 @@
 import axiosInstance from "../utils/axiosInstance";
 
 class AuthService {
-  public static async login(username: string, password: string) {
-    const response = await axiosInstance.get("/users/loginUser", {
-      params: { username, password },
-    });
-    const { token, user } = response.data;
-    return user;
-  }
+
+    public static async login(username: string, password: string) {
+        const response = await axiosInstance.get('/users/loginUser', { params: { username, password } });
+        return response.data;
+    }
 
   public static async register(
     username: string,

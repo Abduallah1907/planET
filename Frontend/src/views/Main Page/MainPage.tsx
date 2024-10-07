@@ -7,10 +7,6 @@ import Destinations from './Destinations'
 const MainPage: React.FC = () => {
     return (
       <>
-        <div>
-          
-          <TopBarLinks />
-        </div>
         <div className="search-bar-main">
           <SearchBar />
         </div>

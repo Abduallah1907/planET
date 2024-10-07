@@ -22,6 +22,19 @@ export default (app: Router) => {
    *       tags:
    *         - Historical_location
    *       summary: Get all Historical_locations
+   *       parameters:
+   *         - in: query
+   *           name: nation
+   *           required: true
+   *           description: Nationality of the tourist
+   *           schema:
+   *             type: string
+   *         - in: query
+   *           name: job
+   *           required: true
+   *           description: Job of the tourist
+   *           schema:
+   *             type: string
    *       responses:
    *         '200':
    *           description: A list of all historical locations.
@@ -82,15 +95,27 @@ export default (app: Router) => {
    *           description: Bad request.
    *         '500':
    *           description: Internal server error.
-   *   /api/historical_location/getHistorical_locationByID/{historical_location_id}:
+   *   /api/historical_location/getHistorical_locationByID:
    *     get:
    *       tags:
    *         - Historical_location
    *       summary: Get Historical_location from system
    *       parameters:
-   *         - in: path
+   *         - in: query
    *           name: historical_location_id
    *           required: true
+   *           schema:
+   *             type: string
+   *         - in: query
+   *           name: nation
+   *           required: true
+   *           description: Nationality of the tourist
+   *           schema:
+   *             type: string
+   *         - in: query
+   *           name: job
+   *           required: true
+   *           description: Job of the tourist
    *           schema:
    *             type: string
    *       responses:
@@ -257,6 +282,17 @@ export default (app: Router) => {
    *           description: Bad request.
    *         '500':
    *           description: Internal server error.
+   *   /api/historical_location/getFilterComponents:
+   *     get:
+   *       tags:
+   *         - Historical_location
+   *       summary: Get filter components
+   *       description: Get filter components
+   *       responses:
+   *         '200':
+   *           description: Filter components are fetched
+   *         '500':
+   *           description: Internal Server Error
    */
 
   app.use("/historical_location", router);
@@ -270,8 +306,7 @@ export default (app: Router) => {
     historical_locationController.createHistorical_locationController
   );
   router.get(
-    "/getHistorical_locationByID/:historical_location_id",
-    authorize([UserRoles.Governor]),
+    "/getHistorical_locationByID",
     historical_locationController.getHistorical_locationByIDController
   );
   router.get(
@@ -303,5 +338,9 @@ export default (app: Router) => {
   router.get(
     "/getFilteredHistorical_locations",
     historical_locationController.getFilteredHistorical_locations
+  );
+  router.get(
+    "/getFilterComponents",
+    historical_locationController.getFilterComponents
   );
 };

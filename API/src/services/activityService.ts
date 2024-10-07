@@ -14,17 +14,23 @@ export default class ActivityService {
     @Inject("activityModel") private activityModel: Models.ActivityModel,
     @Inject("categoryModel") private categoryModel: Models.CategoryModel,
     @Inject("advertiserModel") private advertiserModel: Models.AdvertiserModel
-  ) {}
+  ) { }
+
+
 
   public getAllActivitiesService = async () => {
     const activitiesData = await this.activityModel.find({})
-    .populate("category")
-    .populate("tags")
-    .populate({
-      path: 'advertiser_id',
-      model: 'Advertiser',
-      populate: [{path: 'user_id',model: 'User'}],
-    });
+      .populate("category")
+      .populate("tags")
+      .populate({
+        path: "advertiser_id",
+        model: "Advertiser",
+        populate: {
+          path: "user_id",
+          model: "User" // Ensure this matches the name of your user model
+        }
+      });
+
     if (activitiesData instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
@@ -32,12 +38,12 @@ export default class ActivityService {
       throw new NotFoundError("No Activities Found");
     }
 
-    const activities = activitiesData.map(activity => ({
+    const activities = activitiesData.map((activity) => ({
       ...activity.toObject(),
-      reviewsCount: activity.comments ? activity.comments.length : 0
+      reviewsCount: activity.comments ? activity.comments.length : 0,
     }));
 
-    return new response(true, activities, "All activites are fetched", 200);
+    return new response(true, activities, "All activities are fetched", 200);
   };
 
   public async createActivityService(activityDatainput: IActivityDTO) {
@@ -90,7 +96,18 @@ export default class ActivityService {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID format");
     }
-    const activity = await this.activityModel.findById(new Types.ObjectId(id));
+    const activity = await this.activityModel.findById(new Types.ObjectId(id))
+      .populate("category")
+      .populate("tags")
+      .populate({
+        path: "advertiser_id",
+        model: "Advertiser",
+        populate: {
+          path: "user_id",
+          model: "User" // Ensure this matches the name of your user model
+        }
+      });
+
     if (activity instanceof Error)
       throw new InternalServerError("Internal server error");
     // throw new Error ("Internal server error");

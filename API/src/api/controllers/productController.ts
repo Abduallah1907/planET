@@ -2,14 +2,19 @@ import { Service } from "typedi";
 import { ProductService } from "../../services/productService";
 import { Container } from "typedi";
 import { IProduct, IProductInputDTO } from "../../interfaces/IProduct";
+import { Types } from "mongoose";
 
 @Service()
 export class ProductController {
   public async createProduct(req: any, res: any) {
     const productService: ProductService = Container.get(ProductService);
     const product: IProduct = req.body;
-    const { user_id } = req.params;
-    const result = await productService.createProductService(user_id, product);
+    const { seller_id } = req.params;
+    const sellerObjectId = new Types.ObjectId(seller_id);
+    const result = await productService.createProductService(
+      sellerObjectId,
+      product
+    );
     res.status(result.status).json(result);
   }
 
