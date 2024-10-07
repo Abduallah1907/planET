@@ -7,6 +7,7 @@ import { BiChevronDown } from "react-icons/bi";
 import nationalityOptionsData from "../../utils/nationalityOptions.json";
 import jobOptionsData from "../../utils/jobOptions.json";
 import ButtonWide from "../ButtonWide/ButtonWide";
+import AuthService from "../../services/authService";
 
 interface NationalityOption {
   value: string;
@@ -29,8 +30,8 @@ interface RegData {
   mobile: string;
   password: string;
   confirmPassword: string;
-  nationality: string;
-  dob: string;
+  nation: string;
+  date_of_birth: string;
   job: string;
 }
 
@@ -44,8 +45,8 @@ export default function TouristForm() {
     job: "",
     password: "",
     confirmPassword: "",
-    nationality: "",
-    dob: "",
+    nation: "",
+    date_of_birth: "",
   });
 
   function validateMobileNumber(mobileNumber: string): boolean {
@@ -68,7 +69,7 @@ export default function TouristForm() {
     setRegData({ ...regData, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const mobileNumber = regData.mobile;
     if (regData.password !== regData.confirmPassword) {
@@ -78,6 +79,13 @@ export default function TouristForm() {
     if (!validateMobileNumber(mobileNumber)) {
       console.error("Invalid mobile number");
       return;
+    }
+
+    try {
+      const user = await AuthService.registerTourist(regData); // Call the API
+      console.log("Tourist registered successfully: ", user);
+    } catch (error) {
+      console.error("Tourist registration failed: ", error);
     }
   };
 
@@ -197,63 +205,62 @@ export default function TouristForm() {
             label={"Date of Birth"}
             type={"date"}
             placeholder={"dd/mm/yyyy"}
-            id={"dob"}
+            id={"date_of_birth"}
             disabled={false}
             required={true}
-            value={regData.dob}
+            value={regData.date_of_birth}
             onChange={handleChange}
-            name={"dob"}
+            name={"date_of_birth"}
           />
         </Col>
       </Row>
       <Row>
-      <Col>
-        <Form.Group className="form-group" id="nationality">
-          <Form.Label>Nationality:</Form.Label>
-          <div className="custom-select-container">
-            <Form.Control
-              as="select"
-              name="nationality"
-              value={regData.nationality}
-              id="nationality"
-              onChange={handleChange}
-              className="custom-form-control"
-              required
-            >
-              <option value="">Select your nationality</option>
-              {nationalityOptions.map((option: NationalityOption) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Form.Control>
-            <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
-          </div>
-        </Form.Group>
+        <Col>
+          <Form.Group className="form-group" id="nation">
+            <Form.Label>Nationality:</Form.Label>
+            <div className="custom-select-container">
+              <Form.Control
+                as="select"
+                name="nation"
+                value={regData.nation}
+                id="nation"
+                onChange={handleChange}
+                className="custom-form-control"
+                required
+              >
+                <option value="">Select your nationality</option>
+                {nationalityOptions.map((option: NationalityOption) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </Form.Control>
+              <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
+            </div>
+          </Form.Group>
         </Col>
         <Col>
-        <Form.Group className="form-group" id="job">
-          <Form.Label>Job</Form.Label>
-          <div className="custom-select-container">
-            <Form.Control
-              as="select"
-              name="job"
-              value={regData.job}
-              id="job"
-              onChange={handleChange}
-              
-              required
-            >
-              <option value="">Select your job</option>
-              {jobOptions.map((option: JobOption) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Form.Control>
-            <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
-          </div>
-        </Form.Group>
+          <Form.Group className="form-group" id="job">
+            <Form.Label>Job</Form.Label>
+            <div className="custom-select-container">
+              <Form.Control
+                as="select"
+                name="job"
+                value={regData.job}
+                id="job"
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select your job</option>
+                {jobOptions.map((option: JobOption) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </Form.Control>
+              <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
+            </div>
+          </Form.Group>
         </Col>
       </Row>
       <div key="default-checkbox" className="mb-3">

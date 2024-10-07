@@ -3,24 +3,31 @@ import { Col, Form, Row } from "react-bootstrap";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import ButtonWide from "../ButtonWide/ButtonWide";
 import "./StakeholderForm.css";
+import AuthService from "../../services/authService";
 
 interface StakeData {
+  firstName: string;
+  lastName: string;
   username: string;
   email: string;
   password: string;
   confirmPassword: string;
   file: File | null;
   role: string;
+  mobile: string | undefined;
 }
 
 export default function StakeholderForm() {
   const [StakeData, setStakeData] = useState<StakeData>({
+    firstName: "",
+    lastName: "",
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
     file: null,
     role: "",
+    mobile: "",
   });
 
   const handleChange = (
@@ -39,18 +46,68 @@ export default function StakeholderForm() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (StakeData.password !== StakeData.confirmPassword) {
       alert("Passwords don't match!");
       return;
     }
-    console.log("Stakeholder Data:", StakeData);
+    // console.log("Stakeholder Data:", StakeData);
+    if (StakeData.role == "Seller") {
+      try {
+        const seller = await AuthService.registerSeller(StakeData); // Call the API
+        console.log("Seller registered successfully: ", seller);
+      } catch (error) {
+        console.error("Seller registration failed: ", error);
+      }
+    } else if (StakeData.role == "Advertiser") {
+      try {
+        const advertiser = await AuthService.registerAdvertiser(StakeData); // Call the API
+        console.log("Advertiser registered successfully: ", advertiser);
+      } catch (error) {
+        console.error("Advertiser registration failed: ", error);
+      }
+    } else if (StakeData.role == "Tour Guide") {
+      try {
+        const tourGuide = await AuthService.registerTourGuide(StakeData); // Call the API
+        console.log("Tour Guide registered successfully: ", tourGuide);
+      } catch (error) {
+        console.error("Tour Guide registration failed: ", error);
+      }
+    }
   };
 
   return (
     <Form className="stake-form form-fields" onSubmit={handleSubmit}>
       <h2>Create account</h2>
+      <Row>
+        <Col>
+          <CustomFormGroup
+            label={"First Name"}
+            type={"text"}
+            placeholder={"first name"}
+            id={"firstName"}
+            disabled={false}
+            required={true}
+            value={StakeData.firstName}
+            onChange={handleChange}
+            name={"firstName"}
+          />
+        </Col>
+        <Col>
+          <CustomFormGroup
+            label={"Last Name"}
+            type={"text"}
+            placeholder={"last name"}
+            id={"lastName"}
+            disabled={false}
+            required={true}
+            value={StakeData.lastName}
+            onChange={handleChange}
+            name={"lastName"}
+          />
+        </Col>
+      </Row>
       <Row>
         <Col>
           <CustomFormGroup
@@ -111,7 +168,7 @@ export default function StakeholderForm() {
         <Col>
           <CustomFormGroup
             label={"Role Type"}
-            type={"select"} 
+            type={"select"}
             placeholder={"Select a role"}
             id={"role"}
             disabled={false}
@@ -119,7 +176,7 @@ export default function StakeholderForm() {
             value={StakeData.role}
             onChange={handleChange}
             name={"role"}
-            options={["Tour Guide", "Advertiser", "Seller"]} 
+            options={["Tour Guide", "Advertiser", "Seller"]}
           />
         </Col>
         <Col>
@@ -134,6 +191,21 @@ export default function StakeholderForm() {
             name={"file"}
             accept={".pdf,.doc,.docx"}
             multiple={true}
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <CustomFormGroup
+            label={"Mobile Number"}
+            type={"string"}
+            placeholder={"+20-123456789"}
+            id={"mobile"}
+            disabled={false}
+            required={true}
+            value={StakeData.mobile}
+            onChange={handleChange}
+            name={"mobile"}
           />
         </Col>
       </Row>
