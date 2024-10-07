@@ -6,8 +6,8 @@ import { Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import CreateGoverner from "./views/CreateGoverner/CreateGoverner";
-import BookingLayout from "./views/CreateActivities/CreateActivities";
-import CreateActivity from "./views/CreateActivities/CreateActivities";
+import BookingLayout from "./views/ViewingPages/Activities";
+import Activities from "./views/ViewingPages/Activities";
 import TouristReg from "./views/auth/TouristReg/TouristReg";
 import TourGuideDashboard from "./views/TourGuideDashboard/TourGuidedashboard";
 import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
@@ -16,18 +16,17 @@ import MainPage from "./views/Main Page/MainPage";
 import { AppProvider } from "./AppContext";
 import Delete from "./components/Delete";
 import SellerDashboard from "./views/SellerDashboard/SellerDashboard";
-import ActivityViewEdit from "./views/ProductDetails/ActivityViewEdit";
+import ActivityDetails from "./views/ProductDetails/ActivityDetails";
 import Login from "./views/auth/Login/Login";
 import ProfileForm from "./components/ProfileForm/ProfileFormTourist";
 import SellerProfile from "./components/ProfileForm/SellerProfile";
 import SettingSide from "./components/ProfileForm/settingSide";
 import Advertiser from "./components/ProfileForm/Advertiser";
 import ProfileFormTourGuide from "./components/ProfileForm/ProfileFormTourGuide";
-import Itinerary from "./views/Itinerary";
-import HistoricalPlaces from "./views/HistoricalPlaces";
-import HistoricalLocationCard from "./components/Cards/HistoricalLocationCard";
-import ActivityCard from "./components/Cards/ActivityCard";
-import CreateProduct from "./views/CreateProduct";
+import Itinerary from "./views/ViewingPages/Itinerary";
+import HistoricalPlaces from "./views/ViewingPages/HistoricalPlaces";
+import Products from "./views/ViewingPages/Products";
+import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
 
 const App: React.FC = () => {
   return (
@@ -40,7 +39,7 @@ const App: React.FC = () => {
         <Route path="/admin" element={<CreateAdmin />} />
         <Route path="/governer" element={<CreateGoverner />} />
         <Route path="/test" element={<BookingLayout />} />
-        <Route path="/CreateActivity" element={<CreateActivity />} />
+        <Route path="/Activity" element={<Activities />} />
         <Route path="/editprofile" element={<ProfileForm />} />
         <Route path="/Itinerary" element={<Itinerary />} />
         <Route path="/Historical" element={<HistoricalPlaces />} />
@@ -50,14 +49,14 @@ const App: React.FC = () => {
         <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/SellerDashboard" element={<SellerDashboard />} />
-        <Route path="/ActivityViewEdit" element={<ActivityViewEdit />} />
+        <Route path="/Activity/:id" element={<ActivityDetails />} />
         <Route path="/delete" element={<Delete />} />
         <Route path="/SettingSide" element={<SettingSide />} />
         <Route path="/TourGuide" element={<ProfileFormTourGuide />} />
         <Route path="/Advertiser" element={<Advertiser />} />
-        <Route path="/Products" element={<CreateProduct />} />
-
+        <Route path="/Products" element={<Products />} />
         <Route path="/SellerProfile" element={<SellerProfile />} />
+        <Route path="/HistoricalDetails/:id" element={<HistoricalDetails />} />
       </Routes>
     </AppProvider>
   );

@@ -1,10 +1,10 @@
 import React from "react";
 import { Col, Row, Container, Form, InputGroup } from "react-bootstrap";
-import ItineraryCard from "../components/Cards/ItineraryCard";
-import FilterBy from "../components/FilterBy/FilterBy";
+import ItineraryCard from "../../components/Cards/ItineraryCard";
+import FilterBy from "../../components/FilterBy/FilterBy";
 import { FaSearch } from "react-icons/fa";
 import { BiSort } from "react-icons/bi";
-import filterOptions from '../utils/filterOptions.json';
+import filterOptions from '../../utils/filterOptions.json';
 
 const activityData = [
   {

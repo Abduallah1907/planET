@@ -12,5 +12,15 @@ class ActivityService{
     }
       
  };
+  public static getActivityById=async (id:string) => {
+      try{
+        const response=await axiosInstance.get(`/activity/getActivityByID/${id}`);
+        return response.data;
+      }
+      catch(error){
+      throw error;
+      }
+        
+  };
 }
 export{ActivityService};

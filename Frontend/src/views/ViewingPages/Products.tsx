@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import ProductCard from "../components/Cards/ProductCard"; 
-import FilterBy from "../components/FilterBy/FilterBy";
+import ProductCard from "../../components/Cards/ProductCard"; 
+import FilterBy from "../../components/FilterBy/FilterBy";
 import { Col, Row, Container, Form, InputGroup } from "react-bootstrap";
 import { BiSort } from "react-icons/bi";
 import { FaSearch } from "react-icons/fa";

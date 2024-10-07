@@ -8,49 +8,13 @@ import filterOptions from '../../utils/filterOptions.json';
 import { ActivityService } from "../../services/ActivityService";
 import { IActivity } from "../../types/IActivity";
 import { newDate } from "react-datepicker/dist/date_utils";
+import { useNavigate } from "react-router-dom";
 
-const activityData = [
-  {
-    Name: "Hiking Adventure",
-    location: "Mountain View",
-    category: "Adventure",
-    imageUrl: "https://via.placeholder.com/250x250",
-    RatingVal: 4.5,
-    Reviews: 120,
-    Price: 150.0,
-    Date_Time: new Date(),
-    isActive: true,
-    isBooked: true,
-  },
-  {
-    Name: "City Night Tour",
-    location: "Downtown",
-    category: "Nightlife",
-    imageUrl: "https://via.placeholder.com/250x250",
-    RatingVal: 4.8,
-    Reviews: 95,
-    Price: 100.0,
-    Date_Time: new Date(),
-    isActive: true,
-    isBooked: false,
-  },
-  {
-    Name: "Football Match",
-    location: "Cairo International Stadium",
-    category: "Sports",
-    imageUrl: "https://via.placeholder.com/250x250",
-    RatingVal: 4.0,
-    Reviews: 50,
-    Price: 70.0,
-    Date_Time: new Date(),
-    isActive: true,
-    isBooked: false,
-  },
-];
+
 
 export default function ActivitiesPage() {
 
-
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [ activities, setActivities] = React.useState<IActivity[]>([])
   const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
@@ -68,23 +32,29 @@ export default function ActivitiesPage() {
     setActivities(activitiesData);
     console.log(activitiesData);
   };
-  getActivities();
+  useEffect(() => {
+    getActivities();
+  }, []);
   // Function to sort activities based on selected criteria
-  const sortedActivities = [...activityData].sort((a, b) => {
+  const sortedActivities = [...activities].sort((a, b) => {
     switch (sortBy) {
       case "topPicks":
-        return b.RatingVal - a.RatingVal;
+        return b.average_rating - a.average_rating;
       case "priceLowToHigh":
-        return a.Price - b.Price;
+        return (a.price ?? 0) - (b.price ?? 0);
       case "priceHighToLow":
-        return b.Price - a.Price;
+        return (b.price ?? 0) - (a.price ?? 0);
       default:
         return 0;
     }
   });
 
+  const onActivityClick = (id : string) => {
+    navigate(`/activity/${id}`);
+  }
+
   const filteredActivities = sortedActivities.filter((activity) =>
-    activity.Name.toLowerCase().includes(searchQuery.toLowerCase())
+    activity.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -160,6 +130,7 @@ export default function ActivitiesPage() {
                   onChange={() =>
                     console.log(`${activity.name} booking status changed`)
                   }
+                  onClick={() => onActivityClick(activity._id)}
                 />
               </Col>
             ))}

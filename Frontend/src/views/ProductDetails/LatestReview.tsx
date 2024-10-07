@@ -4,15 +4,15 @@ import { Container } from 'react-bootstrap';
 
 const LatestReviews: React.FC = () => {
   return (
-    <Container className='allcont'>
+    <Container className='allcont mt-4'>
     <div className="reviews-section">
-      <h2>Latest reviews</h2>
+      <h2>Latest Reviews</h2>
       <div className="reviews-list">
         {[...Array(3)].map((_, index) => (
           <div key={index} className="review-card">
             <div className="review-stars">⭐ ⭐ ⭐ ⭐ ⭐</div>
-            <h3>Review title</h3>
-            <p>Review body</p>
+            <h3>Review Title</h3>
+            <p>Review Body</p>
             <div className="reviewer-info">
               <img
                 src="https://via.placeholder.com/40"
@@ -20,7 +20,7 @@ const LatestReviews: React.FC = () => {
                 className="reviewer-avatar"
               />
               <div>
-                <p className="reviewer-name">Reviewer name</p>
+                <p className="reviewer-name">Reviewer Name</p>
                 <p className="review-date">Date</p>
               </div>
             </div>

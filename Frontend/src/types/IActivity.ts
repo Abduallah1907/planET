@@ -1,6 +1,7 @@
 
 
 export interface IActivity  {
+  _id: string;
   average_rating: number;
   category: string;
   comments: string[];

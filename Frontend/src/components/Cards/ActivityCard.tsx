@@ -14,6 +14,7 @@ interface InputData {
   isBooked: boolean; // Added isBooked prop
   imageUrl: string;
   onChange?: () => void; // Change onChange to a function that does not take parameters
+  onClick?: () => void;
 }
 
 const CustomActivityCard = ({
@@ -27,11 +28,13 @@ const CustomActivityCard = ({
   isActive,
   isBooked,
   onChange,
+  onClick,
 }: InputData) => {
   // Manage the state for the rating
 
+
   return (
-    <Card
+    <Card onClick={onClick}
       className="p-3 shadow-sm"
       style={{ borderRadius: "10px", height: "100%" }}
     >
