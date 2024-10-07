@@ -1,9 +1,9 @@
-import { Location } from "@/types/Location";
-import { Document, ObjectId } from "mongoose";
 
-export interface IActivity extends Document {
-  category: ObjectId;
-  comments: ObjectId[];
+
+export interface IActivity  {
+  average_rating: number;
+  category: string;
+  comments: string[];
   name: string;
   date: Date;
   time: string;
@@ -15,11 +15,11 @@ export interface IActivity extends Document {
     max: number;
   };
   special_discount?: number;
-  tags?: ObjectId[];
+  tags?: string[];
   booking_flag: boolean;
   inappropriate_flag: boolean;
   active_flag: boolean;
-  advertiser_id: ObjectId;
+  advertiser_id: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -35,11 +35,11 @@ export interface IActivityDTO {
     min: number;
     max: number;
   };
-  category: ObjectId;
+  category: string;
   special_discount?: number;
-  tags?: ObjectId[];
+  tags?: string[];
   booking_flag: boolean;
-  advertiser_id: ObjectId;
+  advertiser_id: string;
 }
 export interface UpdateIActivityDTO {
   name?: string;
@@ -52,8 +52,9 @@ export interface UpdateIActivityDTO {
     min?: number;
     max?: number;
   };
-  category?: ObjectId;
+  category?: string;
   special_discount?: number;
-  tags?: ObjectId[];
+  tags?: string[];
   booking_flag?: boolean;
+  advertiser_id?: string;
 }

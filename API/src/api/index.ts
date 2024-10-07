@@ -13,6 +13,7 @@ import category from "./routes/category";
 import advertiser from "./routes/advertiser";
 import historical_tag from "./routes/historical_tag";
 import product from "./routes/product";
+import itinerary from "./routes/itinerary";
 export default () => {
   const app = Router();
 
@@ -28,6 +29,7 @@ export default () => {
   historical_tag(app);
   mailer(app);
   product(app);
+  itinerary(app);
 
   return app;
 };

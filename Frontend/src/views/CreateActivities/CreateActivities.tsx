@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Col, Row, Container, Form, InputGroup } from "react-bootstrap";
 import FilterBy from "../../components/FilterBy/FilterBy";
 import CustomActivityCard from "../../components/Cards/ActivityCard";
-import { FaSearch } from "react-icons/fa"; 
+import { FaSearch } from "react-icons/fa";
 import { BiSort } from "react-icons/bi";
 import filterOptions from '../../utils/filterOptions.json';
+import { ActivityService } from "../../services/ActivityService";
+import { IActivity } from "../../types/IActivity";
+import { newDate } from "react-datepicker/dist/date_utils";
 
 const activityData = [
   {
@@ -46,7 +49,10 @@ const activityData = [
 ];
 
 export default function ActivitiesPage() {
+
+
   const [searchQuery, setSearchQuery] = React.useState("");
+  const [ activities, setActivities] = React.useState<IActivity[]>([])
   const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,16 +62,22 @@ export default function ActivitiesPage() {
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value);
   };
-
+  const getActivities = async () => {
+    let activitiesData = await ActivityService.getAllActivities();
+    activitiesData=activitiesData.activities.data;
+    setActivities(activitiesData);
+    console.log(activitiesData);
+  };
+  getActivities();
   // Function to sort activities based on selected criteria
   const sortedActivities = [...activityData].sort((a, b) => {
     switch (sortBy) {
       case "topPicks":
-        return b.RatingVal - a.RatingVal; 
+        return b.RatingVal - a.RatingVal;
       case "priceLowToHigh":
-        return a.Price - b.Price; 
+        return a.Price - b.Price;
       case "priceHighToLow":
-        return b.Price - a.Price; 
+        return b.Price - a.Price;
       default:
         return 0;
     }
@@ -79,7 +91,9 @@ export default function ActivitiesPage() {
     <Container fluid>
       <Row className="justify-content-center my-4">
         <Col md={6} className="text-center">
-          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>Explore Activities</h1>
+          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
+            Explore Activities
+          </h1>
         </Col>
       </Row>
 
@@ -128,22 +142,26 @@ export default function ActivitiesPage() {
                 <option value="priceHighToLow">Price: High to Low</option>
               </Form.Select>
             </div>
-            {filteredActivities.map((activity, index) => (
-               <Col key={index} xs={12} className="mb-4"> {/* Full-width stacking */}
-               <CustomActivityCard
-                 Name={activity.Name}
-                 location={activity.location}
-                 category={activity.category}
-                 imageUrl={activity.imageUrl}
-                 RatingVal={activity.RatingVal}
-                 Reviews={activity.Reviews}
-                 Price={activity.Price}
-                 Date_Time={activity.Date_Time}
-                 isActive={activity.isActive}
-                 isBooked={activity.isBooked}
-                 onChange={() => console.log(`${activity.Name} booking status changed`)}
-               />
-             </Col>
+            {activities.map((activity:IActivity, index) => (
+              <Col key={index} xs={12} className="mb-4">
+                {" "}
+                {/* Full-width stacking */}
+                <CustomActivityCard
+                  Name={activity.name}
+                  location={"cairo"}
+                  category={activity.category}
+                  imageUrl={""}
+                  RatingVal={activity.average_rating}
+                  Reviews={100}
+                  Price={activity.price||0}
+                  Date_Time={new Date(activity.date)}
+                  isActive={activity.active_flag}
+                  isBooked={activity.booking_flag}
+                  onChange={() =>
+                    console.log(`${activity.name} booking status changed`)
+                  }
+                />
+              </Col>
             ))}
           </Row>
         </Col>

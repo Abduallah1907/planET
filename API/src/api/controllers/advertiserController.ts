@@ -14,6 +14,15 @@ export class AdvertiserController {
     );
     res.status(advertiser.status).json({ advertiser });
   }
+  public async getAdvertiserByEmailController(req: any, res: any) {
+    const { email } = req.params;
+    const advertiserService: AdvertiserService =
+      Container.get(AdvertiserService);
+    const advertiser = await advertiserService.getAdvertiserByEmailService(
+      email
+    );
+    res.status(advertiser.status).json({ advertiser });
+  }
   //Get all Advertisers
   public async getAllAdvertisersController(req: any, res: any) {
     const advertiserService: AdvertiserService =
@@ -51,21 +60,21 @@ export class AdvertiserController {
   }
   //Update Advertiser
   public async updateAdvertiserController(req: any, res: any) {
-    const { id } = req.params;
+    const { email } = req.params;
     const advertiserService: AdvertiserService =
       Container.get(AdvertiserService);
     const advertiser = await advertiserService.updateAdvertiserService(
-      id,
+      email,
       req.body
     );
     res.status(advertiser.status).json({ advertiser });
   }
   //Delete Advertiser
   public async deleteAdvertiserController(req: any, res: any) {
-    const { id } = req.params;
+    const { email } = req.params;
     const advertiserService: AdvertiserService =
       Container.get(AdvertiserService);
-    const advertiser = await advertiserService.deleteAdvertiserService(id);
+    const advertiser = await advertiserService.deleteAdvertiserService(email);
     res.status(advertiser.status).json({ advertiser });
   }
 }

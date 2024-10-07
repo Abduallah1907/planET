@@ -1,4 +1,7 @@
-import { IUserAdminCreateAdminDTO, IUserAdminCreateGovernorDTO } from "@/interfaces/IUser";
+import {
+  IUserAdminCreateAdminDTO,
+  IUserAdminCreateGovernorDTO,
+} from "@/interfaces/IUser";
 import AdminService from "@/services/adminService";
 import { Request, Response } from "express";
 import Container, { Inject, Service } from "typedi";
@@ -23,10 +26,9 @@ export class AdminController {
   }
 
   public async deleteUser(req: Request, res: Response): Promise<any> {
-    const { id } = req.params;
-    const _id = new mongoose.Types.ObjectId(id);
+    const { email } = req.params;
     const adminService: AdminService = Container.get(AdminService);
-    const user = await adminService.deleteUserService(_id);
+    const user = await adminService.deleteUserService(email);
     res.status(user.status).json({ user });
   }
 
@@ -65,7 +67,10 @@ export class AdminController {
   public async updateCategory(req: Request, res: Response): Promise<any> {
     const { oldType, newType } = req.body;
     const adminService: AdminService = Container.get(AdminService);
-    const updatedCategory = await adminService.updateCategoryService(oldType, newType);
+    const updatedCategory = await adminService.updateCategoryService(
+      oldType,
+      newType
+    );
     res.status(updatedCategory.status).json({ updatedCategory });
   }
 
@@ -80,7 +85,7 @@ export class AdminController {
     const { type } = req.body;
     const adminService: AdminService = Container.get(AdminService);
     const newTag = await adminService.createTagService(type);
-    res.json(newTag);
+    res.status(newTag.status).json(newTag);
   }
 
   public async getTags(req: Request, res: Response): Promise<any> {
@@ -88,14 +93,14 @@ export class AdminController {
     const pageNum: number = parseInt(page);
     const adminService: AdminService = Container.get(AdminService);
     const tags = await adminService.getTagsService(pageNum);
-    res.json(tags);
+    res.status(tags.status).json(tags);
   }
 
   public async updateTag(req: Request, res: Response): Promise<any> {
     const { oldType, newType } = req.body;
     const adminService: AdminService = Container.get(AdminService);
     const updatedTag = await adminService.updateTagService(oldType, newType);
-    res.json(updatedTag);
+    res.status(updatedTag.status).json(updatedTag);
   }
 
   public async deleteTag(req: Request, res: Response): Promise<any> {

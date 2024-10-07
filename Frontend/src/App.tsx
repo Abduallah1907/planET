@@ -22,13 +22,15 @@ import ProfileForm from "./components/ProfileForm/ProfileFormTourist";
 import SellerProfile from "./components/ProfileForm/SellerProfile";
 import SettingSide from "./components/ProfileForm/settingSide";
 import Advertiser from "./components/ProfileForm/Advertiser";
-import Products from "./components/Products";
 import ProfileFormTourGuide from "./components/ProfileForm/ProfileFormTourGuide";
 import Itinerary from "./views/Itinerary";
 import HistoricalPlaces from "./views/HistoricalPlaces";
 import SellerFirstProfile from "./components/ProfileForm/SellerFirstProfile";
 import TourGuideFirst from "./components/ProfileForm/TourGuideFirst";
 import AdvertiserFirst from "./components/ProfileForm/AdvertiserFirst";
+import HistoricalLocationCard from "./components/Cards/HistoricalLocationCard";
+import ActivityCard from "./components/Cards/ActivityCard";
+import CreateProduct from "./views/CreateProduct";
 
 const App: React.FC = () => {
   return (
@@ -56,9 +58,9 @@ const App: React.FC = () => {
         <Route path="/SettingSide" element={<SettingSide />} />
         <Route path="/TourGuide" element={<ProfileFormTourGuide />} />
         <Route path="/Advertiser" element={<Advertiser />} />
-        <Route path="/Products" element={<Products />} />
         <Route path="/SellerFirstProfile" element={<SellerFirstProfile />} />
         <Route path="/TourGuideFirst" element={<TourGuideFirst />} />
+        <Route path="/Products" element={<CreateProduct />} />
 
         <Route path="/SellerProfile" element={<SellerProfile />} />
         <Route path="/AdvertiserFirst" element={<AdvertiserFirst />} />

@@ -7,26 +7,33 @@ import {
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
 import mongoose, { Types } from "mongoose";
+import { IFilterComponents } from "@/interfaces/IFilterComponents";
 @Service()
 export default class ActivityService {
   constructor(
     @Inject("activityModel") private activityModel: Models.ActivityModel,
-    @Inject("categoryModel") private categoryModel: Models.CategoryModel
+    @Inject("categoryModel") private categoryModel: Models.CategoryModel,
+    @Inject("advertiserModel") private advertiserModel: Models.AdvertiserModel
   ) {}
 
   public getAllActivitiesService = async () => {
-    const activities = await this.activityModel.find({});
-    if (activities instanceof Error) {
+    const activitiesData = await this.activityModel.find({}).populate("category").populate("tags").populate("advertiser_id");
+    if (activitiesData instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
-    if (activities == null) {
+    if (activitiesData == null) {
       throw new NotFoundError("No Activities Found");
     }
+
+    const activities = activitiesData.map(activity => ({
+      ...activity.toObject(),
+      reviewsCount: activity.comments ? activity.comments.length : 0
+    }));
 
     return new response(true, activities, "All activites are fetched", 200);
   };
 
-  public createActivityService = async (activityDatainput: IActivityDTO) => {
+  public async createActivityService(activityDatainput: IActivityDTO) {
     const activityData: IActivityDTO = {
       name: activityDatainput.name,
       date: activityDatainput.date,
@@ -53,19 +60,26 @@ export default class ActivityService {
         !activityData.price_range.min ||
         !activityData.price_range.max)
     ) {
-      throw new BadRequestError("You need one of them ");
+      throw new BadRequestError("You can only input price or price range");
     }
     const activity = await this.activityModel.create(activityData);
-
     if (activity instanceof Error)
       throw new InternalServerError("Internal server error");
 
-    if (activity == null) throw new NotFoundError("User not found");
+    if (activity == null) throw new NotFoundError("activity not created");
+    const advertiser = await this.advertiserModel.findByIdAndUpdate(
+      activityDatainput.advertiser_id,
+      { $push: { activities: activity._id } },
+      { new: true }
+    );
+    if (advertiser instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (advertiser == null) throw new NotFoundError("Advertiser not found");
 
     return new response(true, activity, "Activity", 201);
-  };
+  }
 
-  public getActivityByIDService = async (id: string) => {
+  public async getActivityByIDService(id: string) {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID format");
     }
@@ -76,9 +90,9 @@ export default class ActivityService {
 
     if (activity == null) throw new NotFoundError("Activity not found");
     return new response(true, activity, "Activity is found", 200);
-  };
+  }
 
-  public getActivityByAdvertiserIDService = async (advertiserID: string) => {
+  public async getActivityByAdvertiserIDService(advertiserID: string) {
     if (!Types.ObjectId.isValid(advertiserID)) {
       throw new BadRequestError("Invalid Adverstier ID format");
     }
@@ -92,23 +106,15 @@ export default class ActivityService {
       throw new NotFoundError("No Activity with this Adverstier ID");
     }
     return new response(true, activities, "Activity is found", 200);
-  };
+  }
 
-  public updateActivityService = async (
+  public async updateActivityService(
     id: string,
     activityData: UpdateIActivityDTO
-  ) => {
+  ) {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID format");
     }
-    const activity = await this.activityModel.findById(new Types.ObjectId(id));
-    if (activity instanceof Error) {
-      throw new InternalServerError("Internal server error");
-    }
-    if (activity == null) {
-      throw new NotFoundError("No Activity with this ID");
-    }
-    const updateFields: Partial<IActivityDTO> = {};
     if (
       activityData?.price &&
       activityData.price_range?.max &&
@@ -118,53 +124,28 @@ export default class ActivityService {
         "Cannot enter both price and price range,choose one of them"
       );
     }
-
-    if (activityData.date) updateFields.date = activityData.date;
-    if (activityData.time) updateFields.time = activityData.time;
-    if (
-      activityData.location &&
-      activityData.location.latitude &&
-      activityData.location.longitude
-    ) {
-      updateFields.location = activityData.location;
-    }
-    if (activityData.price) updateFields.price = activityData.price;
-    if (activityData.price_range)
-      updateFields.price_range = {
-        min: activityData.price_range.min ?? 0,
-        max: activityData.price_range.max ?? 0,
-      };
-    if (activityData.category) updateFields.category = activityData.category;
-    if (activityData.special_discount)
-      updateFields.special_discount = activityData.special_discount;
-    if (activityData.tags) updateFields.tags = activityData.tags;
-    if (activityData?.booking_flag)
-      updateFields.booking_flag = activityData.booking_flag;
-    if (updateFields.price) {
-      updateFields.price_range = { min: 0, max: 0 };
-    } else if (
-      updateFields.price_range?.min !== undefined &&
-      updateFields.price_range?.max !== undefined
-    ) {
-      updateFields.price = 0;
-    }
-
     const updatedActivity = await this.activityModel.findByIdAndUpdate(
       new Types.ObjectId(id),
-      { $set: updateFields },
-      { new: true } // Returns the updated document
+      activityData,
+      { new: true }
     );
+    if (updatedActivity instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+    if (updatedActivity == null) {
+      throw new NotFoundError("No Activity with this ID");
+    }
 
     return new response(
       true,
       updatedActivity,
-      "Activity is Update Successfully",
+      "Activity is Updated Successfully",
       200
     );
-  };
+  }
 
   //Delete Actitivity
-  public deleteActivityService = async (id: string) => {
+  public async deleteActivityService(id: string) {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID format");
     }
@@ -177,19 +158,19 @@ export default class ActivityService {
     if (activity == null) {
       throw new NotFoundError("Activity not found");
     }
-    return new response(true, null, "Activity deleted successfully", 200);
-  };
+    await this.advertiserModel.findByIdAndUpdate(
+      activity.advertiser_id,
+      { $pull: { activities: activity._id } },
+      { new: true }
+    );
+    return new response(true, activity, "Activity deleted successfully", 200);
+  }
 
-  public async getActivityService(name: string, category: string, tag: string) {
-    // const newCategory = new Category({type:category});
-    // await newCategory.save();
-    // const newActivity = new Activity({
-    //     category: newCategory._id,
-    //     name: name,
-    //     tags: [tag],
-    // });
-    // await newActivity.save();
-
+  public async getSearchActivityService(
+    name: string,
+    category: string,
+    tag: string
+  ) {
     if (!name && !category && !tag) throw new BadRequestError("Invalid input");
 
     const searchCriteria: any = {};
@@ -340,5 +321,56 @@ export default class ActivityService {
       throw new InternalServerError("Internal server error");
 
     return new response(true, activities, "Sorted activities are fetched", 200);
+  }
+  public async getFilterComponentsService() {
+    const categories = await this.categoryModel.find().select("type").lean();
+
+    const Dates = await this.activityModel
+      .find()
+      .sort({ date: 1 }) // Sort dates in ascending order
+      .select("date") // Select only the date field
+      .lean(); // Convert to plain JavaScript object
+
+    const prices = await this.activityModel
+      .find()
+      .select("price")
+      .sort({ price: 1 })
+      .lean();
+
+    const categoryTypes = categories.map((category) => category.type);
+
+    const earliestDate = Dates[0].date;
+    const latestDate = Dates[Dates.length - 1].date;
+
+    const lowestPrice = prices[0]?.price ?? 0;
+    const highestPrice = prices[prices.length - 1]?.price ?? 0;
+
+    const filterComponents: IFilterComponents = {
+      Category: {
+        type: "multi-select",
+        values: categoryTypes,
+      },
+      Date: {
+        type: "date-range",
+        start: earliestDate,
+        end: latestDate,
+      },
+      Price: {
+        type: "slider",
+        min: lowestPrice,
+        max: highestPrice,
+      },
+      Rating: {
+        type: "slider",
+        min: 0,
+        max: 5,
+      },
+    };
+    return new response(
+      true,
+      filterComponents,
+      "Filter components fetched",
+      200
+    );
   }
 }

@@ -36,9 +36,10 @@ export class ActivityController {
   public async updateActivity(req: any, res: any) {
     const { id } = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
+    const activityData = req.body as IActivityDTO;
     const activity = await activityService.updateActivityService(
       id,
-      req.body.activityData
+      activityData
     );
     res.status(activity.status).json({ activity });
   }
@@ -50,10 +51,10 @@ export class ActivityController {
     res.status(activity.status).json({ activity });
   }
 
-  public async getActivity(req: any, res: any) {
+  public async getSearchActivity(req: any, res: any) {
     const { name, category, tag } = req.query;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activities = await activityService.getActivityService(
+    const activities = await activityService.getSearchActivityService(
       name,
       category,
       tag
@@ -127,5 +128,10 @@ export class ActivityController {
       direction
     );
     res.status(activities.status).json({ activities });
+  }
+  public async getFilterComponents(req: any, res: any) {
+    const activityService: ActivityService = Container.get(ActivityService);
+    const filterComponents = await activityService.getFilterComponentsService();
+    res.status(filterComponents.status).json({ filterComponents });
   }
 }

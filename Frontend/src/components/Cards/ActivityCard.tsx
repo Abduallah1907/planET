@@ -118,7 +118,7 @@ const CustomActivityCard = ({
           <div className="text-end">
             <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
             <Badge
-              bg={isBooked ? "success" : "danger"} // Change color based on booking status
+              bg={isBooked ? "active" : "inactive"} // Change color based on booking status
               className="mt-2 custom-status-badge rounded-4 text-center"
               onClick={onChange} // Call onChange when clicked
             >
