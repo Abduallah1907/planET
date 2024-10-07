@@ -3,9 +3,10 @@ import CustomFormGroup from "../FormGroup/FormGroup";
 import "./ProfileFormTourist.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
+import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
 
 interface FormData {
-  yearsOfExperience: string; // Ensure this is included
   firstName: string;
   lastName: string;
   email: string;
@@ -16,9 +17,12 @@ interface FormData {
   username: string;
   nationality: string;
   dob: string;
+  description: string;
+  logo: File | null; // Added logo field
+  about: string; // New 'About' field
 }
 
-const ProfileFormGuide: React.FC = () => {
+const AdvertiserFirst: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -30,12 +34,24 @@ const ProfileFormGuide: React.FC = () => {
     username: "",
     nationality: "",
     dob: "",
-    yearsOfExperience: "", // Initialize here
+    description: "",
+    logo: null, // Initialize logo as null
+    about: "", // Initialize about section
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFormData({ ...formData, logo: e.target.files[0] });
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -44,10 +60,7 @@ const ProfileFormGuide: React.FC = () => {
       alert("Passwords don't match!");
       return;
     }
-    // Here you could also do form submission or API call
-    console.log("Form submitted:", formData);
-    // Clear the form after submission if needed
-    handleCancel();
+    // Handle form submission, including the logo file and about text
   };
 
   const handleCancel = () => {
@@ -62,7 +75,9 @@ const ProfileFormGuide: React.FC = () => {
       username: "",
       nationality: "",
       dob: "",
-      yearsOfExperience: "", // Reset here
+      description: "",
+      logo: null, // Reset logo
+      about: "", // Reset about section
     });
   };
 
@@ -70,7 +85,7 @@ const ProfileFormGuide: React.FC = () => {
     <div className="profile-form-container">
       <Row className="align-items-center mb-4">
         <Col xs={7} className="text-left">
-          <h2 className="my-profile-heading">Hello Tour Guide</h2>
+          <h2 className="my-profile-heading">Welcome Advertiser!</h2>
         </Col>
         <Col xs={3} className="text-center">
           <img
@@ -93,10 +108,10 @@ const ProfileFormGuide: React.FC = () => {
                 placeholder="Enter your First Name"
                 id="firstName"
                 name="firstName"
+                disabled={false}
                 required={true}
                 value={formData.firstName}
                 onChange={handleChange}
-                disabled={false}
               />
             </Col>
             <Col>
@@ -106,10 +121,10 @@ const ProfileFormGuide: React.FC = () => {
                 placeholder="Enter your Last Name"
                 id="lastName"
                 name="lastName"
+                disabled={false}
                 required={true}
                 value={formData.lastName}
                 onChange={handleChange}
-                disabled={false}
               />
             </Col>
           </Row>
@@ -121,23 +136,10 @@ const ProfileFormGuide: React.FC = () => {
                 placeholder="Enter your email"
                 id="email"
                 name="email"
+                disabled={false}
                 required={true}
                 value={formData.email}
                 onChange={handleChange}
-                disabled={false}
-              />
-            </Col>
-            <Col>
-              <CustomFormGroup
-                label="Username:"
-                type="text"
-                placeholder="Enter your username"
-                id="username"
-                name="username"
-                required={true}
-                value={formData.username}
-                onChange={handleChange}
-                disabled={false} // Assuming this is disabled as per your original code
               />
             </Col>
           </Row>
@@ -150,10 +152,10 @@ const ProfileFormGuide: React.FC = () => {
                 placeholder="Enter your password"
                 id="password"
                 name="password"
+                disabled={false}
                 required={true}
                 value={formData.password}
                 onChange={handleChange}
-                disabled={false}
               />
             </Col>
             <Col>
@@ -163,47 +165,52 @@ const ProfileFormGuide: React.FC = () => {
                 placeholder="Retype your password"
                 id="retypePassword"
                 name="retypePassword"
+                disabled={false}
                 required={true}
                 value={formData.retypePassword}
                 onChange={handleChange}
-                disabled={false}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <CustomFormGroup
-                label="Mobile Number"
-                type="tel"
-                placeholder="Enter your mobile number"
-                id="mobile"
-                name="mobile"
-                required
-                value={formData.mobile}
-                onChange={handleChange}
-                disabled={false}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <CustomFormGroup
-                label="Years of Experience"
-                type="number"
-                placeholder="Enter your years of experience"
-                id="yearsOfExperience"
-                name="yearsOfExperience"
-                required
-                value={formData.yearsOfExperience}
-                onChange={handleChange}
-                disabled={false}
               />
             </Col>
           </Row>
 
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="About:"
+                type="text"
+                placeholder="About"
+                id="description"
+                name="description"
+                disabled={false}
+                required={true}
+                value={formData.description} // Correctly referencing description
+                onChange={handleChange}
+              />
+            </Col>
+          </Row>
+
+          {/* New row for logo upload */}
+          <Row>
+            <Col>
+              <Form.Group controlId="formFile" className="mb-3">
+                <Form.Label>
+                  <h3>Upload Seller Logo</h3> {/* Added 'Seller Logo' label */}
+                </Form.Label>
+                <Form.Control
+                  type="file"
+                  name="logo"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          {/* New row for 'About' section */}
+
           <div className="form-actions">
             <Button type="submit" className="update-btn">
-              Update
+              Confirm
             </Button>
             <Button type="button" className="cancel-btn" onClick={handleCancel}>
               Cancel
@@ -215,4 +222,4 @@ const ProfileFormGuide: React.FC = () => {
   );
 };
 
-export default ProfileFormGuide;
+export default AdvertiserFirst;
