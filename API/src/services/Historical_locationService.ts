@@ -9,6 +9,7 @@ import { Inject, Service } from "typedi";
 import mongoose, { Types } from "mongoose";
 import {
   IHistorical_locationDTO,
+  IHistorical_locationOutputDTO,
   Update_IHistorical_locationDTO,
 } from "@/interfaces/IHistorical_Location";
 import Governor from "@/models/Governor";
@@ -22,6 +23,19 @@ export default class Historical_locationService {
     private historical_tagModel: Models.Historical_tagModel,
     @Inject("governorModel") private governorModel: Models.GovernorModel
   ) {}
+  //this function is to choose the price based on the user data
+  private choosePrice = async (location: any, data: any) => {
+    if (data.job.toLowerCase() == "student") {
+      return location.student_price;
+    } else {
+      const governor = await this.governorModel.findById(location.governor_id);
+      if (governor?.nation.toLowerCase() == data.nation.toLowerCase()) {
+        return location.native_price;
+      } else {
+        return location.foreign_price;
+      }
+    }
+  };
 
   //this a function to check if the value corresponds to the key in the object
   private checkIfValueIsRIght = async (Data: Map<string, string>) => {
@@ -57,7 +71,7 @@ export default class Historical_locationService {
       return true;
     }
   };
-  public getAllHistorical_locationsService = async () => {
+  public getAllHistorical_locationsService = async (data: any) => {
     const Historical_location = await this.historical_locationsModel.find({});
     if (Historical_location instanceof Error) {
       throw new InternalServerError("Internal server error");
@@ -65,9 +79,26 @@ export default class Historical_locationService {
     if (Historical_location == null) {
       throw new NotFoundError("No Historical_locations Found");
     }
+
+    const historical_locationsOutput = await Promise.all(
+      Historical_location.map(async (locationi) => ({
+        name: locationi.name,
+        location: locationi.location,
+        ratingVal: locationi.average_rating,
+        reviews: locationi.comments,
+        price: await this.choosePrice(locationi, data), //this function is to choose the price based on the user data
+        opening_hours_from: locationi.opening_hours_from,
+        opening_hours_to: locationi.opening_hours_to,
+        opening_days: locationi.opening_days,
+        description: locationi.description,
+        isActive: locationi.active_flag,
+        imageUrl: locationi.picture,
+        tags: locationi.tags,
+      }))
+    );
     return new response(
       true,
-      Historical_location,
+      historical_locationsOutput,
       "All historical Locations are fetched",
       200
     );
@@ -87,7 +118,7 @@ export default class Historical_locationService {
       foreign_price: historical_locationInput.foreign_price,
       student_price: historical_locationInput.student_price,
       tags: historical_locationInput.tags,
-      active_flag:  true
+      active_flag: true,
     };
     //Code to check if the value corresponds to the key in the object
     const tags_keys = historical_locationData.tags

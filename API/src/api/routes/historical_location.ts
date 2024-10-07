@@ -22,6 +22,19 @@ export default (app: Router) => {
    *       tags:
    *         - Historical_location
    *       summary: Get all Historical_locations
+   *       parameters:
+   *         - in: query
+   *           name: Nation
+   *           required: true
+   *           description: Nationality of the tourist
+   *           schema:
+   *             type: string
+   *         - in: query
+   *           name: Job
+   *           required: true
+   *           description: Job of the tourist
+   *           schema:
+   *             type: string
    *       responses:
    *         '200':
    *           description: A list of all historical locations.
