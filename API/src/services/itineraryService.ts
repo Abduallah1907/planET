@@ -94,11 +94,12 @@ export default class ItineraryService {
     const itineraries = await this.itineraryModel
       .find({})
       .limit(10)
-      .populate("category", "type")
+      .populate("comments")
       .skip((page - 1) * 10);
     if (itineraries instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
+    console.log(itineraries);
 
     let itinerartiesOutput: IItineraryOutputAllDTO[] = itineraries.map((itinerary) => ({
       itinerary_id: itinerary._id,
