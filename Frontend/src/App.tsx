@@ -23,6 +23,9 @@ import SellerProfile from "./components/ProfileForm/SellerProfile";
 import SettingSide from "./components/ProfileForm/settingSide";
 import Advertiser from "./components/ProfileForm/Advertiser";
 import ProfileFormTourGuide from "./components/ProfileForm/ProfileFormTourGuide";
+import SellerFirstProfile from "./components/ProfileForm/SellerFirstProfile";
+import TourGuideFirst from "./components/ProfileForm/TourGuideFirst";
+import AdvertiserFirst from "./components/ProfileForm/AdvertiserFirst";
 import AdvertiserCreate from "./views/AdvertiserCreate";
 import AdvertiserCreateUpdate from "./views/AdvertiserCreateUpdate";
 import AddNewProduct from "./views/AddNewProduct";
@@ -36,7 +39,7 @@ import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
 const App: React.FC = () => {
   return (
     <AppProvider>
-      <TopBar/>
+      <TopBar />
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/Login" element={<Login />} />
@@ -44,13 +47,14 @@ const App: React.FC = () => {
         <Route path="/admin" element={<CreateAdmin />} />
         <Route path="/governer" element={<CreateGoverner />} />
         <Route path="/test" element={<BookingLayout />} />
+        <Route path="/TouristEdit" element={<ProfileForm />} />
         <Route path="/Activity" element={<Activities />} />
         <Route path="/editprofile" element={<ProfileForm />} />
         <Route path="/Itinerary" element={<Itinerary />} />
         <Route path="/Historical" element={<HistoricalPlaces />} />
-        <Route path="/tourist" element={<TouristReg />} />
-        <Route path='/TourGuidedashboard' element={<TourGuideDashboard />} />
-        <Route path='/AdminDashboard' element={<AdminDashboard />} />
+
+        <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
+        <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/SellerDashboard" element={<SellerDashboard />} />
@@ -59,6 +63,8 @@ const App: React.FC = () => {
         <Route path="/SettingSide" element={<SettingSide />} />
         <Route path="/TourGuide" element={<ProfileFormTourGuide />} />
         <Route path="/Advertiser" element={<Advertiser />} />
+        <Route path="/SellerFirstProfile" element={<SellerFirstProfile />} />
+        <Route path="/TourGuideFirst" element={<TourGuideFirst />} />
         <Route path="/Products" element={<Products />} />
         <Route path="/AdvertiserCreate" element={<AdvertiserCreate />} />
         <Route path="/AdvertiserCreateUpdate" element={<AdvertiserCreateUpdate />} />
@@ -67,6 +73,7 @@ const App: React.FC = () => {
         <Route path="/AddItinerary" element={<AddItinerary />} />
 
         <Route path="/SellerProfile" element={<SellerProfile />} />
+        <Route path="/AdvertiserFirst" element={<AdvertiserFirst />} />
         <Route path="/HistoricalDetails/:id" element={<HistoricalDetails />} />
       </Routes>
     </AppProvider>
