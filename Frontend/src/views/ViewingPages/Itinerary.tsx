@@ -5,61 +5,8 @@ import FilterBy from "../../components/FilterBy/FilterBy";
 import { FaSearch } from "react-icons/fa";
 import { BiSort } from "react-icons/bi";
 import filterOptions from '../../utils/filterOptions.json';
-
-const activityData = [
-  {
-    locations: "Hiking Adventure",
-    pickup: "Mountain Base",
-    dropoff: "Mountain Peak",
-    Languages: "English, Spanish",
-    accessibility: true,
-    RatingVal: 4.5,
-    Reviews: 120,
-    Price: 150.0,
-    Duration: "3 hours",
-    Available_Dates: new Date(),
-    isActive: true,
-    isBooked: true,
-    tags: ["Adventure", "Nature"],
-  },
-  {
-    locations: "City Night Tour",
-    pickup: "Downtown",
-    dropoff: "Central Park",
-    Languages: "English, French",
-    accessibility: false,
-    RatingVal: 4.8,
-    Reviews: 95,
-    Price: 100.0,
-    Duration: "2 hours",
-    Available_Dates: new Date(),
-    isActive: true,
-    isBooked: false,
-    tags: ["NightLife", "City"],
-  },
-  {
-    locations: "Football Match",
-    pickup: "Stadium Entrance",
-    dropoff: "Stadium Exit",
-    Languages: "English, Arabic",
-    accessibility: true,
-    RatingVal: 4.0,
-    Reviews: 50,
-    Price: 70.0,
-    Duration: "4 hours",
-    Available_Dates: new Date(),
-    isActive: true,
-    isBooked: false,
-    tags: ["Sports", "Entertainment"],
-  },
-];
-
-export default function ActivitiesPage() {
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
-import filterOptions from '../utils/filterOptions.json';
-import { ItineraryService } from "../services/ItineraryService";
-import { IItinerary } from "../types/IItinerary";
+import { ItineraryService } from "../../services/ItineraryService";
+import { IItinerary } from "../../types/IItinerary";
 
 export default function ItinerariesPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -185,3 +132,4 @@ export default function ItinerariesPage() {
     </Container>
   );
 }
+
