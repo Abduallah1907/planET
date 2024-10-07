@@ -14,6 +14,7 @@ interface InputData {
   name: string;
   className?: string;
   accept?: string;
+  multiple?: boolean;
 }
 
 function CustomFormGroup({
@@ -27,6 +28,7 @@ function CustomFormGroup({
   onChange,
   name,
   accept,
+  multiple,
 }: InputData) {
   return (
     <Form.Group className="form-group" id={id}>
@@ -46,6 +48,7 @@ function CustomFormGroup({
         }
         accept={type === "file" ? accept : undefined}
         {...(type !== "file" ? { value: value || "" } : {})}
+        multiple={multiple}
       />
     </Form.Group>
   );

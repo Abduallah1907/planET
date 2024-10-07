@@ -32,6 +32,7 @@ export default function StakeholderForm() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
+      console.log("File uploaded: ", e.target.files);
       setStakeData({ ...StakeData, file: e.target.files[0] });
     }
   };
@@ -116,6 +117,7 @@ export default function StakeholderForm() {
             onChange={handleFileChange}
             name={"file"}
             accept={".pdf,.doc,.docx"}
+            multiple={true}
           />
         </Col>
       </Row>
