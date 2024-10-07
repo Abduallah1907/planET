@@ -95,6 +95,7 @@ export default class ItineraryService {
       .find({})
       .limit(10)
       .populate("comments")
+      .populate("tags")
       .skip((page - 1) * 10);
     if (itineraries instanceof Error) {
       throw new InternalServerError("Internal server error");
@@ -103,8 +104,10 @@ export default class ItineraryService {
 
     let itinerartiesOutput: IItineraryOutputAllDTO[] = itineraries.map((itinerary) => ({
       itinerary_id: itinerary._id,
+      name: itinerary.name,
       accessibility: itinerary.accessibility,
       active_flag: itinerary.active_flag,
+      inappropriate_flag: itinerary.inappropriate_flag,
       available_dates: itinerary.available_dates,
       reviews: itinerary.comments,
       drop_off_loc: itinerary.drop_off_loc,
@@ -114,6 +117,7 @@ export default class ItineraryService {
       price: itinerary.price,
       rating_value: itinerary.average_rating,
       locations: itinerary.locations,
+      tags: itinerary.tags,
     }));
 
     return new response(true, itinerartiesOutput, "Page " + page + " of itineraries", 200);

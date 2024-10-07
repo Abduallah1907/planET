@@ -75,6 +75,7 @@ export interface IItineraryOutputDTO {
 
 export interface IItineraryOutputAllDTO {
   itinerary_id: ObjectId;
+  name: string;
   locations?: Location[];
   pickup_loc: Location;
   drop_off_loc: Location;
@@ -85,6 +86,8 @@ export interface IItineraryOutputAllDTO {
   price: Number;
   duration: String;
   available_dates: Date[];
+  inappropriate_flag: Boolean;
   active_flag: Boolean;
+
   tags?: ObjectId[];
 }
