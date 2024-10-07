@@ -9,13 +9,12 @@ export class ProductController {
   public async createProduct(req: any, res: any) {
     const productService: ProductService = Container.get(ProductService);
     const product: IProduct = req.body;
-    const { seller_id } = req.params;
-    const sellerObjectId = new Types.ObjectId(seller_id);
-    const result = await productService.createProductService(
-      sellerObjectId,
+    const { user_id } = req.params;
+    const newProduct = await productService.createProductService(
+      user_id,
       product
     );
-    res.status(result.status).json(result);
+    res.status(newProduct.status).json(newProduct);
   }
 
   public async updateProduct(req: any, res: any) {

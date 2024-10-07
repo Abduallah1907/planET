@@ -14,8 +14,8 @@ import { FaBars } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { toggleSidebar } from "../../store/sidebarSlice";
 
-
 const TopBar: React.FC= () => {
+
   const navigate = useNavigate();
   const { currentFlag, setCurrentFlag, currency, setCurrency } =
     useAppContext();
