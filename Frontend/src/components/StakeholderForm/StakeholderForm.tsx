@@ -10,6 +10,7 @@ interface StakeData {
   password: string;
   confirmPassword: string;
   file: File | null;
+  role: string;
 }
 
 export default function StakeholderForm() {
@@ -19,6 +20,7 @@ export default function StakeholderForm() {
     password: "",
     confirmPassword: "",
     file: null,
+    role: "",
   });
 
   const handleChange = (
@@ -43,7 +45,7 @@ export default function StakeholderForm() {
       alert("Passwords don't match!");
       return;
     }
-    console.log("File uploaded: ", StakeData.file);
+    console.log("Stakeholder Data:", StakeData);
   };
 
   return (
@@ -106,6 +108,20 @@ export default function StakeholderForm() {
         </Col>
       </Row>
       <Row>
+        <Col>
+          <CustomFormGroup
+            label={"Role Type"}
+            type={"select"} 
+            placeholder={"Select a role"}
+            id={"role"}
+            disabled={false}
+            required={true}
+            value={StakeData.role}
+            onChange={handleChange}
+            name={"role"}
+            options={["Tour Guide", "Advertiser", "Seller"]} 
+          />
+        </Col>
         <Col>
           <CustomFormGroup
             label={"Upload Documents"}
