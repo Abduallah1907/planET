@@ -13,6 +13,7 @@ import {
 } from "@/interfaces/IHistorical_Location";
 import Governor from "@/models/Governor";
 import historical_location from "@/api/routes/historical_location";
+import { IFilterComponents } from "@/interfaces/IFilterComponents";
 @Service()
 export default class Historical_locationService {
   constructor(
@@ -87,7 +88,7 @@ export default class Historical_locationService {
       foreign_price: historical_locationInput.foreign_price,
       student_price: historical_locationInput.student_price,
       tags: historical_locationInput.tags,
-      active_flag:  true
+      active_flag: true,
     };
     //Code to check if the value corresponds to the key in the object
     const tags_keys = historical_locationData.tags
@@ -376,6 +377,37 @@ export default class Historical_locationService {
       true,
       historical_locations,
       "Filtered itineraries are fetched",
+      200
+    );
+  }
+
+  public async getFilterComponentsService() {
+    const historicalLocations = await this.historical_locationsModel
+      .find()
+      .select("tags")
+      .lean();
+
+    // Extract and aggregate tags
+    const tagsSet = new Set<string>();
+    historicalLocations.forEach((location: any) => {
+      if (location.tags) {
+        Object.values(location.tags).forEach((tag) =>
+          tagsSet.add(tag as string)
+        );
+      }
+    });
+
+    const tagsList = Array.from(tagsSet);
+
+    const filterComponents: IFilterComponents = {
+      Tag: { type: "multi-select", values: tagsList },
+      // Add other filter components as needed
+    };
+
+    return new response(
+      true,
+      filterComponents,
+      "Filter components fetched",
       200
     );
   }
