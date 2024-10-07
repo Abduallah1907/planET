@@ -24,7 +24,7 @@ export class TourGuideController {
     const newWorkExperience = await tourGuideService.createPreviousWorkService(
       previousWorkData
     );
-    res.status(newWorkExperience.status).json({ newWorkExperience });
+    res.status(newWorkExperience.status).json(newWorkExperience);
   }
 
   public async updatePreviousWork(req: Request, res: Response): Promise<any> {
@@ -32,7 +32,7 @@ export class TourGuideController {
     const tourGuideService: TourGuideService = Container.get(TourGuideService);
     const updatedPreviousWork =
       await tourGuideService.updatePreviousWorkService(updatedPreviousWorkData);
-    res.status(updatedPreviousWork.status).json({ updatedPreviousWork });
+    res.status(updatedPreviousWork.status).json(updatedPreviousWork);
   }
 
   public async deletePreviousWork(req: Request, res: Response): Promise<any> {
@@ -45,7 +45,7 @@ export class TourGuideController {
         _idObjectId,
         tour_guide_idObjectId
       );
-    res.status(deletedPreviousWork.status).json({ deletedPreviousWork });
+    res.status(deletedPreviousWork.status).json(deletedPreviousWork);
   }
   // ---- Profile ----
   public async createProfile(req: Request, res: Response): Promise<any> {
@@ -54,7 +54,7 @@ export class TourGuideController {
     const tourGuideProfile = await tourGuideService.createProfileService(
       tourGuideData
     );
-    res.status(tourGuideProfile.status).json({ tourGuideProfile });
+    res.status(tourGuideProfile.status).json(tourGuideProfile);
   }
   public async getProfile(req: Request, res: Response): Promise<any> {
     const { email } = req.params;
@@ -70,6 +70,6 @@ export class TourGuideController {
       tourGuideUpdatedData,
       email
     );
-    res.status(updatedProfile.status).json({ updatedProfile });
+    res.status(updatedProfile.status).json(updatedProfile);
   }
 }
