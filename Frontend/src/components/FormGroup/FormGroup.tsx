@@ -9,10 +9,11 @@ interface InputData {
   id: string;
   disabled: boolean;
   required: boolean;
-  value: string;
+  value?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   name: string;
   className?: string;
+  accept?: string;
 }
 
 function CustomFormGroup({
@@ -25,6 +26,7 @@ function CustomFormGroup({
   value,
   onChange,
   name,
+  accept,
 }: InputData) {
   return (
     <Form.Group className="form-group" id={id}>
@@ -34,10 +36,16 @@ function CustomFormGroup({
         placeholder={placeholder}
         disabled={disabled}
         required={required}
-        value={value}
+        // value={type !== "file" ? value : ""}
         onChange={onChange}
         name={name}
-        className={disabled ? "disabled-input custom-form-control" : " custom-form-control"}
+        className={
+          disabled
+            ? "disabled-input custom-form-control"
+            : " custom-form-control"
+        }
+        accept={type === "file" ? accept : undefined}
+        {...(type !== "file" ? { value: value || "" } : {})}
       />
     </Form.Group>
   );

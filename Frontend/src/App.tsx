@@ -27,13 +27,15 @@ import SettingSide from "./components/ProfileForm/settingSide";
 import Advertiser from "./components/ProfileForm/Advertiser";
 import Products from "./components/Products";
 import ProfileFormTourGuide from "./components/ProfileForm/ProfileFormTourGuide";
+import filterOptions from "./utils/filterOptions.json";
+import StakeholderReg from "./views/auth/StakeholderReg/StakeholderReg";
 
 const App: React.FC = () => {
   const [isBooked, setIsBooked] = useState(false); // Manage booking state
 
   return (
     <AppProvider>
-      <TopBar/>
+      <TopBar />
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/Login" element={<Login />} />
@@ -102,16 +104,16 @@ const App: React.FC = () => {
           }
         />
         <Route path="/tourist" element={<TouristReg />} />
+        <Route path="/editprofile" Component={ProfileForm} />
         <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
-        <Route path="/SellerDashboard" element={<SellerDashboard />} />
-        <Route path="/ActivityViewEdit" element={<ActivityViewEdit />} />
-        <Route path="/filter" element={<FilterBy />} />
-        <Route path="/delete" element={<Delete />} />
-        <Route path="/SettingSide" element={<SettingSide />} />
-        <Route path="/TourGuide" element={<ProfileFormTourGuide />} />
-        <Route path="/Advertiser" element={<Advertiser />} />
-        <Route path="/Products" element={<Products />} />
+        <Route path="/editprofile" Component={ProfileForm} />
+        <Route
+          path="/filter"
+          element={<FilterBy filterOptions={filterOptions} />}
+        />
+        <Route path="/stakeholder" element={<StakeholderReg />} />
+        <Route path="/" element={<MainPage />} />
 
         <Route path="/SellerProfile" element={<SellerProfile />} />
       </Routes>

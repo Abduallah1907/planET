@@ -1,6 +1,6 @@
 {
   "Category": {
-    "type": "multi-Select",
+    "type": "multi-select",
     "values": ["Text1", "Text2", "Text3"]
   },
   "Price": {
