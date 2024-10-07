@@ -5,8 +5,10 @@ import { ChangeEvent, useEffect, useState } from "react";
 import AuthService from "../../../services/authService";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store/hooks";
-import { activateSidebar } from "../../../store/sidebarSlice";
+import { activateSidebar, setNavItems } from "../../../store/sidebarSlice";
 import { setUser } from "../../../store/userSlice";
+import path from "path";
+import { BiLabel } from "react-icons/bi";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -47,6 +49,7 @@ export default function Login() {
       switch (user.status) {
         case "WAITING_FOR_APPROVAL":
         case "REJECTED":
+
           navigate("/login");
           return;
           break;
@@ -55,19 +58,35 @@ export default function Login() {
       console.log("OJMSJKGYJEGFJH");
       switch (user.role) {
         case "TOURIST":
+          dispatch(setNavItems([
+            { path: "/Touristedit", label: "Edit Profile" },
+          ]));
           navigate("/Touristedit");
           return;
           break;
         case "TOURGUIDE":
+          dispatch(setNavItems([
+            { path: "/TourGuide", label: "Profile" },
+            { path: "/TourGuideDashboard", label: "Dashboard" },
+            { path: "/AddItinerary", label: "Add Itinerary" },
+            { path: "/MyItineraries", label: "My Itineraries" },
+          ]));
           if (user.first_time_login) {
+
             navigate("/TourGuideFirst");
           } else {
+
             navigate("/TourGuide");
           }
           return;
 
           break;
         case "ADVERTISER":
+          dispatch(setNavItems([
+            { path: "/Advertiser", label: "Profile" },
+            { path: "/AdvertiserCreate", label: "Create Advertisement" },
+            { path: "/AdvertiserCreateUpdate", label: "Update Advertisement" },
+          ]));
           if (user.first_time_login) {
             navigate("/AdvertiserFirst");
           } else {
@@ -76,6 +95,12 @@ export default function Login() {
           return;
           break;
         case "SELLER":
+          dispatch(setNavItems([
+            { path: "/SellerProfile", label: "Profile" },
+            { path: "/SellerDashboard", label: "Dashboard" },
+            { path: "/AddNewProduct", label: "Add New Product" },
+            { path: "/MyProducts", label: "My Products" }
+          ]));
           if (user.first_time_login) {
             navigate("/SellerFirstProfile");
           } else {
@@ -83,6 +108,10 @@ export default function Login() {
           }
           break;
         case "GOVERNOR":
+          dispatch(setNavItems([
+            { path: "/AddHistoricalLocation", label: "Add Historical Location" },
+            { path: "/MyHistoricalLocations", label: "My Historical Locations" },
+          ]));
           if (user.first_time_login) {
             navigate("/");
           } else {
@@ -90,14 +119,19 @@ export default function Login() {
           }
           break;
         case "ADMIN":
-          if (user.first_time_login) {
-            navigate("/admin");
-          } else {
-            navigate("/admin");
-          }
+          dispatch(setNavItems([
+            { path: "/AdminDashboard", label: "Dashboard" },
+            { path: "/admin", label: "Create Admin" },
+            { path: "/governer", label: "Create Governer" },
+            { path: "/delete", label: "Delete User" },
+          ]));
+          navigate("/AdminDashboard");
           break;
           default:
-          navigate("/");
+            navigate("/");
+            return;
+          
+          
           break;
       }
      

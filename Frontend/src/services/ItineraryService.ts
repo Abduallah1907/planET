@@ -32,6 +32,15 @@ class ItineraryService{
   }
     
 };
+  public static editItinerary = async (id: string) => {
+    try {
+      const response = await axiosInstance.put(`/itinerary/editItinerary/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
 public static getSearchItinerary=async () => {
   try{
     const response=await axiosInstance.get("/itinerary/getSearchItinerary")

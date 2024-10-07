@@ -130,9 +130,4 @@ export class ItineraryController {
     );
     res.status(itineraries.status).json(itineraries);
   }
-  public async getFilterComponents(req: any, res: any) {
-    const itineraryService: ItineraryService = Container.get(ItineraryService);
-    const filterComponent = await itineraryService.getFilterComponentsService();
-    res.status(filterComponent.status).json(filterComponent);
-  }
 }

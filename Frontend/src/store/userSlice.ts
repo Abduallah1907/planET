@@ -2,6 +2,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
 
 interface UserState {
+    job: any;
+    id(id: any, arg1: { name: string; email: any; job: any; }): unknown;
+    isLoggedIn: any;
     name: string;
     _id: string;
     username: string;
@@ -22,7 +25,12 @@ const initialState: UserState = {
     phone_number: '',
     status: '',
     token: '',
-    stakeholder_id: undefined
+    stakeholder_id: undefined,
+    isLoggedIn: undefined,
+    job: undefined,
+    id: function (id: any, arg1: { name: string; email: any; job: any; }): unknown {
+        throw new Error('Function not implemented.');
+    }
 };
 
 export const userSlice = createSlice({
