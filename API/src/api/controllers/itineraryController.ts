@@ -16,6 +16,7 @@ export class ItineraryController {
       itineraryData
     );
     res.status(newItinerary.status).json(newItinerary);
+    res.status(newItinerary.status).json(newItinerary);
   }
 
   public async getItineraryByID(req: Request, res: Response): Promise<any> {
@@ -25,6 +26,7 @@ export class ItineraryController {
     const newItinerary = await itineraryService.getItineraryByIDService(
       itinerary_idObjectId
     );
+    res.status(newItinerary.status).json(newItinerary);
     res.status(newItinerary.status).json(newItinerary);
   }
   public async updateItinerary(req: Request, res: Response): Promise<any> {
@@ -37,6 +39,7 @@ export class ItineraryController {
       itinerary_idObjectId,
       itineraryData
     );
+    res.status(updatedItinerary.status).json(updatedItinerary);
     res.status(updatedItinerary.status).json(updatedItinerary);
   }
 

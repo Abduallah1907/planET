@@ -17,6 +17,7 @@ export class Historical_locationController {
         req.query
       );
     res.status(historical_location.status).json(historical_location);
+
   }
   public async createHistorical_locationController(req: any, res: any) {
     const historical_locationService: Historical_locationService =
