@@ -36,50 +36,62 @@ import Itinerary from "./views/ViewingPages/Itinerary";
 import HistoricalPlaces from "./views/ViewingPages/HistoricalPlaces";
 import Products from "./views/ViewingPages/Products";
 import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
-import filterOptions from "./utils/filterOptions.json";
 import StakeholderReg from "./views/auth/StakeholderReg/StakeholderReg";
+import ItineraryCardd from "./views/ItineraryCardd";
+import EditHistoricalLocation from "./views/EditHistoricalLocation";
+import EditProduct from "./views/EditProduct";
+import EditItinerary from "./views/EditItinerary";
+import TopBarLinks from "./views/Main Page/TopBarLinks";
 
 const App: React.FC = () => {
   return (
     <AppProvider>
       <TopBar />
+      <TopBarLinks/>
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/Registeration" element={<TouristReg />} />
+        <Route path="/stakeholder" element={<StakeholderReg />} />
+
+        <Route path="/AdvertiserFirst" element={<AdvertiserFirst />} />
+        <Route path="/TourGuideFirst" element={<TourGuideFirst />} />
+        <Route path="/SellerFirstProfile" element={<SellerFirstProfile />} />
+
         <Route path="/admin" element={<CreateAdmin />} />
         <Route path="/governer" element={<CreateGoverner />} />
         <Route path="/test" element={<BookingLayout />} />
-        <Route path="/TouristEdit" element={<ProfileForm />} />
+        
         <Route path="/Activity" element={<Activities />} />
+        <Route path="/Activity/:id" element={<ActivityDetails />} />
+
         <Route path="/Itinerary" element={<Itinerary />} />
+
         <Route path="/Historical" element={<HistoricalPlaces />} />
+        <Route path="/Historical/:id" element={<HistoricalDetails />} />
+
+        <Route path="/Products" element={<Products />} />
+
         <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/SellerDashboard" element={<SellerDashboard />} />
-        <Route path="/Activity/:id" element={<ActivityDetails />} />
         <Route path="/delete" element={<Delete />} />
         <Route path="/SettingSide" element={<SettingSide />} />
         <Route path="/TourGuide" element={<ProfileFormTourGuide />} />
         <Route path="/Advertiser" element={<Advertiser />} />
-        <Route path="/SellerFirstProfile" element={<SellerFirstProfile />} />
-        <Route path="/TourGuideFirst" element={<TourGuideFirst />} />
-        <Route path="/Products" element={<Products />} />
         <Route path="/AdvertiserCreate" element={<AdvertiserCreate />} />
         <Route path="/AdvertiserCreateUpdate" element={<AdvertiserCreateUpdate />} />
         <Route path="/AddNewProduct" element={<AddNewProduct />} />
         <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
         <Route path="/AddItinerary" element={<AddItinerary />} />
-        <Route
-          path="/filter"
-          element={<FilterBy filterOptions={filterOptions} />}
-        />
-        <Route path="/stakeholder" element={<StakeholderReg />} />
-        <Route path="/" element={<MainPage />} />
+        <Route path="/ItineraryCardd" element={<ItineraryCardd />} />
 
+        <Route path="/EditHistoricalLocation" element={<EditHistoricalLocation />} />
+        <Route path="/EditProduct" element={<EditProduct />} />
+        <Route path="/EditItinerary" element={<EditItinerary />} />
+
+        <Route path="/TouristEdit" element={<ProfileForm />} />
         <Route path="/SellerProfile" element={<SellerProfile />} />
-        <Route path="/AdvertiserFirst" element={<AdvertiserFirst />} />
-        <Route path="/Historical/:id" element={<HistoricalDetails />} />
       </Routes>
     </AppProvider>
   );

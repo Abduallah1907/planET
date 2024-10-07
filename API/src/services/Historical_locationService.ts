@@ -23,7 +23,7 @@ export default class Historical_locationService {
     @Inject("historical_tagModel")
     private historical_tagModel: Models.Historical_tagModel,
     @Inject("governorModel") private governorModel: Models.GovernorModel
-  ) {}
+  ) { }
   //this function is to choose the price based on the user data
   private choosePrice = async (location: any, data: any) => {
     if (data.job.toLowerCase() == "student") {
@@ -96,7 +96,7 @@ export default class Historical_locationService {
         active_flag: locationi.active_flag,
         picture: locationi.picture,
         tags: locationi.tags,
-        reviewsCount : locationi.comments.length, 
+        reviewsCount: locationi.comments.length,
       }))
     );
     return new response(
@@ -173,13 +173,13 @@ export default class Historical_locationService {
   };
 
   public getHistorical_locationByIDService = async (
-    historical_location_id: string
+    data: any,
   ) => {
-    if (!Types.ObjectId.isValid(historical_location_id)) {
+    if (!Types.ObjectId.isValid(data.historical_location_id)) {
       throw new BadRequestError("Invalid ID format");
     }
     const Historical_location = await this.historical_locationsModel.findById(
-      new Types.ObjectId(historical_location_id)
+      new Types.ObjectId(data.historical_location_id)
     );
     if (Historical_location instanceof Error)
       throw new InternalServerError("Internal server error");
@@ -187,9 +187,26 @@ export default class Historical_locationService {
 
     if (Historical_location == null)
       throw new NotFoundError("Historical Location not found");
+
+    const historical_locationOutput = {
+      _id: Historical_location._id,
+      name: Historical_location.name,
+      location: Historical_location.location,
+      average_rating: Historical_location.average_rating,
+      comments: Historical_location.comments,
+      price: await this.choosePrice(Historical_location, data), //this function is to choose the price based on the user data
+      opening_hours_from: Historical_location.opening_hours_from,
+      opening_hours_to: Historical_location.opening_hours_to,
+      opening_days: Historical_location.opening_days,
+      description: Historical_location.description,
+      active_flag: Historical_location.active_flag,
+      picture: Historical_location.picture,
+      tags: Historical_location.tags,
+      reviewsCount: Historical_location.comments.length,
+    }
     return new response(
       true,
-      Historical_location,
+      historical_locationOutput,
       "Historical Location is found",
       200
     );

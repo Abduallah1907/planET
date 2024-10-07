@@ -6,6 +6,7 @@ import AuthService from "../../../services/authService";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store/hooks";
 import { activateSidebar } from "../../../store/sidebarSlice";
+import { setUser } from "../../../store/userSlice";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -36,10 +37,13 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const user = await AuthService.login(
+      let user = await AuthService.login(
         userData.usernameOrEmail,
         userData.passwordLogin
       );
+      user = user.data;
+
+      dispatch(setUser(user));
       switch (user.status) {
         case "WAITING_FOR_APPROVAL":
         case "REJECTED":
@@ -48,9 +52,10 @@ export default function Login() {
           break;
         case "APPROVED":
       }
+      console.log("OJMSJKGYJEGFJH");
       switch (user.role) {
         case "TOURIST":
-          navigate("/TouristEdit");
+          navigate("/Touristedit");
           return;
           break;
         case "TOURGUIDE":

@@ -10,18 +10,18 @@ export default (app: Router) => {
   app.use("/product", route);
   /**
    * @swagger
-   * /api/product/createProduct/{user_id}:
+   * /api/product/createProduct/{seller_id}:
    *   post:
-   *     description: Create a product and link it to the seller with their user_id
+   *     description: Create a product and link it to the seller_id
    *     tags:
    *       - Product
    *     parameters:
    *       - in: path
-   *         name: user_id
+   *         name: seller_id
    *         required: true
    *         schema:
    *           type: string
-   *         description: user_id of the seller
+   *         description: seller id
    *     requestBody:
    *       required: true
    *       content:
@@ -192,7 +192,7 @@ export default (app: Router) => {
    */
 
   route.post(
-    "/createProduct/:user_id",
+    "/createProduct/:seller_id",
     authorize([UserRoles.Seller]),
     productController.createProduct
   );

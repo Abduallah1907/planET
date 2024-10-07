@@ -46,6 +46,9 @@
     margin-right: 15px;
     border-radius: 50% !important;
 }
+.btn-flag:hover {
+    scale: 0.9;
+}
 
 .btn-help {
     border: white !important; /* Remove any border */
@@ -62,14 +65,12 @@
 .btn-help:hover {
     scale: 0.85; /* Adjust as needed */
     
-    width: 25px;
-    height: 25px;
+   
     background-color: transparent !important;
     background-size: cover;
     background-position: center;
     border: white !important;
     cursor: pointer;
-    margin-right: 15px;
     filter: invert(1);
 }
 
