@@ -1,55 +1,39 @@
 import React, { useState } from "react";
-import "./ProfileFormTourist.css"; // Make sure this includes your CSS
-
+import CustomFormGroup from "../FormGroup/FormGroup";
+import "./ProfileFormTourist.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
-import Sidebar from "../SideBar/Sidebar";
-import CustomFormGroup from "../FormGroup/FormGroup";
-import { useAppSelector,useAppDispatch } from "../../store/hooks";
-import { toggleSidebar } from "../../store/sidebarSlice";
-
-interface NationalityOption {
-  value: string;
-  label: string;
-}
-
-const nationalityOptions: NationalityOption[] = nationalityOptionsData;
 
 interface FormData {
+  yearsOfExperience: string; // Ensure this is included
+  firstName: string;
+  lastName: string;
+  email: string;
   mobile: string;
-  yearsOfExperience: string;
-  previousWork: string;
+  profession: string;
   password: string;
   retypePassword: string;
+  username: string;
   nationality: string;
   dob: string;
 }
 
-const ProfileFormTourGuide: React.FC = () => {
+const ProfileFormGuide: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
+    firstName: "",
+    lastName: "",
+    email: "",
     mobile: "",
-    yearsOfExperience: "",
-    previousWork: "",
+    profession: "",
     password: "",
     retypePassword: "",
+    username: "",
     nationality: "",
     dob: "",
+    yearsOfExperience: "", // Initialize here
   });
 
-  // Navigation items for the tour guide form
-  const tourGuideNavItems = [
-    { path: "/dashboard", label: "Dashboard" },
-    { path: "/TourGuide", label: "Profile" },
-    { path: "/jobs", label: "Jobs" },
-    { path: "/settings", label: "Settings" },
-  ];
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -60,113 +44,175 @@ const ProfileFormTourGuide: React.FC = () => {
       alert("Passwords don't match!");
       return;
     }
+    // Here you could also do form submission or API call
     console.log("Form submitted:", formData);
+    // Clear the form after submission if needed
+    handleCancel();
   };
 
   const handleCancel = () => {
     setFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
       mobile: "",
-      yearsOfExperience: "",
-      previousWork: "",
+      profession: "",
       password: "",
       retypePassword: "",
+      username: "",
       nationality: "",
       dob: "",
+      yearsOfExperience: "", // Reset here
     });
   };
 
-  const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen)
-  const dispatch = useAppDispatch()
-
   return (
     <div className="profile-form-container">
-      <div className={`sidebar-wrapper ${isSidebarOpen ? "open" : ""}`}>
-        <Sidebar
-          isOpen={isSidebarOpen}
-          onClose={()=>dispatch(toggleSidebar())}
-          navItems={tourGuideNavItems} // Pass the dynamic nav items
-        />
-      </div>
-      <div className={`content-wrapper ${isSidebarOpen ? "shifted" : ""}`}>
-        <Row className="align-items-center mb-4">
-          <Col xs={9} className="text-left">
-            <h2 className="my-profile-heading">Hi Tour Guide</h2>
-          </Col>
-          <Col xs={1} className="text-center">
-            <img
-              src={Logo}
-              width="70"
-              height="50"
-              className="align-top logo"
-              alt="Travel Agency logo"
-            />
-          </Col>
-        </Row>
-        <Container>
-          <Form onSubmit={handleSubmit}>
-            <Row>
-              <Col>
-                <CustomFormGroup
-                  label="Mobile Number"
-                  type="tel"
-                  placeholder="Enter your mobile number"
-                  id="mobile"
-                  name="mobile"
-                  required
-                  value={formData.mobile}
-                  onChange={handleChange}
-                  disabled={false}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <CustomFormGroup
-                  label="Years of Experience"
-                  type="number"
-                  placeholder="Enter your years of experience"
-                  id="yearsOfExperience"
-                  name="yearsOfExperience"
-                  required
-                  value={formData.yearsOfExperience}
-                  onChange={handleChange}
-                  disabled={false}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <CustomFormGroup
-                  label="Previous Work (if exists)"
-                  type="text"
-                  placeholder="Describe your previous work"
-                  id="previousWork"
-                  name="previousWork"
-                  value={formData.previousWork}
-                  onChange={handleChange}
-                  className="previous-work-input"
-                  disabled={false}
-                  required={false}
-                />
-              </Col>
-            </Row>
-            <div className="form-actions">
-              <Button type="submit" className="update-btn">
-                Update
-              </Button>
-              <Button
-                type="button"
-                className="cancel-btn"
-                onClick={handleCancel}
-              >
-                Cancel
-              </Button>
-            </div>
-          </Form>
-        </Container>
-      </div>
+      <Row className="align-items-center mb-4">
+        <Col xs={7} className="text-left">
+          <h2 className="my-profile-heading">Hello Tour Guide</h2>
+        </Col>
+        <Col xs={3} className="text-center">
+          <img
+            src={Logo}
+            width="70"
+            height="50"
+            className="align-top logo"
+            alt="Travel Agency logo"
+          />
+        </Col>
+      </Row>
+
+      <Container>
+        <Form onSubmit={handleSubmit}>
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="First Name"
+                type="text"
+                placeholder="Enter your First Name"
+                id="firstName"
+                name="firstName"
+                required={true}
+                value={formData.firstName}
+                onChange={handleChange}
+                disabled={false}
+              />
+            </Col>
+            <Col>
+              <CustomFormGroup
+                label="Last Name:"
+                type="text"
+                placeholder="Enter your Last Name"
+                id="lastName"
+                name="lastName"
+                required={true}
+                value={formData.lastName}
+                onChange={handleChange}
+                disabled={false}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="Email:"
+                type="email"
+                placeholder="Enter your email"
+                id="email"
+                name="email"
+                required={true}
+                value={formData.email}
+                onChange={handleChange}
+                disabled={false}
+              />
+            </Col>
+            <Col>
+              <CustomFormGroup
+                label="Username:"
+                type="text"
+                placeholder="Enter your username"
+                id="username"
+                name="username"
+                required={true}
+                value={formData.username}
+                onChange={handleChange}
+                disabled={false} // Assuming this is disabled as per your original code
+              />
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="Password:"
+                type="password"
+                placeholder="Enter your password"
+                id="password"
+                name="password"
+                required={true}
+                value={formData.password}
+                onChange={handleChange}
+                disabled={false}
+              />
+            </Col>
+            <Col>
+              <CustomFormGroup
+                label="Retype Password:"
+                type="password"
+                placeholder="Retype your password"
+                id="retypePassword"
+                name="retypePassword"
+                required={true}
+                value={formData.retypePassword}
+                onChange={handleChange}
+                disabled={false}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="Mobile Number"
+                type="tel"
+                placeholder="Enter your mobile number"
+                id="mobile"
+                name="mobile"
+                required
+                value={formData.mobile}
+                onChange={handleChange}
+                disabled={false}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="Years of Experience"
+                type="number"
+                placeholder="Enter your years of experience"
+                id="yearsOfExperience"
+                name="yearsOfExperience"
+                required
+                value={formData.yearsOfExperience}
+                onChange={handleChange}
+                disabled={false}
+              />
+            </Col>
+          </Row>
+
+          <div className="form-actions">
+            <Button type="submit" className="update-btn">
+              Update
+            </Button>
+            <Button type="button" className="cancel-btn" onClick={handleCancel}>
+              Cancel
+            </Button>
+          </div>
+        </Form>
+      </Container>
     </div>
   );
 };
 
-export default ProfileFormTourGuide;
+export default ProfileFormGuide;

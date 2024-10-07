@@ -105,8 +105,8 @@ const FilterBy: React.FC<FilterByProps> = ({ filterOptions }) => {
   };
 
   return (
-    <Row className="m-5">
-      <Col md={2} className="filterby">
+    <Row className="m-3">
+      <Col className="filterby">
         <Row className="border-bottom py-2">
           <span>Filter By:</span>
         </Row>

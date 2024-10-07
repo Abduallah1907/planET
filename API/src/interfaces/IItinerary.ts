@@ -24,7 +24,7 @@ export interface IItinerary extends Document {
 }
 
 export interface IItineraryCreateDTO {
-  tour_guide_user_id: ObjectId;
+  tour_guide_id: ObjectId;
   name: string;
   category: ObjectId;
   activities: ObjectId[];
@@ -41,19 +41,18 @@ export interface IItineraryCreateDTO {
 }
 
 export interface IItineraryUpdateDTO {
-  itinerary_id: ObjectId;
-  name: string;
-  category: ObjectId;
-  activities: ObjectId[];
-  timeline: ObjectId[];
-  locations: Location[];
-  duration: string;
-  languages: string[];
-  price: number;
-  available_dates: Date[];
-  accessibility: boolean;
-  pickup_loc: Location;
-  drop_off_loc: Location;
+  name?: string;
+  category?: ObjectId;
+  activities?: ObjectId[];
+  timeline?: ObjectId[];
+  locations?: Location[];
+  duration?: string;
+  languages?: string[];
+  price?: number;
+  available_dates?: Date[];
+  accessibility?: boolean;
+  pickup_loc?: Location;
+  drop_off_loc?: Location;
   tags?: string[];
 }
 

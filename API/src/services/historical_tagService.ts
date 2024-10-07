@@ -64,7 +64,7 @@ export default class Historical_tagService {
   // Update a historical tag
   public updateHistorical_tagService = async (
     id: string,
-    Data: IHistorical_tagDTO
+    updatedHistoricalTag: IHistorical_tagDTO
   ) => {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID");
@@ -78,13 +78,10 @@ export default class Historical_tagService {
     if (Historical_tag_check == null) {
       throw new NotFoundError("Historical Location not found");
     }
-    const updateFields: Partial<IHistorical_tagDTO> = {};
 
-    if (Data.name) updateFields.name = Data.name;
-    if (Data.Values) updateFields.Values = Data.Values;
     const Historical_tag = await this.historical_tagModel.findByIdAndUpdate(
       new Types.ObjectId(id),
-      { $set: updateFields },
+      updatedHistoricalTag,
       { new: true }
     );
     if (Historical_tag instanceof Error) {
@@ -109,6 +106,7 @@ export default class Historical_tagService {
     if (Historical_tag == null) {
       throw new NotFoundError("No Historical_tag Found");
     }
+
     return new response(true, null, "Tag has been deleted", 200);
   };
 }

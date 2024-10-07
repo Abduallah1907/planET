@@ -1,37 +1,25 @@
 import React, { useState } from "react";
-import "./Advertiser.css"; // Make sure this includes your CSS
-
-import Logo from "../../assets/person-circle.svg";
-import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import Sidebar from "../SideBar/Sidebar";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import { useAppSelector,useAppDispatch } from "../../store/hooks";
-import { toggleSidebar } from "../../store/sidebarSlice";
+import "./ProfileFormTourist.css";
+import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import LogoPlaceholder from "../../assets/person-circle.svg"; // Placeholder logo
 
 interface FormData {
+  username: string;
   website: string;
   hotline: string;
   companyProfile: string;
-  password: string;
-  retypePassword: string;
+  logo: File | null; // Added logo field
 }
 
 const Advertiser: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
+    username: "",
     website: "",
     hotline: "",
     companyProfile: "",
-    password: "",
-    retypePassword: "",
+    logo: null, // Initialize logo as null
   });
-
-  // Navigation items for the advertiser's form
-  const advertiserNavItems = [
-    { path: "/dashboard", label: "Dashboard" },
-    { path: "/advertiser", label: "Profile" },
-    { path: "/campaigns", label: "Campaigns" },
-    { path: "/settings", label: "Settings" },
-  ];
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -42,115 +30,136 @@ const Advertiser: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFormData({ ...formData, logo: e.target.files[0] });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.password !== formData.retypePassword) {
-      alert("Passwords don't match!");
-      return;
-    }
-    console.log("Form submitted:", formData);
+    // Handle form submission, including the logo file
   };
 
   const handleCancel = () => {
     setFormData({
+      username: "",
       website: "",
       hotline: "",
       companyProfile: "",
-      password: "",
-      retypePassword: "",
+      logo: null, // Reset logo
     });
   };
 
-  const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen)
-  const dispatch = useAppDispatch()
-
   return (
     <div className="profile-form-container">
-      <div className={`sidebar-wrapper ${isSidebarOpen ? "open" : ""}`}>
-        <Sidebar
-          isOpen={isSidebarOpen}
-          onClose={()=>dispatch(toggleSidebar())}
-          navItems={advertiserNavItems} // Pass the dynamic nav items
-        />
-      </div>
-      <div className={`content-wrapper ${isSidebarOpen ? "shifted" : ""}`}>
-        <Row className="align-items-center mb-4">
-          <Col xs={9} className="text-left">
-            <h2 className="my-profile-heading">Hi Advertiser</h2>
-          </Col>
-          <Col xs={1} className="text-center">
-            <img
-              src={Logo}
-              width="70"
-              height="50"
-              className="align-top logo"
-              alt="Company logo"
-            />
-          </Col>
-        </Row>
-        <Container>
-          <Form onSubmit={handleSubmit}>
-            <Row>
-              <Col>
-                <CustomFormGroup
-                  label="Website Link"
-                  type="url"
-                  placeholder="Enter the link to your website"
-                  id="website"
-                  name="website"
-                  required
-                  value={formData.website}
-                  onChange={handleChange}
-                  disabled={false}
+      <Row className="align-items-center mb-4">
+        <Col xs={7} className="text-left">
+          <h2 className="my-profile-heading">Welcome Advertiser!</h2>
+        </Col>
+        <Col xs={3} className="text-center">
+          <img
+            src={LogoPlaceholder}
+            width="70"
+            height="50"
+            className="align-top logo"
+            alt="Advertiser logo"
+          />
+        </Col>
+      </Row>
+
+      <Container>
+        <Form onSubmit={handleSubmit}>
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="Username:"
+                type="text"
+                placeholder="Enter your username"
+                id="username"
+                name="username"
+                disabled={false}
+                required={true}
+                value={formData.username}
+                onChange={handleChange}
+              />
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="Link to Website:"
+                type="url"
+                placeholder="Enter your website URL"
+                id="website"
+                name="website"
+                disabled={false}
+                required={true}
+                value={formData.website}
+                onChange={handleChange}
+              />
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="Hotline:"
+                type="tel"
+                placeholder="Enter your hotline number"
+                id="hotline"
+                name="hotline"
+                disabled={false}
+                required={true}
+                value={formData.hotline}
+                onChange={handleChange}
+              />
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="Company Profile:"
+                type="textarea"
+                placeholder="Enter your company profile"
+                id="companyProfile"
+                name="companyProfile"
+                disabled={false}
+                required={true}
+                value={formData.companyProfile}
+                onChange={handleChange}
+              />
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <Form.Group controlId="formFile" className="mb-3">
+                <Form.Label>
+                  <h3>Upload Logo</h3>
+                </Form.Label>
+                <Form.Control
+                  type="file"
+                  name="logo"
+                  onChange={handleFileChange}
+                  accept="image/*"
                 />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <CustomFormGroup
-                  label="Hotline"
-                  type="tel"
-                  placeholder="Enter your hotline number"
-                  id="hotline"
-                  name="hotline"
-                  required
-                  value={formData.hotline}
-                  onChange={handleChange}
-                  disabled={false}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <CustomFormGroup
-                  label="Company Profile"
-                  type="text"
-                  placeholder="Describe your company profile"
-                  id="companyProfile"
-                  name="companyProfile"
-                  value={formData.companyProfile}
-                  onChange={handleChange}
-                  className="company-profile-input"
-                  disabled={false}
-                  required={false}
-                />
-              </Col>
-            </Row>
-            <div className="form-actions">
-              <Button type="submit" className="update-btn">
-                Update
-              </Button>
-              <Button
-                type="button"
-                className="cancel-btn"
-                onClick={handleCancel}
-              >
-                Cancel
-              </Button>
-            </div>
-          </Form>
-        </Container>
-      </div>
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <div className="form-actions">
+            <Button type="submit" className="update-btn">
+              Update
+            </Button>
+            <Button type="button" className="cancel-btn" onClick={handleCancel}>
+              Cancel
+            </Button>
+          </div>
+        </Form>
+      </Container>
     </div>
   );
 };

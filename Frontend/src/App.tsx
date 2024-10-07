@@ -6,11 +6,9 @@ import { Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import CreateGoverner from "./views/CreateGoverner/CreateGoverner";
-import BookingLayout from "./views/CreateActivities/CreateActivities";
+import BookingLayout from "./views/ViewingPages/Activities";
+import Activities from "./views/ViewingPages/Activities";
 import TouristReg from "./views/auth/TouristReg/TouristReg";
-import ActivityCard from "./components/Cards/ActivityCard";
-import HistoricalLocationCard from "./components/Cards/HistoricalLocation";
-import ItineraryCard from "./components/Cards/ItineraryCard";
 import TourGuideDashboard from "./views/TourGuideDashboard/TourGuidedashboard";
 import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
 
@@ -19,95 +17,60 @@ import { AppProvider } from "./AppContext";
 import FilterBy from "./components/FilterBy/FilterBy";
 import Delete from "./components/Delete";
 import SellerDashboard from "./views/SellerDashboard/SellerDashboard";
-import ActivityViewEdit from "./views/ProductDetails/ActivityViewEdit";
+import ActivityDetails from "./views/ProductDetails/ActivityDetails";
 import Login from "./views/auth/Login/Login";
 import ProfileForm from "./components/ProfileForm/ProfileFormTourist";
 import SellerProfile from "./components/ProfileForm/SellerProfile";
 import SettingSide from "./components/ProfileForm/settingSide";
 import Advertiser from "./components/ProfileForm/Advertiser";
-import Products from "./components/Products";
 import ProfileFormTourGuide from "./components/ProfileForm/ProfileFormTourGuide";
+import SellerFirstProfile from "./components/ProfileForm/SellerFirstProfile";
+import TourGuideFirst from "./components/ProfileForm/TourGuideFirst";
+import AdvertiserFirst from "./components/ProfileForm/AdvertiserFirst";
+import AdvertiserCreate from "./views/AdvertiserCreate";
+import AdvertiserCreateUpdate from "./views/AdvertiserCreateUpdate";
+import AddNewProduct from "./views/AddNewProduct";
+import AddHistoricalLocation from "./views/AddHistoricalLocation";
+import AddItinerary from "./views/AddItinerary";
+import Itinerary from "./views/ViewingPages/Itinerary";
+import HistoricalPlaces from "./views/ViewingPages/HistoricalPlaces";
+import Products from "./views/ViewingPages/Products";
+import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
 import filterOptions from "./utils/filterOptions.json";
 import StakeholderReg from "./views/auth/StakeholderReg/StakeholderReg";
 
 const App: React.FC = () => {
-  const [isBooked, setIsBooked] = useState(false); // Manage booking state
-
   return (
     <AppProvider>
+      <TopBar />
       <TopBar />
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/Registeration" element={<TouristReg />} />
-        <Route path="/editprofile" element={<ProfileForm />} />
         <Route path="/admin" element={<CreateAdmin />} />
         <Route path="/governer" element={<CreateGoverner />} />
         <Route path="/test" element={<BookingLayout />} />
-        <Route
-          path="/card"
-          element={
-            <ActivityCard
-              Name={"Retag Match 3almy"}
-              location={"retag, Tagmo3"}
-              category={"Football"}
-              RatingVal={3.1}
-              Reviews={1000}
-              Price={49.99}
-              isActive={true}
-              isBooked={isBooked}
-              Date_Time={new Date()}
-              onChange={() => setIsBooked(!isBooked)} // Toggle booking state
-            />
-          }
-        />
-        <Route
-          path="/historicalcard"
-          element={
-            <HistoricalLocationCard
-              Name={"Pyramids"}
-              location={"Cairo, Giza"}
-              category={"Entratinment"}
-              RatingVal={0.5}
-              Reviews={1000}
-              NativePrice={49.99}
-              ForeignPrice={100.2}
-              StudentPrice={20.5}
-              isActive={true}
-              isBooked={isBooked}
-              OpeningHourFrom="8:00 am"
-              OpeningHourTo="5:00 pm"
-              OpeningDays="weekends"
-              Description="Great Pyramid Of Giza is one of the seven wonders of the Ancient World. "
-              onChange={() => console.log("Booking toggled")}
-            />
-          }
-        />
-        <Route
-          path="/Itinerarycard"
-          element={
-            <ItineraryCard
-              locations={"Cairo, Giza"}
-              pickup={"Hilton Hotel"}
-              dropoff={"Egyptian Museum"}
-              Languages={"English, Arabic"}
-              accessibility={true}
-              RatingVal={0.5}
-              Reviews={100}
-              Price={49.99}
-              isActive={true}
-              isBooked={isBooked}
-              Duration={"45 mins"}
-              Available_Dates={new Date()}
-              onChange={() => console.log("Booking toggled")}
-            />
-          }
-        />
-        <Route path="/tourist" element={<TouristReg />} />
-        <Route path="/editprofile" Component={ProfileForm} />
+        <Route path="/TouristEdit" element={<ProfileForm />} />
+        <Route path="/Activity" element={<Activities />} />
+        <Route path="/Itinerary" element={<Itinerary />} />
+        <Route path="/Historical" element={<HistoricalPlaces />} />
         <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
-        <Route path="/editprofile" Component={ProfileForm} />
+        <Route path="/SellerDashboard" element={<SellerDashboard />} />
+        <Route path="/Activity/:id" element={<ActivityDetails />} />
+        <Route path="/delete" element={<Delete />} />
+        <Route path="/SettingSide" element={<SettingSide />} />
+        <Route path="/TourGuide" element={<ProfileFormTourGuide />} />
+        <Route path="/Advertiser" element={<Advertiser />} />
+        <Route path="/SellerFirstProfile" element={<SellerFirstProfile />} />
+        <Route path="/TourGuideFirst" element={<TourGuideFirst />} />
+        <Route path="/Products" element={<Products />} />
+        <Route path="/AdvertiserCreate" element={<AdvertiserCreate />} />
+        <Route path="/AdvertiserCreateUpdate" element={<AdvertiserCreateUpdate />} />
+        <Route path="/AddNewProduct" element={<AddNewProduct />} />
+        <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
+        <Route path="/AddItinerary" element={<AddItinerary />} />
         <Route
           path="/filter"
           element={<FilterBy filterOptions={filterOptions} />}
@@ -116,6 +79,8 @@ const App: React.FC = () => {
         <Route path="/" element={<MainPage />} />
 
         <Route path="/SellerProfile" element={<SellerProfile />} />
+        <Route path="/AdvertiserFirst" element={<AdvertiserFirst />} />
+        <Route path="/HistoricalDetails/:id" element={<HistoricalDetails />} />
       </Routes>
     </AppProvider>
   );

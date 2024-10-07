@@ -14,6 +14,8 @@ interface NationalityOption {
 const nationalityOptions: NationalityOption[] = nationalityOptionsData;
 
 interface FormData {
+  firstName: string;
+  lastName: string;
   email: string;
   mobile: string;
   profession: string;
@@ -26,6 +28,8 @@ interface FormData {
 
 const ProfileForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
+    firstName: "",
+    lastName: "",
     email: "",
     mobile: "",
     profession: "",
@@ -55,6 +59,8 @@ const ProfileForm: React.FC = () => {
 
   const handleCancel = () => {
     setFormData({
+      firstName: "",
+      lastName: "",
       email: "",
       mobile: "",
       profession: "",
@@ -90,6 +96,34 @@ const ProfileForm: React.FC = () => {
 
       <Container>
         <Form onSubmit={handleSubmit}>
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="First Name"
+                type="text"
+                placeholder="Enter your First Name"
+                id="firstName"
+                name="firstName"
+                disabled={false}
+                required={true}
+                value={formData.firstName}
+                onChange={handleChange}
+              />
+            </Col>
+            <Col>
+              <CustomFormGroup
+                label="Last Name:"
+                type="text"
+                placeholder="Enter your Last Name"
+                id="lastName"
+                name="lastName"
+                disabled={false}
+                required={true}
+                value={formData.lastName}
+                onChange={handleChange}
+              />
+            </Col>
+          </Row>
           <Row>
             <Col>
               <CustomFormGroup
@@ -142,6 +176,7 @@ const ProfileForm: React.FC = () => {
                     name="nationality"
                     value={formData.nationality}
                     onChange={handleChange}
+                    className="custom-form-control"
                     required
                   >
                     <option value="">Select your nationality</option>

@@ -1,57 +1,66 @@
 import { Card, Badge, Row, Col, Image } from "react-bootstrap";
 import Rating from '../Rating/Rating';
 import "./Cards.css";
+import { HistoricalService } from "../../services/HistoricalService";
+import { useEffect, useState } from "react";
+import { get } from "http";
+import { use } from "i18next";
 
 interface InputData {
+  
   Name: string;
   location: string;
-  category: string;
   RatingVal: number; // Initial Rating
   Reviews: number;
-  NativePrice: number;
-  ForeignPrice: number;
-  StudentPrice: number;
+  Price: number;
+  imageUrl: string;
   OpeningHourFrom: string; // Using string for time representation
   OpeningHourTo: string; // Using string for time representation
   OpeningDays: string; // New property for opening days
   Description: string; // Fixed typo from Descripition to Description
   isActive: boolean;
-  isBooked: boolean; // Added isBooked prop
+
+  tags?: string[];
   onChange?: () => void; // Change onChange to a function that does not take parameters
+  onClick?: () => void;
+
 }
 
-const HistoricalLocationCard = ({
+export const HistoricalLocationCard = ({
+  
   Name,
   location,
-  category,
   RatingVal,
   Reviews,
-  NativePrice,
-  ForeignPrice,
-  StudentPrice,
+  Price,
   OpeningHourFrom,
   OpeningHourTo,
   OpeningDays, // New property
   Description,
   isActive,
-  isBooked,
+  imageUrl,
+  tags,
   onChange,
+  onClick,
 }: InputData) => {
   // Manage the state for the rating
+ 
+
+
+
 
   return (
-    <Card
+    <Card onClick={onClick}
       className="p-3 shadow-sm"
       style={{ borderRadius: "10px", height: "100%" }}
     >
-      <Row className="h-100 d-flex align-items-stretch justify-content-between">
+      <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
         {/* Image Section */}
         <Col md={2} className="p-0 d-flex align-items-stretch">
           <Image
             src="https://via.placeholder.com/250x250"
             rounded
             alt="Activity Image"
-            style={{ objectFit: "cover", height: "100%", width: "100%" }}
           />
         </Col>
 
@@ -68,12 +77,11 @@ const HistoricalLocationCard = ({
                   {Name}
                 </Card.Title>
                 {/* Badges next to Activity Name */}
-                <Badge pill bg="primary" className="me-2 custom-badge">
-                  Outdoor
-                </Badge>
-                <Badge pill bg="secondary" className="custom-badge">
-                  Historical
-                </Badge>
+                {tags?.map((tag, index) => (
+                  <Badge pill bg="tag" className="me-2 custom-badge" key={index}>
+                    {tag}
+                  </Badge>
+                ))}
               </div>
               <Card.Text>
                 <a
@@ -86,7 +94,6 @@ const HistoricalLocationCard = ({
               </Card.Text>
 
               {/* Category, Opening Hours, and Opening Days */}
-              <Card.Text className="text-muted">Category: {category}</Card.Text>
               <Card.Text className="text-muted">
                 Opening Hours: {OpeningHourFrom} - {OpeningHourTo}
               </Card.Text>
@@ -124,23 +131,18 @@ const HistoricalLocationCard = ({
             {Reviews.toLocaleString()} Reviews
           </p>
 
-          {/* Price Display */}
-          <div className="text-right">
-            <h6 style={{ fontWeight: "bold" }}>Prices:</h6>
-            <p className="mb-1">Native Price: ${NativePrice.toFixed(2)}</p>
-            <p className="mb-1">Foreign Price: ${ForeignPrice.toFixed(2)}</p>
-            <p className="mb-1">Student Price: ${StudentPrice.toFixed(2)}</p>
-          </div>
+
+
 
           {/* Booking Badge */}
           <div className="text-right">
+            <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
             <Badge
-              bg={isBooked ? "danger" : "success"} // Change color based on booking status
-              className="mt-2 clickable-badge"
-              style={{ cursor: "pointer", fontSize: "1.2rem" }}
+              bg={isActive ? "active" : "inactive"} // Change color based on booking status
+              className="mt-2 custom-status-badge rounded-4 text-center"
               onClick={onChange} // Call onChange when clicked
             >
-              {isBooked ? "Booking Off" : "Book Now"}
+              {isActive ? "Active" : "InActive"}
             </Badge>
           </div>
         </Col>
@@ -149,4 +151,3 @@ const HistoricalLocationCard = ({
   );
 };
 
-export default HistoricalLocationCard;

@@ -178,6 +178,17 @@ export default (app: Router) => {
    *         description: Product not found
    *       500:
    *         description: Internal Server Error
+   * /api/product/getFilterComponents:
+   *   get:
+   *     tags:
+   *       - Product
+   *     summary: Get filter components
+   *     description: Get filter components
+   *     responses:
+   *       200:
+   *         description: Filter components are fetched
+   *       500:
+   *         description: Internal Server Error
    */
 
   route.post(
@@ -212,4 +223,5 @@ export default (app: Router) => {
     authorize([UserRoles.Tourist, UserRoles.Seller]),
     productController.getProductByName
   );
+  route.get("/getFilterComponents", productController.getFilterComponents);
 };

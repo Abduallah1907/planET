@@ -24,6 +24,7 @@
 
 .logo {
     margin-right: 5px;
+    cursor: pointer;
 }
 
 .button-container {
@@ -69,7 +70,6 @@
     border: white !important;
     cursor: pointer;
     margin-right: 15px;
-    scale: 0.75;
     filter: invert(1);
 }
 

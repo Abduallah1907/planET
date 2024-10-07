@@ -25,105 +25,105 @@ export default async ({ expressApp }: { expressApp: Application }) => {
   const activityModel = {
     name: "activityModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/activity").default,
+    model: require("../models/Activity").default,
   };
   const advertiserModel = {
     name: "advertiserModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/advertiser").default,
+    model: require("../models/Advertiser").default,
   };
   const bookmark_notifyModel = {
     name: "bookmark_notifyModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/bookmark_notify").default,
+    model: require("../models/Bookmark_notify").default,
   };
   const categoryModel = {
     name: "categoryModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/category").default,
+    model: require("../models/Category").default,
   };
 
   const comment_ratingModel = {
     name: "comment_ratingModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/comment_rating").default,
+    model: require("../models/Comment_rating").default,
   };
 
   const complaintModel = {
     name: "complaintModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/complaint").default,
+    model: require("../models/Complaint").default,
   };
 
   const governorModel = {
     name: "governorModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/governor").default,
+    model: require("../models/Governor").default,
   };
   const historical_locationModel = {
     name: "historical_locationModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/historical_location").default,
+    model: require("../models/Historical_location").default,
   };
   const itineraryModel = {
     name: "itineraryModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/itinerary").default,
+    model: require("../models/Itinerary").default,
   };
   const orderModel = {
     name: "orderModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/order").default,
+    model: require("../models/Order").default,
   };
   const previous_workModel = {
     name: "previous_workModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/previous_work").default,
+    model: require("../models/Previous_work").default,
   };
   const productModel = {
     name: "productModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/product").default,
+    model: require("../models/Product").default,
   };
   const promo_codeModel = {
     name: "promo_codeModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/promo_code").default,
+    model: require("../models/Promo_code").default,
   };
   const sellerModel = {
     name: "sellerModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/seller").default,
+    model: require("../models/Seller").default,
   };
   const slotModel = {
     name: "slotModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/slot").default,
+    model: require("../models/Slot").default,
   };
   const ticketModel = {
     name: "ticketModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/ticket").default,
+    model: require("../models/Ticket").default,
   };
   const tour_guideModel = {
     name: "tour_guideModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/tour_guide").default,
+    model: require("../models/Tour_guide").default,
   };
   const touristModel = {
     name: "touristModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/tourist").default,
+    model: require("../models/Tourist").default,
   };
   const wishlistModel = {
     name: "wishlistModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/wishlist").default,
+    model: require("../models/Wishlist").default,
   };
   const historical_tagModel = {
     name: "historical_tagModel",
     // Notice the require syntax and the '.default'
-    model: require("../models/historical_tag").default,
+    model: require("../models/Historical_tag").default,
   };
   const tagModel = {
     name: "tagModel",

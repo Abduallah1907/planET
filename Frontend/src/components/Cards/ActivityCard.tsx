@@ -6,19 +6,23 @@ interface InputData {
   Name: string;
   location: string;
   category: string;
+  tags?: string[];
   RatingVal: number; // Initial Rating
   Reviews: number;
   Price: number;
   Date_Time: Date;
   isActive: boolean;
   isBooked: boolean; // Added isBooked prop
+  imageUrl: string;
   onChange?: () => void; // Change onChange to a function that does not take parameters
+  onClick?: () => void;
 }
 
 const CustomActivityCard = ({
   Name,
   location,
   category,
+  tags,
   RatingVal,
   Reviews,
   Price,
@@ -26,11 +30,13 @@ const CustomActivityCard = ({
   isActive,
   isBooked,
   onChange,
+  onClick,
 }: InputData) => {
   // Manage the state for the rating
 
+
   return (
-    <Card
+    <Card onClick={onClick}
       className="p-3 shadow-sm"
       style={{ borderRadius: "10px", height: "100%" }}
     >
@@ -58,12 +64,13 @@ const CustomActivityCard = ({
                   {Name}
                 </Card.Title>
                 {/* Badges next to Activity Name */}
-                <Badge pill bg="tag" className="me-2 custom-badge">
-                  Outdoor
-                </Badge>
-                <Badge pill bg="tag" className="custom-badge">
-                  Nightlife
-                </Badge>
+                {tags?.map((tag) => {
+                  return (
+                    <Badge pill bg="tag" className="me-2 custom-badge">
+                      {tag}
+                    </Badge>
+                  );
+                })}
               </div>
               <Card.Text>
                 <a
@@ -117,7 +124,7 @@ const CustomActivityCard = ({
           <div className="text-end">
             <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
             <Badge
-              bg={isBooked ? "success" : "danger"} // Change color based on booking status
+              bg={isBooked ? "active" : "inactive"} // Change color based on booking status
               className="mt-2 custom-status-badge rounded-4 text-center"
               onClick={onChange} // Call onChange when clicked
             >

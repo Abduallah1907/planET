@@ -15,7 +15,7 @@ export interface IPreviousWorkInputDTO {
   place: string;
   from: Date;
   to: Date;
-  tour_guide_user_id: ObjectId;
+  tour_guide_id: ObjectId;
 }
 
 export interface IPreviousWorkUpdateDTO {

@@ -9,21 +9,21 @@ export class ActivityController {
     const activityService: ActivityService = Container.get(ActivityService);
     const activityData = req.body as IActivityDTO;
     const activity = await activityService.createActivityService(activityData);
-    res.status(activity.status).json({ activity });
+    res.status(activity.status).json(activity);
   }
 
   //Get all Acivites in the DB
   public async getAllActivities(req: any, res: any) {
     const activityService: ActivityService = Container.get(ActivityService);
     const activities = await activityService.getAllActivitiesService();
-    res.status(activities.status).json({ activities });
+    res.status(activities.status).json(activities);
   }
   //Get activity using ID
   public async getActivityByID(req: any, res: any) {
     const { id } = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
     const activity = await activityService.getActivityByIDService(id);
-    res.status(activity.status).json({ activity });
+    res.status(activity.status).json(activity);
   }
   public async getActivityByAdvertiserID(req: any, res: any) {
     const { advertiserID } = req.params;
@@ -31,34 +31,35 @@ export class ActivityController {
     const activity = await activityService.getActivityByAdvertiserIDService(
       advertiserID
     );
-    res.status(activity.status).json({ activity });
+    res.status(activity.status).json(activity);
   }
   public async updateActivity(req: any, res: any) {
     const { id } = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
+    const activityData = req.body as IActivityDTO;
     const activity = await activityService.updateActivityService(
       id,
-      req.body.activityData
+      activityData
     );
-    res.status(activity.status).json({ activity });
+    res.status(activity.status).json(activity);
   }
 
   public async deleteActivity(req: any, res: any) {
     const { id } = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
     const activity = await activityService.deleteActivityService(id);
-    res.status(activity.status).json({ activity });
+    res.status(activity.status).json(activity);
   }
 
-  public async getActivity(req: any, res: any) {
+  public async getSearchActivity(req: any, res: any) {
     const { name, category, tag } = req.query;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activities = await activityService.getActivityService(
+    const activities = await activityService.getSearchActivityService(
       name,
       category,
       tag
     );
-    res.status(activities.status).json({ activities });
+    res.status(activities.status).json(activities);
   }
 
   public async getUpcomingActivities(req: any, res: any) {
@@ -66,7 +67,7 @@ export class ActivityController {
     const upcomingActivities =
       await activityService.getUpcomingActivitiesService();
 
-    res.status(upcomingActivities.status).json({ upcomingActivities });
+    res.status(upcomingActivities.status).json(upcomingActivities);
   }
 
   public async getFilteredActivities(req: any, res: any) {
@@ -117,7 +118,7 @@ export class ActivityController {
     const activities = await activityService.getFilteredActivitiesService(
       filters
     );
-    res.status(activities.status).json({ activities });
+    res.status(activities.status).json(activities);
   }
   public async getSortedActivities(req: any, res: any) {
     const { sort, direction } = req.query;
@@ -126,6 +127,11 @@ export class ActivityController {
       sort,
       direction
     );
-    res.status(activities.status).json({ activities });
+    res.status(activities.status).json(activities);
+  }
+  public async getFilterComponents(req: any, res: any) {
+    const activityService: ActivityService = Container.get(ActivityService);
+    const filterComponents = await activityService.getFilterComponentsService();
+    res.status(filterComponents.status).json(filterComponents);
   }
 }
