@@ -144,102 +144,114 @@ export default (app: Router) => {
    *           description: Successful retrieval of itineraries
    *         500:
    *           description: Internal server error.
-   * /api/itinerary/getSearchItinerary:
-   *   get:
-   *     tags:
-   *       - Itinerary
-   *     summary: Retrieve itineraries from system
-   *     description: Retrieve itineraries data by name, category, and tag
-   *     parameters:
-   *       - in: query
-   *         name: name
-   *         description: Name of the itinerary
-   *         schema:
-   *           type: string
-   *       - in: query
-   *         name: category
-   *         description: Category of the itinerary
-   *         schema:
-   *           type: string
-   *       - in: query
-   *         name: tag
-   *         description: Tag of the itinerary
-   *         schema:
-   *           type: string
-   *     responses:
-   *       200:
-   *         description: List of Itineraries.
-   *       400:
-   *         description: Bad request.
-   *       500:
-   *         description: Internal server error.
-   * /api/itinerary/getUpcomingItineraries:
-   *   get:
-   *     tags:
-   *       - Itinerary
-   *     summary: Retrieve upcoming itineraries from system
-   *     description: Retrieve upcoming itineraries data
-   *     responses:
-   *       200:
-   *         description: List of upcoming itineraries.
-   *       400:
-   *         description: Bad request.
-   *       500:
-   *         description: Internal server error.
-   * /api/itinerary/getFitleredItineraries:
-   *   get:
-   *     tags:
-   *       - Itinerary
-   *     summary: Retrieve filtered itineraries from system by preferences,budget,date
-   *     description: Retrieve filtered itineraries data
-   *     parameters:
-   *       - in: query
-   *         name: budget
-   *         description: Budget for the itinerary
-   *         schema:
-   *           type: string
-   *       - in: query
-   *         name: date
-   *         description: Date of the itinerary
-   *         schema:
-   *           type: string
-   *           format: date
-   *       - in: query
-   *         name: preferences
-   *         description: Preferences of the itinerary
-   *         schema:
-   *           type: string
-   *     responses:
-   *       200:
-   *         description: List of filtered itineraries.
-   *       400:
-   *         description: Bad request.
-   *       500:
-   *         description: Internal server error.
-   * /api/itinerary/getSortedItineraries:
-   *   get:
-   *     tags:
-   *       - Itinerary
-   *     summary: Retrieve sorted itineraries from system
-   *     description: Retrieve sorted itineraries data by sort and direction sort as "ratings" or "price" and direction as 1=Asc , -1=Desc
-   *     parameters:
-   *       - in: query
-   *         name: sort
-   *         description: Sort the itineraries by ratings or price
-   *         schema:
-   *           type: string
-   *       - in: query
-   *         name: direction
-   *         description: Direction of the sort
-   *         schema:
-   *           type: number
-   *     responses:
-   *       200:
-   *         description: List of sorted itineraries.
-   *       400:
-   *         description: Bad request.
-   *       500:
-   *         description: Internal server error.
+   *   /api/itinerary/getSearchItinerary:
+   *     get:
+   *       tags:
+   *         - Itinerary
+   *       summary: Retrieve itineraries from system
+   *       description: Retrieve itineraries data by name, category, and tag
+   *       parameters:
+   *         - in: query
+   *           name: name
+   *           description: Name of the itinerary
+   *           schema:
+   *             type: string
+   *         - in: query
+   *           name: category
+   *           description: Category of the itinerary
+   *           schema:
+   *             type: string
+   *         - in: query
+   *           name: tag
+   *           description: Tag of the itinerary
+   *           schema:
+   *             type: string
+   *       responses:
+   *         200:
+   *           description: List of Itineraries.
+   *         400:
+   *           description: Bad request.
+   *         500:
+   *           description: Internal server error.
+   *   /api/itinerary/getUpcomingItineraries:
+   *     get:
+   *       tags:
+   *         - Itinerary
+   *       summary: Retrieve upcoming itineraries from system
+   *       description: Retrieve upcoming itineraries data
+   *       responses:
+   *         200:
+   *           description: List of upcoming itineraries.
+   *         400:
+   *           description: Bad request.
+   *         500:
+   *           description: Internal server error.
+   *   /api/itinerary/getFilteredItineraries:
+   *     get:
+   *       tags:
+   *         - Itinerary
+   *       summary: Retrieve filtered itineraries from system by preferences, budget, date
+   *       description: Retrieve filtered itineraries data
+   *       parameters:
+   *         - in: query
+   *           name: budget
+   *           description: Budget for the itinerary
+   *           schema:
+   *             type: string
+   *         - in: query
+   *           name: date
+   *           description: Date of the itinerary
+   *           schema:
+   *             type: string
+   *             format: date
+   *         - in: query
+   *           name: preferences
+   *           description: Preferences of the itinerary
+   *           schema:
+   *             type: string
+   *       responses:
+   *         200:
+   *           description: List of filtered itineraries.
+   *         400:
+   *           description: Bad request.
+   *         500:
+   *           description: Internal server error.
+   *   /api/itinerary/getSortedItineraries:
+   *     get:
+   *       tags:
+   *         - Itinerary
+   *       summary: Retrieve sorted itineraries from system
+   *       description: Retrieve sorted itineraries data by sort and direction sort as "ratings" or "price" and direction as 1=Asc , -1=Desc
+   *       parameters:
+   *         - in: query
+   *           name: sort
+   *           description: Sort the itineraries by ratings or price
+   *           schema:
+   *             type: string
+   *         - in: query
+   *           name: direction
+   *           description: Direction of the sort
+   *           schema:
+   *             type: number
+   *       responses:
+   *         200:
+   *           description: List of sorted itineraries.
+   *         400:
+   *           description: Bad request.
+   *         500:
+   *           description: Internal server error.
+   *   /api/itinerary/getFilterComponents:
+   *     get:
+   *       tags:
+   *         - Itinerary
+   *       summary: Retrieve filter components for itineraries
+   *       responses:
+   *         200:
+   *           description: List of filter components.
+   *         400:
+   *           description: Bad request.
+   *         500:
+   *           description: Internal server error.
    */
   const itineraryController: ItineraryController =
     Container.get(ItineraryController);
@@ -285,7 +297,8 @@ export default (app: Router) => {
   );
 
   router.get(
-    "/getFitleredItineraries",
+    "/getFilteredItineraries",
     itineraryController.getFilteredItineraries
   );
+  router.get("/getFilterComponents", itineraryController.getFilterComponents);
 };

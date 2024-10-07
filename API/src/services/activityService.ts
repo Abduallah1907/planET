@@ -6,7 +6,7 @@ import {
 } from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
-import mongoose, { Types } from "mongoose";
+import mongoose, { model, Types } from "mongoose";
 import { IFilterComponents } from "@/interfaces/IFilterComponents";
 @Service()
 export default class ActivityService {
@@ -15,6 +15,8 @@ export default class ActivityService {
     @Inject("categoryModel") private categoryModel: Models.CategoryModel,
     @Inject("advertiserModel") private advertiserModel: Models.AdvertiserModel
   ) {}
+
+ 
 
   public getAllActivitiesService = async () => {  
     const activitiesData = await this.activityModel.find({})
@@ -35,12 +37,12 @@ export default class ActivityService {
       throw new NotFoundError("No Activities Found");
     }
 
-    const activities = activitiesData.map(activity => ({
+    const activities = activitiesData.map((activity) => ({
       ...activity.toObject(),
-      reviewsCount: activity.comments ? activity.comments.length : 0
+      reviewsCount: activity.comments ? activity.comments.length : 0,
     }));
 
-    return new response(true, activities, "All activites are fetched", 200);
+    return new response(true, activities, "All activities are fetched", 200);
   };
 
   public async createActivityService(activityDatainput: IActivityDTO) {

@@ -13,6 +13,25 @@ interface ActivityCardProps {
 
   id: string;
 }
+interface Advertiser {
+  photo: string;
+  name: string;
+  email: string;
+  phone: string;
+  location: { longitude: number; latitude: number };
+}
+interface ActivityData {
+  name: string;
+  tags: string[];
+  average_rating: number;
+  advertiser: Advertiser;
+  category: string;
+  date: Date;
+  time: string;
+  price: number;
+  booking_flag: boolean;
+}
+
 
 const ActivityCard: React.FC<ActivityCardProps> = ({id}) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -47,7 +66,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({id}) => {
   useEffect(() => {
     getActivityById(id);
   }, [id]);
-  
+
   const handleAdvertiserClick = () => {
     setShowAdvertiserModal(true);
   };
@@ -69,7 +88,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({id}) => {
           <div className="details">
             <div className="d-flex align-items-center">
               <h2 className="me-3">{activityData ? activityData.name : ''}</h2>
-              {activityData && (activityData.tags ?? []).map((tag:any, index:any) => (
+              {activityData && (activityData.tags ?? []).map((tag: string, index: number) => (
                 <Badge key={index} pill bg="tag" className="me-2 custom-badge">
                   {tag}
                 </Badge>
@@ -93,6 +112,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({id}) => {
                 </Badge>
               </div>
             </div>
+            <p className='Advertiser' onClick={handleAdvertiserClick} style={{ cursor: 'pointer', color: '#d76f30', textDecoration: 'underline' }}>{activityData?.advertiser_id.user_id.name}</p>
+            <p className='Category'>{activityData?.category.type}</p>
             <p className='Advertiser' onClick={handleAdvertiserClick} style={{ cursor: 'pointer', color:'#d76f30' , textDecoration:'underline'}}>{activityData?.advertiser_id.user_id.name}</p>
             <p className='Category'>{activityData?.category}</p>
             <p className="date">{activityData?.date ? new Date(activityData.date).toLocaleDateString() : 'Date not available'}</p>
@@ -132,12 +153,17 @@ const ActivityCard: React.FC<ActivityCardProps> = ({id}) => {
           <Modal.Title>Advertiser Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <img src={activityData?.advertiser_id.logo} alt="Advertiser" />
+          <p><strong>Name:</strong> {activityData?.advertiser_id.user_id.name}</p>
+          <p><strong>ID:</strong> {activityData?.advertiser_id.user_id.email}</p>
+          <p><strong>Phone:</strong> {activityData?.advertiser_id.user_id.phone}</p>
+          <p><strong>Location:</strong> {activityData?.location.latitude}, {activityData?.location.longitude}</p>
           
           <p><strong>Name:</strong> {activityData?.advertiser_id.user_id.name}</p>
           <p><strong>ID:</strong> {activityData?.advertiser_id.user_id.email}</p>
           <p><strong>Phone:</strong> {activityData?.advertiser_id.user_id.phone}</p>
 
-          
+
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseAdvertiserModal}>
@@ -148,5 +174,4 @@ const ActivityCard: React.FC<ActivityCardProps> = ({id}) => {
     </Container>
   );
 };
-
 export default ActivityCard;

@@ -13,13 +13,13 @@ export class UserController {
     const userService: UserService = Container.get(UserService);
     const userData = req.body as IUserInputDTO;
     const user = await userService.createUserService(userData);
-    res.status(user.status).json({ user });
+    res.status(user.status).json(user);
   }
 
   public async loginUser(req: any, res: any) {
     const loginData = req.query as IUserInputDTO;
     const userService: UserService = Container.get(UserService);
     const user = await userService.loginUserService(loginData);
-    res.status(user.status).json({ user });
+    res.status(user.status).json(user);
   }
 }

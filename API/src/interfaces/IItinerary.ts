@@ -13,12 +13,13 @@ export interface IItinerary extends Document {
   accessibility: boolean;
   pickup_loc: Location;
   drop_off_loc: Location;
-  tags?: string[];
+  tags?: ObjectId[];
   active_flag: boolean;
   inappropriate_flag: boolean;
   tour_guide_id: ObjectId;
   name: string;
   category: ObjectId;
+  average_rating: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -37,7 +38,7 @@ export interface IItineraryCreateDTO {
   accessibility: boolean;
   pickup_loc: Location;
   drop_off_loc: Location;
-  tags?: string[];
+  tags?: ObjectId[];
 }
 
 export interface IItineraryUpdateDTO {
@@ -53,7 +54,7 @@ export interface IItineraryUpdateDTO {
   accessibility?: boolean;
   pickup_loc?: Location;
   drop_off_loc?: Location;
-  tags?: string[];
+  tags?: ObjectId[];
 }
 
 export interface IItineraryOutputDTO {
@@ -68,6 +69,25 @@ export interface IItineraryOutputDTO {
   available_dates: Date[];
   pickup_loc: Location;
   drop_off_loc: Location;
-  tags?: string[];
+  tags?: ObjectId[];
   tour_guide_id: ObjectId;
+}
+
+export interface IItineraryOutputAllDTO {
+  itinerary_id: ObjectId;
+  name: string;
+  locations?: Location[];
+  pickup_loc: Location;
+  drop_off_loc: Location;
+  languages: String[];
+  accessibility: Boolean;
+  rating_value: Number;
+  reviews: ObjectId[];
+  price: Number;
+  duration: String;
+  available_dates: Date[];
+  inappropriate_flag: Boolean;
+  active_flag: Boolean;
+
+  tags?: ObjectId[];
 }

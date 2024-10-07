@@ -1,3 +1,4 @@
+import { ILocation } from "./ILocation";
 
 
 export interface IActivity  {
@@ -8,7 +9,7 @@ export interface IActivity  {
   name: string;
   date: Date;
   time: string;
-  location: Location; // [longitude, latitude];
+  location: ILocation; // [longitude, latitude];
   price?: number; // Single price (optional)
   price_range?: {
     // Price range (optional) check the users story 21 in azure
@@ -29,7 +30,7 @@ export interface IActivityDTO {
   name: string;
   date: Date;
   time: string;
-  location: Location; // [longitude, latitude];
+  location: ILocation; // [longitude, latitude];
   price?: number; // Single price (optional)
   price_range?: {
     // Price range (optional)
@@ -46,7 +47,7 @@ export interface UpdateIActivityDTO {
   name?: string;
   date?: Date;
   time?: string;
-  location?: Location; // [longitude, latitude];
+  location?: ILocation; // [longitude, latitude];
   price?: number; // Single price (optional)
   price_range?: {
     // Price range (optional)
