@@ -85,16 +85,10 @@ const App: React.FC = () => {
         <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
         <Route path="/AddItinerary" element={<AddItinerary />} />
         <Route path="/ItineraryCardd" element={<ItineraryCardd />} />
+
         <Route path="/EditHistoricalLocation" element={<EditHistoricalLocation />} />
         <Route path="/EditProduct" element={<EditProduct />} />
         <Route path="/EditItinerary" element={<EditItinerary />} />
-        <Route
-          path="/filter"
-          element={<FilterBy filterOptions={filterOptions} />}
-        />
-        <Route path="/stakeholder" element={<StakeholderReg />} />
-        <Route path="/" element={<MainPage />} />
-
 
         <Route path="/TouristEdit" element={<ProfileForm />} />
         <Route path="/SellerProfile" element={<SellerProfile />} />
