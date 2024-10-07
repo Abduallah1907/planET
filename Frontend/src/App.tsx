@@ -42,6 +42,11 @@ import ItineraryCardd from "./views/ItineraryCardd";
 import EditHistoricalLocation from "./views/EditHistoricalLocation";
 import EditProduct from "./views/EditProduct";
 import EditItinerary from "./views/EditItinerary";
+import UsersTable from "./views/UsersTable";
+import MyActivities from "./views/ViewingPages copy/MyActivities";
+import MyHistoricalPlaces from "./views/ViewingPages copy/MyHistoricalPlaces";
+import MyItinerary from "./views/ViewingPages copy/MyItinerary";
+import MyProducts from "./views/ViewingPages copy/MyProducts";
 
 const App: React.FC = () => {
   return (
@@ -78,6 +83,11 @@ const App: React.FC = () => {
         <Route path="/EditHistoricalLocation" element={<EditHistoricalLocation />} />
         <Route path="/EditProduct" element={<EditProduct />} />
         <Route path="/EditItinerary" element={<EditItinerary />} />
+        <Route path="UsersTable" element={<UsersTable />} />
+        <Route path="/MyActivities" element={<MyActivities />} />
+        <Route path="/MyHistoricalPlaces" element={<MyHistoricalPlaces />} />
+        <Route path="/MyItinerary" element={<MyItinerary />} />
+        <Route path="/MyProducts" element={<MyProducts />} />
         <Route
           path="/filter"
           element={<FilterBy filterOptions={filterOptions} />}
