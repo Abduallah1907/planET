@@ -34,19 +34,24 @@ export default class ItineraryService {
     if (!itineraryData) throw new HttpError("Itinerary not found", 404);
 
     const itineraryOutput: IItineraryOutputDTO = {
+      // tour_guide_id: itineraryData.tour_guide_id,
+      // activities: itineraryData.activities,
+      // category: itineraryData.category,
       itinerary_id: itineraryData._id,
-      tour_guide_id: itineraryData.tour_guide_id,
       name: itineraryData.name,
-      activities: itineraryData.activities,
-      category: itineraryData.category,
-      tags: itineraryData.tags,
+      accessibility: itineraryData.accessibility,
+      active_flag: itineraryData.active_flag,
+      inappropriate_flag: itineraryData.inappropriate_flag,
       available_dates: itineraryData.available_dates,
-      comments: itineraryData.comments,
+      reviews: itineraryData.comments,
       drop_off_loc: itineraryData.drop_off_loc,
+      duration: itineraryData.duration,
       languages: itineraryData.languages,
-      locations: itineraryData.locations,
       pickup_loc: itineraryData.pickup_loc,
-      timeline: itineraryData.timeline,
+      price: itineraryData.price,
+      rating_value: itineraryData.average_rating,
+      locations: itineraryData.locations,
+      tags: itineraryData.tags,
     };
     return new response(true, itineraryOutput, "Itinerary found!", 201);
   }
@@ -102,7 +107,7 @@ export default class ItineraryService {
     }
     console.log(itineraries);
 
-    let itinerartiesOutput: IItineraryOutputAllDTO[] = itineraries.map((itinerary) => ({
+    const itinerartiesOutput: IItineraryOutputAllDTO[] = itineraries.map((itinerary) => ({
       itinerary_id: itinerary._id,
       name: itinerary.name,
       accessibility: itinerary.accessibility,
