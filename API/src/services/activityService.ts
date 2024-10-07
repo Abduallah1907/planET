@@ -16,8 +16,18 @@ export default class ActivityService {
     @Inject("advertiserModel") private advertiserModel: Models.AdvertiserModel
   ) {}
 
-  public getAllActivitiesService = async () => {
-    const activitiesData = await this.activityModel.find({}).populate("category").populate("tags").populate("advertiser_id");
+  public getAllActivitiesService = async () => {  
+    const activitiesData = await this.activityModel.find({})
+    .populate("category")
+    .populate("tags")
+    .populate({
+      path: "advertiser_id",
+      model: "Advertiser",
+      populate: {
+        path: "user_id",
+        model: "User" // Ensure this matches the name of your user model
+      }
+    });
     if (activitiesData instanceof Error) {
       throw new InternalServerError("Internal server error");
     }

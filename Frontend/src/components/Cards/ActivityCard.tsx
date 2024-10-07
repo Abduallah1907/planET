@@ -6,6 +6,7 @@ interface InputData {
   Name: string;
   location: string;
   category: string;
+  tags?: string[];
   RatingVal: number; // Initial Rating
   Reviews: number;
   Price: number;
@@ -21,6 +22,7 @@ const CustomActivityCard = ({
   Name,
   location,
   category,
+  tags,
   RatingVal,
   Reviews,
   Price,
@@ -62,12 +64,11 @@ const CustomActivityCard = ({
                   {Name}
                 </Card.Title>
                 {/* Badges next to Activity Name */}
-                <Badge pill bg="tag" className="me-2 custom-badge">
-                  Outdoor
-                </Badge>
-                <Badge pill bg="tag" className="custom-badge">
-                  Nightlife
-                </Badge>
+                {(tags || []).map((tag, index) => (
+                  <Badge key={index} pill bg="tag" className="me-2 custom-badge">
+                    {tag}
+                  </Badge>
+                ))}
               </div>
               <Card.Text>
                 <a
