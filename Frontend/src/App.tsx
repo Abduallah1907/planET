@@ -38,6 +38,7 @@ import Products from "./views/ViewingPages/Products";
 import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
 import filterOptions from "./utils/filterOptions.json";
 import StakeholderReg from "./views/auth/StakeholderReg/StakeholderReg";
+import ItineraryCardd from "./views/ItineraryCardd";
 
 const App: React.FC = () => {
   return (
@@ -70,6 +71,7 @@ const App: React.FC = () => {
         <Route path="/AddNewProduct" element={<AddNewProduct />} />
         <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
         <Route path="/AddItinerary" element={<AddItinerary />} />
+        <Route path="/ItineraryCardd" element={<ItineraryCardd />} />
         <Route
           path="/filter"
           element={<FilterBy filterOptions={filterOptions} />}
