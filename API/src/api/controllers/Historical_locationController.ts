@@ -112,4 +112,11 @@ export class Historical_locationController {
 
     res.status(historical_locations.status).json(historical_locations);
   }
+  public async getFilterComponents(req: any, res: any) {
+    const historical_locationService: Historical_locationService =
+      Container.get(Historical_locationService);
+    const filterComponents =
+      await historical_locationService.getFilterComponentsService();
+    res.status(filterComponents.status).json(filterComponents);
+  }
 }
