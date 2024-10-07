@@ -55,7 +55,7 @@ export default function Login() {
           break;
         case "APPROVED":
       }
-      console.log("OJMSJKGYJEGFJH");
+
       switch (user.role) {
         case "TOURIST":
           dispatch(setNavItems([
@@ -75,7 +75,6 @@ export default function Login() {
 
             navigate("/TourGuideFirst");
           } else {
-
             navigate("/TourGuide");
           }
           return;
@@ -127,10 +126,12 @@ export default function Login() {
           ]));
           navigate("/AdminDashboard");
           break;
-          default:
-            navigate("/");
+        default:
+          navigate("/");
+          break;
             return;
       }
+
       dispatch(activateSidebar());
     } catch (err: any) {
       setError(err.message);
