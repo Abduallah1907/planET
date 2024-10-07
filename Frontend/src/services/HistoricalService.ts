@@ -12,6 +12,7 @@ class HistoricalService{
     }
       
   };
+
  public static getAllHistorical_Location=async (nation:string , job:string) => {
     try{
 
@@ -23,5 +24,15 @@ class HistoricalService{
     }
       
  };
+ public static getFilterComponents=async () => {
+  try{
+    const response=await axiosInstance.get("/historical_location/getFilterComponents");
+    return response.data;
+  }
+  catch(error){
+   throw error;
+  }
+    
+};
 }
 export{HistoricalService};
