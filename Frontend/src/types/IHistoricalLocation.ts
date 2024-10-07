@@ -20,6 +20,7 @@ export interface IHistorical_location  {
   date_time?: Date;
   createdAt?: Date;
   updatedAt?: Date;
+  reviewsCount?: number;
 }
 export interface IHistorical_locationDTO {
   _id: string;
@@ -45,6 +46,7 @@ export interface IHistorical_locationDTO {
   average_rating: number;
 
   tags?: Map<string, string>;
+  reviewsCount?: number;
 }
 
 export interface Update_IHistorical_locationDTO {
@@ -69,4 +71,25 @@ export interface Update_IHistorical_locationDTO {
   average_rating?: number;
 
   tags?: Map<string, string>;
+  reviewsCount?: number;
+}
+export interface IHistorical_location_tourist  {
+  _id: string;
+  governor_id: string;
+  comments: string[];
+  name: string;
+  description: string;
+  picture: string[];
+  location: Location;
+  opening_hours_from: string;
+  opening_hours_to: string;
+  opening_days: string[];
+  price: number;
+  active_flag: boolean;
+  average_rating:number;
+  tags?: Map<string, string>;
+  date_time?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  reviewsCount?: number;
 }
