@@ -91,13 +91,16 @@ export default function Login() {
           break;
         case "ADMIN":
           if (user.first_time_login) {
-            navigate("/");
+            navigate("/admin");
           } else {
-            navigate("/");
+            navigate("/admin");
           }
           break;
+          default:
+          navigate("/");
+          break;
       }
-      navigate("/");
+     
       dispatch(activateSidebar());
     } catch (err: any) {
       setError(err.message);
