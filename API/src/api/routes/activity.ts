@@ -418,7 +418,6 @@ export default (app: Router) => {
 
   router.get(
     "/getActivityByID/:id",
-    authorize([UserRoles.Advertiser]),
     activityController.getActivityByID
   );
 
