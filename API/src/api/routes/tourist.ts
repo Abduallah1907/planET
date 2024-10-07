@@ -248,7 +248,6 @@ export default (app: Router) => {
   );
   route.post(
     "/createTourist",
-    authorize([UserRoles.Tourist]),
     touristController.createTourist
   );
 };

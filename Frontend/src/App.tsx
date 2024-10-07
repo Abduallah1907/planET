@@ -38,6 +38,9 @@ import Products from "./views/ViewingPages/Products";
 import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
 import StakeholderReg from "./views/auth/StakeholderReg/StakeholderReg";
 import ItineraryCardd from "./views/ItineraryCardd";
+import EditHistoricalLocation from "./views/EditHistoricalLocation";
+import EditProduct from "./views/EditProduct";
+import EditItinerary from "./views/EditItinerary";
 import TopBarLinks from "./views/Main Page/TopBarLinks";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { toggleSidebar } from "./store/sidebarSlice";
@@ -96,6 +99,10 @@ const App: React.FC = () => {
         <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
         <Route path="/AddItinerary" element={<AddItinerary />} />
         <Route path="/ItineraryCardd" element={<ItineraryCardd />} />
+
+        <Route path="/EditHistoricalLocation" element={<EditHistoricalLocation />} />
+        <Route path="/EditProduct" element={<EditProduct />} />
+        <Route path="/EditItinerary" element={<EditItinerary />} />
 
         <Route path="/TouristEdit" element={<ProfileForm />} />
         <Route path="/SellerProfile" element={<SellerProfile />} />

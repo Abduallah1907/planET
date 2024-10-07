@@ -215,12 +215,10 @@ export default (app: Router) => {
   );
   route.get(
     "/getAllProducts",
-    authorize([UserRoles.Tourist, UserRoles.Seller]),
     productController.getAllProducts
   );
   route.get(
     "/getProductByName/:product_name",
-    authorize([UserRoles.Tourist, UserRoles.Seller]),
     productController.getProductByName
   );
   route.get("/getFilterComponents", productController.getFilterComponents);

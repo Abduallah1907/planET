@@ -1,5 +1,5 @@
 import AdvertiserService from "@/services/advertiserService";
-import { IAdvertiser } from "../../interfaces/IAdvertiser";
+import { IAdvertiser, IAdvertiserMain } from "../../interfaces/IAdvertiser";
 import Container, { Service } from "typedi";
 
 @Service()
@@ -14,6 +14,16 @@ export class AdvertiserController {
     );
     res.status(advertiser.status).json(advertiser);
   }
+  public async createAdvertiserMainController(req: any, res: any) {
+    const advertiserService: AdvertiserService =
+      Container.get(AdvertiserService);
+    const advertiserData = req.body as IAdvertiserMain;
+    const advertiser = await advertiserService.createAdvertiserMainDataService(
+      advertiserData
+    );
+    res.status(advertiser.status).json(advertiser);
+  }
+
   public async getAdvertiserByEmailController(req: any, res: any) {
     const { email } = req.params;
     const advertiserService: AdvertiserService =
