@@ -4,8 +4,7 @@ class AuthService {
 
     public static async login(username: string, password: string) {
         const response = await axiosInstance.get('/users/loginUser', { params: { username, password } });
-        const { token, user } = response.data;
-        return user;
+        return response.data;
     }
 
     public static async register(username: string, password: string, email: string) {
