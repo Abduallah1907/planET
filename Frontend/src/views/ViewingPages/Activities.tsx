@@ -1,28 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Col, Row, Container, Form, InputGroup } from "react-bootstrap";
-import ItineraryCard from "../components/Cards/ItineraryCard";
-import FilterBy from "../components/FilterBy/FilterBy";
+import FilterBy from "../../components/FilterBy/FilterBy";
+import CustomActivityCard from "../../components/Cards/ActivityCard";
 import { FaSearch } from "react-icons/fa";
 import { BiSort } from "react-icons/bi";
-import filterOptions from '../utils/filterOptions.json';
-import { ItineraryService } from "../services/ItineraryService";
-import { IItinerary } from "../types/IItinerary";
+import filterOptions from '../../utils/filterOptions.json';
+import { ActivityService } from "../../services/ActivityService";
+import { IActivity } from "../../types/IActivity";
+import { newDate } from "react-datepicker/dist/date_utils";
+import { useNavigate } from "react-router-dom";
 
-export default function ItinerariesPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [itineraries, setItineraries] = useState<IItinerary[]>([]);
-  const [sortBy, setSortBy] = useState("topPicks"); // State for sort by selection
 
-  useEffect(() => {
-    const getItinerary = async () => {
-      let ItinerariesData = await ItineraryService.getAllItineraries(1);
-      ItinerariesData = ItinerariesData.itineraries.data;
-      setItineraries(ItinerariesData);
-      console.log(ItinerariesData);
-    };
 
-    getItinerary();
-  }, []);
+export default function ActivitiesPage() {
+
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [ activities, setActivities] = React.useState<IActivity[]>([])
+  const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -31,30 +26,44 @@ export default function ItinerariesPage() {
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value);
   };
-
+  const getActivities = async () => {
+    let activitiesData = await ActivityService.getAllActivities();
+    activitiesData=activitiesData.data;
+    setActivities(activitiesData);
+    console.log(activitiesData);
+  };
+  useEffect(() => {
+    getActivities();
+  }, []);
   // Function to sort activities based on selected criteria
-  const sortedActivities = [...itineraries].sort((a, b) => {
+  const sortedActivities = [...activities].sort((a, b) => {
     switch (sortBy) {
       case "topPicks":
         return b.average_rating - a.average_rating;
       case "priceLowToHigh":
-        return a.price - b.price;
+        return (a.price ?? 0) - (b.price ?? 0);
       case "priceHighToLow":
-        return b.price - a.price;
+        return (b.price ?? 0) - (a.price ?? 0);
       default:
         return 0;
     }
   });
 
+  const onActivityClick = (id : string) => {
+    navigate(`/activity/${id}`);
+  }
+
   const filteredActivities = sortedActivities.filter((activity) =>
-    activity.locations.toString().toLowerCase().includes(searchQuery.toLowerCase())
+    activity.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <Container fluid>
       <Row className="justify-content-center my-4">
         <Col md={6} className="text-center">
-          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>Explore Itineraries</h1>
+          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
+            Explore Activities
+          </h1>
         </Col>
       </Row>
 
@@ -103,27 +112,27 @@ export default function ItinerariesPage() {
                 <option value="priceHighToLow">Price: High to Low</option>
               </Form.Select>
             </div>
-
-            {/* Display Itinerary Cards */}
-            {filteredActivities.map((activity, index) => (
-              <Col key={index} xs={12} className="mb-4 ps-0"> {/* Full-width stacking */}
-                <ItineraryCard
-                  name={activity.name}
-                  comments={""}
-                  timeline={""}
-                  locations={""}
-                  pickup_loc={""}
-                  drop_off_loc={""}
-                  Languages={activity.languages.join(",")}
-                  accessibility={activity.accessibility}
+            {activities.map((activity:IActivity, index) => (
+              <Col key={index} xs={12} className="mb-4">
+                {" "}
+                {/* Full-width stacking */}
+                <CustomActivityCard
+                  Name={activity.name}
+                  location={"cairo"}
+                  category={activity.category.type}
+                  tags={activity.tags.map((item: { type: any; }) => item.type)}
+                  imageUrl={""}
                   RatingVal={activity.average_rating}
-                  Reviews={activity.Reviews}
-                  Price={activity.price}
-                  Duration={activity.duration}
-                  Available_Dates={activity.available_dates}
+                  Reviews={100}
+                  Price={activity.price||0}
+                  Date_Time={new Date(activity.date)}
                   isActive={activity.active_flag}
-                  tags={activity.tags}
-                  onChange={() => console.log(`${activity.locations} booking status changed`)} category={""}                />
+                  isBooked={activity.booking_flag}
+                  onChange={() =>
+                    console.log(`${activity.name} booking status changed`)
+                  }
+                  onClick={() => onActivityClick(activity._id)}
+                />
               </Col>
             ))}
           </Row>

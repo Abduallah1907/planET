@@ -1,14 +1,19 @@
 import { Card, Badge, Row, Col, Image } from "react-bootstrap";
 import Rating from '../Rating/Rating';
 import "./Cards.css";
+import { HistoricalService } from "../../services/HistoricalService";
+import { useEffect, useState } from "react";
+import { get } from "http";
+import { use } from "i18next";
 
 interface InputData {
+  
   Name: string;
   location: string;
   RatingVal: number; // Initial Rating
   Reviews: number;
   Price: number;
-  imageUrl:string;
+  imageUrl: string;
   OpeningHourFrom: string; // Using string for time representation
   OpeningHourTo: string; // Using string for time representation
   OpeningDays: string; // New property for opening days
@@ -17,9 +22,12 @@ interface InputData {
 
   tags?: string[];
   onChange?: () => void; // Change onChange to a function that does not take parameters
+  onClick?: () => void;
+
 }
 
-const HistoricalLocationCard = ({
+export const HistoricalLocationCard = ({
+  
   Name,
   location,
   RatingVal,
@@ -33,11 +41,16 @@ const HistoricalLocationCard = ({
   imageUrl,
   tags,
   onChange,
+  onClick,
 }: InputData) => {
   // Manage the state for the rating
+ 
+
+
+
 
   return (
-    <Card
+    <Card onClick={onClick}
       className="p-3 shadow-sm"
       style={{ borderRadius: "10px", height: "100%" }}
     >
@@ -118,12 +131,12 @@ const HistoricalLocationCard = ({
             {Reviews.toLocaleString()} Reviews
           </p>
 
-         
-          
+
+
 
           {/* Booking Badge */}
           <div className="text-right">
-          <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
+            <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
             <Badge
               bg={isActive ? "active" : "inactive"} // Change color based on booking status
               className="mt-2 custom-status-badge rounded-4 text-center"
@@ -138,4 +151,3 @@ const HistoricalLocationCard = ({
   );
 };
 
-export default HistoricalLocationCard;

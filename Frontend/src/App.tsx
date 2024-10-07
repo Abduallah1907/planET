@@ -6,31 +6,38 @@ import { Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import CreateGoverner from "./views/CreateGoverner/CreateGoverner";
-import BookingLayout from "./views/CreateActivities/CreateActivities";
-import CreateActivity from "./views/CreateActivities/CreateActivities";
+import BookingLayout from "./views/ViewingPages/Activities";
+import Activities from "./views/ViewingPages/Activities";
 import TouristReg from "./views/auth/TouristReg/TouristReg";
 import TourGuideDashboard from "./views/TourGuideDashboard/TourGuidedashboard";
 import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
 
 import MainPage from "./views/Main Page/MainPage";
 import { AppProvider } from "./AppContext";
+import FilterBy from "./components/FilterBy/FilterBy";
 import Delete from "./components/Delete";
 import SellerDashboard from "./views/SellerDashboard/SellerDashboard";
-import ActivityViewEdit from "./views/ProductDetails/ActivityViewEdit";
+import ActivityDetails from "./views/ProductDetails/ActivityDetails";
 import Login from "./views/auth/Login/Login";
 import ProfileForm from "./components/ProfileForm/ProfileFormTourist";
 import SellerProfile from "./components/ProfileForm/SellerProfile";
 import SettingSide from "./components/ProfileForm/settingSide";
 import Advertiser from "./components/ProfileForm/Advertiser";
 import ProfileFormTourGuide from "./components/ProfileForm/ProfileFormTourGuide";
-import Itinerary from "./views/Itinerary";
-import HistoricalPlaces from "./views/HistoricalPlaces";
 import SellerFirstProfile from "./components/ProfileForm/SellerFirstProfile";
 import TourGuideFirst from "./components/ProfileForm/TourGuideFirst";
 import AdvertiserFirst from "./components/ProfileForm/AdvertiserFirst";
-import HistoricalLocationCard from "./components/Cards/HistoricalLocationCard";
-import ActivityCard from "./components/Cards/ActivityCard";
-import CreateProduct from "./views/CreateProduct";
+import AdvertiserCreate from "./views/AdvertiserCreate";
+import AdvertiserCreateUpdate from "./views/AdvertiserCreateUpdate";
+import AddNewProduct from "./views/AddNewProduct";
+import AddHistoricalLocation from "./views/AddHistoricalLocation";
+import AddItinerary from "./views/AddItinerary";
+import Itinerary from "./views/ViewingPages/Itinerary";
+import HistoricalPlaces from "./views/ViewingPages/HistoricalPlaces";
+import Products from "./views/ViewingPages/Products";
+import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
+import filterOptions from "./utils/filterOptions.json";
+import StakeholderReg from "./views/auth/StakeholderReg/StakeholderReg";
 
 const App: React.FC = () => {
   return (
@@ -43,27 +50,36 @@ const App: React.FC = () => {
         <Route path="/admin" element={<CreateAdmin />} />
         <Route path="/governer" element={<CreateGoverner />} />
         <Route path="/test" element={<BookingLayout />} />
-        <Route path="/CreateActivity" element={<CreateActivity />} />
         <Route path="/TouristEdit" element={<ProfileForm />} />
+        <Route path="/Activity" element={<Activities />} />
         <Route path="/Itinerary" element={<Itinerary />} />
         <Route path="/Historical" element={<HistoricalPlaces />} />
-
-        <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
-        <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/SellerDashboard" element={<SellerDashboard />} />
-        <Route path="/ActivityViewEdit" element={<ActivityViewEdit />} />
+        <Route path="/Activity/:id" element={<ActivityDetails />} />
         <Route path="/delete" element={<Delete />} />
         <Route path="/SettingSide" element={<SettingSide />} />
         <Route path="/TourGuide" element={<ProfileFormTourGuide />} />
         <Route path="/Advertiser" element={<Advertiser />} />
         <Route path="/SellerFirstProfile" element={<SellerFirstProfile />} />
         <Route path="/TourGuideFirst" element={<TourGuideFirst />} />
-        <Route path="/Products" element={<CreateProduct />} />
+        <Route path="/Products" element={<Products />} />
+        <Route path="/AdvertiserCreate" element={<AdvertiserCreate />} />
+        <Route path="/AdvertiserCreateUpdate" element={<AdvertiserCreateUpdate />} />
+        <Route path="/AddNewProduct" element={<AddNewProduct />} />
+        <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
+        <Route path="/AddItinerary" element={<AddItinerary />} />
+        <Route
+          path="/filter"
+          element={<FilterBy filterOptions={filterOptions} />}
+        />
+        <Route path="/stakeholder" element={<StakeholderReg />} />
+        <Route path="/" element={<MainPage />} />
 
         <Route path="/SellerProfile" element={<SellerProfile />} />
         <Route path="/AdvertiserFirst" element={<AdvertiserFirst />} />
+        <Route path="/Historical/:id" element={<HistoricalDetails />} />
       </Routes>
     </AppProvider>
   );

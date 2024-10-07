@@ -13,8 +13,10 @@ export class Historical_locationController {
     const historical_locationService: Historical_locationService =
       Container.get(Historical_locationService);
     const historical_location =
-      await historical_locationService.getAllHistorical_locationsService();
-    res.status(historical_location.status).json({ historical_location });
+      await historical_locationService.getAllHistorical_locationsService(
+        req.query
+      );
+    res.status(historical_location.status).json(historical_location);
   }
   public async createHistorical_locationController(req: any, res: any) {
     const historical_locationService: Historical_locationService =
@@ -24,7 +26,7 @@ export class Historical_locationController {
       await historical_locationService.createHistorical_locationService(
         Historical_locationData
       );
-    res.status(historical_location.status).json({ historical_location });
+    res.status(historical_location.status).json(historical_location);
   }
   public async getHistorical_locationByIDController(req: any, res: any) {
     const { historical_location_id } = req.params;
@@ -34,7 +36,7 @@ export class Historical_locationController {
       await historical_locationService.getHistorical_locationByIDService(
         historical_location_id
       );
-    res.status(historical_location.status).json({ historical_location });
+    res.status(historical_location.status).json(historical_location);
   }
   //Get Historical_location by Governer_id
   public async getHistorical_locationsByGovernerIDController(
@@ -48,7 +50,7 @@ export class Historical_locationController {
       await historical_locationService.getHistorical_locationsByGovernerIDService(
         Governer_id
       );
-    res.status(historical_location.status).json({ historical_location });
+    res.status(historical_location.status).json(historical_location);
   }
   //Update Historical_location
   public async updateHistorical_locationController(req: any, res: any) {
@@ -61,7 +63,7 @@ export class Historical_locationController {
         historical_location_id,
         Historical_locationData
       );
-    res.status(historical_location.status).json({ historical_location });
+    res.status(historical_location.status).json(historical_location);
   }
   //Delete Historical_location
   public async deleteHistorical_locationController(req: any, res: any) {
@@ -73,7 +75,7 @@ export class Historical_locationController {
       await historical_locationService.deleteHistorical_locationService(
         historical_id
       );
-    res.status(historical_location.status).json({ historical_location });
+    res.status(historical_location.status).json(historical_location);
   }
   public async getSearchHistorical_location(req: any, res: any) {
     const { name, category, tag } = req.query;
@@ -85,7 +87,7 @@ export class Historical_locationController {
         category,
         tag
       );
-    res.status(historical_locations.status).json({ historical_locations });
+    res.status(historical_locations.status).json(historical_locations);
   }
   public async getUpcomingHistorical_locations(req: any, res: any) {
     const historical_locationService: Historical_locationService =
@@ -94,7 +96,7 @@ export class Historical_locationController {
       await historical_locationService.getUpcomingHistorical_locationsService();
     res
       .status(upcomingHistorical_locations.status)
-      .json({ upcomingHistorical_locations });
+      .json(upcomingHistorical_locations);
   }
   public async getFilteredHistorical_locations(req: any, res: any) {
     const { tags } = req.query;
@@ -110,6 +112,13 @@ export class Historical_locationController {
         filters
       );
 
-    res.status(historical_locations.status).json({ historical_locations });
+    res.status(historical_locations.status).json(historical_locations);
+  }
+  public async getFilterComponents(req: any, res: any) {
+    const historical_locationService: Historical_locationService =
+      Container.get(Historical_locationService);
+    const filterComponents =
+      await historical_locationService.getFilterComponentsService();
+    res.status(filterComponents.status).json(filterComponents);
   }
 }

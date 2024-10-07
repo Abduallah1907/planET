@@ -77,47 +77,6 @@ export default (app: Router) => {
    *       responses:
    *         '200':
    *           description: A list of activities.
-   *           content:
-   *             application/json:
-   *               schema:
-   *                 type: array
-   *                 items:
-   *                   type: object
-   *                   properties:
-   *                     id:
-   *                       type: string
-   *                     name:
-   *                       type: string
-   *                     date:
-   *                       type: string
-   *                       format: date
-   *                     time:
-   *                       type: string
-   *                       format: time
-   *                     location:
-   *                       type: object
-   *                       properties:
-   *                         longitude:
-   *                           type: number
-   *                         latitude:
-   *                           type: number
-   *                       description: JSON object with longitude and latitude
-   *                     price:
-   *                       type: number
-   *                     price_range:
-   *                       type: string
-   *                     category:
-   *                       type: string
-   *                     tags:
-   *                       type: array
-   *                       items:
-   *                         type: string
-   *                     special_discount:
-   *                       type: number
-   *                     booking_flag:
-   *                       type: boolean
-   *                     advertiser_id:
-   *                       type: string
    *         '500':
    *           description: Internal Server Error.
    *
@@ -416,10 +375,7 @@ export default (app: Router) => {
   );
   router.get("/getAllActivities", activityController.getAllActivities);
 
-  router.get(
-    "/getActivityByID/:id",
-    activityController.getActivityByID
-  );
+  router.get("/getActivityByID/:id", activityController.getActivityByID);
 
   router.get(
     "/getActivityByAdvertiserID/:advertiserID",

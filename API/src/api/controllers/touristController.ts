@@ -12,7 +12,7 @@ export class TouristController {
     const { email } = req.params;
     const touristService: TouristService = Container.get(TouristService);
     const tourist = await touristService.getTouristService(email);
-    res.status(tourist.status).json({ tourist });
+    res.status(tourist.status).json(tourist);
   }
 
   public async createTourist(req: any, res: any) {
@@ -21,7 +21,7 @@ export class TouristController {
     const createdTourist = await touristService.createTouristService(
       touristData
     );
-    res.status(createdTourist.status).json({ createdTourist });
+    res.status(createdTourist.status).json(createdTourist);
   }
 
   public async updateTourist(req: any, res: any) {
@@ -32,6 +32,6 @@ export class TouristController {
       searchEmail,
       touristUpdateData
     );
-    res.status(updatedTourist.status).json({ updatedTourist });
+    res.status(updatedTourist.status).json(updatedTourist);
   }
 }

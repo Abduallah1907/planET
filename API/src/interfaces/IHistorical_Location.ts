@@ -16,7 +16,7 @@ export interface IHistorical_location extends Document {
   student_price: number;
   active_flag: boolean;
   tags?: Map<string, string>;
-  average_rating:Number;
+  average_rating: Number;
   date_time?: Date;
   createdAt?: Date;
   updatedAt?: Date;
@@ -33,7 +33,7 @@ export interface IHistorical_locationDTO {
   foreign_price: number;
   student_price: number;
   tags?: Map<string, string>;
-  average_rating?:Number;
+  average_rating?: Number;
   active_flag?: boolean;
 }
 
@@ -48,5 +48,19 @@ export interface Update_IHistorical_locationDTO {
   foreign_price?: number;
   student_price?: number;
   tags?: Map<string, string>;
-  average_rating:Number;
+  average_rating: Number;
+}
+export interface IHistorical_locationOutputDTO {
+  name: string;
+  location: Location;
+  ratingVal: Number;
+  reviews: string[];
+  price?: number;
+  opening_hours_from: string;
+  opening_hours_to: string;
+  opening_days: string[];
+  description: string;
+  isActive: boolean;
+  imageUrl: string[];
+  tags?: Map<string, string>;
 }
