@@ -1,38 +1,41 @@
-
-
 /* Form Group Styles */
 .form-group {
-    margin-bottom: 0.6rem; /* Adjust spacing between form groups */
+  margin-bottom: 0.6rem; /* Adjust spacing between form groups */
 }
 
 .form-group label {
-    font-weight: bold;
-    font-size: 20px; 
+  font-weight: bold;
+  font-size: 20px;
 }
 
 /* Input & Select Styles */
-.form-control {
-    width: 100%; /* Full width of the column */
-    height: auto; /* Let content dictate height */
-    padding: 0.5rem;
-    border: 1px solid #e67e22; /* Bootstrap's default border color */
-    border-radius: 10px;
-    box-sizing: border-box;
-    transition: border-color 0.3s; /* Add transition for better UX */
+.custom-form-control {
+    width: 100% !important; /* Full width of the column */
+    height: auto !important; /* Let content dictate height */
+    padding: 0.5rem !important;
+    border: 1px solid #e67e22 !important; /* Bootstrap's default border color */
+    border-radius: 10px !important;
+    box-sizing: border-box !important;
+    transition: border-color 0.3s !important; /* Add transition for better UX */
 }
 
-.form-control:focus {
-    border-color: #d35400; /* Change border color on focus */
+.custom-form-control:focus {
+    border-color: #d35400 !important; /* Change border color on focus */
+    box-shadow: 0 0 0 .25rem rgba(211, 84, 0, .25) !important;
+}
+
+.custom-form-control {
+    background-color: var(--secondary-color) !important;
 }
 
 /* Disabled Input Styles */
 .disabled-input {
-    background-color: #c1b5b5;
-    color: #110f0f;
-    border: 1px solid #b39696; /* Fixed the border style */
-    cursor: not-allowed;
+  background-color: #c1b5b5;
+  color: #110f0f;
+  border: 1px solid #b39696; /* Fixed the border style */
+  cursor: not-allowed;
 }
 
 .disabled-input:focus {
-    outline: none;
+  outline: none;
 }

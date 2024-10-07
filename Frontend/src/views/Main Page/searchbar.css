@@ -1,0 +1,190 @@
+.search-wrapper {
+    display: flex;
+    justify-content: center; /* Center the containers horizontally */
+    align-items: center; /* Center the containers vertically */
+    margin: 20px auto; /* Center the wrapper and add top margin */
+    flex-wrap: wrap; /* Allow wrapping for smaller screens */
+    position: absolute;
+    top: 30%;
+    left: 39%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 800px; /* Limit the width of the wrapper */
+    z-index: 3; /* Ensure the wrapper is above the background image */
+    
+}
+
+
+
+.search-container,
+.date-container,
+.counter-container {
+    display: flex;
+    align-items: center;
+    border: 2px solid var(--main-color); 
+    background-color: var(--secondary-color);
+}
+
+.search-container {
+    position: relative; /* Ensure relative positioning for icon placement */
+}
+
+.search-container input {
+    padding-left: 30px; /* Space for the icon */
+}
+
+.search-container .fa-search {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    pointer-events: none; /* Prevent the icon from being interactive */
+}
+
+.date-container {
+    position: relative; /* Ensure relative positioning for icon placement */
+}
+
+.date-container .react-datepicker-wrapper{
+    width: 100%;
+}
+
+.custom-input {
+    position: relative;
+    width: 100%;
+}
+
+.custom-input .fa-calendar-alt {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    pointer-events: none; /* Prevent the icon from being interactive */
+}
+
+.custom-input input {
+    padding-left: 30px; /* Space for the icon */
+}
+
+.counter-container {
+    display: flex;
+    align-items: center;
+    height: 40px; /* Ensure consistent height */
+}
+
+.counter {
+    display: flex;
+    align-items: center;
+    margin-right: 20px; /* Add space between counters */
+    position: relative; /* Ensure relative positioning for icon placement */
+}
+
+.counter i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    pointer-events: none; /* Prevent the icon from being interactive */
+}
+
+.counter span {
+    padding-left: 30px; /* Space for the icon */
+    margin-right: 10px;
+}
+
+.counter-button {
+    padding: 3px 6px; /* Smaller padding for smaller buttons */
+    border: none;
+    background-color: transparent; /* Transparent background */
+    color: #007bff;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 12px; /* Smaller font size */
+}
+
+.counter-button i {
+    font-size: 16px; /* Adjust icon size */
+}
+
+.counter-button:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.search-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    align-self: center;
+}
+
+.btn-custom{
+    background-color: #002042;
+    color: white;
+    border: 2px solid var(--main-color);
+    padding: 5px 12px;
+    cursor: pointer;
+}
+
+.btn-custom:hover{
+    background-color: #003366;
+}
+
+.search-wrapper .row{
+    border: 0.5rem solid var(--main-color);
+}
+
+.search-wrapper .col, .date-container .col{
+    padding: 0;
+}
+
+.input-group-text{
+    border: 0;
+    background-color: transparent;
+}
+
+.form-control{
+    border: 0;
+}
+
+.search-container .form-control{
+    padding: 0 !important;
+}
+
+.form-control:focus{
+    box-shadow: none;
+}
+
+.react-datepicker__input-container input{
+    width: 100%;
+    border: none;
+}
+
+.search-container .btn-custom, .counter-container,.search-container .input-group{
+    height: -webkit-fill-available;
+    height: 100%;
+    border-radius: 0.25rem; 
+}
+
+.counter-container{
+    height: inherit;
+}
+
+.search-wrapper .row, .submit-btn {
+    background-color: var(--main-color) !important;
+}
+
+.search-container .input-group-text{
+    background-color: #fff !important;
+}
+
+#travel-options-dropdown, #travel-options-dropdown:hover{
+    color: #595c5f;
+}

@@ -1,0 +1,114 @@
+.search-bar {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.search-bar input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 40%;
+}
+
+.statistics-container {
+  display: flex;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background-color: white !important;
+  border: none !important;
+  border-radius: 1.5rem !important;
+  padding: 20px !important;
+  text-align: left;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) !important;
+  width: 25% !important;
+
+}
+
+.stat-card h4 {
+  font-size: 1.3rem !important;
+  margin-bottom: 10px;
+  font-weight: normal;
+  font-size: 1rem;
+  color: rgba(32, 34, 36, 0.5);
+}
+
+.stat-card .stat-value {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.stat-icon{
+  padding: 1.2rem;
+  border-radius: 1.2rem;
+}
+
+.stat-icon svg{
+  font-size: 1.75rem;
+  color: var(--main-color);
+}
+
+.bg-icon{
+  background-color: rgba(215, 111, 48, 0.21);
+}
+
+.green-text {
+  color: green;
+}
+
+.red-text {
+  color: red;
+}
+
+.chart-container {
+  background-color: white;
+  border-color: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 1.5rem;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.chart-container h4 {
+  margin-bottom: 20px;
+}
+
+.table-container {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.trip-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.trip-table th,
+.trip-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.trip-table .status-label {
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.status-label.arrived {
+  background-color: #28a745;
+  color: white;
+}
+
+.status-label.boarding {
+  background-color: #ffc107;
+  color: black;
+}
+
+.status-label.cancelled {
+  background-color: #dc3545;
+  color: white;
+}

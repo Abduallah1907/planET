@@ -9,9 +9,13 @@ interface InputData {
   id: string;
   disabled: boolean;
   required: boolean;
-  value: string;
+  value?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   name: string;
+  className?: string;
+  accept?: string;
+  multiple?: boolean;
+  options?: string[];
 }
 
 function CustomFormGroup({
@@ -24,22 +28,77 @@ function CustomFormGroup({
   value,
   onChange,
   name,
+  accept,
+  multiple,
+  options,
 }: InputData) {
   return (
-    <Form.Group className="form-group" controlId={id}>
+    <Form.Group className="form-group" id={id}>
       <Form.Label>{label}</Form.Label>
-      <Form.Control
-        type={type}
-        placeholder={placeholder}
-        disabled={disabled}
-        required={required}
-        value={value}
-        onChange={onChange}
-        name={name}
-        className={disabled ? "disabled-input" : ""}
-      />
+      {type === "select" ? (
+        <Form.Control
+          as="select"
+          disabled={disabled}
+          required={required}
+          onChange={onChange}
+          name={name}
+          value={value || ""}
+          className={
+            disabled
+              ? "disabled-input custom-form-control"
+              : "custom-form-control"
+          }
+        >
+          <option value="" disabled>
+            {placeholder}
+          </option>
+          {options &&
+            options.map((option, index) => (
+              <option key={index} value={option}>
+                {option}
+              </option>
+            ))}
+        </Form.Control>
+      ) : (
+        <Form.Control
+          type={type}
+          placeholder={placeholder}
+          disabled={disabled}
+          required={required}
+          onChange={onChange}
+          name={name}
+          className={
+            disabled
+              ? "disabled-input custom-form-control"
+              : "custom-form-control"
+          }
+          accept={type === "file" ? accept : undefined}
+          {...(type !== "file" ? { value: value || "" } : {})}
+          multiple={multiple}
+        />
+      )}
     </Form.Group>
   );
 }
 
 export default CustomFormGroup;
+
+{
+  /* <Form.Control
+  type={type}
+  placeholder={placeholder}
+  disabled={disabled}
+  required={required}
+  // value={type !== "file" ? value : ""}
+  onChange={onChange}
+  name={name}
+  className={
+    disabled
+      ? "disabled-input custom-form-control"
+      : " custom-form-control"
+  }
+  accept={type === "file" ? accept : undefined}
+  {...(type !== "file" ? { value: value || "" } : {})}
+  multiple={multiple}
+/> */
+}

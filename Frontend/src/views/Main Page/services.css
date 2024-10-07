@@ -1,0 +1,52 @@
+.ser-container .card-shadow {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* Adjust the shadow as needed */
+  transition: box-shadow 0.3s ease-in-out;
+  /* Smooth transition for shadow */
+
+  width: 100%;
+  /* Ensure the card takes full width of the column */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  border-radius: 5%;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+  /* Add a subtle shadow */
+}
+
+.ser-container .card-shadow:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  /* Slightly larger shadow on hover */
+}
+
+.ser-container .card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+  /* Add a subtle shadow */
+  height: 25%;
+  padding: 10px;
+}
+
+.ser-container .card-icon {
+  font-size: 2rem;
+  /* Adjust the size of the icon */
+  margin-bottom: 10px;
+  /* Space between the icon and the title */
+}
+
+.services-text {
+  font-size: 2.0rem;
+  font-weight: 700 !important;
+  font-family: Volkhov, serif;
+  color: var(--text-secondary-color);
+}
+
+.ser-container {
+  margin-bottom: 50px;
+}

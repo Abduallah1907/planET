@@ -1,8 +1,9 @@
 .form-fields {
   width: 800px;
   margin: auto;
-  /* display: flex;
-  flex-direction: column;
-  justify-content: space-around; */
   margin-top: 70px;
+}
+
+.tourist-form .form-group{
+  width: 20rem;
 }

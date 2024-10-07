@@ -120,6 +120,15 @@ export default async ({ expressApp }: { expressApp: Application }) => {
     // Notice the require syntax and the '.default'
     model: require("../models/Wishlist").default,
   };
+  const historical_tagModel = {
+    name: "historical_tagModel",
+    // Notice the require syntax and the '.default'
+    model: require("../models/Historical_tag").default,
+  };
+  const tagModel = {
+    name: "tagModel",
+    model: require("../models/Tag").default,
+  };
 
   // It returns the agenda instance because it's needed in the subsequent loaders
   const { agenda } = await dependencyInjectorLoader({
@@ -145,6 +154,8 @@ export default async ({ expressApp }: { expressApp: Application }) => {
       tour_guideModel,
       touristModel,
       wishlistModel,
+      tagModel,
+      historical_tagModel,
     ],
   });
   Logger.info("✌️ Dependency Injector loaded");

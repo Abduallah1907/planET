@@ -51,6 +51,13 @@ const itinerarySchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    average_rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      required: true,
+      default: 0,
+    },
     available_dates: [
       {
         type: Date,
@@ -62,16 +69,17 @@ const itinerarySchema = new mongoose.Schema(
       required: true,
     },
     pickup_loc: {
-      type: String,
+      type: LocationSchema,
       required: true,
     },
     drop_off_loc: {
-      type: String,
+      type: LocationSchema,
       required: true,
     },
     tags: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
       },
     ],
     active_flag: {
@@ -91,9 +99,6 @@ const itinerarySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Itinerary = mongoose.model<IItinerary & mongoose.Document>(
-  "Itinerary",
-  itinerarySchema
-);
+const Itinerary = mongoose.model<IItinerary & mongoose.Document>("Itinerary", itinerarySchema);
 
 export default Itinerary;

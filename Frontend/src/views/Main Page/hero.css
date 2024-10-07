@@ -1,0 +1,78 @@
+.hero-section {
+  position: relative;
+  overflow: hidden;
+  background-image : url('../../assets/Decore1.svg');
+  background-repeat: no-repeat;
+  background-position: right;
+  z-index: 1;
+  padding-top: 120px;
+  min-height: 100vh;
+}
+
+.hero-section img {
+  position: absolute;
+}
+
+.hero-section .traveller {
+  top: 0;
+  right: 0;
+  width: auto;
+  height: auto;
+}
+
+.hero-section .plane {
+  top: 30%;
+  right: 30%;
+  width: 30%;
+  height: 6rem;
+  transform: translateY(-50%);
+}
+ .absolute-image {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 700px;
+  /* Adjust the width as needed */
+  height: auto;
+  z-index: 2;
+  /* Ensure it is below other elements */
+  pointer-events: none;
+  /* Ensure it doesn't intercept any clicks or events */
+}
+
+.hero-text h1 {
+  font-size: 4rem;
+  font-weight: 700 !important;
+  line-height: 1.2;
+  font-family: Volkhov, serif;
+  color: var(--text-secondary-color);
+}
+
+.hero-buttons .btn {
+  padding: 10px 20px;
+  font-size: 1.2rem;
+}
+
+.hero-text p {
+  font-size: 1rem;
+  color: #666;
+  margin: 20px 0;
+}
+
+.hero-text h5 {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  color: var(--main-color);
+  margin: 20px 0;
+  font-weight: bold;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}

@@ -9,15 +9,15 @@ const activitySchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
-    comment: [
+    comments: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Comment_rating",
+        ref: "Comment_Rating",
       },
     ],
     name: {
       type: String,
-      required: false,
+      required: true,
     },
     date: {
       type: Date,
@@ -29,7 +29,7 @@ const activitySchema = new mongoose.Schema(
     },
     location: {
       type: LocationSchema, // [longitude, latitude],
-      required: true,
+      // required: true,
     },
     price: { type: Number, required: false }, // Optional single price
     price_range: {
@@ -38,16 +38,18 @@ const activitySchema = new mongoose.Schema(
     },
     special_discount: {
       type: Number,
-      required: true,
+      // required: true,
     },
     tags: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
       },
     ],
     booking_flag: {
       type: Boolean,
       required: true,
+      default: false,
     },
     inappropriate_flag: {
       type: Boolean,
@@ -57,10 +59,21 @@ const activitySchema = new mongoose.Schema(
       type: Boolean,
       required: false,
     },
+    average_rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      required: true,
+      default: 0,
+    },
+    image:{
+      type: String,
+      required: false
+    },
     advertiser_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Advertiser",
-      required: true,
+      // required: true,
     },
   },
   { timestamps: true }
