@@ -34,15 +34,6 @@
   color: #333;
 }
 
-.description {
-  width: 100%;
-  max-width: 650px;
-  position: relative;
-  height: 100px;
-  border: 1px solid #e0a16e;
-  border-radius: 5px;
-  padding: 10px;
-}
 
 .reserve-button {
   background-color: var(--main-color);

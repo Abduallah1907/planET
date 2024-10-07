@@ -28,7 +28,7 @@ export default function ActivitiesPage() {
   };
   const getActivities = async () => {
     let activitiesData = await ActivityService.getAllActivities();
-    activitiesData=activitiesData.activities.data;
+    activitiesData=activitiesData.data;
     setActivities(activitiesData);
     console.log(activitiesData);
   };
@@ -120,8 +120,8 @@ export default function ActivitiesPage() {
                   Name={activity.name}
                   location={"cairo"}
                   category={activity.category.type}
+                  tags={activity.tags.map((item: { type: any; }) => item.type)}
                   imageUrl={""}
-                  tags={activity.tags.map((tag: any) => tag.type)}
                   RatingVal={activity.average_rating}
                   Reviews={100}
                   Price={activity.price||0}

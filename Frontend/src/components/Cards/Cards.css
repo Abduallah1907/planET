@@ -3,7 +3,7 @@
   font-weight: 500 !important;
   font-family: Poppins !important;
   margin-right: 5px !important;
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.5) !important;
 }
 
 .card-title {

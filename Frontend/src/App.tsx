@@ -14,6 +14,7 @@ import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
 
 import MainPage from "./views/Main Page/MainPage";
 import { AppProvider } from "./AppContext";
+import FilterBy from "./components/FilterBy/FilterBy";
 import Delete from "./components/Delete";
 import SellerDashboard from "./views/SellerDashboard/SellerDashboard";
 import ActivityDetails from "./views/ProductDetails/ActivityDetails";
@@ -35,6 +36,8 @@ import Itinerary from "./views/ViewingPages/Itinerary";
 import HistoricalPlaces from "./views/ViewingPages/HistoricalPlaces";
 import Products from "./views/ViewingPages/Products";
 import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
+import filterOptions from "./utils/filterOptions.json";
+import StakeholderReg from "./views/auth/StakeholderReg/StakeholderReg";
 
 const App: React.FC = () => {
   return (
@@ -49,12 +52,8 @@ const App: React.FC = () => {
         <Route path="/test" element={<BookingLayout />} />
         <Route path="/TouristEdit" element={<ProfileForm />} />
         <Route path="/Activity" element={<Activities />} />
-        <Route path="/editprofile" element={<ProfileForm />} />
         <Route path="/Itinerary" element={<Itinerary />} />
         <Route path="/Historical" element={<HistoricalPlaces />} />
-
-        <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
-        <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/SellerDashboard" element={<SellerDashboard />} />
@@ -71,10 +70,16 @@ const App: React.FC = () => {
         <Route path="/AddNewProduct" element={<AddNewProduct />} />
         <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
         <Route path="/AddItinerary" element={<AddItinerary />} />
+        <Route
+          path="/filter"
+          element={<FilterBy filterOptions={filterOptions} />}
+        />
+        <Route path="/stakeholder" element={<StakeholderReg />} />
+        <Route path="/" element={<MainPage />} />
 
         <Route path="/SellerProfile" element={<SellerProfile />} />
         <Route path="/AdvertiserFirst" element={<AdvertiserFirst />} />
-        <Route path="/HistoricalDetails/:id" element={<HistoricalDetails />} />
+        <Route path="/Historical/:id" element={<HistoricalDetails />} />
       </Routes>
     </AppProvider>
   );
