@@ -6,6 +6,7 @@ interface InputData {
   Name: string;
   location: string;
   category: string;
+  tags?: string[];
   RatingVal: number; // Initial Rating
   Reviews: number;
   Price: number;
@@ -14,12 +15,14 @@ interface InputData {
   isBooked: boolean; // Added isBooked prop
   imageUrl: string;
   onChange?: () => void; // Change onChange to a function that does not take parameters
+  onClick?: () => void;
 }
 
 const CustomActivityCard = ({
   Name,
   location,
   category,
+  tags,
   RatingVal,
   Reviews,
   Price,
@@ -27,11 +30,13 @@ const CustomActivityCard = ({
   isActive,
   isBooked,
   onChange,
+  onClick,
 }: InputData) => {
   // Manage the state for the rating
 
+
   return (
-    <Card
+    <Card onClick={onClick}
       className="p-3 shadow-sm"
       style={{ borderRadius: "10px", height: "100%" }}
     >
@@ -59,12 +64,13 @@ const CustomActivityCard = ({
                   {Name}
                 </Card.Title>
                 {/* Badges next to Activity Name */}
-                <Badge pill bg="tag" className="me-2 custom-badge">
-                  Outdoor
-                </Badge>
-                <Badge pill bg="tag" className="custom-badge">
-                  Nightlife
-                </Badge>
+                {tags?.map((tag) => {
+                  return (
+                    <Badge pill bg="tag" className="me-2 custom-badge">
+                      {tag}
+                    </Badge>
+                  );
+                })}
               </div>
               <Card.Text>
                 <a

@@ -1,6 +1,7 @@
 
 //import { IHistorical_tag } from "./IHistorical_tag";
 export interface IHistorical_location  {
+  _id: string;
   governor_id: string;
   comments: string[];
   name: string;
@@ -21,6 +22,7 @@ export interface IHistorical_location  {
   updatedAt?: Date;
 }
 export interface IHistorical_locationDTO {
+  _id: string;
   name: string;
   governor_id: string;
 

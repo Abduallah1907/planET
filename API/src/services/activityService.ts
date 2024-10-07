@@ -6,7 +6,7 @@ import {
 } from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
-import mongoose, { Types } from "mongoose";
+import mongoose, { model, Types } from "mongoose";
 import { IFilterComponents } from "@/interfaces/IFilterComponents";
 @Service()
 export default class ActivityService {
@@ -17,7 +17,14 @@ export default class ActivityService {
   ) {}
 
   public getAllActivitiesService = async () => {
-    const activitiesData = await this.activityModel.find({}).populate("category").populate("tags").populate("advertiser_id");
+    const activitiesData = await this.activityModel.find({})
+    .populate("category")
+    .populate("tags")
+    .populate({
+      path: 'advertiser_id',
+      model: 'Advertiser',
+      populate: [{path: 'user_id',model: 'User'}],
+    });
     if (activitiesData instanceof Error) {
       throw new InternalServerError("Internal server error");
     }

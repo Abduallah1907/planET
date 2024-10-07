@@ -1,0 +1,66 @@
+.historical-card-container {
+    margin-top: 20px;
+  }
+  
+  .historical-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .historical-details {
+    padding: 20px;
+  }
+  
+  .image-placeholder {
+    height: 200px;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .details {
+    margin-top: 20px;
+  }
+  
+  .details h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .details .custom-badge {
+    background-color: #d76f30;
+    color: white;
+  }
+  
+  .details .rating-stars {
+    margin-left: auto;
+  }
+  
+  .details .Advertiser {
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+  }
+  
+  .details .Category,
+  .details .date,
+  .details .time,
+  .details .price {
+    margin-bottom: 10px;
+  }
+  
+  .reserve-button {
+    background-color: #d76f30;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .reserve-button:hover {
+    background-color: #c65a2b;
+  }

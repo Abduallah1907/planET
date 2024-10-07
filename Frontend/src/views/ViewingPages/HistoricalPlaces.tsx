@@ -1,17 +1,19 @@
 import { t } from "i18next";
-import HistoricalLocationCard from "../components/Cards/HistoricalLocationCard";
-import FilterBy from "../components/FilterBy/FilterBy";
-import React from "react";
+import { HistoricalLocationCard } from "../../components/Cards/HistoricalLocationCard";
+import FilterBy from "../../components/FilterBy/FilterBy";
+import React, { useEffect } from "react";
 import { Col, Row, Container, Form, InputGroup } from "react-bootstrap";
 import { BiSort } from "react-icons/bi";
 
 import { FaSearch } from "react-icons/fa";
-import filterOptions from '../utils/filterOptions.json';
-import { HistoricalService } from "../services/HistoricalService";
-import { IHistorical_location } from "../types/IHistoricalLocation";
+import filterOptions from '../../utils/filterOptions.json';
+import { HistoricalService } from "../../services/HistoricalService";
+import { IHistorical_location } from "../../types/IHistoricalLocation";
+import { useNavigate } from "react-router-dom";
 
 const historicalData = [
   {
+    id: "1",
     Name: "The Great Wall of China",
     location: "China",
     category: "Historical Landmark",
@@ -23,6 +25,7 @@ const historicalData = [
     tags: ["Historical", "Landmark"],
   },
   {
+    id: "2",
     Name: "The Pyramids of Giza",
     location: "Egypt",
     category: "Historical Wonder",
@@ -34,6 +37,7 @@ const historicalData = [
     tags: ["Historical", "Wonder"],
   },
   {
+    id: "3",
     Name: "Machu Picchu",
     location: "Peru",
     category: "Historical Site",
@@ -47,7 +51,7 @@ const historicalData = [
 ];
 
 export default function HistoricalLocationsPage() {
-
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [ historical, setHistorical] = React.useState<IHistorical_location[]>([])
   const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
@@ -65,8 +69,13 @@ export default function HistoricalLocationsPage() {
     setHistorical(HistoricalData);
     console.log(HistoricalData);
   };
-  getHistorical();
-
+  useEffect(() => {
+    getHistorical();
+  }, []);
+  const onHistoricalClick = (id : string) => {
+    navigate(`/HistoricalDetails/${id}`);
+  }
+  
   // Function to sort historical locations based on selected criteria
   const sortedLocations = [...historicalData].sort((a, b) => {
     switch (sortBy) {
@@ -139,18 +148,24 @@ export default function HistoricalLocationsPage() {
               </Form.Select>
             </div>
             {historical.map((location:IHistorical_location, index) => (
-              <Col key={index} xs={12} className="mb-4 ps-0">
-                <HistoricalLocationCard
-                  Name={location.name}
-                  location={"cairo"}
-                  imageUrl={""}
-                  RatingVal={location.average_rating}
-                  Reviews={100}
-                  Description={location.description}
-                  isActive={location.active_flag}
-                  tags={location.tags ? Object.values(location.tags) : []}
-                  onChange={() => console.log(`${location.name} booking status changed`)} Price={location.native_price}  OpeningHourFrom={location.opening_hours_from} OpeningHourTo={location.opening_hours_to} OpeningDays={location.opening_days.join(",")}                 />
-              </Col>
+              <Col key={location._id} xs={12} className="mb-4 ps-0">
+              <HistoricalLocationCard
+                Name={location.name}
+                location={"cairo"}
+                imageUrl={""}
+                RatingVal={location.average_rating}
+                Reviews={100}
+                Description={location.description}
+                isActive={location.active_flag}
+                tags={location.tags ? Object.values(location.tags) : []}
+                onChange={() => console.log(`${location.name} booking status changed`)}
+                Price={location.native_price}
+                OpeningHourFrom={location.opening_hours_from}
+                OpeningHourTo={location.opening_hours_to}
+                OpeningDays={location.opening_days.join(",")}
+                onClick={() => onHistoricalClick(location._id)}
+              />
+            </Col>
             ))}
           </Row>
         </Col>

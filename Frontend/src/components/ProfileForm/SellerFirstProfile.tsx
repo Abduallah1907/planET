@@ -2,24 +2,40 @@ import React, { useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import "./ProfileFormTourist.css";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import LogoPlaceholder from "../../assets/person-circle.svg"; // Placeholder logo
+import LogoPlaceholder from "../../assets/person-circle.svg"; // Placeholder logo import
 
 interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  mobile: string;
+  profession: string;
+  password: string;
+  retypePassword: string;
   username: string;
-  website: string;
-  hotline: string;
-  companyProfile: string;
+  nationality: string;
+  dob: string;
+  description: string;
   logo: File | null; // Added logo field
 }
 
-const Advertiser: React.FC = () => {
+const SellerFirstProfile: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    mobile: "",
+    profession: "",
+    password: "",
+    retypePassword: "",
     username: "",
-    website: "",
-    hotline: "",
-    companyProfile: "",
+    nationality: "",
+    dob: "",
+    description: "",
     logo: null, // Initialize logo as null
   });
+
+  const [logoPreview, setLogoPreview] = useState<string | null>(null); // For previewing the logo
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -31,39 +47,54 @@ const Advertiser: React.FC = () => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFormData({ ...formData, logo: e.target.files[0] });
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setFormData({ ...formData, logo: file });
+      setLogoPreview(URL.createObjectURL(file)); // Preview the selected logo
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.password !== formData.retypePassword) {
+      alert("Passwords don't match!");
+      return;
+    }
     // Handle form submission, including the logo file
   };
 
   const handleCancel = () => {
     setFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      mobile: "",
+      profession: "",
+      password: "",
+      retypePassword: "",
       username: "",
-      website: "",
-      hotline: "",
-      companyProfile: "",
+      nationality: "",
+      dob: "",
+      description: "",
       logo: null, // Reset logo
     });
+    setLogoPreview(null); // Reset the logo preview
   };
 
   return (
     <div className="profile-form-container">
       <Row className="align-items-center mb-4">
         <Col xs={7} className="text-left">
-          <h2 className="my-profile-heading">Welcome Advertiser!</h2>
+          <h2 className="my-profile-heading">Welcome Seller!</h2>
         </Col>
         <Col xs={3} className="text-center">
+          {/* Use LogoPlaceholder as the default logo until changed */}
           <img
-            src={LogoPlaceholder}
+            src={logoPreview || LogoPlaceholder} // Use logo preview or placeholder
             width="70"
             height="50"
             className="align-top logo"
-            alt="Advertiser logo"
+            alt="Seller logo"
           />
         </Col>
       </Row>
@@ -73,72 +104,25 @@ const Advertiser: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="Username:"
+                label="Description:"
                 type="text"
-                placeholder="Enter your username"
-                id="username"
-                name="username"
+                placeholder="Change your description"
+                id="description"
+                name="description"
                 disabled={false}
                 required={true}
-                value={formData.username}
+                value={formData.description} // Correctly referencing description
                 onChange={handleChange}
               />
             </Col>
           </Row>
 
-          <Row>
-            <Col>
-              <CustomFormGroup
-                label="Link to Website:"
-                type="url"
-                placeholder="Enter your website URL"
-                id="website"
-                name="website"
-                disabled={false}
-                required={true}
-                value={formData.website}
-                onChange={handleChange}
-              />
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <CustomFormGroup
-                label="Hotline:"
-                type="tel"
-                placeholder="Enter your hotline number"
-                id="hotline"
-                name="hotline"
-                disabled={false}
-                required={true}
-                value={formData.hotline}
-                onChange={handleChange}
-              />
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <CustomFormGroup
-                label="Company Profile:"
-                type="textarea"
-                placeholder="Enter your company profile"
-                id="companyProfile"
-                name="companyProfile"
-                disabled={false}
-                required={true}
-                value={formData.companyProfile}
-                onChange={handleChange}
-              />
-            </Col>
-          </Row>
-
+          {/* New row for logo upload */}
           <Row>
             <Col>
               <Form.Group controlId="formFile" className="mb-3">
                 <Form.Label>
-                  <h3>Upload Logo</h3>
+                  <h3>Change Logo</h3>
                 </Form.Label>
                 <Form.Control
                   type="file"
@@ -164,4 +148,4 @@ const Advertiser: React.FC = () => {
   );
 };
 
-export default Advertiser;
+export default SellerFirstProfile;
