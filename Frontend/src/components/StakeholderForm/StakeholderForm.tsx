@@ -111,7 +111,7 @@ export default function StakeholderForm() {
         <Col>
           <CustomFormGroup
             label={"Role Type"}
-            type={"select"} 
+            type={"select"}
             placeholder={"Select a role"}
             id={"role"}
             disabled={false}
@@ -119,7 +119,7 @@ export default function StakeholderForm() {
             value={StakeData.role}
             onChange={handleChange}
             name={"role"}
-            options={["Tour Guide", "Advertiser", "Seller"]} 
+            options={["Tour Guide", "Advertiser", "Seller"]}
           />
         </Col>
         <Col>
