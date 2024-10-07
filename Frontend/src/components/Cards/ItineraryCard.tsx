@@ -6,26 +6,33 @@ import "./Cards.css";
 import Rating from "../Rating/Rating";
 
 interface InputData {
+  name: string;
+  comments: string;
+  timeline: string;
   locations: string;
-  pickup: string;
-  dropoff: string;
+  category: string;
+  pickup_loc: string;
+  drop_off_loc: string;
   Languages: string;
   accessibility: boolean;
   RatingVal: number; // Initial Rating
   Reviews: number;
   Price: number;
   Duration: string;
-  Available_Dates: Date;
+  Available_Dates: Date[];
   isActive: boolean;
-  isBooked: boolean;
   tags?: string[]; // Add tags property
   onChange?: (newStatus: boolean) => void; // Pass new booking status as parameter
 }
 
 const ItineraryCard = ({
+  name,
+  comments,
+  timeline,
   locations,
-  pickup,
-  dropoff,
+  category,
+  pickup_loc,
+  drop_off_loc,
   Languages,
   accessibility,
   RatingVal,
@@ -34,12 +41,11 @@ const ItineraryCard = ({
   Duration,
   Available_Dates,
   isActive,
-  isBooked,
   tags,
   onChange,
 }: InputData) => {
-  // Manage the state for the rating
-  const [bookingStatus, setBookingStatus] = useState(isBooked); // Handle booking status
+  // Manage the state for the booking status
+  const [bookingStatus, setBookingStatus] = useState(isActive); // Initialize booking status from props
 
   // Toggle booking status
   const handleBookingToggle = () => {
@@ -70,6 +76,7 @@ const ItineraryCard = ({
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
+                <h5>{name}</h5>
                 {/* Badges next to Activity Name */}
                 {tags?.map((tag, index) => (
                   <Badge pill bg="tag" className="me-2 custom-badge" key={index}>
@@ -77,6 +84,13 @@ const ItineraryCard = ({
                   </Badge>
                 ))}
               </div>
+              <Card.Text className="text-muted mb-2">
+                {comments}
+              </Card.Text>
+              <Card.Text className="text-muted">
+                Timeline: {timeline}
+              </Card.Text>
+
               <Card.Text>
                 <a
                   href="#"
@@ -89,7 +103,7 @@ const ItineraryCard = ({
 
               {/* Pickup, Dropoff, Languages, and Accessibility */}
               <Card.Text className="text-muted">
-                Pickup: {pickup} • Dropoff: {dropoff}
+                Pickup: {pickup_loc} • Dropoff: {drop_off_loc}
               </Card.Text>
               <Card.Text className="text-muted">
                 Languages: {Languages}
@@ -108,7 +122,7 @@ const ItineraryCard = ({
 
               {/* Date and Duration */}
               <Card.Text className="text-muted">
-                {Available_Dates.toLocaleDateString()} • Duration: {Duration}
+                {Available_Dates.join(",")} • Duration: {Duration}
               </Card.Text>
             </div>
           </Card.Body>
@@ -135,14 +149,14 @@ const ItineraryCard = ({
             className="text-muted text-right"
             style={{ fontSize: "1.1rem", fontWeight: "500" }}
           >
-            {Reviews.toLocaleString()} Reviews
+            {Reviews} Reviews
           </p>
 
           {/* Price and Active/Inactive Button */}
           <div className="text-end">
             <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
             <Badge
-              bg={bookingStatus ? "success" : "danger"} // Change color based on booking status
+              bg={bookingStatus ? "active" : "inactive"} // Change color based on booking status
               className="mt-2 custom-status-badge rounded-4 text-center"
               onClick={handleBookingToggle} // Toggle booking status
             >

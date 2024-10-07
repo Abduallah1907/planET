@@ -1,55 +1,49 @@
-import { t } from "i18next";
-import HistoricalLocationCard from "../components/Cards/HistoricalLocationCard";
-import FilterBy from "../components/FilterBy/FilterBy";
-import React from "react";
+import React, { useState } from "react";
+import ProductCard from "../../components/Cards/ProductCard"; 
+import FilterBy from "../../components/FilterBy/FilterBy";
 import { Col, Row, Container, Form, InputGroup } from "react-bootstrap";
 import { BiSort } from "react-icons/bi";
-
 import { FaSearch } from "react-icons/fa";
-import filterOptions from '../utils/filterOptions.json';
 
-const historicalData = [
+const productData = [
   {
-    Name: "The Great Wall of China",
-    location: "China",
-    category: "Historical Landmark",
+    Name: "Smartphone",
+    Price: 700,
+    RatingVal: 4.5,
+    Reviews: 200,
+    description: "Latest model with advanced features.",
+    seller: "TechStore",
     imageUrl: "https://via.placeholder.com/250x250",
-    RatingVal: 4.8,
-    Reviews: 1500,
-    Description: "A historic wall that stretches across northern China.",
     isActive: true,
     isBooked: false,
-    tags: ["Historical", "Landmark"],
   },
   {
-    Name: "The Pyramids of Giza",
-    location: "Egypt",
-    category: "Historical Wonder",
-    imageUrl: "https://via.placeholder.com/250x250",
-    RatingVal: 4.9,
-    Reviews: 1200,
-    Description: "One of the Seven Wonders of the Ancient World.",
-    isActive: true,
-    isBooked: false,
-    tags: ["Historical", "Wonder"],
-  },
-  {
-    Name: "Machu Picchu",
-    location: "Peru",
-    category: "Historical Site",
-    imageUrl: "https://via.placeholder.com/250x250",
+    Name: "Laptop",
+    Price: 1250,
     RatingVal: 4.7,
-    Reviews: 800,
-    Description: "An Incan citadel set high in the Andes Mountains.",
+    Reviews: 320,
+    description: "High-performance laptop with sleek design.",
+    seller: "CompWorld",
+    imageUrl: "https://via.placeholder.com/250x250",
     isActive: true,
     isBooked: true,
-    tags: ["Historical", "Site"],
+  },
+  {
+    Name: "Headphones",
+    Price: 190,
+    RatingVal: 4.3,
+    Reviews: 150,
+    description: "Noise-cancelling wireless headphones.",
+    seller: "AudioMania",
+    imageUrl: "https://via.placeholder.com/250x250",
+    isActive: true,
+    isBooked: false,
   },
 ];
 
-export default function HistoricalLocationsPage() {
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
+export default function ProductsPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("topPicks"); // State for sort by selection
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -59,11 +53,15 @@ export default function HistoricalLocationsPage() {
     setSortBy(e.target.value);
   };
 
-  // Function to sort historical locations based on selected criteria
-  const sortedLocations = [...historicalData].sort((a, b) => {
+  // Function to sort products based on selected criteria
+  const sortedProducts = [...productData].sort((a, b) => {
     switch (sortBy) {
       case "topPicks":
         return b.RatingVal - a.RatingVal;
+      case "priceLowToHigh":
+        return a.Price - b.Price;
+      case "priceHighToLow":
+        return b.Price - a.Price;
       case "reviewsLowToHigh":
         return a.Reviews - b.Reviews;
       case "reviewsHighToLow":
@@ -73,15 +71,15 @@ export default function HistoricalLocationsPage() {
     }
   });
 
-  const filteredLocations = sortedLocations.filter((location) =>
-    location.Name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredProducts = sortedProducts.filter((product) =>
+    product.Name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <Container fluid>
       <Row className="justify-content-center my-4">
         <Col md={6} className="text-center">
-          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>Explore Historical Locations</h1>
+          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>Explore Our Products</h1>
         </Col>
       </Row>
 
@@ -116,7 +114,7 @@ export default function HistoricalLocationsPage() {
 
       <Row>
         <Col md={3} className="border-bottom pb-2">
-          <FilterBy filterOptions={filterOptions}/>
+          <FilterBy filterOptions={{}} />
         </Col>
 
         <Col md={9} className="p-3">
@@ -128,22 +126,23 @@ export default function HistoricalLocationsPage() {
                 <option value="topPicks">Our Top Picks</option>
                 <option value="priceLowToHigh">Price: Low to High</option>
                 <option value="priceHighToLow">Price: High to Low</option>
+                <option value="reviewsLowToHigh">Reviews: Low to High</option>
+                <option value="reviewsHighToLow">Reviews: High to Low</option>
               </Form.Select>
             </div>
-            {filteredLocations.map((location, index) => (
+            {filteredProducts.map((product, index) => (
               <Col key={index} xs={12} className="mb-4 ps-0">
-                <HistoricalLocationCard
-                        Name={location.Name}
-                        location={location.location}
-                        category={location.category}
-                        imageUrl={location.imageUrl}
-                        RatingVal={location.RatingVal}
-                        Reviews={location.Reviews}
-                        Description={location.Description}
-                        isActive={location.isActive}
-                        isBooked={location.isBooked}
-                        tags={location.tags}
-                        onChange={() => console.log(`${location.Name} booking status changed`)} NativePrice={0} ForeignPrice={0} StudentPrice={0} OpeningHourFrom={""} OpeningHourTo={""} OpeningDays={""}                />
+                <ProductCard
+                        Name={product.Name}
+                        RatingVal={product.RatingVal}
+                        Reviews={product.Reviews}
+                        Price={product.Price}
+                        description={product.description}
+                        seller={product.seller}
+                        imageUrl={product.imageUrl}
+                        isActive={product.isActive}
+                        isBooked={product.isBooked}
+                        onChange={() => console.log(`${product.Name} booking status changed`)} id={0} isSeller={true}                />
               </Col>
             ))}
           </Row>

@@ -8,9 +8,22 @@ export interface IFilterComponents {
     min: number;
     max: number;
   };
+  Rating?: {
+    type: string;
+    min: number;
+    max: number;
+  };
   Date?: {
-    type: Date;
+    type: string;
     start: Date;
     end: Date;
+  };
+  Tag?: {
+    type: string;
+    values: string[];
+  };
+  Language?: {
+    type: string;
+    values: string[];
   };
 }

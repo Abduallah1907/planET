@@ -9,14 +9,14 @@ export class SellerController {
     const { email } = req.params;
     const sellerService: SellerService = Container.get(SellerService);
     const seller = await sellerService.getSellerService(email);
-    res.status(seller.status).json({ seller });
+    res.status(seller.status).json(seller);
   }
 
   public async createSeller(req: any, res: any) {
     const sellerService: SellerService = Container.get(SellerService);
     const newSellerData = req.body as ISellerInputDTO;
     const seller = await sellerService.createSellerService(newSellerData);
-    res.status(seller.status).json({ seller });
+    res.status(seller.status).json(seller);
   }
   public async updateSeller(req: any, res: any) {
     const sellerService: SellerService = Container.get(SellerService);
@@ -26,6 +26,6 @@ export class SellerController {
       searchEmail,
       updateSellerData
     );
-    res.status(seller.status).json({ seller });
+    res.status(seller.status).json(seller);
   }
 }

@@ -4,6 +4,6 @@ export interface IHistorical_tag extends Document {
   Values: string[];
 }
 export interface IHistorical_tagDTO {
-  name: string;
-  Values: string[];
+  name?: string;
+  Values?: string[];
 }
