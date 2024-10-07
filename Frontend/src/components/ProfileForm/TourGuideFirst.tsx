@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./ProfileFormTourist.css"; // Ensure it includes your CSS for layout
 
 import Logo from "../../assets/person-circle.svg";
@@ -7,6 +7,7 @@ import Sidebar from "../SideBar/Sidebar";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { toggleSidebar } from "../../store/sidebarSlice";
+import { TourGuideServices } from "../../services/TourGuideServices";
 
 interface WorkExperience {
   title: string;
@@ -37,6 +38,25 @@ const TourGuideFirst: React.FC = () => {
     nationality: "",
     dob: "",
   });
+  const TourGuideFirst = useAppSelector((state) => state.user);
+
+  useEffect(() => {
+    setFormData({
+      mobile: TourGuideFirst.phone_number || "", // Update mobile
+      yearsOfExperience: "", // Reset yearsOfExperience
+      previousWork: [{ title: "", place: "", from: "", to: "" }], // Reset previous work experience
+      password: "", // Reset password
+      retypePassword: "", // Reset retypePassword
+      nationality: "", // Reset nationality
+      dob: "", // Reset date of birth
+    });
+  }, [TourGuideFirst]);
+
+  const OnClick = async () => {
+    await TourGuideServices.updateTourGuide(TourGuideFirst.email, {
+      /*password: formData.password,*/
+    });
+  };
 
   const handleChange = (
     e: React.ChangeEvent<

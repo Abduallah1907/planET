@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import "./ProfileFormTourist.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import { useAppSelector } from "../../store/hooks";
+import { TourGuideServices } from "../../services/TourGuideServices";
 
 interface FormData {
   yearsOfExperience: string; // Ensure this is included
@@ -32,6 +34,33 @@ const ProfileFormGuide: React.FC = () => {
     dob: "",
     yearsOfExperience: "", // Initialize here
   });
+  const TourGuide = useAppSelector((state) => state.user);
+
+  useEffect(() => {
+    setFormData({
+      firstName: TourGuide.name.split(" ")[0],
+      lastName: TourGuide.name.split(" ")[1] || "", // Fallback for last name
+      email: TourGuide.email,
+      mobile: TourGuide.phone_number,
+      profession: TourGuide.stakeholder_id?.job || "",
+      password: "",
+      retypePassword: "",
+      username: TourGuide.username,
+      nationality: TourGuide.stakeholder_id?.nation || "",
+      dob: TourGuide.stakeholder_id?.date_of_birth || "",
+      yearsOfExperience: TourGuide.stakeholder_id?.years_of_experience || "", // Include yearsOfExperience here
+    });
+  }, [TourGuide]);
+  // Dependency array to rerun this effect when Tourist data changes
+  const OnClick = async () => {
+    await TourGuideServices.updateTourGuide(TourGuide.email, {
+      name: formData.firstName + " " + formData.lastName,
+      newEmail: formData.email,
+      /*password: formData.password,*/
+      job: formData.profession,
+      nation: formData.nationality,
+    });
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -202,7 +231,7 @@ const ProfileFormGuide: React.FC = () => {
           </Row>
 
           <div className="form-actions">
-            <Button type="submit" className="update-btn">
+            <Button type="submit" className="update-btn" onClick={OnClick}>
               Update
             </Button>
             <Button type="button" className="cancel-btn" onClick={handleCancel}>

@@ -52,7 +52,7 @@ export default function Login() {
           break;
         case "APPROVED":
       }
-      console.log("OJMSJKGYJEGFJH");
+
       switch (user.role) {
         case "TOURIST":
           navigate("/Touristedit");
@@ -62,7 +62,7 @@ export default function Login() {
           if (user.first_time_login) {
             navigate("/TourGuideFirst");
           } else {
-            navigate("/TourGuide");
+            navigate("/ProfileFormTourGuide");
           }
           return;
 
@@ -96,8 +96,11 @@ export default function Login() {
             navigate("/");
           }
           break;
+        default:
+          navigate("/");
+          break;
       }
-      navigate("/");
+
       dispatch(activateSidebar());
     } catch (err: any) {
       setError(err.message);

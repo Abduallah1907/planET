@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import "./ProfileFormTourist.css";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import LogoPlaceholder from "../../assets/person-circle.svg"; // Placeholder logo
+import { useAppSelector } from "../../store/hooks";
+import { AdvertiserService } from "../../services/AdvertiserService";
 
 interface FormData {
   username: string;
@@ -11,15 +13,41 @@ interface FormData {
   companyProfile: string;
   logo: File | null; // Added logo field
 }
-
 const Advertiser: React.FC = () => {
+  const Advertiser = useAppSelector((state) => state.user);
+
   const [formData, setFormData] = useState<FormData>({
     username: "",
     website: "",
     hotline: "",
     companyProfile: "",
-    logo: null, // Initialize logo as null
+    logo: null, // Initialize logo as null for file upload handling
   });
+
+  useEffect(() => {
+    setFormData({
+      username: Advertiser.username || "",
+      website: Advertiser.stakeholder_id?.link_to_website || "",
+      hotline: Advertiser.stakeholder_id?.hotline || "",
+      companyProfile: Advertiser.stakeholder_id?.company_profile || "",
+      logo: null,
+    });
+  }, [Advertiser]);
+
+  const handleLogoUpload = (file: File) => {
+    setFormData((prev) => ({ ...prev, logo: file }));
+  };
+
+  const OnClick = async () => {
+    const updatedData = {
+      username: formData.username,
+      website: formData.website,
+      hotline: formData.hotline,
+      companyProfile: formData.companyProfile,
+    };
+
+    await AdvertiserService.updateAdvertiser(Advertiser.email, updatedData);
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -151,7 +179,7 @@ const Advertiser: React.FC = () => {
           </Row>
 
           <div className="form-actions">
-            <Button type="submit" className="update-btn">
+            <Button type="submit" className="update-btn" onClick={OnClick}>
               Update
             </Button>
             <Button type="button" className="cancel-btn" onClick={handleCancel}>

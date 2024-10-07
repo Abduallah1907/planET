@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import "./ProfileFormTourist.css";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import LogoPlaceholder from "../../assets/person-circle.svg"; // Placeholder logo import
+import { SellerServices } from "../../services/SellerServices";
+import { useAppSelector } from "../../store/hooks";
 
 interface FormData {
   firstName: string;
@@ -36,6 +38,33 @@ const SellerFirstProfile: React.FC = () => {
   });
 
   const [logoPreview, setLogoPreview] = useState<string | null>(null); // For previewing the logo
+  const SellerFirst = useAppSelector((state) => state.user);
+  useEffect(() => {
+    setFormData({
+      firstName: SellerFirst.name.split(" ")[0],
+      lastName: SellerFirst.name.split(" ")[1] || "",
+      email: SellerFirst.email,
+      mobile: SellerFirst.phone_number,
+      profession: SellerFirst.stakeholder_id?.job || "",
+      password: "",
+      retypePassword: "",
+      username: SellerFirst.username,
+      nationality: SellerFirst.stakeholder_id?.nation || "",
+      dob: SellerFirst.stakeholder_id?.date_of_birth || "",
+      description: "",
+      logo: null,
+    });
+  }, [SellerFirst]);
+
+  const OnClick = async () => {
+    await SellerServices.updateSellerServices(SellerFirst.email, {
+      name: formData.firstName + " " + formData.lastName,
+      newEmail: formData.email,
+      /*password: formData.password,*/
+      job: formData.profession,
+      nation: formData.nationality,
+    });
+  };
 
   const handleChange = (
     e: React.ChangeEvent<

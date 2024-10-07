@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import "./ProfileFormTourist.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
+import { useAppSelector } from "../../store/hooks";
+import { SellerServices } from "../../services/SellerServices";
 
 interface FormData {
   firstName: string;
@@ -36,6 +38,34 @@ const SellerProfile: React.FC = () => {
     description: "",
     logo: null, // Initialize logo as null
   });
+  const Seller = useAppSelector((state) => state.user);
+
+  useEffect(() => {
+    setFormData({
+      firstName: Seller.name.split(" ")[0],
+      lastName: Seller.name.split(" ")[1] || "", // Adding a fallback for lastName in case there's no space
+      email: Seller.email,
+      mobile: Seller.phone_number,
+      profession: Seller.stakeholder_id?.job || "", // Optional chaining in case stakeholder_id is undefined
+      password: "",
+      retypePassword: "",
+      username: Seller.username,
+      nationality: Seller.stakeholder_id?.nation || "", // Optional chaining
+      dob: Seller.stakeholder_id?.date_of_birth || "", // Optional chaining
+      description: "", // Initialize description
+      logo: null, // Initialize logo as null
+    });
+  }, [Seller]);
+  // Dependency array to rerun this effect when Tourist data changes
+  const OnClick = async () => {
+    await SellerServices.updateSellerServices(Seller.email, {
+      name: formData.firstName + " " + formData.lastName,
+      newEmail: formData.email,
+      /*password: formData.password,*/
+      job: formData.profession,
+      nation: formData.nationality,
+    });
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
