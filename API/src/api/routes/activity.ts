@@ -381,7 +381,7 @@ export default (app: Router) => {
     authorize([UserRoles.Advertiser]),
     activityController.createActivity
   );
-  router.get("/getAllActivites", activityController.getAllActivities);
+  router.get("/getAllActivities", activityController.getAllActivities);
 
   router.get("/getActivityByID/:id", activityController.getActivityByID);
 
