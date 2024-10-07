@@ -60,7 +60,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({id}) => {
   const getActivityById = async (id: string) => {
     // Fetch activity data by id
     const activity = await ActivityService.getActivityById(id);
-    setActivityData(activity.activity.data);
+    setActivityData(activity.data);
 
   }
   useEffect(() => {
@@ -88,9 +88,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({id}) => {
           <div className="details">
             <div className="d-flex align-items-center">
               <h2 className="me-3">{activityData ? activityData.name : ''}</h2>
-              {activityData && (activityData.tags ?? []).map((tag: string, index: number) => (
+              {activityData && (activityData.tags ?? []).map((tag: any, index: number) => (
                 <Badge key={index} pill bg="tag" className="me-2 custom-badge">
-                  {tag}
+                  {tag.type}
                 </Badge>
               ))}
 
@@ -114,8 +114,6 @@ const ActivityCard: React.FC<ActivityCardProps> = ({id}) => {
             </div>
             <p className='Advertiser' onClick={handleAdvertiserClick} style={{ cursor: 'pointer', color: '#d76f30', textDecoration: 'underline' }}>{activityData?.advertiser_id.user_id.name}</p>
             <p className='Category'>{activityData?.category.type}</p>
-            <p className='Advertiser' onClick={handleAdvertiserClick} style={{ cursor: 'pointer', color:'#d76f30' , textDecoration:'underline'}}>{activityData?.advertiser_id.user_id.name}</p>
-            <p className='Category'>{activityData?.category}</p>
             <p className="date">{activityData?.date ? new Date(activityData.date).toLocaleDateString() : 'Date not available'}</p>
             <p className="time">{activityData?.time}</p>
             <p className="price">${activityData?.price}</p>
@@ -155,15 +153,10 @@ const ActivityCard: React.FC<ActivityCardProps> = ({id}) => {
         <Modal.Body>
           <img src={activityData?.advertiser_id.logo} alt="Advertiser" />
           <p><strong>Name:</strong> {activityData?.advertiser_id.user_id.name}</p>
-          <p><strong>ID:</strong> {activityData?.advertiser_id.user_id.email}</p>
-          <p><strong>Phone:</strong> {activityData?.advertiser_id.user_id.phone}</p>
+          <p><strong>Email:</strong> {activityData?.advertiser_id.user_id.email}</p>
+          <p><strong>Phone:</strong> {activityData?.advertiser_id.user_id.phone_number}</p>
           <p><strong>Location:</strong> {activityData?.location.latitude}, {activityData?.location.longitude}</p>
           
-          <p><strong>Name:</strong> {activityData?.advertiser_id.user_id.name}</p>
-          <p><strong>ID:</strong> {activityData?.advertiser_id.user_id.email}</p>
-          <p><strong>Phone:</strong> {activityData?.advertiser_id.user_id.phone}</p>
-
-
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseAdvertiserModal}>

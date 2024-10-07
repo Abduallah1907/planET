@@ -28,7 +28,7 @@ export default function ActivitiesPage() {
   };
   const getActivities = async () => {
     let activitiesData = await ActivityService.getAllActivities();
-    activitiesData=activitiesData.activities.data;
+    activitiesData=activitiesData.data;
     setActivities(activitiesData);
     console.log(activitiesData);
   };

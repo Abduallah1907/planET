@@ -43,7 +43,6 @@ const App: React.FC = () => {
   return (
     <AppProvider>
       <TopBar />
-      <TopBar />
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/Login" element={<Login />} />
@@ -80,7 +79,7 @@ const App: React.FC = () => {
 
         <Route path="/SellerProfile" element={<SellerProfile />} />
         <Route path="/AdvertiserFirst" element={<AdvertiserFirst />} />
-        <Route path="/HistoricalDetails/:id" element={<HistoricalDetails />} />
+        <Route path="/Historical/:id" element={<HistoricalDetails />} />
       </Routes>
     </AppProvider>
   );

@@ -8,52 +8,15 @@ import { BiSort } from "react-icons/bi";
 import { FaSearch } from "react-icons/fa";
 import filterOptions from '../../utils/filterOptions.json';
 import { HistoricalService } from "../../services/HistoricalService";
-import { IHistorical_location } from "../../types/IHistoricalLocation";
+import { IHistorical_location, IHistorical_location_tourist } from "../../types/IHistoricalLocation";
 import { useNavigate } from "react-router-dom";
 
-const historicalData = [
-  {
-    id: "1",
-    Name: "The Great Wall of China",
-    location: "China",
-    category: "Historical Landmark",
-    imageUrl: "https://via.placeholder.com/250x250",
-    RatingVal: 4.8,
-    Reviews: 1500,
-    Description: "A historic wall that stretches across northern China.",
-    isActive: true,
-    tags: ["Historical", "Landmark"],
-  },
-  {
-    id: "2",
-    Name: "The Pyramids of Giza",
-    location: "Egypt",
-    category: "Historical Wonder",
-    imageUrl: "https://via.placeholder.com/250x250",
-    RatingVal: 4.9,
-    Reviews: 1200,
-    Description: "One of the Seven Wonders of the Ancient World.",
-    isActive: true,
-    tags: ["Historical", "Wonder"],
-  },
-  {
-    id: "3",
-    Name: "Machu Picchu",
-    location: "Peru",
-    category: "Historical Site",
-    imageUrl: "https://via.placeholder.com/250x250",
-    RatingVal: 4.7,
-    Reviews: 800,
-    Description: "An Incan citadel set high in the Andes Mountains.",
-    isActive: true,
-    tags: ["Historical", "Site"],
-  },
-];
+
 
 export default function HistoricalLocationsPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [ historical, setHistorical] = React.useState<IHistorical_location[]>([])
+  const [ historical, setHistorical] = React.useState<IHistorical_location_tourist[]>([])
   const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,34 +27,33 @@ export default function HistoricalLocationsPage() {
     setSortBy(e.target.value);
   };
   const getHistorical = async () => {
-    let HistoricalData = await HistoricalService.getAllHistorical_Location();
-    HistoricalData=HistoricalData.historical_location.data;
-    setHistorical(HistoricalData);
+    const HistoricalData = await HistoricalService.getAllHistorical_Location("masry","engineer");
+    setHistorical(HistoricalData.data);
     console.log(HistoricalData);
   };
   useEffect(() => {
     getHistorical();
   }, []);
   const onHistoricalClick = (id : string) => {
-    navigate(`/HistoricalDetails/${id}`);
+    navigate(`/Historical/${id}`);
   }
   
   // Function to sort historical locations based on selected criteria
-  const sortedLocations = [...historicalData].sort((a, b) => {
+  const sortedLocations = [...historical].sort((a, b) => {
     switch (sortBy) {
       case "topPicks":
-        return b.RatingVal - a.RatingVal;
+        return b.average_rating - a.average_rating;
       case "reviewsLowToHigh":
-        return a.Reviews - b.Reviews;
+        return (a.reviewsCount ?? 0) - (b.reviewsCount ?? 0);
       case "reviewsHighToLow":
-        return b.Reviews - a.Reviews;
+        return (b.reviewsCount ?? 0) - (a.reviewsCount ?? 0);
       default:
         return 0;
     }
   });
 
   const filteredLocations = sortedLocations.filter((location) =>
-    location.Name.toLowerCase().includes(searchQuery.toLowerCase())
+    location.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -147,19 +109,19 @@ export default function HistoricalLocationsPage() {
                 <option value="priceHighToLow">Price: High to Low</option>
               </Form.Select>
             </div>
-            {historical.map((location:IHistorical_location, index) => (
+            {historical.map((location:IHistorical_location_tourist, index) => (
               <Col key={location._id} xs={12} className="mb-4 ps-0">
               <HistoricalLocationCard
                 Name={location.name}
                 location={"cairo"}
                 imageUrl={""}
                 RatingVal={location.average_rating}
-                Reviews={100}
+                Reviews={location.reviewsCount ?? 0}
                 Description={location.description}
                 isActive={location.active_flag}
                 tags={location.tags ? Object.values(location.tags) : []}
                 onChange={() => console.log(`${location.name} booking status changed`)}
-                Price={location.native_price}
+                Price={location.price}
                 OpeningHourFrom={location.opening_hours_from}
                 OpeningHourTo={location.opening_hours_to}
                 OpeningDays={location.opening_days.join(",")}

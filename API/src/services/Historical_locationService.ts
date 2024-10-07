@@ -83,18 +83,20 @@ export default class Historical_locationService {
 
     const historical_locationsOutput = await Promise.all(
       Historical_location.map(async (locationi) => ({
+        _id: locationi._id,
         name: locationi.name,
         location: locationi.location,
-        ratingVal: locationi.average_rating,
-        reviews: locationi.comments,
+        average_rating: locationi.average_rating,
+        comments: locationi.comments,
         price: await this.choosePrice(locationi, data), //this function is to choose the price based on the user data
         opening_hours_from: locationi.opening_hours_from,
         opening_hours_to: locationi.opening_hours_to,
         opening_days: locationi.opening_days,
         description: locationi.description,
-        isActive: locationi.active_flag,
-        imageUrl: locationi.picture,
+        active_flag: locationi.active_flag,
+        picture: locationi.picture,
         tags: locationi.tags,
+        reviewsCount : locationi.comments.length, 
       }))
     );
     return new response(

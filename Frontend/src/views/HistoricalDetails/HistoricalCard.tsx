@@ -55,7 +55,7 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
 
   const getHistoricalLocationById = async (id: string) => {
     const historicalLocation = await HistoricalService.getHistoricalLocationById(id);
-    setLocalHistoricalData(historicalLocation.historical_location.data);
+    setLocalHistoricalData(historicalLocation.data);
   };
   useEffect(() => {
     getHistoricalLocationById(id);

@@ -1,3 +1,4 @@
+import { IAdvertiser } from "./IAdvertiser";
 import { ILocation } from "./ILocation";
 
 
@@ -21,7 +22,8 @@ export interface IActivity  {
   booking_flag: boolean;
   inappropriate_flag: boolean;
   active_flag: boolean;
-  advertiser_id: any;
+  advertiser_id: IAdvertiser;
+  
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -41,7 +43,7 @@ export interface IActivityDTO {
   special_discount?: number;
   tags?: any;
   booking_flag: boolean;
-  advertiser_id: string;
+  advertiser_id: IAdvertiser;
 }
 export interface UpdateIActivityDTO {
   name?: string;
@@ -58,5 +60,7 @@ export interface UpdateIActivityDTO {
   special_discount?: number;
   tags?: any;
   booking_flag?: boolean;
-  advertiser_id?: string;
+  advertiser_id?: IAdvertiser;
 }
+
+
