@@ -119,8 +119,9 @@ export default function ActivitiesPage() {
                 <CustomActivityCard
                   Name={activity.name}
                   location={"cairo"}
-                  category={activity.category}
+                  category={activity.category.type}
                   imageUrl={""}
+                  tags={activity.tags.map((tag: any) => tag.type)}
                   RatingVal={activity.average_rating}
                   Reviews={100}
                   Price={activity.price||0}

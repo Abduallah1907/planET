@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import './ActivityCard.css';
-import { Container } from 'react-bootstrap';
-import { FaRegHeart } from 'react-icons/fa';
-
-const ActivityCard: React.FC = () => {
 import { Container, Badge, Modal, Button } from 'react-bootstrap';
 import { FaRegHeart, FaHeart, FaBookmark, FaRegBookmark } from 'react-icons/fa';
 import Rating from '../../components/Rating/Rating';
@@ -34,23 +30,6 @@ interface ActivityData {
   price: number;
   booking_flag: boolean;
 }
-const Data : ActivityData = {
-  name: "Activity Name",
-  tags: ["Tag1", "Tag2", "Tag3"],
-  average_rating: 4.5,
-  advertiser: {
-    photo: "",
-    name: "Advertiser Name",
-    email: "",
-    phone: "",
-    location: { longitude: 0, latitude: 0 },
-  },
-  category: "Category",
-  date: new Date(),
-  time: "Time",
-  price: 100,
-  booking_flag: true,
-};
 
 const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -85,7 +64,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
   useEffect(() => {
     getActivityById(id);
   }, [id]);
-  
+
   const handleAdvertiserClick = () => {
     setShowAdvertiserModal(true);
   };
@@ -94,17 +73,6 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
     setShowAdvertiserModal(false);
   };
   return (
-    <Container className='mt-5'>
-    <div className="activity-card">
-      <div className="activity-details">
-        <div className="image-placeholder">
-          <i className="heart-icon"><FaRegHeart /></i>
-        </div>
-        <div className="details">
-          <h2>Activity Name</h2>
-          <p className="price">$50</p>
-          <textarea className="description" placeholder="Title"></textarea>
-          <button className="reserve-button">Reserve</button>
     <Container className='activity-card-container mt-5'>
       <div className="activity-card">
         <div className="activity-details">
@@ -118,7 +86,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
           <div className="details">
             <div className="d-flex align-items-center">
               <h2 className="me-3">{activityData ? activityData.name : ''}</h2>
-              {activityData && (activityData.tags ?? []).map((tag, index) => (
+              {activityData && (activityData.tags ?? []).map((tag: string, index: number) => (
                 <Badge key={index} pill bg="tag" className="me-2 custom-badge">
                   {tag}
                 </Badge>
@@ -142,8 +110,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
                 </Badge>
               </div>
             </div>
-            <p className='Advertiser' onClick={handleAdvertiserClick} style={{ cursor: 'pointer', color:'#d76f30' , textDecoration:'underline'}}>{Data?.advertiser.name}</p>
-            <p className='Category'>{activityData?.category}</p>
+            <p className='Advertiser' onClick={handleAdvertiserClick} style={{ cursor: 'pointer', color: '#d76f30', textDecoration: 'underline' }}>{activityData?.advertiser_id.user_id.name}</p>
+            <p className='Category'>{activityData?.category.type}</p>
             <p className="date">{activityData?.date ? new Date(activityData.date).toLocaleDateString() : 'Date not available'}</p>
             <p className="time">{activityData?.time}</p>
             <p className="price">${activityData?.price}</p>
@@ -180,13 +148,13 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
           <Modal.Title>Advertiser Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <img src={Data?.advertiser.photo} alt="Advertiser" />
-          <p><strong>Name:</strong> {Data?.advertiser.name}</p>
-          <p><strong>ID:</strong> {Data?.advertiser.email}</p>
-          <p><strong>Phone:</strong> {Data?.advertiser.phone}</p>
-          <p><strong>Location:</strong> {Data?.advertiser.location.latitude}, {Data?.advertiser.location.longitude}</p>
+          <img src={activityData?.advertiser_id.logo} alt="Advertiser" />
+          <p><strong>Name:</strong> {activityData?.advertiser_id.user_id.name}</p>
+          <p><strong>ID:</strong> {activityData?.advertiser_id.user_id.email}</p>
+          <p><strong>Phone:</strong> {activityData?.advertiser_id.user_id.phone}</p>
+          <p><strong>Location:</strong> {activityData?.location.latitude}, {activityData?.location.longitude}</p>
 
-          
+
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseAdvertiserModal}>
@@ -197,5 +165,4 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
     </Container>
   );
 };
-
 export default ActivityCard;
