@@ -12,6 +12,24 @@ class AdminService {
       throw error;
     }
   };
+  public static CreateAdmin = async (data:any) => {
+    try {
+      const response = await axiosInstance.post(`/admin/createAdmin/`,data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static CreateGoverner = async (data:any) => {
+    try {
+      const response = await axiosInstance.post(`/admin/createGoverner/`,data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+  
 }
 
 export { AdminService };

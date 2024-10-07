@@ -5,6 +5,7 @@ import Logo from "../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
+import { AdminService } from "../../services/AdminService";
 
 interface NationalityOption {
   value: string;
@@ -14,26 +15,26 @@ interface NationalityOption {
 const nationalityOptions: NationalityOption[] = nationalityOptionsData;
 
 interface FormData {
+  fname: string;
+  lname: string;
   email: string;
   mobile: string;
-  profession: string;
   password: string;
   retypePassword: string;
   username: string;
   nationality: string;
-  dob: string;
 }
 
 const CreateGoverner: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
+    fname:"",
+    lname:"",
     email: "",
     mobile: "",
-    profession: "",
     password: "",
     retypePassword: "",
     username: "",
     nationality: "",
-    dob: "",
   });
 
   const handleChange = (
@@ -55,15 +56,22 @@ const CreateGoverner: React.FC = () => {
 
   const handleCancel = () => {
     setFormData({
+      fname:"",
+      lname:"",
       email: "",
       mobile: "",
-      profession: "",
       password: "",
       retypePassword: "",
       username: "",
       nationality: "",
-      dob: "",
     });
+  };
+
+  
+  const OnClick = async () => {
+    await AdminService.CreateGoverner(formData);
+      
+  
   };
 
   return (
@@ -87,7 +95,7 @@ const CreateGoverner: React.FC = () => {
                 name="fname"
                 disabled={false}
                 required={true}
-                value={formData.email}
+                value={formData.fname}
                 onChange={handleChange}
               />
             </Col>
@@ -96,11 +104,11 @@ const CreateGoverner: React.FC = () => {
                 label="Last name"
                 type="text"
                 placeholder="Enter your last name"
-                id="dob"
-                name="dob"
+                id="lname"
+                name="lname"
                 disabled={false}
                 required={true}
-                value={formData.dob}
+                value={formData.lname}
                 onChange={handleChange}
               />
             </Col>
@@ -156,7 +164,7 @@ const CreateGoverner: React.FC = () => {
                 name="username"
                 disabled={false}
                 required={false}
-                value={formData.profession}
+                value={formData.username}
                 onChange={handleChange}
               />
             </Col>
@@ -223,7 +231,7 @@ const CreateGoverner: React.FC = () => {
 </Row>
 
           <div className="form-actions">
-            <Button type="submit" className="update-btn">
+            <Button type="submit" className="update-btn" onClick={OnClick}>
               Create governer
             </Button>
           </div>
