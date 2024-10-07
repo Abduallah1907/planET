@@ -7,6 +7,7 @@ import {
 } from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Service, Inject } from "typedi";
+import { Types } from "mongoose";
 
 @Service()
 export class ProductService {
@@ -16,10 +17,20 @@ export class ProductService {
     @Inject("userModel") private userModel: Models.UserModel
   ) {}
 
-  public async createProductService(user_id: number, product: IProduct) {
+  public async createProductService(
+    seller_id: Types.ObjectId,
+    product: IProduct
+  ) {
     const newProduct = new this.productModel({
-      ...product,
-      user_id,
+      comments: product.comments,
+      name: product.name,
+      description: product.description,
+      picture: product.picture,
+      price: product.price,
+      quantity: product.quantity,
+      sales: product.sales,
+      archieve_flag: product.archieve_flag,
+      user_id: seller_id,
     });
 
     const resultProduct = await newProduct.save();
@@ -31,7 +42,7 @@ export class ProductService {
 
     const product_id = resultProduct._id;
 
-    const seller = await this.sellerModel.findOne({ user_id });
+    const seller = await this.sellerModel.findById(seller_id);
 
     if (!seller) throw new Error("Seller is not found");
     if (seller instanceof Error)

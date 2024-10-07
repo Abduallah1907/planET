@@ -59,18 +59,20 @@ export interface IItineraryUpdateDTO {
 
 export interface IItineraryOutputDTO {
   itinerary_id: ObjectId;
-  activities: ObjectId[];
-  timeline: ObjectId[];
-  comments: ObjectId[];
-  category: ObjectId;
-  name: String;
-  locations: Location[];
-  languages: string[];
-  available_dates: Date[];
+  name: string;
+  locations?: Location[];
   pickup_loc: Location;
   drop_off_loc: Location;
+  languages: String[];
+  accessibility: Boolean;
+  rating_value: Number;
+  reviews: ObjectId[];
+  price: Number;
+  duration: String;
+  available_dates: Date[];
+  inappropriate_flag: Boolean;
+  active_flag: Boolean;
   tags?: ObjectId[];
-  tour_guide_id: ObjectId;
 }
 
 export interface IItineraryOutputAllDTO {

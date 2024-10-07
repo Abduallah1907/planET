@@ -30,7 +30,73 @@ export default (app: Router) => {
    *         content:
    *           application/json:
    *             schema:
-   *               $ref: '#/components/schemas/ItineraryCreationData'
+   *               type: object
+   *               properties:
+   *                 tour_guide_id:
+   *                   type: string
+   *                   format: objectId
+   *                 name:
+   *                   type: string
+   *                   example: "Tour of the city"
+   *                 category:
+   *                   type: string
+   *                   format: objectId
+   *                 activities:
+   *                   type: array
+   *                   items:
+   *                     type: string
+   *                     format: objectId
+   *                 timeline:
+   *                   type: array
+   *                   items:
+   *                     type: string
+   *                     format: objectId
+   *                 locations:
+   *                   type: array
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       longitude:
+   *                         type: number
+   *                       latitude:
+   *                         type: number
+   *                 duration:
+   *                   type: string
+   *                 languages:
+   *                   type: array
+   *                   items:
+   *                     type: string
+   *                 price:
+   *                   type: number
+   *                 available_dates:
+   *                   type: array
+   *                   items:
+   *                     type: string
+   *                     format: date
+   *                 accessibility:
+   *                   type: boolean
+   *                 pickup_loc:
+   *                   type: object
+   *                   properties:
+   *                     longitude:
+   *                       type: number
+   *                     latitude:
+   *                       type: number
+   *                 drop_off_loc:
+   *                   type: object
+   *                   properties:
+   *                     longitude:
+   *                       type: number
+   *                     latitude:
+   *                       type: number
+   *                 tags:
+   *                   type: array
+   *                   items:
+   *                     type: string
+   *                 active_flag:
+   *                   type: boolean
+   *                 inappropriate_flag:
+   *                   type: boolean
    *       responses:
    *         201:
    *           description: Itinerary created successfully
@@ -253,52 +319,25 @@ export default (app: Router) => {
    *         500:
    *           description: Internal server error.
    */
-  const itineraryController: ItineraryController =
-    Container.get(ItineraryController);
+  const itineraryController: ItineraryController = Container.get(ItineraryController);
   app.use("/itinerary", router);
 
   // CRUD for itinerary
-  router.post(
-    "/createItinerary",
-    authorize([UserRoles.TourGuide]),
-    itineraryController.createItinerary
-  );
-  router.get(
-    "/getItineraryByID/:itinerary_id",
-    authorize([UserRoles.TourGuide]),
-    itineraryController.getItineraryByID
-  );
-  router.put(
-    "/updateItinerary/:itinerary_id",
-    authorize([UserRoles.TourGuide]),
-    itineraryController.updateItinerary
-  );
-  router.delete(
-    "/deleteItinerary/:itinerary_id",
-    authorize([UserRoles.TourGuide]),
-    itineraryController.deleteItinerary
-  );
+  router.post("/createItinerary", authorize([UserRoles.TourGuide]), itineraryController.createItinerary);
+  router.get("/getItineraryByID/:itinerary_id", authorize([UserRoles.TourGuide]), itineraryController.getItineraryByID);
+  router.put("/updateItinerary/:itinerary_id", authorize([UserRoles.TourGuide]), itineraryController.updateItinerary);
+  router.delete("/deleteItinerary/:itinerary_id", authorize([UserRoles.TourGuide]), itineraryController.deleteItinerary);
 
   // get all itineraries
-  router.get(
-    "/getAllItinerariesByTourGuideID/:tour_guide_id",
-    authorize([UserRoles.TourGuide]),
-    itineraryController.getAllItinerariesByTourGuideID
-  );
+  router.get("/getAllItinerariesByTourGuideID/:tour_guide_id", authorize([UserRoles.TourGuide]), itineraryController.getAllItinerariesByTourGuideID);
   router.get("/getAllItineraries/:page", itineraryController.getAllItineraries);
 
   router.get("/getSortedItineraries", itineraryController.getSortedItineraries);
 
   router.get("/getSearchItinerary", itineraryController.getSearchItinerary);
 
-  router.get(
-    "/getUpcomingItineraries",
-    itineraryController.getUpcomingItineraries
-  );
+  router.get("/getUpcomingItineraries", itineraryController.getUpcomingItineraries);
 
-  router.get(
-    "/getFilteredItineraries",
-    itineraryController.getFilteredItineraries
-  );
+  router.get("/getFilteredItineraries", itineraryController.getFilteredItineraries);
   router.get("/getFilterComponents", itineraryController.getFilterComponents);
 };

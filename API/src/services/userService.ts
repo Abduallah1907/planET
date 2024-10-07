@@ -14,7 +14,7 @@ import {
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
 import { log } from "console";
-import jwt from "jsonwebtoken";
+import jwt, { Algorithm } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import config from "@/config";
 
@@ -134,7 +134,10 @@ export default class UserService {
         stakeholder_id: stakeholder_id?.toString(), // Ensure stakeholder_id is a string
       },
       config.jwtSecret as string,
-      { expiresIn: "1h", algorithm: config.jwtAlgorithm as jwt.Algorithm }
+      {
+        expiresIn: "1h",
+        algorithm: (config.jwtAlgorithm as Algorithm) || "HS256",
+      }
     );
 
     const userOutput: IUserLoginOutputDTO = {
