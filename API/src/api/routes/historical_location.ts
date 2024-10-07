@@ -282,7 +282,6 @@ export default (app: Router) => {
   );
   router.get(
     "/getHistorical_locationByID/:historical_location_id",
-    authorize([UserRoles.Governor]),
     historical_locationController.getHistorical_locationByIDController
   );
   router.get(
