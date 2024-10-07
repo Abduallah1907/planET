@@ -112,11 +112,10 @@ export default function Login() {
             { path: "/AddHistoricalLocation", label: "Add Historical Location" },
             { path: "/MyHistoricalLocations", label: "My Historical Locations" },
           ]));
-          if (user.first_time_login) {
-            navigate("/");
-          } else {
-            navigate("/");
-          }
+         
+            navigate("/EditHistoricalLocation");
+         
+           
           break;
         case "ADMIN":
           dispatch(setNavItems([
