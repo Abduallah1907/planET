@@ -33,3 +33,11 @@ export interface IAdvertiserUpdateDTO {
   logo?: string;
   company_profile?: string;
 }
+export interface IAdvertiserMain extends Document {
+  email: string;
+  name: string;
+  username: string;
+  password: string;
+  phone_number: string;
+  documents_required: string[];
+}
