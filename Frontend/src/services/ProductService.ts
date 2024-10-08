@@ -22,6 +22,15 @@ class ProductService{
       }
         
   };
+
+  public static getFilteredProducts = async (filter: any) => {
+    try{
+      const response = await axiosInstance.get("/product/getFilteredProducts", {params: filter})
+      return response.data;
+    }catch (error){
+      throw error;
+    }
+  }
   public static getFilterComponents=async () => {
     try{
       const response=await axiosInstance.get("/product/getFilterComponents/");

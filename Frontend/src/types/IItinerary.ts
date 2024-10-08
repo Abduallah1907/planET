@@ -1,6 +1,6 @@
 
 export interface IItinerary {
-  rating_value: number;
+  average_rating: number;
   Reviews: number;
   activities: string[];
   timeline: string[];

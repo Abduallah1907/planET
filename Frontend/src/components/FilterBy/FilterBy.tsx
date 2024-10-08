@@ -4,34 +4,33 @@ import { Col, Form, Row } from "react-bootstrap";
 import MultiRangeSlider from "../MultiSelectRange/MultiSliderRange";
 
 interface filterData {
-  fromDate: string;
-  toDate: string;
+  [key: string]: any;
 }
 
 interface FilterByProps {
   filterOptions: { [key: string]: any };
+  onFilterChange: (filter: filterData) => void; // Add this prop
 }
 
-const FilterBy: React.FC<FilterByProps> = ({ filterOptions }) => {
-  const [filter, setFilter] = React.useState<filterData>({
-    fromDate: "",
-    toDate: "",
-  });
+const FilterBy: React.FC<FilterByProps> = ({ filterOptions, onFilterChange }) => {
+  const [filter, setFilter] = React.useState<filterData>({});
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    setFilter({ ...filter, [name]: value });
-    console.log(filter);
+  const handleCheckboxChange = (key: string, value: string) => {
+    setFilter((prevFilter) => {
+      const selectedValues = prevFilter[key] || [];
+      const newSelectedValues = selectedValues.includes(value)
+        ? selectedValues.filter((v: string) => v !== value)
+        : [...selectedValues, value];
+      const newFilter = { ...prevFilter, [key]: newSelectedValues };
+      onFilterChange(newFilter); // Call the callback function with the updated filter
+      return newFilter;
+    });
   };
+
   const renderFilterFields = () => {
     return (Object.keys(filterOptions)).map(
       (key) => {
         const field = filterOptions[key];
-        console.log(field)
         switch (field.type) {
           case "multi-select":
             if ("values" in field) {
@@ -47,6 +46,8 @@ const FilterBy: React.FC<FilterByProps> = ({ filterOptions }) => {
                       id={`inline-checkbox-${key}-${index}`}
                       className="ms-3"
                       key={index}
+                      checked={filter[key.toLowerCase()]?.includes(value) || false}
+                      onChange={() => handleCheckboxChange(key.toLowerCase(), value)}
                     />
                   ))}
                 </Row>
@@ -62,16 +63,37 @@ const FilterBy: React.FC<FilterByProps> = ({ filterOptions }) => {
                   <MultiRangeSlider
                     min={field.min}
                     max={field.max}
-                    onChange={({ min, max }: { min: number; max: number }) =>
-                      console.log(`min = ${min}, max = ${max}`)
-                    }
+                    onChange={({ min, max }: { min: number; max: number }) =>{
+                      const newFilter = { ...filter, [key.toString().toLowerCase()]: `${min}-${max}` };
+                      setFilter(newFilter);
+                      onFilterChange(newFilter);
+                    }}
                   />
                 </Row>
               );
             }
             break;
 
-          case "range":
+          case "date-range":
+            const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+              const { name, value } = e.target;
+              const newDateFilter = { ...filter, [name]: value };
+              const fromDate = newDateFilter.fromDate || "";
+              const toDate = newDateFilter.toDate || "";
+              let dateRange = "";
+
+              if (fromDate && toDate) {
+                dateRange = `${fromDate}-${toDate}`;
+              } else if (fromDate) {
+                dateRange = fromDate;
+              } else if (toDate) {
+                dateRange = toDate;
+              }
+              const updatedFilter = { ...filter, [key.toLowerCase()]: dateRange };
+              setFilter(updatedFilter);
+              onFilterChange(updatedFilter);
+              console.log(updatedFilter)
+            };
             return (
               <Row className="border-bottom pb-2" key={key}>
                 <span className="py-2">{key}</span>
@@ -79,20 +101,20 @@ const FilterBy: React.FC<FilterByProps> = ({ filterOptions }) => {
                   <Form.Label>From Date</Form.Label>
                   <Form.Control
                     type="date"
-                    placeholder="dd/mm/yyy"
-                    value={filter.fromDate}
-                    onChange={handleChange}
-                    name={"fromDate"}
+                    placeholder="dd/mm/yyyy"
+                    value={filter.fromDate || ""}
+                    onChange={handleDateChange}
+                    name="fromDate"
                   />
                 </Form.Group>
                 <Form.Group className="form-group" id="toDate">
-                  <Form.Label className="">To Date</Form.Label>
+                  <Form.Label>To Date</Form.Label>
                   <Form.Control
                     type="date"
-                    placeholder="dd/mm/yyy"
-                    value={filter.toDate}
-                    onChange={handleChange}
-                    name={"toDate"}
+                    placeholder="dd/mm/yyyy"
+                    value={filter.toDate || ""}
+                    onChange={handleDateChange}
+                    name="toDate"
                   />
                 </Form.Group>
               </Row>

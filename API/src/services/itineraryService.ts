@@ -9,7 +9,8 @@ import { IFilterComponents } from "@/interfaces/IFilterComponents";
 export default class ItineraryService {
   constructor(
     @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel,
-    @Inject("tour_guideModel") private tourGuideModel: Models.Tour_guideModel
+    @Inject("tour_guideModel") private tourGuideModel: Models.Tour_guideModel,
+    @Inject("tagModel") private tagModel: Models.TagModel
   ) {}
   // we also need timeline object???
   public async createItineraryService(itineraryData: IItineraryCreateDTO) {
@@ -121,7 +122,7 @@ export default class ItineraryService {
       languages: itinerary.languages,
       pickup_loc: itinerary.pickup_loc,
       price: itinerary.price,
-      rating_value: itinerary.average_rating,
+      average_rating: itinerary.average_rating,
       locations: itinerary.locations,
       tags: itinerary.tags,
     }));
@@ -198,11 +199,8 @@ export default class ItineraryService {
           from: "tags", // The name of the tag collection
           localField: "tags", // The field in the tags collection
           foreignField: "_id", // The field in the tags collection
-          as: "tagDetails",
+          as: "tags",
         },
-      },
-      {
-        $unwind: "$tagDetails",
       },
       {
         $match: matchStage,
@@ -211,7 +209,7 @@ export default class ItineraryService {
     if (filters.preferences) {
       aggregationPipeline.push({
         $match: {
-          "tagDetails.type": { $in: filters.preferences },
+          "tags.type": { $in: filters.preferences },
         },
       });
     }
@@ -240,7 +238,7 @@ export default class ItineraryService {
     return new response(true, itineraries, "Sorted activities are fetched", 200);
   }
   public async getFilterComponentsService() {
-    const preferences = await this.itineraryModel.find().select("tags").lean();
+    const preferences = await this.tagModel.find().select("type").lean();
 
     const prices = await this.itineraryModel
       .find()
@@ -264,7 +262,7 @@ export default class ItineraryService {
       .lean();
 
     const preferencesList = preferences.map(
-      (preference: any) => preference.tags
+      (preference: any) => preference.type
     );
 
     const lowestPrice = prices[0].price;
@@ -273,7 +271,9 @@ export default class ItineraryService {
     const earliestDate = allDates[0];
     const latestDate = allDates[allDates.length - 1];
 
-    const languagesList = languages.map((language: any) => language.languages);
+    const languagesList = [
+      ...new Set(languages.flatMap((language: any) => language.languages))
+    ];
 
     const filterComponents: IFilterComponents = {
       Tag: { type: "multi-select", values: preferencesList },

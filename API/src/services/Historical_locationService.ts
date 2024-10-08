@@ -6,14 +6,12 @@ import {
 
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
-import mongoose, { Types } from "mongoose";
+import { Types } from "mongoose";
 import {
   IHistorical_locationDTO,
   IHistorical_locationOutputDTO,
   Update_IHistorical_locationDTO,
 } from "@/interfaces/IHistorical_Location";
-import Governor from "@/models/Governor";
-import historical_location from "@/api/routes/historical_location";
 import { IFilterComponents } from "@/interfaces/IFilterComponents";
 @Service()
 export default class Historical_locationService {
@@ -383,6 +381,8 @@ export default class Historical_locationService {
   }
   public async getFilteredHistorical_locationsService(filters: {
     tags?: string[];
+    nation: string;
+    job: string;
   }) {
     if (!filters) {
       const historical_locations = await this.historical_locationsModel.find();
@@ -396,15 +396,9 @@ export default class Historical_locationService {
     const matchStage: any = {};
     var aggregationPipeline: any[] = [
       {
-        $lookup: {
-          from: "tags", // The name of the tag collection
-          localField: "tags", // The field in the tags collection
-          foreignField: "_id", // The field in the tags collection
-          as: "tagDetails",
-        },
-      },
-      {
-        $unwind: "$tagDetails",
+        $addFields: {
+          tagsArray: { $objectToArray: "$tags" }
+        }
       },
       {
         $match: matchStage,
@@ -413,7 +407,7 @@ export default class Historical_locationService {
     if (filters.tags) {
       aggregationPipeline.push({
         $match: {
-          "tagDetails.type": { $in: filters.tags },
+          "tagsArray.v": { $in: filters.tags },
         },
       });
     }
@@ -423,9 +417,13 @@ export default class Historical_locationService {
     if (historical_locations instanceof Error)
       throw new InternalServerError("Internal server error");
 
+    const historical_locations_with_prices = await Promise.all( historical_locations.map(async location => {
+      location.price = await this.choosePrice(location,{ nation: filters.nation, job: filters.job });
+      return location;
+    }));
     return new response(
       true,
-      historical_locations,
+      historical_locations_with_prices,
       "Filtered itineraries are fetched",
       200
     );

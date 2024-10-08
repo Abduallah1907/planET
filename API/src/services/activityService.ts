@@ -293,11 +293,11 @@ export default class ActivityService {
           from: "categories", // The name of the category collection
           localField: "category", // The field in the activities collection
           foreignField: "_id", // The field in the category collection
-          as: "categoryDetails",
+          as: "category",
         },
       },
       {
-        $unwind: "$categoryDetails",
+        $unwind: "$category",
       },
       {
         $match: matchStage,
@@ -307,10 +307,20 @@ export default class ActivityService {
     if (filters.category) {
       aggregationPipeline.push({
         $match: {
-          "categoryDetails.type": { $in: filters.category },
+          "category.type": { $in: filters.category },
         },
       });
     }
+    // Add $lookup stage to populate tags
+    aggregationPipeline.push({
+      $lookup: {
+        from: "tags", // Assuming the collection name is "tags"
+        localField: "tags", // Assuming the field in activities is "tagIds"
+        foreignField: "_id",
+        as: "tags",
+      },
+    });
+
     const activities = await this.activityModel.aggregate(aggregationPipeline);
     if (activities instanceof Error)
       throw new InternalServerError("Internal server error");

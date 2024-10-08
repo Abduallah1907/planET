@@ -71,23 +71,23 @@ export class ActivityController {
   }
 
   public async getFilteredActivities(req: any, res: any) {
-    const { budget, date, category, rating } = req.query;
+    const { price, date, category, rating } = req.query;
     const activityService: ActivityService = Container.get(ActivityService);
     var filters = {};
-    if (budget)
-      if (budget.includes("-")) {
+    if (price)
+      if (price.includes("-")) {
         filters = {
           ...filters,
           price: {
-            min: parseFloat(budget.split("-")[0]),
-            max: parseFloat(budget.split("-")[1]),
+            min: parseFloat(price.split("-")[0]),
+            max: parseFloat(price.split("-")[1]),
           },
         };
       } else {
         filters = {
           ...filters,
           price: {
-            max: parseFloat(budget),
+            max: parseFloat(price),
           },
         };
       }

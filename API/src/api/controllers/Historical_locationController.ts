@@ -99,14 +99,15 @@ export class Historical_locationController {
       .json(upcomingHistorical_locations);
   }
   public async getFilteredHistorical_locations(req: any, res: any) {
-    const { tags } = req.query;
+    const { tag, nation, job } = req.query;
     const historical_locationService: Historical_locationService =
       Container.get(Historical_locationService);
-    var filters = {};
-    if (tags) {
-      const tagsList = tags.split(",").map((tag: string) => tag.trim());
+    var filters: any = {};
+    if (tag) {
+      const tagsList = tag.split(",").map((tag: string) => tag.trim());
       filters = { ...filters, tags: tagsList };
     }
+    filters = { ...filters , nation , job}
     const historical_locations =
       await historical_locationService.getFilteredHistorical_locationsService(
         filters

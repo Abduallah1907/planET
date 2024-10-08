@@ -94,7 +94,7 @@ const ProductCard = ({
             {/* Show Active/Archive button if the user is the seller */}
             {isSeller && (
               <Badge
-                bg={isBooked ? "success" : "danger"}
+                bg={isBooked ? "active" : "inactive"}
                 className="mt-2 custom-status-badge rounded-4 text-center"
                 onClick={onChange} 
                 style={{ cursor: "pointer" }}

@@ -63,9 +63,9 @@ public static getUpcomingItineraries=async () => {
     
 };
 
-public static getFilteredItineraries=async () => {
+public static getFilteredItineraries=async (filter: any) => {
   try{
-    const response=await axiosInstance.get("/itinerary/getFilteredItineraries")
+    const response=await axiosInstance.get("/itinerary/getFilteredItineraries", {params: filter})
     return response.data;
   }
   catch(error){

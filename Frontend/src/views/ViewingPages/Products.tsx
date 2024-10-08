@@ -1,48 +1,12 @@
 import React, { useEffect, useState } from "react";
 import ProductCard from "../../components/Cards/ProductCard"; 
 import FilterBy from "../../components/FilterBy/FilterBy";
-import { Col, Row, Container, Form, InputGroup } from "react-bootstrap";
+import { Col, Row, Container, Form, InputGroup, Button } from "react-bootstrap";
 import { BiSort } from "react-icons/bi";
 import { FaSearch } from "react-icons/fa";
 import { IProduct } from "../../types/IProduct";
 import { useNavigate } from "react-router-dom";
 import { ProductService } from "../../services/ProductService";
-
-const productData = [
-  {
-    Name: "Smartphone",
-    Price: 700,
-    average_rating: 4.5,
-    Reviews: 200,
-    description: "Latest model with advanced features.",
-    seller: "TechStore",
-    imageUrl: "https://via.placeholder.com/250x250",
-    isActive: true,
-    isBooked: false,
-  },
-  {
-    Name: "Laptop",
-    Price: 1250,
-    average_rating: 4.7,
-    Reviews: 320,
-    description: "High-performance laptop with sleek design.",
-    seller: "CompWorld",
-    imageUrl: "https://via.placeholder.com/250x250",
-    isActive: true,
-    isBooked: true,
-  },
-  {
-    Name: "Headphones",
-    Price: 190,
-    average_rating: 4.3,
-    Reviews: 150,
-    description: "Noise-cancelling wireless headphones.",
-    seller: "AudioMania",
-    imageUrl: "https://via.placeholder.com/250x250",
-    isActive: true,
-    isBooked: false,
-  },
-];
 
 export default function ProductsPage() {
   const navigate = useNavigate();
@@ -50,10 +14,30 @@ export default function ProductsPage() {
   const [products, setProducts] = React.useState<IProduct[]>([])
   const [ filtercomponent, setfilterComponents] = React.useState({})
   const [sortBy, setSortBy] = useState("topPicks"); 
+  const [filter,setFilter] = React.useState({});
+
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
+
+  // Function to sort products based on selected criteria
+  const sortedProducts = [...products].sort((a, b) => {
+    switch (sortBy) {
+      case "topPicks":
+        return b.average_rating - a.average_rating;
+      case "priceHighToLow":
+        return a.price - b.price;
+      case "priceLowToHigh":
+        return b.price - a.price;
+      case "reviewsLowToHigh":
+        return a.reviews - b.reviews;
+      case "reviewsHighToLow":
+        return b.reviews - a.reviews;
+      default:
+        return 0;
+    }
+  });
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value);
@@ -62,6 +46,18 @@ export default function ProductsPage() {
     const productsData = await ProductService.getAllProducts();
     setProducts(productsData.data);
   };
+  const getFilteredProducts = async () => {
+    const modifiedFilter = Object.fromEntries(
+      Object.entries(filter).map(([key, value]) =>
+        Array.isArray(value) ? [key, value.join(",")] : [key, value]
+      )
+    );
+    const productsData = await ProductService.getFilteredProducts(modifiedFilter);
+    setProducts(productsData.data);
+  }
+  const handleApplyFilters = () => {
+    getFilteredProducts();
+  }
   const getFilterComponents = async () => {
     const filterData = await ProductService.getFilterComponents();
     setfilterComponents(filterData.data);
@@ -71,30 +67,16 @@ export default function ProductsPage() {
     getProducts();
     getFilterComponents();
   }, []);
-
   const onProductClick = (name : string) => {
     navigate(`/product/${name}`);
   }
-  // Function to sort products based on selected criteria
-  const sortedProducts = [...productData].sort((a, b) => {
-    switch (sortBy) {
-      case "topPicks":
-        return b.average_rating - a.average_rating;
-      case "priceLowToHigh":
-        return a.Price - b.Price;
-      case "priceHighToLow":
-        return b.Price - a.Price;
-      case "reviewsLowToHigh":
-        return a.Reviews - b.Reviews;
-      case "reviewsHighToLow":
-        return b.Reviews - a.Reviews;
-      default:
-        return 0;
-    }
-  });
 
-  const filteredProducts = sortedProducts.filter((product) =>
-    product.Name.toLowerCase().includes(searchQuery.toLowerCase())
+  const onFilterChange = (newFilter: {[key: string]: any;}) => {
+    setFilter(newFilter);
+  }
+
+  const filteredProducts = sortedProducts.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -135,8 +117,9 @@ export default function ProductsPage() {
       </Row>
 
       <Row>
-        <Col md={3} className="border-bottom pb-2">
-          <FilterBy filterOptions={filtercomponent} />
+      <Col md={3} className="border-bottom pb-2 d-flex flex-column align-items-md-center">
+          <Button variant="main-inverse" onClick={handleApplyFilters}>Apply Filters</Button>
+          <FilterBy filterOptions={filtercomponent} onFilterChange={onFilterChange}/>
         </Col>
 
         <Col md={9} className="p-3">
@@ -152,7 +135,7 @@ export default function ProductsPage() {
                 <option value="reviewsHighToLow">Reviews: High to Low</option>
               </Form.Select>
             </div>
-            {products.map((product:IProduct, index) => (
+            {filteredProducts.map((product:IProduct, index) => (
               <Col key={index} xs={12} className="mb-4 ps-0">
                 <ProductCard
                         Name={product.name}

@@ -91,30 +91,30 @@ export class ItineraryController {
     res.status(upcomingItineraries.status).json(upcomingItineraries);
   }
   public async getFilteredItineraries(req: any, res: any) {
-    const { budget, date, preferences } = req.query;
+    const { price, date, tag } = req.query;
     const itineraryService: ItineraryService = Container.get(ItineraryService);
     var filters = {};
-    if (budget) {
-      if (budget.includes("-")) {
+    if (price) {
+      if (price.includes("-")) {
         filters = {
           ...filters,
           price: {
-            min: parseFloat(budget.split("-")[0]),
-            max: parseFloat(budget.split("-")[1]),
+            min: parseFloat(price.split("-")[0]),
+            max: parseFloat(price.split("-")[1]),
           },
         };
       } else {
         filters = {
           ...filters,
           price: {
-            max: parseFloat(budget),
+            max: parseFloat(price),
           },
         };
       }
     }
     if (date) filters = { ...filters, date: { start: date } };
-    if (preferences) {
-      const preferencesList = preferences
+    if (tag) {
+      const preferencesList = tag
         .split(",")
         .map((preference: string) => preference.trim());
       filters = { ...filters, preferences: preferencesList };

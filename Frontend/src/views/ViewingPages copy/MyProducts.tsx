@@ -1,79 +1,80 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProductCard from "../../components/Cards/ProductCard"; 
 import FilterBy from "../../components/FilterBy/FilterBy";
-import { Col, Row, Container, Form, InputGroup } from "react-bootstrap";
+import { Col, Row, Container, Form, InputGroup, Button } from "react-bootstrap";
 import { BiSort } from "react-icons/bi";
 import { FaSearch } from "react-icons/fa";
-
-const productData = [
-  {
-    Name: "Smartphone",
-    Price: 700,
-    RatingVal: 4.5,
-    Reviews: 200,
-    description: "Latest model with advanced features.",
-    seller: "TechStore",
-    imageUrl: "https://via.placeholder.com/250x250",
-    isActive: true,
-    isBooked: false,
-  },
-  {
-    Name: "Laptop",
-    Price: 1250,
-    RatingVal: 4.7,
-    Reviews: 320,
-    description: "High-performance laptop with sleek design.",
-    seller: "CompWorld",
-    imageUrl: "https://via.placeholder.com/250x250",
-    isActive: true,
-    isBooked: true,
-  },
-  {
-    Name: "Headphones",
-    Price: 190,
-    RatingVal: 4.3,
-    Reviews: 150,
-    description: "Noise-cancelling wireless headphones.",
-    seller: "AudioMania",
-    imageUrl: "https://via.placeholder.com/250x250",
-    isActive: true,
-    isBooked: false,
-  },
-];
+import { IProduct } from "../../types/IProduct";
+import { useNavigate } from "react-router-dom";
+import { ProductService } from "../../services/ProductService";
 
 export default function ProductsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("topPicks"); // State for sort by selection
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [products, setProducts] = React.useState<IProduct[]>([])
+  const [ filtercomponent, setfilterComponents] = React.useState({})
+  const [sortBy, setSortBy] = useState("topPicks"); 
+  const [filter,setFilter] = React.useState({});
+
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortBy(e.target.value);
-  };
-
   // Function to sort products based on selected criteria
-  const sortedProducts = [...productData].sort((a, b) => {
+  const sortedProducts = [...products].sort((a, b) => {
     switch (sortBy) {
       case "topPicks":
-        return b.RatingVal - a.RatingVal;
-      case "priceLowToHigh":
-        return a.Price - b.Price;
+        return b.average_rating - a.average_rating;
       case "priceHighToLow":
-        return b.Price - a.Price;
+        return a.price - b.price;
+      case "priceLowToHigh":
+        return b.price - a.price;
       case "reviewsLowToHigh":
-        return a.Reviews - b.Reviews;
+        return a.reviews - b.reviews;
       case "reviewsHighToLow":
-        return b.Reviews - a.Reviews;
+        return b.reviews - a.reviews;
       default:
         return 0;
     }
   });
 
-  const filteredProducts = sortedProducts.filter((product) =>
-    product.Name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortBy(e.target.value);
+    setProducts(sortedProducts)
+  };
+  const getProducts = async () => {
+    const productsData = await ProductService.getAllProducts();
+    setProducts(productsData.data);
+  };
+  const getFilteredProducts = async () => {
+    const modifiedFilter = Object.fromEntries(
+      Object.entries(filter).map(([key, value]) =>
+        Array.isArray(value) ? [key, value.join(",")] : [key, value]
+      )
+    );
+    const productsData = await ProductService.getFilteredProducts(modifiedFilter);
+    setProducts(productsData.data);
+  }
+  const handleApplyFilters = () => {
+    getFilteredProducts();
+  }
+  const getFilterComponents = async () => {
+    const filterData = await ProductService.getFilterComponents();
+    setfilterComponents(filterData.data);
+  };
+
+  useEffect(() => {
+    getProducts();
+    getFilterComponents();
+  }, []);
+  const onProductClick = (name : string) => {
+    navigate(`/product/${name}`);
+  }
+
+  const onFilterChange = (newFilter: {[key: string]: any;}) => {
+    setFilter(newFilter);
+  }
 
   return (
     <Container fluid>
@@ -113,8 +114,9 @@ export default function ProductsPage() {
       </Row>
 
       <Row>
-        <Col md={3} className="border-bottom pb-2">
-          <FilterBy filterOptions={{}} />
+      <Col md={3} className="border-bottom pb-2 d-flex flex-column align-items-md-center">
+          <Button variant="main-inverse" onClick={handleApplyFilters}>Apply Filters</Button>
+          <FilterBy filterOptions={filtercomponent} onFilterChange={onFilterChange}/>
         </Col>
 
         <Col md={9} className="p-3">
@@ -130,19 +132,21 @@ export default function ProductsPage() {
                 <option value="reviewsHighToLow">Reviews: High to Low</option>
               </Form.Select>
             </div>
-            {filteredProducts.map((product, index) => (
+            {products.map((product:IProduct, index) => (
               <Col key={index} xs={12} className="mb-4 ps-0">
                 <ProductCard
-                        Name={product.Name}
-                        RatingVal={product.RatingVal}
-                        Reviews={product.Reviews}
-                        Price={product.Price}
+                        Name={product.name}
+                        average_rating={product.average_rating}
+                        quantity={product.quantity}
+                        price={product.price}
                         description={product.description}
-                        seller={product.seller}
-                        imageUrl={product.imageUrl}
-                        isActive={product.isActive}
-                        isBooked={product.isBooked}
-                        onChange={() => console.log(`${product.Name} booking status changed`)} id={0} isSeller={true}                />
+                        sales={product.sales}
+                        Reviews={product.reviews}
+                        createdAt={product.createdAt ? new Date(product.createdAt):new Date()}
+                        updatedAt={product.updatedAt ? new Date(product.updatedAt):new Date()}
+                        imageUrl={product.picture}
+                        isActiveArchive={product.archieve_flag}
+                        onChange={() => console.log(`${product.name} booking status changed`)} id={product.user_id} isSeller={true}                />
               </Col>
             ))}
           </Row>

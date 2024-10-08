@@ -24,6 +24,15 @@ class HistoricalService {
     }
   };
 
+  public static getFilteredHistorical_Location = async (filter: any) => {
+    try{
+      const response = await axiosInstance.get("/historical_location/getFilteredHistorical_locations", {params: filter})
+      return response.data;
+    }catch (error){
+      throw error;
+    }
+  }
+
   public static async addHistoricalLocation(formData: any) {
     try {
       const response = await axiosInstance.post(

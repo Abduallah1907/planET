@@ -205,12 +205,10 @@ export default (app: Router) => {
 
   route.get(
     "/getFilteredProducts",
-    authorize([UserRoles.Tourist, UserRoles.Seller]),
     productController.getFilteredProducts
   );
   route.get(
     "/getSortedProducts",
-    authorize([UserRoles.Tourist, UserRoles.Seller]),
     productController.getSortedProducts
   );
   route.get(

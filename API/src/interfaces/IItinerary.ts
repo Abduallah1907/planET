@@ -83,7 +83,7 @@ export interface IItineraryOutputAllDTO {
   drop_off_loc: Location;
   languages: String[];
   accessibility: Boolean;
-  rating_value: Number;
+  average_rating: Number;
   reviews: ObjectId[];
   price: Number;
   duration: String;

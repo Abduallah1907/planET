@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Col, Row, Container, Form, InputGroup } from "react-bootstrap";
+import { Col, Row, Container, Form, InputGroup, Button } from "react-bootstrap";
 import FilterBy from "../../components/FilterBy/FilterBy";
 import CustomActivityCard from "../../components/Cards/ActivityCard";
 import { FaSearch } from "react-icons/fa";
@@ -18,6 +18,7 @@ export default function ActivitiesPage() {
   const [ activities, setActivities] = React.useState<IActivity[]>([])
   const [ filtercomponent, setfilterComponents] = React.useState({})
   const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
+  const [filter,setFilter] = React.useState({});
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -30,6 +31,21 @@ export default function ActivitiesPage() {
     const activitiesData = await ActivityService.getAllActivities();
     setActivities(activitiesData.data);
   };
+
+  const getFilteredActivites = async () => {
+    const modifiedFilter = Object.fromEntries(
+      Object.entries(filter).map(([key, value]) =>
+        Array.isArray(value) ? [key, value.join(",")] : [key, value]
+      )
+    );
+    const activitiesData = await ActivityService.getFilteredActivites(modifiedFilter);
+    setActivities(activitiesData.data);
+  }
+
+  const handleApplyFilters = () => {
+    getFilteredActivites();
+  }
+
   const getFilterComponents = async () => {
     const filterData = await ActivityService.getFilterComponents();
     setfilterComponents(filterData.data);
@@ -43,9 +59,9 @@ export default function ActivitiesPage() {
     switch (sortBy) {
       case "topPicks":
         return b.average_rating - a.average_rating;
-      case "priceLowToHigh":
-        return (a.price ?? 0) - (b.price ?? 0);
       case "priceHighToLow":
+        return (a.price ?? 0) - (b.price ?? 0);
+      case "priceLowToHigh":
         return (b.price ?? 0) - (a.price ?? 0);
       default:
         return 0;
@@ -59,6 +75,10 @@ export default function ActivitiesPage() {
   const filteredActivities = sortedActivities.filter((activity) =>
     activity.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const onFilterChange = (newFilter: {[key: string]: any;}) => {
+    setFilter(newFilter);
+  }
 
   return (
     <Container fluid>
@@ -100,8 +120,9 @@ export default function ActivitiesPage() {
       </Row>
 
       <Row>
-        <Col md={3} className="border-bottom pb-2">
-          <FilterBy filterOptions={filtercomponent}/>
+        <Col md={3} className="border-bottom pb-2 d-flex flex-column align-items-md-center">
+          <Button variant="main-inverse" onClick={handleApplyFilters}>Apply Filters</Button>
+          <FilterBy filterOptions={filtercomponent} onFilterChange={onFilterChange}/>
         </Col>
 
         <Col md={9} className="p-3">
@@ -115,7 +136,7 @@ export default function ActivitiesPage() {
                 <option value="priceHighToLow">Price: High to Low</option>
               </Form.Select>
             </div>
-            {activities.map((activity:IActivity, index) => (
+            {filteredActivities.map((activity:IActivity, index) => (
               <Col key={index} xs={12} className="mb-4">
                 {" "}
                 {/* Full-width stacking */}
