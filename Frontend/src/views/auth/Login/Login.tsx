@@ -147,6 +147,8 @@ export default function Login() {
               { path: "/admin", label: "Create Admin" },
               { path: "/governer", label: "Create Governer" },
               { path: "/delete", label: "Delete User" },
+              { path: "/Categories", label: "Categories"},
+              { path: "/Tags", label: "Tags"}
             ])
           );
           navigate("/AdminDashboard");

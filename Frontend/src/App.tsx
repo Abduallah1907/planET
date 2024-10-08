@@ -51,6 +51,8 @@ import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { toggleSidebar } from "./store/sidebarSlice";
 import Sidebar from "./components/SideBar/Sidebar";
 import { use } from "i18next";
+import CategoryTable from "./views/CategoryTable";
+import TagsTable from "./views/TagTable";
 
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen)
@@ -108,16 +110,19 @@ const App: React.FC = () => {
         <Route path="/EditHistoricalLocation" element={<EditHistoricalLocation />} />
         <Route path="/EditProduct" element={<EditProduct />} />
         <Route path="/EditItinerary" element={<EditItinerary />} />
-        <Route path="UsersTable" element={<UsersTable />} />
+        <Route path="/UsersTable" element={<UsersTable />} />
         <Route path="/MyActivities" element={<MyActivities />} />
         <Route path="/MyHistoricalPlaces" element={<MyHistoricalPlaces />} />
         <Route path="/MyItinerary" element={<MyItinerary />} />
         <Route path="/MyProducts" element={<MyProducts />} />
 
-        <Route path="/stakeholder" element={<StakeholderReg />} />
+        <Route path="/JoinUs" element={<StakeholderReg />} />
 
         <Route path="/TouristEdit" element={<ProfileForm />} />
         <Route path="/SellerProfile" element={<SellerProfile />} />
+
+        <Route path="/Categories" element={<CategoryTable />} />
+        <Route path="/Tags" element={<TagsTable />} />
       </Routes>
     </AppProvider>
   );
