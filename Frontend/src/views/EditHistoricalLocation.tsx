@@ -7,6 +7,7 @@ import "./tagsinput.css";
 import tagsData from "./tags.json"; // Ensure this path is correct
 import { BiChevronDown } from "react-icons/bi";
 import { HistoricalService } from "../services/HistoricalService";
+import { useAppSelector } from "../store/hooks";
 
 const HistoricalPlaceForm: React.FC = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -64,7 +65,7 @@ const HistoricalPlaceForm: React.FC = () => {
     e.preventDefault();
     // Add form submission logic here
     const formData = {
-      category,
+      // category,
       name,
       date,
       description,
@@ -81,7 +82,7 @@ const HistoricalPlaceForm: React.FC = () => {
     console.log("Form submitted:", formData);
     try {
       const updatedLocation = await HistoricalService.editHistoricalLocation(
-        "locationId123",
+        Governer.stakeholder_id,
         formData
       );
       console.log("Historical Location updated successfully:", updatedLocation);
@@ -90,6 +91,7 @@ const HistoricalPlaceForm: React.FC = () => {
     }
   };
 
+  const Governer = useAppSelector((state) => state.user);
   return (
     <div className="profile-form-container">
       <Row className="align-items-center mb-4">
