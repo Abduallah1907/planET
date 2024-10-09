@@ -74,7 +74,7 @@ const ProfileFormGuide: React.FC = () => {
       return;
     }
     // Here you could also do form submission or API call
-    console.log("Form submitted:", formData);
+    // console.log("Form submitted:", formData);
     // Clear the form after submission if needed
     handleCancel();
   };

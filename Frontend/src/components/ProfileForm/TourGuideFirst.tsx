@@ -99,7 +99,7 @@ const TourGuideFirst: React.FC = () => {
       alert("Passwords don't match!");
       return;
     }
-    console.log("Form submitted:", formData);
+    // console.log("Form submitted:", formData);
   };
 
   const handleCancel = () => {

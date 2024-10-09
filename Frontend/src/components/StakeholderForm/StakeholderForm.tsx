@@ -41,7 +41,7 @@ export default function StakeholderForm() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      console.log("File uploaded: ", e.target.files);
+      // console.log("File uploaded: ", e.target.files);
       setStakeData({ ...StakeData, file: e.target.files[0] });
     }
   };
@@ -56,21 +56,21 @@ export default function StakeholderForm() {
     if (StakeData.role == "Seller") {
       try {
         const seller = await AuthService.registerSeller(StakeData); // Call the API
-        console.log("Seller registered successfully: ", seller);
+        // console.log("Seller registered successfully: ", seller);
       } catch (error) {
         console.error("Seller registration failed: ", error);
       }
     } else if (StakeData.role == "Advertiser") {
       try {
         const advertiser = await AuthService.registerAdvertiser(StakeData); // Call the API
-        console.log("Advertiser registered successfully: ", advertiser);
+        // console.log("Advertiser registered successfully: ", advertiser);
       } catch (error) {
         console.error("Advertiser registration failed: ", error);
       }
     } else if (StakeData.role == "Tour Guide") {
       try {
         const tourGuide = await AuthService.registerTourGuide(StakeData); // Call the API
-        console.log("Tour Guide registered successfully: ", tourGuide);
+        // console.log("Tour Guide registered successfully: ", tourGuide);
       } catch (error) {
         console.error("Tour Guide registration failed: ", error);
       }

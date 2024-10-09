@@ -78,13 +78,13 @@ const HistoricalPlaceForm: React.FC = () => {
       selectedTags,
       isActive,
     };
-    console.log("Form submitted:", formData);
+    // console.log("Form submitted:", formData);
     try {
       const updatedLocation = await HistoricalService.editHistoricalLocation(
         "locationId123",
         formData
       );
-      console.log("Historical Location updated successfully:", updatedLocation);
+      // console.log("Historical Location updated successfully:", updatedLocation);
     } catch (error) {
       console.error("Failed to update Historical Location:", error);
     }
