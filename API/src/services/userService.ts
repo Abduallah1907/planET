@@ -86,6 +86,7 @@ export default class UserService {
     const role = user.role;
     let stakeholder_id;
     switch (role) {
+      case UserRoles.Admin:
       case UserRoles.Seller:
         const seller = await this.sellerModel.findOne({ user_id });
         if (seller instanceof Error)
