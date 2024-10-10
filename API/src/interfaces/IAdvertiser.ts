@@ -26,7 +26,12 @@ export interface IAdvertiserCreateDTO {
 }
 
 export interface IAdvertiserUpdateDTO {
-  activities?: ObjectId[];
+  newEmail?: string;
+  name?: string;
+  phone_number?: string;
+  username?: string;
+  password?: string;
+
   link_to_website?: string;
   hotline?: string;
   about?: string;

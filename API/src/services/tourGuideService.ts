@@ -185,16 +185,35 @@ export default class TourGuideService {
     };
     return new response(true, tourGuideOutput, "Tour guide profile", 200);
   }
-
+  //add can update user details
+  //add can update previous work experience
   public async updateProfileService(
     updatedTourGuide: ITour_GuideUpdateDTO,
     email: string
   ): Promise<any> {
-    const { years_of_experience, photo, phone_number } = updatedTourGuide;
+    const {
+      newEmail,
+      name,
+      username,
+      password,
+      phone_number,
+      years_of_experience,
+      photo,
+      previous_work_title,
+      previous_work_place,
+      previous_work_from,
+      previous_work_to,
+    } = updatedTourGuide;
     const tourGuideUser = await this.userModel
       .findOneAndUpdate(
         { email: email, role: UserRoles.TourGuide },
-        { phone_number: phone_number },
+        {
+          phone_number: phone_number,
+          name: name,
+          username: username,
+          password: password,
+          email: newEmail,
+        },
         { new: true }
       )
       .select("status role username name phone_number");
@@ -216,6 +235,7 @@ export default class TourGuideService {
       );
     }
     const tour_guide_user_id = tourGuideUser._id;
+
     const tourGuideProfile = await this.tourGuideModel
       .findOneAndUpdate(
         { user_id: tour_guide_user_id },
