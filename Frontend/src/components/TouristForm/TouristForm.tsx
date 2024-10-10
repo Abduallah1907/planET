@@ -78,7 +78,7 @@ export default function TouristForm() {
 
     try {
       const user = await AuthService.registerTourist(regData); // Call the API
-      console.log("Tourist registered successfully: ", user);
+      // console.log("Tourist registered successfully: ", user);
     } catch (error) {
       console.error("Tourist registration failed: ", error);
     }

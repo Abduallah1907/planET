@@ -143,10 +143,29 @@ export default class AdvertiserService {
     email: string,
     advertiserData: IAdvertiserUpdateDTO
   ) => {
-    const advertiserUser = await this.userModel.findOne({
-      email: email,
-      role: UserRoles.Advertiser,
-    });
+    const {
+      newEmail,
+      name,
+      username,
+      password,
+      phone_number,
+      link_to_website,
+      hotline,
+      about,
+      logo,
+      company_profile,
+    } = advertiserData;
+    const advertiserUser = await this.userModel.findOneAndUpdate(
+      { email: email, role: UserRoles.Advertiser },
+      {
+        email: newEmail,
+        name: name,
+        username: username,
+        password: password,
+        phone_number: phone_number,
+      },
+      { new: true }
+    );
     if (advertiserUser instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
@@ -154,22 +173,15 @@ export default class AdvertiserService {
       throw new NotFoundError("No Advertiser with this email");
     }
 
-    const advertisercheck = await this.advertiserModel.findOne({
-      user_id: advertiserUser._id,
-    });
-    if (advertisercheck instanceof Error) {
-      throw new InternalServerError("Internal server error");
-    }
-    if (advertisercheck == null) {
-      throw new NotFoundError("No Activity with this ID");
-    }
-    if (!advertiserData) {
-      throw new BadRequestError("Advertiser data is undefined");
-    }
-
     const advertiser = await this.advertiserModel.findOneAndUpdate(
       { user_id: advertiserUser._id },
-      advertiserData,
+      {
+        link_to_website: link_to_website,
+        hotline: hotline,
+        about: about,
+        logo: logo,
+        company_profile: company_profile,
+      },
       { new: true }
     );
 

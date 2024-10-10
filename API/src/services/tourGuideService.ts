@@ -185,16 +185,34 @@ export default class TourGuideService {
     };
     return new response(true, tourGuideOutput, "Tour guide profile", 200);
   }
-
+  //add can update user details
+  //add can update previous work experience
   public async updateProfileService(
     updatedTourGuide: ITour_GuideUpdateDTO,
     email: string
   ): Promise<any> {
-    const { years_of_experience, photo, phone_number } = updatedTourGuide;
+    const {
+      newEmail,
+      name,
+      username,
+      password,
+      phone_number,
+      years_of_experience,
+      photo,
+      createdPreviousWork,
+      updatedPreviousWork,
+      deletedPreviousWork,
+    } = updatedTourGuide;
     const tourGuideUser = await this.userModel
       .findOneAndUpdate(
         { email: email, role: UserRoles.TourGuide },
-        { phone_number: phone_number },
+        {
+          phone_number: phone_number,
+          name: name,
+          username: username,
+          password: password,
+          email: newEmail,
+        },
         { new: true }
       )
       .select("status role username name phone_number");
@@ -215,14 +233,48 @@ export default class TourGuideService {
         400
       );
     }
+
     const tour_guide_user_id = tourGuideUser._id;
+    let previousWork;
+    const previousWorkSearch = await this.previousWorkModel.findOne({});
+
+    if (!previousWorkSearch) {
+      previousWork = new this.previousWorkModel({});
+      console.log(
+        previousWork.title,
+        previousWork.place,
+        previousWork.from,
+        previousWork.to
+      );
+      if (previousWork instanceof Error)
+        throw new InternalServerError(
+          "Internal server error while creating previous work"
+        );
+      await previousWork.save();
+    } else {
+      previousWork = await this.previousWorkModel.findOneAndUpdate(
+        {},
+        { new: true }
+      );
+    }
+    if (previousWork instanceof Error)
+      throw new InternalServerError(
+        "Internal server error while updating previous work"
+      );
+    if (!previousWork) throw new HttpError("Previous work not found", 404);
+
+    const previousWorkId = previousWork._id;
     const tourGuideProfile = await this.tourGuideModel
       .findOneAndUpdate(
         { user_id: tour_guide_user_id },
-        { photo: photo, years_of_experience: years_of_experience },
+        {
+          photo: photo,
+          years_of_experience: years_of_experience,
+        },
         { new: true }
       )
       .populate("previous_work_description");
+
     if (!tourGuideProfile)
       throw new HttpError(
         "For some reason, the tour guide is registered as user and not in the tour guide table. In other words, if this error is thrown, something has gone terribly wrong",

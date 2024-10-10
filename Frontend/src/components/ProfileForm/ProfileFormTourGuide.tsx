@@ -5,19 +5,16 @@ import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { useAppSelector } from "../../store/hooks";
 import { TourGuideServices } from "../../services/TourGuideServices";
-
+// LOGOOOOOOOO PLEASE YA OMAR
 interface FormData {
   yearsOfExperience: string; // Ensure this is included
   firstName: string;
   lastName: string;
   email: string;
   mobile: string;
-  profession: string;
-  password: string;
+  changePassword: string;
   retypePassword: string;
   username: string;
-  nationality: string;
-  dob: string;
 }
 
 const ProfileFormGuide: React.FC = () => {
@@ -26,12 +23,9 @@ const ProfileFormGuide: React.FC = () => {
     lastName: "",
     email: "",
     mobile: "",
-    profession: "",
-    password: "",
+    changePassword: "",
     retypePassword: "",
     username: "",
-    nationality: "",
-    dob: "",
     yearsOfExperience: "", // Initialize here
   });
   const TourGuide = useAppSelector((state) => state.user);
@@ -42,23 +36,18 @@ const ProfileFormGuide: React.FC = () => {
       lastName: TourGuide.name.split(" ")[1] || "", // Fallback for last name
       email: TourGuide.email,
       mobile: TourGuide.phone_number,
-      profession: TourGuide.stakeholder_id?.job || "",
-      password: "",
+      changePassword: "",
       retypePassword: "",
       username: TourGuide.username,
-      nationality: TourGuide.stakeholder_id?.nation || "",
-      dob: TourGuide.stakeholder_id?.date_of_birth || "",
       yearsOfExperience: TourGuide.stakeholder_id?.years_of_experience || "", // Include yearsOfExperience here
     });
   }, [TourGuide]);
-  // Dependency array to rerun this effect when Tourist data changes
+  //
   const OnClick = async () => {
     await TourGuideServices.updateTourGuide(TourGuide.email, {
       name: formData.firstName + " " + formData.lastName,
       newEmail: formData.email,
-      /*password: formData.password,*/
-      job: formData.profession,
-      nation: formData.nationality,
+      phone_number: formData.mobile,
     });
   };
 
@@ -69,14 +58,10 @@ const ProfileFormGuide: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.password !== formData.retypePassword) {
+    if (formData.changePassword !== formData.retypePassword) {
       alert("Passwords don't match!");
       return;
     }
-    // Here you could also do form submission or API call
-    console.log("Form submitted:", formData);
-    // Clear the form after submission if needed
-    handleCancel();
   };
 
   const handleCancel = () => {
@@ -85,12 +70,9 @@ const ProfileFormGuide: React.FC = () => {
       lastName: "",
       email: "",
       mobile: "",
-      profession: "",
-      password: "",
+      changePassword: "",
       retypePassword: "",
       username: "",
-      nationality: "",
-      dob: "",
       yearsOfExperience: "", // Reset here
     });
   };
@@ -174,13 +156,13 @@ const ProfileFormGuide: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="Password:"
+                label="Change Password:"
                 type="password"
                 placeholder="Enter your password"
                 id="password"
                 name="password"
                 required={true}
-                value={formData.password}
+                value={formData.changePassword}
                 onChange={handleChange}
                 disabled={false}
               />

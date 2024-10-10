@@ -83,14 +83,21 @@ export default class SellerService {
   }
 
   //Takes old and new name and description of seller
+  //update seller data with new attributes in dto
   public async updateSellerService(
     searchEmail: string,
     updatedSellerData: ISellerUpdateDTO
   ) {
-    const { name, email, description } = updatedSellerData;
+    const { name, username, email, phone_number, description, logo } =
+      updatedSellerData;
     const user = await this.userModel.findOneAndUpdate(
-      { searchEmail, role: UserRoles.Seller },
-      { name: name, email: email },
+      { email: searchEmail, role: UserRoles.Seller },
+      {
+        name: name,
+        email: email,
+        username: username,
+        phone_number: phone_number,
+      },
       { new: true }
     );
     if (user instanceof Error)
@@ -99,7 +106,7 @@ export default class SellerService {
 
     const updatedSeller = await this.sellerModel.findOneAndUpdate(
       { user_id: user._id },
-      { description: description },
+      { description: description, logo: logo },
       { new: true }
     );
 
