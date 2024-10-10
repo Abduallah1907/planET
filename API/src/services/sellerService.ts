@@ -89,7 +89,7 @@ export default class SellerService {
   ) {
     const { name, email, description } = updatedSellerData;
     const user = await this.userModel.findOneAndUpdate(
-      { searchEmail, role: UserRoles.Seller },
+      { email:searchEmail, role: UserRoles.Seller },
       { name: name, email: email },
       { new: true }
     );
