@@ -13,15 +13,14 @@ interface FormData {
   lastName: string;
   email: string;
   mobile: string;
-  profession: string;
-  password: string;
+  changePassword: string;
   retypePassword: string;
   username: string;
-  nationality: string;
-  dob: string;
-  description: string;
   logo: File | null; // Added logo field
   about: string; // New 'About' field
+  companyProfile: string;
+  hotline: string;
+  linktoweb: string;
 }
 
 const Advertiser: React.FC = () => {
@@ -30,15 +29,14 @@ const Advertiser: React.FC = () => {
     lastName: "",
     email: "",
     mobile: "",
-    profession: "",
-    password: "",
+    changePassword: "",
     retypePassword: "",
     username: "",
-    nationality: "",
-    dob: "",
-    description: "",
     logo: null, // Initialize logo as null
-    about: "", // Initialize about section
+    about: "",
+    companyProfile: "",
+    hotline: "",
+    linktoweb: "",
   });
   const Advertiser = useAppSelector((state) => state.user);
 
@@ -48,24 +46,28 @@ const Advertiser: React.FC = () => {
       lastName: Advertiser.name?.split(" ")[1] || "", // Adding fallback if there's no last name
       email: Advertiser.email || "",
       mobile: Advertiser.phone_number || "",
-      profession: Advertiser.stakeholder_id?.job || "", // Optional chaining to prevent errors
-      password: "",
+      changePassword: "",
       retypePassword: "",
       username: Advertiser.username || "",
-      nationality: Advertiser.stakeholder_id?.nation || "", // Optional chaining
-      dob: Advertiser.stakeholder_id?.date_of_birth || "", // Optional chaining
-      description: formData.description || "",
       logo: formData.logo || null,
-      about: Advertiser.stakeholder_id?.about || formData.about || "", // Fallback to formData.about if unavailable
+      about: Advertiser.stakeholder_id?.about || formData.about || "",
+      hotline: Advertiser.stakeholder_id?.hotline || "",
+      linktoweb: Advertiser.stakeholder_id?.link_to_website || "",
+      companyProfile: Advertiser.stakeholder_id?.company_profile || "",
     });
-  }, [Advertiser, formData.description, formData.logo, formData.about]);
+  }, [Advertiser]);
 
   const OnClick = async () => {
     await AdvertiserService.updateAdvertiser(Advertiser.email, {
       name: formData.firstName + " " + formData.lastName,
+      username: formData.username,
       newEmail: formData.email,
-      /*password: formData.password,*/
-      About: formData.about,
+      password: formData.changePassword,
+      phone_number: formData.mobile,
+      about: formData.about,
+      hotline: formData.hotline,
+      company_profile: formData.companyProfile,
+      link_to_website: formData.linktoweb,
     });
   };
 
@@ -86,7 +88,7 @@ const Advertiser: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.password !== formData.retypePassword) {
+    if (formData.changePassword !== formData.retypePassword) {
       alert("Passwords don't match!");
       return;
     }
@@ -99,15 +101,14 @@ const Advertiser: React.FC = () => {
       lastName: "",
       email: "",
       mobile: "",
-      profession: "",
-      password: "",
+      companyProfile: "",
+      changePassword: "",
       retypePassword: "",
       username: "",
-      nationality: "",
-      dob: "",
-      description: "",
       logo: null, // Reset logo
-      about: "", // Reset about section
+      about: "",
+      linktoweb: "",
+      hotline: "",
     });
   };
 
@@ -172,19 +173,32 @@ const Advertiser: React.FC = () => {
                 onChange={handleChange}
               />
             </Col>
+            <Col>
+              <CustomFormGroup
+                label="Username:"
+                type="text"
+                placeholder="Enter your username"
+                id="username"
+                name="username"
+                disabled={false}
+                required={true}
+                value={formData.username}
+                onChange={handleChange}
+              />
+            </Col>
           </Row>
 
           <Row>
             <Col>
               <CustomFormGroup
-                label="Password:"
+                label="change Password:"
                 type="password"
                 placeholder="Enter your password"
-                id="password"
-                name="password"
+                id="changePassword"
+                name="changePassword"
                 disabled={false}
                 required={true}
-                value={formData.password}
+                value={formData.changePassword}
                 onChange={handleChange}
               />
             </Col>
@@ -208,12 +222,68 @@ const Advertiser: React.FC = () => {
               <CustomFormGroup
                 label="About:"
                 type="text"
-                placeholder="About"
-                id="description"
-                name="description"
+                placeholder="about"
+                id="about"
+                name="about"
                 disabled={false}
                 required={true}
-                value={formData.description} // Correctly referencing description
+                value={formData.about} // Correctly referencing description
+                onChange={handleChange}
+              />
+            </Col>
+            <Col>
+              <CustomFormGroup
+                label="Mobile Number:"
+                type="text"
+                placeholder="Enter your mobile number"
+                id="mobile"
+                name="mobile"
+                disabled={false}
+                required={true}
+                value={formData.mobile} // Correctly referencing description
+                onChange={handleChange}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="hotline:"
+                type="text"
+                placeholder="Enter your hotline"
+                id="hotline"
+                name="hotline"
+                disabled={false}
+                required={true}
+                value={formData.hotline} // Correctly referencing description
+                onChange={handleChange}
+              />
+            </Col>
+            <Col>
+              <CustomFormGroup
+                label="company profile "
+                type="text"
+                placeholder="Enter your companyProfile"
+                id="companyProfile"
+                name="companyProfile"
+                disabled={false}
+                required={true}
+                value={formData.companyProfile} // Correctly referencing description
+                onChange={handleChange}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="Link to Website "
+                type="text"
+                placeholder="Enter your website link"
+                id="linktoweb"
+                name="linktoweb"
+                disabled={false}
+                required={true}
+                value={formData.linktoweb} // Correctly referencing description
                 onChange={handleChange}
               />
             </Col>
