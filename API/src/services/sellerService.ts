@@ -91,7 +91,7 @@ export default class SellerService {
     const { name, username, email, phone_number, description, logo } =
       updatedSellerData;
     const user = await this.userModel.findOneAndUpdate(
-      { searchEmail, role: UserRoles.Seller },
+      { email: searchEmail, role: UserRoles.Seller },
       {
         name: name,
         email: email,

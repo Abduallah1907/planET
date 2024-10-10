@@ -199,10 +199,9 @@ export default class TourGuideService {
       phone_number,
       years_of_experience,
       photo,
-      previous_work_title,
-      previous_work_place,
-      previous_work_from,
-      previous_work_to,
+      createdPreviousWork,
+      updatedPreviousWork,
+      deletedPreviousWork,
     } = updatedTourGuide;
     const tourGuideUser = await this.userModel
       .findOneAndUpdate(
@@ -234,15 +233,48 @@ export default class TourGuideService {
         400
       );
     }
-    const tour_guide_user_id = tourGuideUser._id;
 
+    const tour_guide_user_id = tourGuideUser._id;
+    let previousWork;
+    const previousWorkSearch = await this.previousWorkModel.findOne({});
+
+    if (!previousWorkSearch) {
+      previousWork = new this.previousWorkModel({});
+      console.log(
+        previousWork.title,
+        previousWork.place,
+        previousWork.from,
+        previousWork.to
+      );
+      if (previousWork instanceof Error)
+        throw new InternalServerError(
+          "Internal server error while creating previous work"
+        );
+      await previousWork.save();
+    } else {
+      previousWork = await this.previousWorkModel.findOneAndUpdate(
+        {},
+        { new: true }
+      );
+    }
+    if (previousWork instanceof Error)
+      throw new InternalServerError(
+        "Internal server error while updating previous work"
+      );
+    if (!previousWork) throw new HttpError("Previous work not found", 404);
+
+    const previousWorkId = previousWork._id;
     const tourGuideProfile = await this.tourGuideModel
       .findOneAndUpdate(
         { user_id: tour_guide_user_id },
-        { photo: photo, years_of_experience: years_of_experience },
+        {
+          photo: photo,
+          years_of_experience: years_of_experience,
+        },
         { new: true }
       )
       .populate("previous_work_description");
+
     if (!tourGuideProfile)
       throw new HttpError(
         "For some reason, the tour guide is registered as user and not in the tour guide table. In other words, if this error is thrown, something has gone terribly wrong",

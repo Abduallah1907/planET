@@ -19,10 +19,9 @@ export interface ITour_GuideUpdateDTO {
   password?: string;
   years_of_experience?: number;
   photo?: string;
-  previous_work_title?: string;
-  previous_work_place?: string;
-  previous_work_from?: Date;
-  previous_work_to?: Date;
+  createdPreviousWork?: ObjectId[];
+  updatedPreviousWork?: ObjectId[];
+  deletedPreviousWork?: ObjectId[];
 }
 export interface ITourGuideInput {
   username: string;
