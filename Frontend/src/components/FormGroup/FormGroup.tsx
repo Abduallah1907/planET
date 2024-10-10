@@ -42,7 +42,7 @@ function CustomFormGroup({
           required={required}
           onChange={onChange}
           name={name}
-          value={value || ""}
+          value={value}
           className={
             disabled
               ? "disabled-input custom-form-control"

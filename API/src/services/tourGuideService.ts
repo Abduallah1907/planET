@@ -272,8 +272,32 @@ export default class TourGuideService {
         "Internal server error while updating previous work"
       );
     if (!previousWork) throw new HttpError("Previous work not found", 404);
+    // if (!previousWorkSearch) {
+    //   previousWork = new this.previousWorkModel({});
+    //   console.log(
+    //     previousWork.title,
+    //     previousWork.place,
+    //     previousWork.from,
+    //     previousWork.to
+    //   );
+    //   if (previousWork instanceof Error)
+    //     throw new InternalServerError(
+    //       "Internal server error while creating previous work"
+    //     );
+    //   await previousWork.save();
+    // } else {
+    //   previousWork = await this.previousWorkModel.findOneAndUpdate(
+    //     {},
+    //     { new: true }
+    //   );
+    // }
+    // if (previousWork instanceof Error)
+    //   throw new InternalServerError(
+    //     "Internal server error while updating previous work"
+    //   );
+    // if (!previousWork) throw new HttpError("Previous work not found", 404);
 
-    const previousWorkId = previousWork._id;*/
+    // const previousWorkId = previousWork._id;
     const tourGuideProfile = await this.tourGuideModel
       .findOneAndUpdate(
         { user_id: tour_guide_user_id },

@@ -9,9 +9,9 @@ export class ProductController {
   public async createProduct(req: any, res: any) {
     const productService: ProductService = Container.get(ProductService);
     const product: IProduct = req.body;
-    const { user_id } = req.params;
+    const { seller_id } = req.params;
     const newProduct = await productService.createProductService(
-      user_id,
+      seller_id,
       product
     );
     res.status(newProduct.status).json(newProduct);
@@ -73,6 +73,13 @@ export class ProductController {
     const productService: ProductService = Container.get(ProductService);
     const { product_name } = req.params;
     const product = await productService.getProductByNameService(product_name);
+    res.status(product.status).json(product);
+  }
+  public async getProductById(req: any, res: any) {
+    const productService: ProductService = Container.get(ProductService);    
+    const { id } = req.params;
+    const idObject = new Types.ObjectId(id);
+    const product = await productService.getProductByIdService(idObject);
     res.status(product.status).json(product);
   }
   public async getFilterComponents(req: any, res: any) {

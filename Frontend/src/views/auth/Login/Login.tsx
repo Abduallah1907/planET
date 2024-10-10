@@ -151,6 +151,8 @@ export default function Login() {
           dispatch(
             setNavItems([
               { path: "/AdminDashboard", label: "Dashboard" },
+              { path: "/AddNewProduct", label: "Add Product" },
+              { path: "/MyProducts", label: " My Products" },
               { path: "/admin", label: "Create Admin" },
               { path: "/governer", label: "Create Governer" },
               { path: "/delete", label: "Delete User" },

@@ -39,7 +39,7 @@ import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
 import StakeholderReg from "./views/auth/StakeholderReg/StakeholderReg";
 import ItineraryCardd from "./views/ItineraryCardd";
 import EditHistoricalLocation from "./views/EditHistoricalLocation";
-import EditProduct from "./views/EditProduct";
+import EditProduct from "./views/UpdateProduct";
 import EditItinerary from "./views/EditItinerary";
 import UsersTable from "./views/UsersTable";
 import MyActivities from "./views/ViewingPages copy/MyActivities";
@@ -53,6 +53,7 @@ import Sidebar from "./components/SideBar/Sidebar";
 import { use } from "i18next";
 import CategoryTable from "./views/CategoryTable";
 import TagsTable from "./views/TagTable";
+import UpdateProduct from "./views/UpdateProduct";
 
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen)
@@ -108,7 +109,7 @@ const App: React.FC = () => {
         <Route path="/ItineraryCardd" element={<ItineraryCardd />} />
 
         <Route path="/EditHistoricalLocation" element={<EditHistoricalLocation />} />
-        <Route path="/EditProduct" element={<EditProduct />} />
+        <Route path="/UpdateProduct/:product_id" element={<UpdateProduct />} />
         <Route path="/EditItinerary" element={<EditItinerary />} />
         <Route path="/UsersTable" element={<UsersTable />} />
         <Route path="/MyActivities" element={<MyActivities />} />

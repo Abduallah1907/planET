@@ -235,6 +235,7 @@ export default class AdminService {
       createdAt: newUserResponse.data.createdAt,
       updatedAt: newUserResponse.data.updatedAt,
     };
+    
     return new response(true, adminOutput, "Admin created", 201);
   }
 

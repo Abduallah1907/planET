@@ -135,6 +135,7 @@ export default function ProductsPage() {
             {products.map((product:IProduct, index) => (
               <Col key={index} xs={12} className="mb-4 ps-0">
                 <ProductCard
+                        id={product._id}
                         Name={product.name}
                         average_rating={product.average_rating}
                         quantity={product.quantity}
@@ -146,7 +147,9 @@ export default function ProductsPage() {
                         updatedAt={product.updatedAt ? new Date(product.updatedAt):new Date()}
                         imageUrl={product.picture}
                         isActiveArchive={product.archieve_flag}
-                        onChange={() => console.log(`${product.name} booking status changed`)} id={product.user_id} isSeller={true}                />
+                        onChange={() => console.log(`${product.name} booking status changed`)}
+                        isSeller={true}
+                        isAdmin={true}             />
               </Col>
             ))}
           </Row>

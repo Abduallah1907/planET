@@ -9,6 +9,7 @@ export interface IProduct extends Document {
   quantity: number;
   sales: number;
   archieve_flag: boolean;
+  seller_id?: ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -21,4 +22,5 @@ export interface IProductInputDTO {
   quantity?: number;
   sales?: number;
   archieve_flag?: boolean;
+  seller_id?: ObjectId;
 }
