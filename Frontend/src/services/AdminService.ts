@@ -4,15 +4,23 @@ import axios from 'axios';
 class AdminService {
 
   // Function to delete user account
-  public static deleteAccount = async (userId: any, authToken: any) => {
+  public static deleteUser = async (email: any) => {
     try {
-      const response = await axiosInstance.delete(`/admin/deleteUser/${userId}`);
+      const response = await axiosInstance.delete(`/admin/deleteUser/${email}`);
       return response.data;
     } catch (error) {
       throw error;
     }
   };
-  public static CreateAdmin = async (data:any) => {
+  public static getUsers = async (page: number) => {
+    try {
+      const response = await axiosInstance.get(`/admin/getUsers/${page}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+  public static createAdmin = async (data:any) => {
     try {
       const response = await axiosInstance.post(`/admin/createAdmin/`,data);
       return response.data;
@@ -21,9 +29,9 @@ class AdminService {
     }
   };
 
-  public static CreateGoverner = async (data:any) => {
+  public static createGovernor = async (data:any) => {
     try {
-      const response = await axiosInstance.post(`/admin/createGoverner/`,data);
+      const response = await axiosInstance.post(`/admin/createGovernor/`,data);
       return response.data;
     } catch (error) {
       throw error;

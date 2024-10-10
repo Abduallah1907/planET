@@ -179,11 +179,11 @@ body {
 }
 
 .bg-active {
-  background-color: rgb(89, 232, 103);
+  background-color: rgb(89, 232, 103) !important;
 }
 
 .bg-inactive {
-  background-color: rgb(232, 89, 89);
+  background-color: rgb(232, 89, 89) !important;
 }
 
 .bg-tag {

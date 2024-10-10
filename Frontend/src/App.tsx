@@ -5,7 +5,7 @@ import TopBar from "./components/TopBar/TopBar";
 import { Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import CreateGoverner from "./views/CreateGoverner/CreateGoverner";
+import CreateGoverner from "./views/CreateGoverner/CreateGovernor";
 import BookingLayout from "./views/ViewingPages/Activities";
 import Activities from "./views/ViewingPages/Activities";
 import TouristReg from "./views/auth/TouristReg/TouristReg";
@@ -15,7 +15,6 @@ import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
 import MainPage from "./views/Main Page/MainPage";
 import { AppProvider } from "./AppContext";
 import FilterBy from "./components/FilterBy/FilterBy";
-import Delete from "./components/Delete";
 import SellerDashboard from "./views/SellerDashboard/SellerDashboard";
 import ActivityDetails from "./views/ProductDetails/ActivityDetails";
 import Login from "./views/auth/Login/Login";
@@ -96,7 +95,6 @@ const App: React.FC = () => {
         <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/SellerDashboard" element={<SellerDashboard />} />
-        <Route path="/delete" element={<Delete />} />
         <Route path="/SettingSide" element={<SettingSide />} />
         <Route path="/TourGuide" element={<ProfileFormTourGuide />} />
         <Route path="/Advertiser" element={<Advertiser />} />

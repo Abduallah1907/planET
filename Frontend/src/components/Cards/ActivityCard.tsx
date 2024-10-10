@@ -35,9 +35,9 @@ const CustomActivityCard = ({
 }: InputData) => {
   // Manage the state for the rating
 
-
   return (
-    <Card onClick={onClick}
+    <Card
+      onClick={onClick}
       className="p-3 shadow-sm"
       style={{ borderRadius: "10px", height: "100%" }}
     >
@@ -65,9 +65,14 @@ const CustomActivityCard = ({
                   {Name}
                 </Card.Title>
                 {/* Badges next to Activity Name */}
-           
+
                 {(tags || []).map((tag, index) => (
-                  <Badge key={index} pill bg="tag" className="me-2 custom-badge">
+                  <Badge
+                    key={index}
+                    pill
+                    bg="tag"
+                    className="me-2 custom-badge"
+                  >
                     {tag}
                   </Badge>
                 ))}
@@ -100,10 +105,7 @@ const CustomActivityCard = ({
           {/* Rating and Reviews on the Far Right */}
           <div className="d-flex align-items-center justify-content-end mb-1">
             {/* Rating Stars */}
-            <Rating
-              rating={RatingVal}
-              readOnly={true}
-            />
+            <Rating rating={RatingVal} readOnly={true} />
             <Badge
               className="ms-2 review-badge text-center"
               style={{

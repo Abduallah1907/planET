@@ -86,3 +86,12 @@ export interface IUserLoginOutputDTO {
   stakeholder_id: string;
   token: string;
 }
+
+export interface IUserManagmentDTO{
+  _id: string;
+  name: string;
+  email: string;
+  username: string;
+  role: string;
+  status: string;
+}
