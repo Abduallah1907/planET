@@ -131,14 +131,21 @@ export default function Login() {
           } else {
             navigate("/");
           }
-          dispatch(setNavItems([
-            { path: "/AddHistoricalLocation", label: "Add Historical Location" },
-            { path: "/MyHistoricalLocations", label: "My Historical Locations" },
-          ]));
-         
-            navigate("/EditHistoricalLocation");
-         
-           
+          dispatch(
+            setNavItems([
+              {
+                path: "/AddHistoricalLocation",
+                label: "Add Historical Location",
+              },
+              {
+                path: "/MyHistoricalLocations",
+                label: "My Historical Locations",
+              },
+            ])
+          );
+
+          navigate("/EditHistoricalLocation");
+
           break;
         case "ADMIN":
           dispatch(
@@ -147,8 +154,8 @@ export default function Login() {
               { path: "/admin", label: "Create Admin" },
               { path: "/governer", label: "Create Governer" },
               { path: "/delete", label: "Delete User" },
-              { path: "/Categories", label: "Categories"},
-              { path: "/Tags", label: "Tags"}
+              { path: "/Categories", label: "Categories" },
+              { path: "/Tags", label: "Tags" },
             ])
           );
           navigate("/AdminDashboard");
@@ -157,9 +164,8 @@ export default function Login() {
           navigate("/");
           break;
           return;
-            return;
-          
-          
+          return;
+
           break;
       }
       dispatch(activateSidebar());

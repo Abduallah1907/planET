@@ -62,10 +62,6 @@ const ProfileFormGuide: React.FC = () => {
       alert("Passwords don't match!");
       return;
     }
-    // Here you could also do form submission or API call
-    // console.log("Form submitted:", formData);
-    // Clear the form after submission if needed
-    handleCancel();
   };
 
   const handleCancel = () => {

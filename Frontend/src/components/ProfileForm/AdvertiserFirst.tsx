@@ -1,72 +1,55 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import "./ProfileFormTourist.css";
-import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
-import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
-import { AdvertiserService } from "../../services/AdvertiserService";
+import LogoPlaceholder from "../../assets/person-circle.svg"; // Placeholder logo
 import { useAppSelector } from "../../store/hooks";
+import { AdvertiserService } from "../../services/AdvertiserService";
 
 interface FormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  mobile: string;
-  profession: string;
-  password: string;
-  retypePassword: string;
   username: string;
-  nationality: string;
-  dob: string;
-  description: string;
+  website: string;
+  hotline: string;
+  companyProfile: string;
   logo: File | null; // Added logo field
-  about: string; // New 'About' field
 }
-
 const AdvertiserFirst: React.FC = () => {
+  const AdvertiserFirst = useAppSelector((state) => state.user);
+
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    mobile: "",
-    profession: "",
-    password: "",
-    retypePassword: "",
     username: "",
-    nationality: "",
-    dob: "",
-    description: "",
-    logo: null, // Initialize logo as null
-    about: "", // Initialize about section
+    website: "",
+    hotline: "",
+    companyProfile: "",
+    logo: null, // Initialize logo as null for file upload handling
   });
-  const Advertiser = useAppSelector((state) => state.user);
 
   useEffect(() => {
     setFormData({
-      firstName: Advertiser.name?.split(" ")[0] || "",
-      lastName: Advertiser.name?.split(" ")[1] || "", // Adding fallback if there's no last name
-      email: Advertiser.email || "",
-      mobile: Advertiser.phone_number || "",
-      profession: Advertiser.stakeholder_id?.job || "", // Optional chaining to prevent errors
-      password: "",
-      retypePassword: "",
-      username: Advertiser.username || "",
-      nationality: Advertiser.stakeholder_id?.nation || "", // Optional chaining
-      dob: Advertiser.stakeholder_id?.date_of_birth || "", // Optional chaining
-      description: formData.description || "",
-      logo: formData.logo || null,
-      about: Advertiser.stakeholder_id?.about || formData.about || "", // Fallback to formData.about if unavailable
+      username: AdvertiserFirst.username || "",
+      website: AdvertiserFirst.stakeholder_id?.link_to_website || "",
+      hotline: AdvertiserFirst.stakeholder_id?.hotline || "",
+      companyProfile: AdvertiserFirst.stakeholder_id?.company_profile || "",
+      logo: null,
     });
-  }, [Advertiser, formData.description, formData.logo, formData.about]);
+  }, [AdvertiserFirst]);
+
+  const handleLogoUpload = (file: File) => {
+    setFormData((prev) => ({ ...prev, logo: file }));
+  };
 
   const OnClick = async () => {
-    await AdvertiserService.updateAdvertiser(Advertiser.email, {
-      name: formData.firstName + " " + formData.lastName,
-      newEmail: formData.email,
-      /*password: formData.password,*/
-      About: formData.about,
-    });
+    const updatedData = {
+      username: formData.username,
+      website: formData.website,
+      hotline: formData.hotline,
+      companyProfile: formData.companyProfile,
+    };
+
+    await AdvertiserService.updateAdvertiser(
+      AdvertiserFirst.email,
+      updatedData
+    );
   };
 
   const handleChange = (
@@ -86,28 +69,16 @@ const AdvertiserFirst: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.password !== formData.retypePassword) {
-      alert("Passwords don't match!");
-      return;
-    }
-    // Handle form submission, including the logo file and about text
+    // Handle form submission, including the logo file
   };
 
   const handleCancel = () => {
     setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      mobile: "",
-      profession: "",
-      password: "",
-      retypePassword: "",
       username: "",
-      nationality: "",
-      dob: "",
-      description: "",
+      website: "",
+      hotline: "",
+      companyProfile: "",
       logo: null, // Reset logo
-      about: "", // Reset about section
     });
   };
 
@@ -119,11 +90,11 @@ const AdvertiserFirst: React.FC = () => {
         </Col>
         <Col xs={3} className="text-center">
           <img
-            src={Logo}
+            src={LogoPlaceholder}
             width="70"
             height="50"
             className="align-top logo"
-            alt="Travel Agency logo"
+            alt="Advertiser logo"
           />
         </Col>
       </Row>
@@ -133,42 +104,14 @@ const AdvertiserFirst: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="First Name"
+                label="Username:"
                 type="text"
-                placeholder="Enter your First Name"
-                id="firstName"
-                name="firstName"
+                placeholder="Enter your username"
+                id="username"
+                name="username"
                 disabled={false}
                 required={true}
-                value={formData.firstName}
-                onChange={handleChange}
-              />
-            </Col>
-            <Col>
-              <CustomFormGroup
-                label="Last Name:"
-                type="text"
-                placeholder="Enter your Last Name"
-                id="lastName"
-                name="lastName"
-                disabled={false}
-                required={true}
-                value={formData.lastName}
-                onChange={handleChange}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <CustomFormGroup
-                label="Email:"
-                type="email"
-                placeholder="Enter your email"
-                id="email"
-                name="email"
-                disabled={false}
-                required={true}
-                value={formData.email}
+                value={formData.username}
                 onChange={handleChange}
               />
             </Col>
@@ -177,27 +120,14 @@ const AdvertiserFirst: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="Password:"
-                type="password"
-                placeholder="Enter your password"
-                id="password"
-                name="password"
+                label="Link to Website:"
+                type="url"
+                placeholder="Enter your website URL"
+                id="website"
+                name="website"
                 disabled={false}
                 required={true}
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </Col>
-            <Col>
-              <CustomFormGroup
-                label="Retype Password:"
-                type="password"
-                placeholder="Retype your password"
-                id="retypePassword"
-                name="retypePassword"
-                disabled={false}
-                required={true}
-                value={formData.retypePassword}
+                value={formData.website}
                 onChange={handleChange}
               />
             </Col>
@@ -206,25 +136,40 @@ const AdvertiserFirst: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="About:"
-                type="text"
-                placeholder="About"
-                id="description"
-                name="description"
+                label="Hotline:"
+                type="tel"
+                placeholder="Enter your hotline number"
+                id="hotline"
+                name="hotline"
                 disabled={false}
                 required={true}
-                value={formData.description} // Correctly referencing description
+                value={formData.hotline}
                 onChange={handleChange}
               />
             </Col>
           </Row>
 
-          {/* New row for logo upload */}
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="Company Profile:"
+                type="textarea"
+                placeholder="Enter your company profile"
+                id="companyProfile"
+                name="companyProfile"
+                disabled={false}
+                required={true}
+                value={formData.companyProfile}
+                onChange={handleChange}
+              />
+            </Col>
+          </Row>
+
           <Row>
             <Col>
               <Form.Group controlId="formFile" className="mb-3">
                 <Form.Label>
-                  <h3>Upload Seller Logo</h3> {/* Added 'Seller Logo' label */}
+                  <h3>Upload Logo</h3>
                 </Form.Label>
                 <Form.Control
                   type="file"
@@ -236,11 +181,9 @@ const AdvertiserFirst: React.FC = () => {
             </Col>
           </Row>
 
-          {/* New row for 'About' section */}
-
           <div className="form-actions">
             <Button type="submit" className="update-btn" onClick={OnClick}>
-              Confirm
+              Update
             </Button>
             <Button type="button" className="cancel-btn" onClick={handleCancel}>
               Cancel
