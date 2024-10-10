@@ -1,10 +1,15 @@
-import { Card, Badge, Row, Col, Image } from "react-bootstrap";
+import { Card, Badge, Row, Col, Image, Button, DropdownButton, Dropdown } from "react-bootstrap";
 import "./Cards.css";
 import Rating from "../Rating/Rating";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import UpdateProduct from "../../views/UpdateProduct";
+
 
 interface InputData {
   Name: string;
-  id: string;
+  id?: string;
   average_rating: number;
   Reviews: number;
   sales: number;
@@ -16,10 +21,12 @@ interface InputData {
   createdAt: Date;
   updatedAt: Date;
   onChange?: () => void;
-  isSeller: boolean; // Check if the user is the seller
+  isSeller: boolean;
+  isAdmin:boolean; // Check if the user is the seller
 }
 
 const ProductCard = ({
+  id,
   Name,
   average_rating,
   Reviews,
@@ -33,9 +40,20 @@ const ProductCard = ({
   updatedAt,
   onChange,
   isSeller,
+  isAdmin,
 }: InputData) => {
   // Determine if the product is active or archived
   const isBooked = isActiveArchive;
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+
+  // Function to handle edit action
+  const navigate = useNavigate();
+
+  const handleEdit = (product_id: string) => {
+    console.log(product_id);
+    navigate(`/UpdateProduct/${product_id}`); // Navigate to the UpdateProduct page
+  };
 
   return (
     <Card className="p-3 shadow-sm" style={{ borderRadius: "10px", height: "100%" }}>
@@ -43,7 +61,7 @@ const ProductCard = ({
         {/* Image Section */}
         <Col md={2} className="p-0 d-flex align-items-stretch">
           <Image
-            src={imageUrl || "https://via.placeholder.com/250x250"} 
+            src={imageUrl || "https://via.placeholder.com/250x250"}
             rounded
             alt="Product Image"
             style={{ objectFit: "cover", height: "100%", width: "100%" }}
@@ -51,7 +69,7 @@ const ProductCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={7} className="d-flex align-items-stretch">
+        <Col md={(isSeller ||isAdmin) ? 6 : 7} className="d-flex align-items-stretch">
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
@@ -64,7 +82,7 @@ const ProductCard = ({
               {/* Product Description */}
               <Card.Text className="mt-2">Description: {description}</Card.Text>
               <Card.Text className="text-muted">
-                Sales: {sales} | Quantity: {quantity}
+                {(isSeller ||isAdmin)? `Sales: ${sales} | Quantity: ${quantity}` : `Quantity: ${quantity}`}
               </Card.Text>
             </div>
             <Card.Text className="text-muted">
@@ -87,23 +105,34 @@ const ProductCard = ({
             {Reviews} Reviews
           </p>
 
-          
+
           <div className="text-end">
             <h4 style={{ fontWeight: "bold" }}>${price.toFixed(2)}</h4>
 
             {/* Show Active/Archive button if the user is the seller */}
-            {isSeller && (
+            {(isSeller ||isAdmin) ? (
               <Badge
                 bg={isBooked ? "active" : "inactive"}
                 className="mt-2 custom-status-badge rounded-4 text-center"
-                onClick={onChange} 
+                onClick={onChange}
                 style={{ cursor: "pointer" }}
               >
                 {isBooked ? "Active" : "Archive"}
               </Badge>
-            )}
+            ) : null}
           </div>
         </Col>
+        {(isSeller ||isAdmin) ?
+          <Col md={1} className="d-flex align-items-baseline">
+            <DropdownButton
+              align="end"
+              title="⋮"  // Three-dot symbol
+              variant="light"
+              className="d-flex justify-content-end ms-3 btn-main-inverse">
+              <Dropdown.Item onClick={() => id && handleEdit(id)}>Edit</Dropdown.Item>
+            </DropdownButton>
+          </Col>
+          : null}
       </Row>
     </Card>
   );

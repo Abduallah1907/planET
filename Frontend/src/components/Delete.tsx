@@ -15,7 +15,7 @@ const Delete:React.FC = () =>{
       };
       const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        AdminService.deleteAccount(userId,"")
+        AdminService.deleteAccount(userId)
       };
     return(
         <Form>

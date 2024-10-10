@@ -149,7 +149,10 @@ export default function ProductsPage() {
                         updatedAt={product.updatedAt ? new Date(product.updatedAt):new Date()}
                         imageUrl={product.picture}
                         isActiveArchive={product.archieve_flag}
-                        onChange={() => console.log(`${product.name} booking status changed`)} id={product.user_id} isSeller={true}                />
+                        onChange={() => console.log(`${product.name} booking status changed`)} 
+                        id={product.user_id} 
+                        isSeller={false}  
+                        isAdmin={false}              />
               </Col>
             ))}
           </Row>
