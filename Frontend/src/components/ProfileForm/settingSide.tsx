@@ -5,7 +5,7 @@ import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import Sidebar from "../SideBar/Sidebar";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import { useAppSelector,useAppDispatch } from "../../store/hooks";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { toggleSidebar } from "../../store/sidebarSlice";
 
 interface FormData {
@@ -54,7 +54,7 @@ const SettingSide: React.FC = () => {
       alert("Passwords don't match!");
       return;
     }
-    console.log("Form submitted:", formData);
+    // console.log("Form submitted:", formData);
   };
 
   const handleCancel = () => {
@@ -70,15 +70,15 @@ const SettingSide: React.FC = () => {
     });
   };
 
-  const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen)
-  const dispatch = useAppDispatch()
+  const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen);
+  const dispatch = useAppDispatch();
 
   return (
     <div className="profile-form-container">
       <div className={`sidebar-wrapper ${isSidebarOpen ? "open" : ""}`}>
         <Sidebar
           isOpen={isSidebarOpen}
-          onClose={()=>dispatch(toggleSidebar())}
+          onClose={() => dispatch(toggleSidebar())}
           navItems={settingsNavItems} // Pass the settings nav items
         />
       </div>

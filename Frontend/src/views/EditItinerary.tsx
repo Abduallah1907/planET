@@ -19,13 +19,15 @@ const ItineraryForm: React.FC = () => {
   const [duration, setDuration] = useState<string>("");
   const [language, setLanguage] = useState<string>("");
   const [price, setPrice] = useState<string>("");
-  const [availableDates, setAvailableDates] = useState<{ date: string; time: string }[]>([]);
+  const [availableDates, setAvailableDates] = useState<
+    { date: string; time: string }[]
+  >([]);
   const [pickupLocation, setPickupLocation] = useState<string>("");
   const [dropoffLocation, setDropoffLocation] = useState<string>("");
   const [tourGuideId, setTourGuideId] = useState<string>("");
   const [isAccessible, setIsAccessible] = useState<boolean>(false);
   const [isActive, setIsActive] = useState<boolean>(true);
-  
+
   const [newAvailableDate, setNewAvailableDate] = useState<string>("");
   const [newAvailableTime, setNewAvailableTime] = useState<string>("");
 
@@ -64,7 +66,10 @@ const ItineraryForm: React.FC = () => {
 
   const handleAddAvailableDate = () => {
     if (newAvailableDate && newAvailableTime) {
-      setAvailableDates((prev) => [...prev, { date: newAvailableDate, time: newAvailableTime }]);
+      setAvailableDates((prev) => [
+        ...prev,
+        { date: newAvailableDate, time: newAvailableTime },
+      ]);
       setNewAvailableDate("");
       setNewAvailableTime("");
     }
@@ -88,27 +93,27 @@ const ItineraryForm: React.FC = () => {
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Add form submission logic here
-    console.log({
-      timelineActivities,
-      category,
-      name,
-      locations,
-      duration,
-      language,
-      price,
-      availableDates,
-      pickupLocation,
-      dropoffLocation,
-      tourGuideId,
-      selectedTags,
-      isAccessible,
-      isActive,
-    });
+    // console.log({
+    //   timelineActivities,
+    //   category,
+    //   name,
+    //   locations,
+    //   duration,
+    //   language,
+    //   price,
+    //   availableDates,
+    //   pickupLocation,
+    //   dropoffLocation,
+    //   tourGuideId,
+    //   selectedTags,
+    //   isAccessible,
+    //   isActive,
+    // });
   };
 
   return (
     <div className="profile-form-container">
-        <Row className="align-items-center mb-4">
+      <Row className="align-items-center mb-4">
         <Col xs={7} className="text-left">
           <h2 className="my-profile-heading">Edit Itinerary</h2>
         </Col>
@@ -135,20 +140,24 @@ const ItineraryForm: React.FC = () => {
               </Form.Group>
             </Col>
             <Col>
-              <AdminFormGroup className="form-group"
-                              label="Name"
-                              type="text"
-                              placeholder="Enter Itinerary Name"
-                              id="itinerary-name"
-                              required={true}
-                              value={name}
-                              onChange={(e) => setName(e.target.value)} disabled={false} name={""}              />
+              <AdminFormGroup
+                className="form-group"
+                label="Name"
+                type="text"
+                placeholder="Enter Itinerary Name"
+                id="itinerary-name"
+                required={true}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                disabled={false}
+                name={""}
+              />
             </Col>
           </Row>
 
           <Row>
             <Col>
-              <Form.Group  className="form-group" controlId="timelineActivities">
+              <Form.Group className="form-group" controlId="timelineActivities">
                 <Form.Label>Timeline Activities</Form.Label>
                 {timelineActivities.map((activity, index) => (
                   <div key={index} className="timeline-activity">
@@ -157,68 +166,91 @@ const ItineraryForm: React.FC = () => {
                       className="mt-1"
                       placeholder="Enter Activity"
                       value={activity}
-                      onChange={(e) => handleActivityChange(index, e.target.value)}
+                      onChange={(e) =>
+                        handleActivityChange(index, e.target.value)
+                      }
                       required
                     />
                   </div>
                 ))}
-                <Button className="update-btn mt-3" variant="outline-primary" onClick={handleAddActivity}>
+                <Button
+                  className="update-btn mt-3"
+                  variant="outline-primary"
+                  onClick={handleAddActivity}
+                >
                   Add Another Activity
                 </Button>
               </Form.Group>
             </Col>
             <Col>
-              <AdminFormGroup className="form-group"
-                              label="Locations"
-                              type="text"
-                              placeholder="Enter Locations to be visited"
-                              id="locations"
-                              required={true}
-                              value={locations}
-                              onChange={(e) => setLocations(e.target.value)} disabled={false} name={""}              />
+              <AdminFormGroup
+                className="form-group"
+                label="Locations"
+                type="text"
+                placeholder="Enter Locations to be visited"
+                id="locations"
+                required={true}
+                value={locations}
+                onChange={(e) => setLocations(e.target.value)}
+                disabled={false}
+                name={""}
+              />
             </Col>
           </Row>
 
           <Row>
             <Col>
-              <AdminFormGroup className="form-group"
-                              label="Duration"
-                              type="text"
-                              placeholder="Enter Duration (e.g., 3 hours)"
-                              id="duration"
-                              required={true}
-                              value={duration}
-                              onChange={(e) => setDuration(e.target.value)} disabled={false} name={""}              />
+              <AdminFormGroup
+                className="form-group"
+                label="Duration"
+                type="text"
+                placeholder="Enter Duration (e.g., 3 hours)"
+                id="duration"
+                required={true}
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+                disabled={false}
+                name={""}
+              />
             </Col>
             <Col>
-              <AdminFormGroup className="form-group"
-                              label="Language of Tour"
-                              type="text"
-                              placeholder="Enter Language"
-                              id="language"
-                              required={true}
-                              value={language}
-                              onChange={(e) => setLanguage(e.target.value)} disabled={false} name={""}              />
+              <AdminFormGroup
+                className="form-group"
+                label="Language of Tour"
+                type="text"
+                placeholder="Enter Language"
+                id="language"
+                required={true}
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                disabled={false}
+                name={""}
+              />
             </Col>
           </Row>
 
           <Row>
-            <Col> 
-              <AdminFormGroup className="form-group"
-                              label="Price"
-                              type="number"
-                              placeholder="Enter Price"
-                              id="price"
-                              required={true}
-                              value={price}
-                              onChange={(e) => setPrice(e.target.value)} disabled={false} name={""}              />
+            <Col>
+              <AdminFormGroup
+                className="form-group"
+                label="Price"
+                type="number"
+                placeholder="Enter Price"
+                id="price"
+                required={true}
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                disabled={false}
+                name={""}
+              />
             </Col>
             <Col>
-              <Form.Group  className="form-group" controlId="availableDates">
+              <Form.Group className="form-group" controlId="availableDates">
                 <Form.Label>Available Dates & Times</Form.Label>
                 <Row>
                   <Col>
-                    <Form.Control className="form-group"
+                    <Form.Control
+                      className="form-group"
                       type="date"
                       value={newAvailableDate}
                       onChange={(e) => setNewAvailableDate(e.target.value)}
@@ -226,7 +258,8 @@ const ItineraryForm: React.FC = () => {
                     />
                   </Col>
                   <Col>
-                    <Form.Control className="form-group"
+                    <Form.Control
+                      className="form-group"
                       type="time"
                       value={newAvailableTime}
                       onChange={(e) => setNewAvailableTime(e.target.value)}
@@ -234,23 +267,27 @@ const ItineraryForm: React.FC = () => {
                     />
                   </Col>
                   <Col>
-                    <Button variant="outline-primary" className="update-btn " onClick={handleAddAvailableDate}>
+                    <Button
+                      variant="outline-primary"
+                      className="update-btn "
+                      onClick={handleAddAvailableDate}
+                    >
                       Add
                     </Button>
                   </Col>
                 </Row>
                 {availableDates.map((available, index) => (
-                    <Container className="form-group">
-                  <div key={index} className="available-date-time">
-                    {available.date} at {available.time}{" "}
-                    <button 
-                      type="button"
-                      onClick={() => handleDeleteAvailableDate(index)}
-                      className="update-btn "
-                    >
-                      &times;
-                    </button>
-                  </div>
+                  <Container className="form-group">
+                    <div key={index} className="available-date-time">
+                      {available.date} at {available.time}{" "}
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteAvailableDate(index)}
+                        className="update-btn "
+                      >
+                        &times;
+                      </button>
+                    </div>
                   </Container>
                 ))}
               </Form.Group>
@@ -259,43 +296,55 @@ const ItineraryForm: React.FC = () => {
 
           <Row>
             <Col>
-              <AdminFormGroup className="form-group"
-                              label="Pickup Location"
-                              type="text"
-                              placeholder="Enter Pickup Location"
-                              id="pickup-location"
-                              required={true}
-                              value={pickupLocation}
-                              onChange={(e) => setPickupLocation(e.target.value)} disabled={false} name={""}              />
+              <AdminFormGroup
+                className="form-group"
+                label="Pickup Location"
+                type="text"
+                placeholder="Enter Pickup Location"
+                id="pickup-location"
+                required={true}
+                value={pickupLocation}
+                onChange={(e) => setPickupLocation(e.target.value)}
+                disabled={false}
+                name={""}
+              />
             </Col>
             <Col>
-              <AdminFormGroup className="form-group"
-                              label="Drop-off Location"
-                              type="text"
-                              placeholder="Enter Drop-off Location"
-                              id="dropoff-location"
-                              required={true}
-                              value={dropoffLocation}
-                              onChange={(e) => setDropoffLocation(e.target.value)} disabled={false} name={""}              />
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <AdminFormGroup className="form-group"
-                              label="Tour Guide ID"
-                              type="text"
-                              placeholder="Enter Tour Guide ID"
-                              id="tour-guide-id"
-                              required={true}
-                              value={tourGuideId}
-                              onChange={(e) => setTourGuideId(e.target.value)} disabled={false} name={""}              />
+              <AdminFormGroup
+                className="form-group"
+                label="Drop-off Location"
+                type="text"
+                placeholder="Enter Drop-off Location"
+                id="dropoff-location"
+                required={true}
+                value={dropoffLocation}
+                onChange={(e) => setDropoffLocation(e.target.value)}
+                disabled={false}
+                name={""}
+              />
             </Col>
           </Row>
 
           <Row>
             <Col>
-              <Form.Group  className="form-group" controlId="tags">
+              <AdminFormGroup
+                className="form-group"
+                label="Tour Guide ID"
+                type="text"
+                placeholder="Enter Tour Guide ID"
+                id="tour-guide-id"
+                required={true}
+                value={tourGuideId}
+                onChange={(e) => setTourGuideId(e.target.value)}
+                disabled={false}
+                name={""}
+              />
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <Form.Group className="form-group" controlId="tags">
                 <Form.Label>Tags</Form.Label>
                 <div className="tags-input">
                   {selectedTags.map((tag) => (
@@ -323,7 +372,9 @@ const ItineraryForm: React.FC = () => {
                     {suggestions.map((suggestion) => (
                       <li
                         key={suggestion}
-                        onClick={() => setSelectedTags((prev) => [...prev, suggestion])}
+                        onClick={() =>
+                          setSelectedTags((prev) => [...prev, suggestion])
+                        }
                       >
                         {suggestion}
                       </li>
@@ -336,7 +387,7 @@ const ItineraryForm: React.FC = () => {
 
           <Row>
             <Col>
-              <Form.Group  className="form-group" controlId="isAccessible">
+              <Form.Group className="form-group" controlId="isAccessible">
                 <Form.Check
                   type="checkbox"
                   label="Accessibility"
@@ -346,7 +397,7 @@ const ItineraryForm: React.FC = () => {
               </Form.Group>
             </Col>
             <Col>
-              <Form.Group  className="form-group"controlId="isActive">
+              <Form.Group className="form-group" controlId="isActive">
                 <Form.Check
                   type="checkbox"
                   label="Active"

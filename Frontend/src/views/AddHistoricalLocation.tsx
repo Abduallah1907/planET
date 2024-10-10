@@ -78,15 +78,15 @@ const HistoricalPlaceForm: React.FC = () => {
       selectedTags,
       isActive,
     };
-    console.log("Form submitted:", formData);
+    // console.log("Form submitted:", formData);
     try {
       const historicalLocation = await HistoricalService.addHistoricalLocation(
         formData
       ); // Call the API
-      console.log(
-        "Historical Location added successfully: ",
-        historicalLocation
-      );
+      // console.log(
+      //   "Historical Location added successfully: ",
+      //   historicalLocation
+      // );
     } catch (error) {
       console.error("Historical Location failed: ", error);
     }
