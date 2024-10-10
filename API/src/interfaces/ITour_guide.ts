@@ -12,9 +12,16 @@ export interface ITour_Guide extends Document {
   updatedAt?: Date;
 }
 export interface ITour_GuideUpdateDTO {
+  newEmail?: string;
+  name?: string;
+  phone_number?: string;
+  username?: string;
+  password?: string;
   years_of_experience?: number;
   photo?: string;
-  phone_number?: string;
+  createdPreviousWork?: ObjectId[];
+  updatedPreviousWork?: ObjectId[];
+  deletedPreviousWork?: ObjectId[];
 }
 export interface ITourGuideInput {
   username: string;

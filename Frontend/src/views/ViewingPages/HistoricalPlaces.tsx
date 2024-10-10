@@ -6,21 +6,23 @@ import { Col, Row, Container, Form, InputGroup, Button } from "react-bootstrap";
 import { BiSort } from "react-icons/bi";
 
 import { FaSearch } from "react-icons/fa";
-import filterOptions from '../../utils/filterOptions.json';
+import filterOptions from "../../utils/filterOptions.json";
 import { HistoricalService } from "../../services/HistoricalService";
-import { IHistorical_location, IHistorical_location_tourist } from "../../types/IHistoricalLocation";
+import {
+  IHistorical_location,
+  IHistorical_location_tourist,
+} from "../../types/IHistoricalLocation";
 import { useNavigate } from "react-router-dom";
-
-
 
 export default function HistoricalLocationsPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [ historical, setHistorical] = React.useState<IHistorical_location_tourist[]>([])
+  const [historical, setHistorical] = React.useState<
+    IHistorical_location_tourist[]
+  >([]);
   const [filtercomponent, setfilterComponents] = React.useState({});
   const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
-  const [filter,setFilter] = React.useState({});
-
+  const [filter, setFilter] = React.useState({});
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -30,9 +32,12 @@ export default function HistoricalLocationsPage() {
     setSortBy(e.target.value);
   };
   const getHistorical = async () => {
-    const HistoricalData = await HistoricalService.getAllHistorical_Location("masry","engineer");
+    const HistoricalData = await HistoricalService.getAllHistorical_Location(
+      "masry",
+      "engineer"
+    );
     setHistorical(HistoricalData.data);
-    console.log(HistoricalData);
+    // console.log(HistoricalData);
   };
   const getFilteredHistorical = async () => {
     const modifiedFilter = Object.fromEntries(
@@ -40,14 +45,15 @@ export default function HistoricalLocationsPage() {
         Array.isArray(value) ? [key, value.join(",")] : [key, value]
       )
     );
-    modifiedFilter.nation = "masry"
-    modifiedFilter.job = "student"
-    const HistoricalData = await HistoricalService.getFilteredHistorical_Location(modifiedFilter);
+    modifiedFilter.nation = "masry";
+    modifiedFilter.job = "student";
+    const HistoricalData =
+      await HistoricalService.getFilteredHistorical_Location(modifiedFilter);
     setHistorical(HistoricalData.data);
-  }
+  };
   const handleApplyFilters = () => {
     getFilteredHistorical();
-  }
+  };
   const getFilterComponents = async () => {
     const filterData = await HistoricalService.getFilterComponents();
     setfilterComponents(filterData.data);
@@ -56,12 +62,12 @@ export default function HistoricalLocationsPage() {
     getHistorical();
     getFilterComponents();
   }, []);
-  const onHistoricalClick = (id : string) => {
+  const onHistoricalClick = (id: string) => {
     navigate(`/Historical/${id}`);
-  }
-  const onFilterChange = (newFilter: {[key: string]: any;}) => {
+  };
+  const onFilterChange = (newFilter: { [key: string]: any }) => {
     setFilter(newFilter);
-  }
+  };
   // Function to sort historical locations based on selected criteria
   const sortedLocations = [...historical].sort((a, b) => {
     switch (sortBy) {
@@ -84,7 +90,9 @@ export default function HistoricalLocationsPage() {
     <Container fluid>
       <Row className="justify-content-center my-4">
         <Col md={6} className="text-center">
-          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>Explore Historical Locations</h1>
+          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
+            Explore Historical Locations
+          </h1>
         </Col>
       </Row>
 
@@ -118,9 +126,17 @@ export default function HistoricalLocationsPage() {
       </Row>
 
       <Row>
-      <Col md={3} className="border-bottom pb-2 d-flex flex-column align-items-md-center">
-          <Button variant="main-inverse" onClick={handleApplyFilters}>Apply Filters</Button>
-          <FilterBy filterOptions={filtercomponent} onFilterChange={onFilterChange}/>
+        <Col
+          md={3}
+          className="border-bottom pb-2 d-flex flex-column align-items-md-center"
+        >
+          <Button variant="main-inverse" onClick={handleApplyFilters}>
+            Apply Filters
+          </Button>
+          <FilterBy
+            filterOptions={filtercomponent}
+            onFilterChange={onFilterChange}
+          />
         </Col>
 
         <Col md={9} className="p-3">
@@ -134,26 +150,30 @@ export default function HistoricalLocationsPage() {
                 <option value="priceHighToLow">Price: High to Low</option>
               </Form.Select>
             </div>
-            {filteredLocations.map((location:IHistorical_location_tourist, index) => (
-              <Col key={location._id} xs={12} className="mb-4 ps-0">
-              <HistoricalLocationCard
-                Name={location.name}
-                location={"cairo"}
-                imageUrl={""}
-                RatingVal={location.average_rating}
-                Reviews={location.reviewsCount ?? 0}
-                Description={location.description}
-                isActive={location.active_flag}
-                tags={location.tags ? Object.values(location.tags) : []}
-                onChange={() => console.log(`${location.name} booking status changed`)}
-                Price={location.price}
-                OpeningHourFrom={location.opening_hours_from}
-                OpeningHourTo={location.opening_hours_to}
-                OpeningDays={location.opening_days.join(",")}
-                onClick={() => onHistoricalClick(location._id)}
-              />
-            </Col>
-            ))}
+            {filteredLocations.map(
+              (location: IHistorical_location_tourist, index) => (
+                <Col key={location._id} xs={12} className="mb-4 ps-0">
+                  <HistoricalLocationCard
+                    Name={location.name}
+                    location={"cairo"}
+                    imageUrl={""}
+                    RatingVal={location.average_rating}
+                    Reviews={location.reviewsCount ?? 0}
+                    Description={location.description}
+                    isActive={location.active_flag}
+                    tags={location.tags ? Object.values(location.tags) : []}
+                    onChange={() =>
+                      console.log(`${location.name} booking status changed`)
+                    }
+                    Price={location.price}
+                    OpeningHourFrom={location.opening_hours_from}
+                    OpeningHourTo={location.opening_hours_to}
+                    OpeningDays={location.opening_days.join(",")}
+                    onClick={() => onHistoricalClick(location._id)}
+                  />
+                </Col>
+              )
+            )}
           </Row>
         </Col>
       </Row>

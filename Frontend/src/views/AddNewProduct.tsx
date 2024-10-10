@@ -28,7 +28,8 @@ const AddNewProduct: React.FC = () => {
           setProductPrice(value);
           break;
         case "productQuantity":
-          if (/^\d*$/.test(value)) { // Ensure only integer values
+          if (/^\d*$/.test(value)) {
+            // Ensure only integer values
             setProductQuantity(value);
           }
           break;
@@ -54,7 +55,7 @@ const AddNewProduct: React.FC = () => {
     formData.append("quantity", productQuantity);
     formData.append("isArchived", isArchived.toString());
 
-    console.log("Product data submitted", formData);
+    // console.log("Product data submitted", formData);
 
     setProductName("");
     setProductDescription("");
