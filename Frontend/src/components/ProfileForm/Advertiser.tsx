@@ -180,8 +180,8 @@ const Advertiser: React.FC = () => {
                 placeholder="Enter your username"
                 id="username"
                 name="username"
-                disabled={false}
-                required={true}
+                disabled={true}
+                required={false}
                 value={formData.username}
                 onChange={handleChange}
               />
