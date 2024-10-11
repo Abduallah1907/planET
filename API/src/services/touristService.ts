@@ -14,6 +14,7 @@ import UserRoles from "@/types/enums/userRoles";
 
 import Container, { Inject, Service } from "typedi";
 import UserService from "./userService";
+import { ObjectId } from "mongoose";
 
 @Service()
 export default class TouristService {
@@ -81,7 +82,7 @@ export default class TouristService {
       throw new InternalServerError("Internal server error");
 
     const newTouristData: ITouristNewUserDTO = {
-      user_id: newUser._id,
+      user_id: newUser._id as ObjectId,
       date_of_birth: touristData.date_of_birth,
       job: touristData.job,
       nation: touristData.nation,

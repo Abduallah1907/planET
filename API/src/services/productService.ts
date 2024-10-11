@@ -39,7 +39,7 @@ export class ProductService {
         "Internal Server Error cannot save product"
       );
 
-    const product_id = resultProduct._id;
+    const product_id = resultProduct._id as ObjectId;
 
     const seller = await this.sellerModel.findById(seller_id);
 
@@ -135,7 +135,7 @@ export class ProductService {
 
     return new response(true, products, "All products are fetched", 200);
   }
-public async getProductByIdService(product_id: Types.ObjectId) {
+  public async getProductByIdService(product_id: Types.ObjectId) {
     const product = await this.productModel.findById(product_id);
     if (product instanceof Error)
       throw new InternalServerError("Internal Server Error");

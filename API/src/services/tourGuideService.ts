@@ -42,7 +42,7 @@ export default class TourGuideService {
     if (newWorkExperience instanceof Error)
       throw new InternalServerError("Internal server error");
     const previousWorkOutput: IPreviousWorkOutputDTO = {
-      previous_work_id: newWorkExperience._id,
+      previous_work_id: newWorkExperience._id as ObjectId,
       title: newWorkExperience.title,
       place: newWorkExperience.place,
       from: newWorkExperience.from,
@@ -76,7 +76,7 @@ export default class TourGuideService {
     previousWork.to = updatedPreviousWorkInfo.to;
     await previousWork.save();
     const previousWorkOutput: IPreviousWorkOutputDTO = {
-      previous_work_id: previousWork._id,
+      previous_work_id: previousWork._id as ObjectId,
       title: previousWork.title,
       place: previousWork.place,
       from: previousWork.from,

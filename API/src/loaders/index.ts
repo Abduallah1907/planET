@@ -4,9 +4,11 @@ import dependencyInjectorLoader from "./dependencyInjector";
 import jobsLoader from "./jobs";
 import expressLoader from "./express";
 import { Application } from "express";
+import { gridfsLoader } from "./gridfs";
 
 export default async ({ expressApp }: { expressApp: Application }) => {
   const mongoConnection = await mongooseLoader();
+
   Logger.info("✌️ DB loaded and connected!");
 
   /**
@@ -165,4 +167,7 @@ export default async ({ expressApp }: { expressApp: Application }) => {
 
   await expressLoader({ app: expressApp });
   Logger.info("✌️ Express loaded");
+
+  await gridfsLoader({ mongoConnection });
+  Logger.info("✌️ GridFS loaded");
 };

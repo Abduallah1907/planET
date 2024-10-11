@@ -71,10 +71,13 @@ export class AdvertiserController {
   //Update Advertiser
   public async updateAdvertiserController(req: any, res: any) {
     const { email } = req.params;
+    const file = req.file;
+
     const advertiserService: AdvertiserService =
       Container.get(AdvertiserService);
     const advertiser = await advertiserService.updateAdvertiserService(
       email,
+      file,
       req.body
     );
     res.status(advertiser.status).json(advertiser);

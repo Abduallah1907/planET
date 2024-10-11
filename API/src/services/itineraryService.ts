@@ -63,7 +63,7 @@ export default class ItineraryService {
       // tour_guide_id: itineraryData.tour_guide_id,
       // activities: itineraryData.activities,
       // category: itineraryData.category,
-      itinerary_id: itineraryData._id,
+      itinerary_id: itineraryData._id as ObjectId,
       name: itineraryData.name,
       accessibility: itineraryData.accessibility,
       active_flag: itineraryData.active_flag,
@@ -172,7 +172,7 @@ export default class ItineraryService {
 
     const itinerartiesOutput: IItineraryOutputAllDTO[] = itineraries.map(
       (itinerary) => ({
-        itinerary_id: itinerary._id,
+        itinerary_id: itinerary._id as ObjectId,
         name: itinerary.name,
         accessibility: itinerary.accessibility,
         active_flag: itinerary.active_flag,
