@@ -16,7 +16,7 @@ import UserRoles from "@/types/enums/userRoles";
 import UserService from "./userService";
 import user from "@/api/routes/user";
 import bcrypt from "bcryptjs";
-import { FileUploadService } from "./fileUploadService";
+import { FileService } from "./fileService";
 @Service()
 export default class AdvertiserService {
   constructor(
@@ -146,8 +146,6 @@ export default class AdvertiserService {
     file: Express.Multer.File,
     advertiserData: IAdvertiserUpdateDTO
   ) => {
-    const fileUploadService: FileUploadService =
-      Container.get(FileUploadService);
     const {
       newEmail,
       name,
@@ -181,20 +179,13 @@ export default class AdvertiserService {
     if (advertiserUser == null) {
       throw new NotFoundError("No Advertiser with this email");
     }
-    let logoFile;
-    if (file) {
-      logoFile = await fileUploadService.uploadFile(file);
-      if (logoFile instanceof Error) {
-        throw new InternalServerError("Error in uploading file");
-      }
-    }
     const advertiser = await this.advertiserModel.findOneAndUpdate(
       { user_id: advertiserUser._id },
       {
         link_to_website: link_to_website,
         hotline: hotline,
         about: about,
-        logo: logoFile ? logoFile._id : undefined,
+        logo: logo,
         company_profile: company_profile,
       },
       { new: true }

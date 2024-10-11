@@ -131,7 +131,8 @@ export default async ({ expressApp }: { expressApp: Application }) => {
     name: "tagModel",
     model: require("../models/Tag").default,
   };
-
+  const { gfs, upload } = await gridfsLoader({ mongoConnection });
+  Logger.info("✌️ GridFS loaded");
   // It returns the agenda instance because it's needed in the subsequent loaders
   const { agenda } = await dependencyInjectorLoader({
     mongoConnection,
@@ -159,7 +160,10 @@ export default async ({ expressApp }: { expressApp: Application }) => {
       tagModel,
       historical_tagModel,
     ],
+    gfs,
+    upload,
   });
+
   Logger.info("✌️ Dependency Injector loaded");
 
   await jobsLoader({ agenda });
@@ -167,7 +171,4 @@ export default async ({ expressApp }: { expressApp: Application }) => {
 
   await expressLoader({ app: expressApp });
   Logger.info("✌️ Express loaded");
-
-  await gridfsLoader({ mongoConnection });
-  Logger.info("✌️ GridFS loaded");
 };

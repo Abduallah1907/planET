@@ -1,4 +1,4 @@
-import { ObjectId, Types } from "mongoose";
+import mongoose, { ObjectId, Types } from "mongoose";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import Container, { Inject, Service } from "typedi";
@@ -23,10 +23,8 @@ export default class TourGuideService {
     private previousWorkModel: Models.Previous_workModel,
     @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel
   ) {}
+
   // CUD for work experiences
-  // Read is mostly like not needed as it will be viewed along side the profile, so the logic for that is moved down there
-  // *depends on frontend implementation tho
-  // creates the work experience AND inserts it into the tour guide
   public async createPreviousWorkService(
     previousWork: IPreviousWorkInputDTO
   ): Promise<any> {
@@ -44,7 +42,7 @@ export default class TourGuideService {
     if (newWorkExperience instanceof Error)
       throw new InternalServerError("Internal server error");
     const previousWorkOutput: IPreviousWorkOutputDTO = {
-      previous_work_id: newWorkExperience._id as ObjectId,
+      previous_work_id: (newWorkExperience._id as Types.ObjectId).toString(),
       title: newWorkExperience.title,
       place: newWorkExperience.place,
       from: newWorkExperience.from,
@@ -72,13 +70,22 @@ export default class TourGuideService {
     );
     if (!previousWork) throw new Error("Previous work not found");
 
-    previousWork.title = updatedPreviousWorkInfo.title;
-    previousWork.place = updatedPreviousWorkInfo.place;
-    previousWork.from = updatedPreviousWorkInfo.from;
-    previousWork.to = updatedPreviousWorkInfo.to;
+    if (updatedPreviousWorkInfo.title !== undefined) {
+      previousWork.title = updatedPreviousWorkInfo.title;
+    }
+    if (updatedPreviousWorkInfo.place !== undefined) {
+      previousWork.place = updatedPreviousWorkInfo.place;
+    }
+    if (updatedPreviousWorkInfo.from !== undefined) {
+      previousWork.from = updatedPreviousWorkInfo.from;
+    }
+    if (updatedPreviousWorkInfo.to !== undefined) {
+      previousWork.to = updatedPreviousWorkInfo.to;
+    }
+
     await previousWork.save();
     const previousWorkOutput: IPreviousWorkOutputDTO = {
-      previous_work_id: previousWork._id as ObjectId,
+      previous_work_id: (previousWork._id as Types.ObjectId).toString(),
       title: previousWork.title,
       place: previousWork.place,
       from: previousWork.from,
@@ -157,6 +164,7 @@ export default class TourGuideService {
       201
     );
   }
+
   public async getProfileService(email: string): Promise<any> {
     const userProfile = await this.userModel
       .findOne({
@@ -187,8 +195,7 @@ export default class TourGuideService {
     };
     return new response(true, tourGuideOutput, "Tour guide profile", 200);
   }
-  //add can update user details
-  //add can update previous work experience
+
   public async updateProfileService(
     updatedTourGuide: ITour_GuideUpdateDTO,
     email: string
@@ -205,14 +212,14 @@ export default class TourGuideService {
       updatedPreviousWork,
       deletedPreviousWork,
     } = updatedTourGuide;
-    
+
     // Hash the password if it's provided
-  let hashedPassword;
-  if (password) {
-    hashedPassword = await bcrypt.hash(password, 10);  // Await bcrypt.hash here
-  }
-      
-    
+    let hashedPassword;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10); // Await bcrypt.hash here
+    }
+    let finalUpdatedPreviousWork: ObjectId[] = [];
+
     const tourGuideUser = await this.userModel
       .findOneAndUpdate(
         { email: email, role: UserRoles.TourGuide },
@@ -226,7 +233,7 @@ export default class TourGuideService {
         { new: true }
       )
       .select("status role username name phone_number");
- 
+
     if (tourGuideUser) {
       const isAccepted = tourGuideUser.status;
       const role = tourGuideUser.role;
@@ -245,65 +252,54 @@ export default class TourGuideService {
     }
 
     const tour_guide_user_id = tourGuideUser._id;
-    let previousWork;
-    const previousWorkSearch = await this.previousWorkModel.findOne({});
 
-  /*  if (!previousWorkSearch) {
-      previousWork = new this.previousWorkModel({});
-      console.log(
-        previousWork.title,
-        previousWork.place,
-        previousWork.from,
-        previousWork.to
-      );
-      if (previousWork instanceof Error)
-        throw new InternalServerError(
-          "Internal server error while creating previous work"
-        );
-      await previousWork.save();
-    } else {
-      previousWork = await this.previousWorkModel.findOneAndUpdate(
-        {},
-        { new: true }
-      );
+    //Handle created previous work
+    if (createdPreviousWork) {
+      for (const work of createdPreviousWork) {
+        const newWorkExperience = await this.previousWorkModel.create({
+          title: work.title,
+          place: work.place,
+          from: work.from,
+          to: work.to,
+          tour_guide_id: tour_guide_user_id,
+        });
+        finalUpdatedPreviousWork.push(newWorkExperience._id as ObjectId);
+      }
     }
-    if (previousWork instanceof Error)
-      throw new InternalServerError(
-        "Internal server error while updating previous work"
-      );
-    if (!previousWork) throw new HttpError("Previous work not found", 404);
-    // if (!previousWorkSearch) {
-    //   previousWork = new this.previousWorkModel({});
-    //   console.log(
-    //     previousWork.title,
-    //     previousWork.place,
-    //     previousWork.from,
-    //     previousWork.to
-    //   );
-    //   if (previousWork instanceof Error)
-    //     throw new InternalServerError(
-    //       "Internal server error while creating previous work"
-    //     );
-    //   await previousWork.save();
-    // } else {
-    //   previousWork = await this.previousWorkModel.findOneAndUpdate(
-    //     {},
-    //     { new: true }
-    //   );
-    // }
-    // if (previousWork instanceof Error)
-    //   throw new InternalServerError(
-    //     "Internal server error while updating previous work"
-    //   );
-    // if (!previousWork) throw new HttpError("Previous work not found", 404);
+    if (updatedPreviousWork) {
+      for (const work of updatedPreviousWork) {
+        const workObjectId = new mongoose.Types.ObjectId(work.previous_work_id);
+        const updatedWorkExperience =
+          await this.previousWorkModel.findByIdAndUpdate(
+            workObjectId,
+            {
+              title: work.title,
+              place: work.place,
+              from: work.from,
+              to: work.to,
+            },
+            { new: true }
+          );
+        if (updatedWorkExperience) {
+          finalUpdatedPreviousWork.push(updatedWorkExperience._id as ObjectId);
+        }
+      }
+    }
+    if (deletedPreviousWork) {
+      for (const work of deletedPreviousWork) {
+        const workObjectId = new mongoose.Types.ObjectId(work.previous_work_id);
 
-    // const previousWorkId = previousWork._id;
+        await this.previousWorkModel.findByIdAndDelete(workObjectId);
+      }
+    }
+
     const tourGuideProfile = await this.tourGuideModel
       .findOneAndUpdate(
         { user_id: tour_guide_user_id },
         {
           photo: photo,
           years_of_experience: years_of_experience,
+          previous_work_description: finalUpdatedPreviousWork,
         },
         { new: true }
       )
@@ -314,6 +310,7 @@ export default class TourGuideService {
         "For some reason, the tour guide is registered as user and not in the tour guide table. In other words, if this error is thrown, something has gone terribly wrong",
         404
       );
+
     const tourGuideOutput: ITourGuideOutput = {
       comments: tourGuideProfile.comments,
       itineraries: tourGuideProfile.itineraries,
@@ -324,6 +321,7 @@ export default class TourGuideService {
       phone_number: tourGuideUser.phone_number,
       name: tourGuideUser.name,
     };
+
     return new response(
       true,
       tourGuideOutput,

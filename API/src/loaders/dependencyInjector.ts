@@ -9,9 +9,13 @@ import mongoose from "mongoose";
 export default ({
   mongoConnection,
   models,
+  gfs,
+  upload,
 }: {
   mongoConnection: mongoose.Connection;
   models: { name: string; model: any }[];
+  gfs: any;
+  upload: any;
 }) => {
   try {
     models.forEach((m) => {
@@ -32,7 +36,6 @@ export default ({
         rejectUnauthorized: false,
       },
     });
-    const { gfs, upload } = gridfsLoader({ mongoConnection });
 
     Container.set("agendaInstance", agendaInstance);
     Container.set("logger", LoggerInstance);

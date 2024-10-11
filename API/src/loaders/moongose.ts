@@ -1,9 +1,5 @@
 import mongoose from "mongoose";
-import { Db } from "mongodb";
 import config from "@/config";
-import multer from "multer";
-import Grid from "gridfs-stream";
-import { GridFsStorage } from "multer-gridfs-storage";
 
 export default async (): Promise<mongoose.Connection> => {
   const databaseURL: string | undefined = config.databaseURL;
@@ -33,5 +29,6 @@ export default async (): Promise<mongoose.Connection> => {
   if (!connection.connection.db) {
     throw new Error("⚠️  Database connection failed  ⚠️");
   }
+
   return connection.connection;
 };
