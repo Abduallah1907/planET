@@ -14,6 +14,8 @@ import UserRoles from "@/types/enums/userRoles";
 
 import Container, { Inject, Service } from "typedi";
 import UserService from "./userService";
+import bcrypt from "bcryptjs";
+
 import { ObjectId } from "mongoose";
 
 @Service()
@@ -137,11 +139,14 @@ export default class TouristService {
     //   !emailRegex.test(touristUpdateData.newEmail)
     // )
     //   throw new BadRequestError("Invalid new email");
-
+    let hashedPassword;
+    if (touristUpdateData.password) {
+      hashedPassword = await bcrypt.hash(touristUpdateData.password, 10); // Await bcrypt.hash here
+    }
     const updatedUserData = {
       name: touristUpdateData.name,
       email: touristUpdateData.newEmail,
-      password: touristUpdateData.password,
+      password: hashedPassword,
       phone_number: touristUpdateData.phone_number,
     };
     const user = await this.userModel.findOneAndUpdate(

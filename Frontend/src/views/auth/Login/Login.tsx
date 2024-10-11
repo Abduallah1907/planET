@@ -155,19 +155,15 @@ export default function Login() {
               { path: "/MyProducts", label: " My Products" },
               { path: "/admin", label: "Create Admin" },
               { path: "/governer", label: "Create Governer" },
-              { path: "/delete", label: "Delete User" },
               { path: "/Categories", label: "Categories" },
               { path: "/Tags", label: "Tags" },
+              { path: "/UsersTable", label: "Get Users" },
             ])
           );
           navigate("/AdminDashboard");
           break;
         default:
           navigate("/");
-          break;
-          return;
-          return;
-
           break;
       }
       dispatch(activateSidebar());

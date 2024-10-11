@@ -13,12 +13,9 @@ interface FormData {
   lastName: string;
   email: string;
   mobile: string;
-  profession: string;
   password: string;
   retypePassword: string;
   username: string;
-  nationality: string;
-  dob: string;
   description: string;
   logo: File | null; // Added logo field
 }
@@ -29,12 +26,9 @@ const SellerProfile: React.FC = () => {
     lastName: "",
     email: "",
     mobile: "",
-    profession: "",
     password: "",
     retypePassword: "",
     username: "",
-    nationality: "",
-    dob: "",
     description: "",
     logo: null, // Initialize logo as null
   });
@@ -46,13 +40,10 @@ const SellerProfile: React.FC = () => {
       lastName: Seller.name.split(" ")[1] || "",
       email: Seller.email,
       mobile: Seller.phone_number,
-      profession: Seller.stakeholder_id?.job || "",
       password: "",
       retypePassword: "",
       username: Seller.username,
-      nationality: Seller.stakeholder_id?.nation || "",
-      dob: Seller.stakeholder_id?.date_of_birth || "",
-      description: "",
+      description: Seller.stakeholder_id?.description || "",
       logo: null,
     });
   }, [Seller]);
@@ -60,10 +51,11 @@ const SellerProfile: React.FC = () => {
   const OnClick = async () => {
     await SellerServices.updateSellerServices(Seller.email, {
       name: formData.firstName + " " + formData.lastName,
-      newEmail: formData.email,
-
-      job: formData.profession,
-      nation: formData.nationality,
+      email: formData.email,
+      username: formData.username,
+      description: formData.description,
+      phone_number: formData.mobile,
+      password: formData.password,
     });
   };
 
@@ -97,12 +89,9 @@ const SellerProfile: React.FC = () => {
       lastName: "",
       email: "",
       mobile: "",
-      profession: "",
       password: "",
       retypePassword: "",
       username: "",
-      nationality: "",
-      dob: "",
       description: "",
       logo: null, // Reset logo
     });
@@ -176,8 +165,8 @@ const SellerProfile: React.FC = () => {
                 placeholder="Enter your username"
                 id="username"
                 name="username"
-                disabled={false}
-                required={true}
+                disabled={true}
+                required={false}
                 value={formData.username}
                 onChange={handleChange}
               />
@@ -187,9 +176,9 @@ const SellerProfile: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="Password:"
+                label="Chnage your password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Change your password"
                 id="password"
                 name="password"
                 disabled={false}
@@ -224,6 +213,21 @@ const SellerProfile: React.FC = () => {
                 disabled={false}
                 required={true}
                 value={formData.description} // Correctly referencing description
+                onChange={handleChange}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="Mobile Number"
+                type="text"
+                placeholder="Enter your mobile number"
+                id="mobile"
+                name="mobile"
+                disabled={false}
+                required={true}
+                value={formData.mobile} // Correctly referencing description
                 onChange={handleChange}
               />
             </Col>
