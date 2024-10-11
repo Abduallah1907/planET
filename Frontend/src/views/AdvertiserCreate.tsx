@@ -172,7 +172,7 @@ const AdvertiserCreate: React.FC = () => {
                 required={true}
                 value={formData.name}
                 onChange={handleChange}
-                name="activityName"
+                name="name"
               />
             </Col>
             <Col>
@@ -205,7 +205,7 @@ const AdvertiserCreate: React.FC = () => {
                 required={true}
                 value={formData.date}
                 onChange={handleChange}
-                name="activityDate"
+                name="date"
               />
             </Col>
             <Col>
@@ -218,7 +218,7 @@ const AdvertiserCreate: React.FC = () => {
                 required={true}
                 value={formData.time}
                 onChange={handleChange}
-                name="activityTime"
+                name="time"
               />
             </Col>
           </Row>
@@ -234,7 +234,7 @@ const AdvertiserCreate: React.FC = () => {
                 required={true}
                 value={formData.price?.toString() || ""}
                 onChange={handleChange}
-                name="activityPrice"
+                name="price"
               />
             </Col>
             <Col>
@@ -267,7 +267,7 @@ const AdvertiserCreate: React.FC = () => {
                 required={false}
                 value={formData.discount?.toString() || ""}
                 onChange={handleChange}
-                name="specialDiscount"
+                name="discount"
               />
             </Col>
             <Col>
