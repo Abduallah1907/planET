@@ -5,45 +5,50 @@ import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import LogoPlaceholder from "../../assets/person-circle.svg"; // Placeholder logo
 import { useAppSelector } from "../../store/hooks";
 import { AdvertiserService } from "../../services/AdvertiserService";
+import axios from "axios";
 
 interface FormData {
-  username: string;
+  about: string;
   website: string;
   hotline: string;
   companyProfile: string;
-  logo: File | null; // Added logo field
+  logo: File | undefined; // Update logo to handle file
 }
+
 const AdvertiserFirst: React.FC = () => {
   const AdvertiserFirst = useAppSelector((state) => state.user);
 
   const [formData, setFormData] = useState<FormData>({
-    username: "",
+    about: "",
     website: "",
     hotline: "",
     companyProfile: "",
-    logo: null, // Initialize logo as null for file upload handling
+    logo: undefined, // Initialize logo
   });
 
   useEffect(() => {
     setFormData({
-      username: AdvertiserFirst.username || "",
+      about: AdvertiserFirst.stakeholder_id?.about || "",
       website: AdvertiserFirst.stakeholder_id?.link_to_website || "",
       hotline: AdvertiserFirst.stakeholder_id?.hotline || "",
       companyProfile: AdvertiserFirst.stakeholder_id?.company_profile || "",
-      logo: null,
+      logo: AdvertiserFirst.stakeholder_id?.logo || "",
     });
   }, [AdvertiserFirst]);
 
-  const handleLogoUpload = (file: File) => {
-    setFormData((prev) => ({ ...prev, logo: file }));
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFormData({ ...formData, logo: e.target.files[0] });
+    }
   };
 
   const OnClick = async () => {
     const updatedData = {
-      username: formData.username,
-      website: formData.website,
+      about: formData.about,
+      link_to_website: formData.website,
       hotline: formData.hotline,
-      companyProfile: formData.companyProfile,
+      company_profile: formData.companyProfile,
+      logo: formData.logo,
     };
 
     await AdvertiserService.updateAdvertiser(
@@ -61,25 +66,18 @@ const AdvertiserFirst: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFormData({ ...formData, logo: e.target.files[0] });
-    }
+  const handleCancel = () => {
+    setFormData({
+      about: "",
+      website: "",
+      hotline: "",
+      companyProfile: "",
+      logo: undefined, // Reset logo
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission, including the logo file
-  };
-
-  const handleCancel = () => {
-    setFormData({
-      username: "",
-      website: "",
-      hotline: "",
-      companyProfile: "",
-      logo: null, // Reset logo
-    });
   };
 
   return (
@@ -104,14 +102,14 @@ const AdvertiserFirst: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="Username:"
+                label="About:"
                 type="text"
-                placeholder="Enter your username"
-                id="username"
-                name="username"
+                placeholder="about...."
+                id="about"
+                name="about"
                 disabled={false}
                 required={true}
-                value={formData.username}
+                value={formData.about}
                 onChange={handleChange}
               />
             </Col>
@@ -121,7 +119,7 @@ const AdvertiserFirst: React.FC = () => {
             <Col>
               <CustomFormGroup
                 label="Link to Website:"
-                type="url"
+                type="text"
                 placeholder="Enter your website URL"
                 id="website"
                 name="website"
@@ -137,7 +135,7 @@ const AdvertiserFirst: React.FC = () => {
             <Col>
               <CustomFormGroup
                 label="Hotline:"
-                type="tel"
+                type="text"
                 placeholder="Enter your hotline number"
                 id="hotline"
                 name="hotline"
@@ -153,7 +151,7 @@ const AdvertiserFirst: React.FC = () => {
             <Col>
               <CustomFormGroup
                 label="Company Profile:"
-                type="textarea"
+                type="text"
                 placeholder="Enter your company profile"
                 id="companyProfile"
                 name="companyProfile"

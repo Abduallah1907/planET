@@ -152,10 +152,10 @@ const ProfileFormGuide: React.FC = () => {
                 placeholder="Enter your username"
                 id="username"
                 name="username"
-                required={true}
+                required={false}
                 value={formData.username}
                 onChange={handleChange}
-                disabled={false} // Assuming this is disabled as per your original code
+                disabled={true} // Assuming this is disabled as per your original code
               />
             </Col>
           </Row>
