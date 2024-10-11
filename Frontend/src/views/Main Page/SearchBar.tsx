@@ -109,7 +109,7 @@ const SearchBar: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="d-flex justify-content-between align-items-center mb-2">
-                                    <span>Children</span>
+                                    <span>{t("children")}</span>
                                     <div>
                                         <span
                                             className="btn btn-outline-secondary"

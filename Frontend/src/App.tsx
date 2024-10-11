@@ -109,7 +109,7 @@ const App: React.FC = () => {
 
         <Route path="/EditHistoricalLocation" element={<EditHistoricalLocation />} />
         <Route path="/EditProduct" element={<EditProduct />} />
-        <Route path="/EditItinerary" element={<EditItinerary />} />
+        <Route path="/EditItinerary/:itinerary_id" element={<EditItinerary />} />
         <Route path="/UsersTable" element={<UsersTable />} />
         <Route path="/MyActivities" element={<MyActivities />} />
         <Route path="/MyHistoricalPlaces" element={<MyHistoricalPlaces />} />
