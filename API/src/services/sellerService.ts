@@ -6,6 +6,8 @@ import Container, { Inject, Service } from "typedi";
 import { IUserInputDTO } from "@/interfaces/IUser";
 import UserService from "./userService";
 import { ISellerUpdateDTO } from "@/interfaces/ISeller";
+import bcrypt from "bcryptjs";
+
 
 @Service()
 export default class SellerService {
@@ -88,8 +90,12 @@ export default class SellerService {
     searchEmail: string,
     updatedSellerData: ISellerUpdateDTO
   ) {
-    const { name, username, email, phone_number, description, logo } =
+    const { name, username, email, phone_number, description, password,logo } =
       updatedSellerData;
+      let hashedPassword;
+    if (password) {
+    hashedPassword = await bcrypt.hash(password, 10);  // Await bcrypt.hash here
+    }
     const user = await this.userModel.findOneAndUpdate(
       { email: searchEmail, role: UserRoles.Seller },
       {
@@ -97,6 +103,7 @@ export default class SellerService {
         email: email,
         username: username,
         phone_number: phone_number,
+        password:hashedPassword,
       },
       { new: true }
     );

@@ -15,6 +15,8 @@ import {
   BadRequestError,
 } from "@/types/Errors";
 import UserService from "./userService";
+import bcrypt from "bcryptjs";
+
 
 // User related services (delete, view, and create users)
 

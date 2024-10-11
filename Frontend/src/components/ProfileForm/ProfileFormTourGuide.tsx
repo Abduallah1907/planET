@@ -15,6 +15,7 @@ interface FormData {
   changePassword: string;
   retypePassword: string;
   username: string;
+  logo: string;
 }
 
 const ProfileFormGuide: React.FC = () => {
@@ -26,7 +27,8 @@ const ProfileFormGuide: React.FC = () => {
     changePassword: "",
     retypePassword: "",
     username: "",
-    yearsOfExperience: "", // Initialize here
+    yearsOfExperience: "",
+    logo: "",
   });
   const TourGuide = useAppSelector((state) => state.user);
 
@@ -39,7 +41,8 @@ const ProfileFormGuide: React.FC = () => {
       changePassword: "",
       retypePassword: "",
       username: TourGuide.username,
-      yearsOfExperience: TourGuide.stakeholder_id?.years_of_experience || "", // Include yearsOfExperience here
+      yearsOfExperience: TourGuide.stakeholder_id?.years_of_experience || "",
+      logo: TourGuide.stakeholder_id?.logo || "",
     });
   }, [TourGuide]);
   //
@@ -48,6 +51,9 @@ const ProfileFormGuide: React.FC = () => {
       name: formData.firstName + " " + formData.lastName,
       newEmail: formData.email,
       phone_number: formData.mobile,
+      logo: formData.logo,
+      years_of_experience: formData.yearsOfExperience,
+      password: formData.changePassword,
     });
   };
 
@@ -73,7 +79,8 @@ const ProfileFormGuide: React.FC = () => {
       changePassword: "",
       retypePassword: "",
       username: "",
-      yearsOfExperience: "", // Reset here
+      yearsOfExperience: "",
+      logo: "", // Reset here
     });
   };
 
@@ -159,8 +166,8 @@ const ProfileFormGuide: React.FC = () => {
                 label="Change Password:"
                 type="password"
                 placeholder="Enter your password"
-                id="password"
-                name="password"
+                id="changePassword"
+                name="changePassword" // Corrected name
                 required={true}
                 value={formData.changePassword}
                 onChange={handleChange}
@@ -173,7 +180,7 @@ const ProfileFormGuide: React.FC = () => {
                 type="password"
                 placeholder="Retype your password"
                 id="retypePassword"
-                name="retypePassword"
+                name="retypePassword" // Corrected name
                 required={true}
                 value={formData.retypePassword}
                 onChange={handleChange}
@@ -181,6 +188,7 @@ const ProfileFormGuide: React.FC = () => {
               />
             </Col>
           </Row>
+
           <Row>
             <Col>
               <CustomFormGroup

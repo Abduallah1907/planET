@@ -15,6 +15,7 @@ import User from "@/models/user";
 import UserRoles from "@/types/enums/userRoles";
 import UserService from "./userService";
 import user from "@/api/routes/user";
+import bcrypt from "bcryptjs";
 @Service()
 export default class AdvertiserService {
   constructor(
@@ -155,13 +156,17 @@ export default class AdvertiserService {
       logo,
       company_profile,
     } = advertiserData;
+    let hashedPassword;
+  if (password) {
+    hashedPassword = await bcrypt.hash(password, 10);  // Await bcrypt.hash here
+  }
     const advertiserUser = await this.userModel.findOneAndUpdate(
       { email: email, role: UserRoles.Advertiser },
       {
         email: newEmail,
         name: name,
         username: username,
-        password: password,
+        password: hashedPassword,
         phone_number: phone_number,
       },
       { new: true }

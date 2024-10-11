@@ -12,6 +12,8 @@ import {
 import { ITourGuideInput, ITourGuideOutput } from "@/interfaces/ITour_guide";
 import UserService from "./userService";
 import { IUserInputDTO } from "@/interfaces/IUser";
+import bcrypt from "bcryptjs";
+
 @Service()
 export default class TourGuideService {
   constructor(
@@ -203,6 +205,14 @@ export default class TourGuideService {
       updatedPreviousWork,
       deletedPreviousWork,
     } = updatedTourGuide;
+    
+    // Hash the password if it's provided
+  let hashedPassword;
+  if (password) {
+    hashedPassword = await bcrypt.hash(password, 10);  // Await bcrypt.hash here
+  }
+      
+    
     const tourGuideUser = await this.userModel
       .findOneAndUpdate(
         { email: email, role: UserRoles.TourGuide },
@@ -210,13 +220,13 @@ export default class TourGuideService {
           phone_number: phone_number,
           name: name,
           username: username,
-          password: password,
+          password: hashedPassword,
           email: newEmail,
         },
         { new: true }
       )
       .select("status role username name phone_number");
-
+ 
     if (tourGuideUser) {
       const isAccepted = tourGuideUser.status;
       const role = tourGuideUser.role;
@@ -238,6 +248,30 @@ export default class TourGuideService {
     let previousWork;
     const previousWorkSearch = await this.previousWorkModel.findOne({});
 
+  /*  if (!previousWorkSearch) {
+      previousWork = new this.previousWorkModel({});
+      console.log(
+        previousWork.title,
+        previousWork.place,
+        previousWork.from,
+        previousWork.to
+      );
+      if (previousWork instanceof Error)
+        throw new InternalServerError(
+          "Internal server error while creating previous work"
+        );
+      await previousWork.save();
+    } else {
+      previousWork = await this.previousWorkModel.findOneAndUpdate(
+        {},
+        { new: true }
+      );
+    }
+    if (previousWork instanceof Error)
+      throw new InternalServerError(
+        "Internal server error while updating previous work"
+      );
+    if (!previousWork) throw new HttpError("Previous work not found", 404);
     // if (!previousWorkSearch) {
     //   previousWork = new this.previousWorkModel({});
     //   console.log(

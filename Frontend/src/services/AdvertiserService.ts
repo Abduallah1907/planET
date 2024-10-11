@@ -17,7 +17,7 @@ class AdvertiserService {
 
   public static updateAdvertiser = async (email: string, touristData: object) => {
     try {
-      const response = await axiosInstance.put(`advertiser/updateAdvertiser/${email}`, touristData);
+      const response = await axiosInstance.put(`/advertiser/updateAdvertiser/${email}`, touristData);
       return response.data;
     } catch (error) {
       throw error;
