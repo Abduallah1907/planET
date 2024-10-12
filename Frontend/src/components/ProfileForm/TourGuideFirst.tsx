@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Button, Form, Table } from "react-bootstrap";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import { useAppSelector } from "../../store/hooks";
 import { TourGuideServices } from "../../services/TourGuideServices";
 
 interface WorkExperience {
-  id?: string; // Optional ID for existing entries
+  id?: string; // ID from the backend
   title: string;
   place: string;
   from: string;
@@ -26,15 +26,13 @@ const TourGuideFirst: React.FC = () => {
   });
 
   const [createdWork, setCreatedWork] = useState<WorkExperience[]>([]);
-  const [editedWork, setEditedWork] = useState<WorkExperience[]>([]);
-  const [deletedWork, setDeletedWork] = useState<WorkExperience[]>([]);
 
   const TourGuideFirst = useAppSelector((state) => state.user);
 
   useEffect(() => {
     setFormData({
       yearsOfExperience: "",
-      previousWork: [], // Initialize work experience from the state
+      previousWork: [],
       logo: null,
     });
   }, [TourGuideFirst]);
@@ -53,47 +51,89 @@ const TourGuideFirst: React.FC = () => {
     }
   };
 
+  const handleAddWork = () => {
+    const newWork: WorkExperience = {
+      title: "",
+      place: "",
+      from: "",
+      to: "",
+      id: "", // Initialize as empty or undefined
+    };
+    setFormData((prev) => ({
+      ...prev,
+      previousWork: [...prev.previousWork, newWork],
+    }));
+
+    setCreatedWork((prevCreatedWork) => [...prevCreatedWork, newWork]);
+  };
+
   const handleWorkChange = (
     index: number,
     field: keyof WorkExperience,
     value: string
   ) => {
-    const updatedWork = formData.previousWork.map((work, i) =>
-      i === index ? { ...work, [field]: value } : work
-    );
+    const updatedWork = [...formData.previousWork];
+
+    // Update the specific field
+    updatedWork[index] = { ...updatedWork[index], [field]: value };
+
     setFormData({ ...formData, previousWork: updatedWork });
 
-    if (updatedWork[index].id) {
-      setEditedWork([...editedWork, updatedWork[index]]);
-    }
-  };
-
-  const handleAddWork = () => {
-    const newWork: WorkExperience = { title: "", place: "", from: "", to: "" };
-    setFormData({
-      ...formData,
-      previousWork: [...formData.previousWork, newWork],
-    });
-    setCreatedWork([...createdWork, newWork]);
+    // Manage createdWork array
+    setCreatedWork(
+      updatedWork.filter(
+        (work) => work.title || work.place || work.from || work.to
+      )
+    );
   };
 
   const handleRemoveWork = (index: number) => {
     const workToDelete = formData.previousWork[index];
-    if (workToDelete.id) {
-      setDeletedWork([...deletedWork, workToDelete]);
+
+    if (workToDelete) {
+      // Create a full WorkExperience object for deletedWork
+      const workToDeleteEntry: WorkExperience = {
+        id: workToDelete.id, // Use the id to track what to delete
+        title: workToDelete.title || "",
+        place: workToDelete.place || "",
+        from: workToDelete.from || "",
+        to: workToDelete.to || "",
+      };
+
+      // Remove the work entry from the form state
+      const updatedWork = formData.previousWork.filter((_, i) => i !== index);
+      setFormData({ ...formData, previousWork: updatedWork });
+
+      // Update createdWork by removing only the deleted entry
+      setCreatedWork((prevCreatedWork) =>
+        prevCreatedWork.filter((_, i) => i !== index)
+      );
     }
-    const updatedWork = formData.previousWork.filter((_, i) => i !== index);
-    setFormData({ ...formData, previousWork: updatedWork });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    console.log("Form data before submission: ", {
+      years_of_experience: formData.yearsOfExperience,
+      logo: formData.logo,
+    });
+
+    // Log the arrays
+    console.log("Created Previous Work: ", createdWork);
+
     await TourGuideServices.updateTourGuide(TourGuideFirst.email, {
       years_of_experience: formData.yearsOfExperience,
       logo: formData.logo,
-      createdWork,
-      editedWork,
-      deletedWork,
+      createdPreviousWork: createdWork.map((work) => ({
+        id: work.id, // Send the ID to the backend
+        title: work.title,
+        place: work.place,
+        from: work.from,
+        to: work.to,
+      })),
+
+      updatedPreviousWork: [], // Ensure updatedPreviousWork is empty
     });
   };
 
@@ -104,8 +144,6 @@ const TourGuideFirst: React.FC = () => {
       logo: null,
     });
     setCreatedWork([]);
-    setEditedWork([]);
-    setDeletedWork([]);
   };
 
   return (
@@ -214,3 +252,4 @@ const TourGuideFirst: React.FC = () => {
 };
 
 export default TourGuideFirst;
+//deleted is empty
