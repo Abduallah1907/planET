@@ -45,11 +45,26 @@ class ActivityService {
     }
   };
 
-  public static createAdvertiser = async (productData: any) => {
+  public static createActivity = async (productData: any) => {
     try {
       const response = await axiosInstance.post(
         `/activity/addActivity`,
         productData
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static updateActivity = async (
+    activityId: string,
+    updatedData: any
+  ) => {
+    try {
+      const response = await axiosInstance.put(
+        `/activity/updateActivity/${activityId}`,
+        updatedData
       );
       return response.data;
     } catch (error) {

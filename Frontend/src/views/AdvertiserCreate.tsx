@@ -144,7 +144,7 @@ const AdvertiserCreate: React.FC = () => {
       advertiser_id: AdvertiserId,
     };
     if (AdvertiserId) {
-      await ActivityService.createAdvertiser(productData);
+      await ActivityService.createActivity(productData);
       navigate("/MyActivities");
     } else {
       console.error("Advertiser Id is undefined");
