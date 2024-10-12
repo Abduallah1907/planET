@@ -1,5 +1,4 @@
 import axiosInstance from '../utils/axiosInstance';
-import axios from 'axios';
 
 class AdminService {
 
@@ -37,6 +36,14 @@ class AdminService {
       throw error;
     }
   };
+  public static getTags = async (page: number) => {
+    try {
+    const response = await axiosInstance.get(`/admin/getTags/${page}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
   
 }
 

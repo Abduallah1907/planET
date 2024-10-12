@@ -3,7 +3,7 @@ import axiosInstance from '../utils/axiosInstance';
 class CategoryService {
     public static async getAll() {
         try {
-            const response = await axiosInstance.get("/category/getAllCategories");
+            const response = await axiosInstance.get(`/category/getAllCategories`);
             return response.data;
         } catch (error) {
             throw new Error('Error fetching categories');

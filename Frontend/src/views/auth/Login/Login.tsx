@@ -9,8 +9,10 @@ import { activateSidebar, setNavItems } from "../../../store/sidebarSlice";
 import { setUser } from "../../../store/userSlice";
 import path from "path";
 import { BiLabel } from "react-icons/bi";
+import { useTranslation } from "react-i18next";
 
 export default function Login() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
     usernameOrEmail: "",
@@ -178,9 +180,9 @@ export default function Login() {
       <Container>
         <Row className="justify-content-center mt-5">
           <Col sm={12}>
-            <h1 className="LOGIN">Login</h1>
-            <h2 className="LOGIN">
-              New to planET? <span className="orange-text">SignUp</span>
+          <h1>{t("login_title")}</h1>
+          <h2 className="LOGIN">
+              {t("new_to_planet")}<span className="orange-text">{t("signup")}</span>
             </h2>
             {showAlert ? (
               <Alert variant="danger" className="text-center">
@@ -189,9 +191,9 @@ export default function Login() {
             ) : null}
             <Form className="mt-3">
               <CustomFormGroup
-                label="Username or Email"
+                label={t("username_or_email")}
                 type="text"
-                placeholder="Enter your username or email"
+                placeholder={t("enter_username_or_email")}
                 id={"usernameOrEmail"}
                 name={"usernameOrEmail"}
                 disabled={false}
@@ -200,9 +202,9 @@ export default function Login() {
                 onChange={handleChange}
               />
               <CustomFormGroup
-                label="Password"
+                label={t("password")}
                 type="password"
-                placeholder="Enter your password"
+                placeholder={t("enter_password")}
                 id={"passwordLogin"}
                 name={"passwordLogin"}
                 disabled={false}
@@ -210,9 +212,9 @@ export default function Login() {
                 value={userData.passwordLogin}
                 onChange={handleChange}
               />
-              <span className="orange-text mb-2">Forget Password?</span>
+              <span className="orange-text mb-2">{t("forgot_password")}</span>
               <Button onClick={handleLogin} className="login-btn w-100">
-                Login
+                {t("login")}
               </Button>
             </Form>
           </Col>

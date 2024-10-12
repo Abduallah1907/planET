@@ -28,7 +28,72 @@ const resources = {
       "contact_us": "Contact Us",
       "about_us": "About Us",
       "terms_and_conditions": "Terms and Conditions",
-      "privacy_policy": "Privacy Policy"
+      "privacy_policy": "Privacy Policy",
+      "trip_details": "Trip Details",
+      "flight_number": "Flight Number",
+      "destination": "Destination",
+      "date_time": "Date and Time",
+      "piece": "Piece",
+      "flight_time": "Flight Time",
+      "status": "Status",
+      "login": "Login",
+      "logout": "Logout",
+      "profile": "Profile",
+      "dashboard": "Dashboard",
+      "edit_profile": "Edit Profile",
+      "add_itinerary": "Add Itinerary",
+      "my_itineraries": "My Itineraries",
+      "create_advertisement": "Create Advertisement",
+      "update_advertisement": "Update Advertisement",
+      "seller_profile": "Seller Profile",
+      "tourist": "Tourist",
+      "tour_guide": "Tour Guide",
+      "advertiser": "Advertiser",
+      "seller": "Seller",
+      "pending_accounts": "Pending Accounts",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "waiting_for_approval": "Waiting for Approval",
+      "total_user": "Total User",
+      "total_trips": "Total Trips",
+      "total_sellers": "Total Sellers",
+      "total_pending_accounts": "Total Pending Accounts",
+      "from_last_week": "from last week",
+      "arrived": "Arrived",
+      "boarding": "Boarding",
+      "cancelled": "Cancelled",
+      "country_campaign_table": "Country Campaign Table",
+      "status_label": "Status Label",
+      "row_color": "Row Color",
+      "green_text": "Green Text",
+      "red_text": "Red Text",
+      "statistics_container": "Statistics Container",
+      "stat_card": "Stat Card",
+      "stat_value": "Stat Value",
+      "enter_username_or_email": "Enter username or email",
+      "enter_password": "Enter password",
+      "login_title": "Login",
+      "new_to_planet": "New to PlanET?",
+      "signup": "Sign Up",
+      "username_or_email": "Username or Email",
+      "password": "Password",
+      "forgot_password": "Forgot Password? ",
+      "best_destinations_around_the_world": "Best Destinations Around The World",
+      "travel,": "Travel,",
+      "enjoy": "Enjoy",
+      "and_live_a_new_and_full_life": "And Live A New And Full Life",
+      "built_wicket_longer_admire_do_barton_vanity_itself_do_in_it_._preferred_to_sportsmen_it_engrossed_listening": "Built Wicket Longer Admire Do Barton Vanity Itself Do In It. Preferred To Sportsmen It Engrossed Listening",
+      "highlight": "highlight",
+      "find_out_more": "Find out more",
+      "play_demo": "Play Demo",
+      "we_offer_best_services": "We offer the best services",
+
+
+
+
+
+
+
     }
   },
   ar: {
@@ -57,7 +122,71 @@ const resources = {
       "contact_us": "اتصل بنا",
       "about_us": "معلومات عنا",
       "terms_and_conditions": "البنود و الظروف",
-      "privacy_policy": "سياسة الخصوصية"
+      "privacy_policy": "سياسة الخصوصية",
+      "trip_details": "تفاصيل الرحلة",
+      "flight_number": "رقم الرحلة",
+      "destination": "الوجهة",
+      "date_time": "التاريخ والوقت",
+      "piece": "قطعة",
+      "flight_time": "وقت الرحلة",
+      "status": "الحالة",
+      "login": "تسجيل الدخول",
+      "logout": "تسجيل الخروج",
+      "profile": "الملف الشخصي",
+      "dashboard": "لوحة القيادة",
+      "edit_profile": "تعديل الملف الشخصي",
+      "add_itinerary": "إضافة جدول رحلة",
+      "my_itineraries": "جداول الرحلات الخاصة بي",
+      "create_advertisement": "إنشاء إعلان",
+      "update_advertisement": "تحديث الإعلان",
+      "seller_profile": "ملف البائع",
+      "tourist": "سائح",
+      "tour_guide": "مرشد سياحي",
+      "advertiser": "معلن",
+      "seller": "بائع",
+      "pending_accounts": "الحسابات المعلقة",
+      "approved": "تمت الموافقة عليه",
+      "rejected": "مرفوض",
+      "waiting_for_approval": "في انتظار الموافقة",
+      "total_user": "إجمالي المستخدمين",
+      "total_trips": "إجمالي الرحلات",
+      "total_sellers": "إجمالي البائعين",
+      "total_pending_accounts": "إجمالي الحسابات المعلقة",
+      "from_last_week": "من الأسبوع الماضي",
+      "arrived": "وصلت",
+      "boarding": "الصعود",
+      "cancelled": "ألغيت",
+      "country_campaign_table": "جدول تفاصيل الرحلة",
+      "status_label": "تسمية الحالة",
+      "row_color": "لون الصف",
+      "green_text": "النص الأخضر",
+      "red_text": "النص الأحمر",
+      "statistics_container": "حاوية الإحصائيات",
+      "stat_card": "بطاقة الإحصائيات",
+      "stat_value": "قيمة الإحصائيات",
+      "enter_username_or_email": "أدخل اسم المستخدم أو البريد الإلكتروني",
+      "enter_password": "أدخل كلمة المرور",
+      "login_title": "تسجيل الدخول",
+      "new_to_planet": "؟PlanET جديد على",
+      "signup": "انشاء حساب",
+      "username_or_email": "اسم المستخدم أو البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "forgot_password": "هل نسيت كلمة المرور؟ ",
+      "best_destinations_around_the_world": "أفضل الوجهات حول العالم",
+      "travel,": "السفر،",
+      "enjoy": "التمتع",
+      "and_live_a_new_and_full_life": "وعيش حياة جديدة وكاملة",
+      "built_wicket_longer_admire_do_barton_vanity_itself_do_in_it_._preferred_to_sportsmen_it_engrossed_listening": "بنيت ويكيت أطول أعجب بارتون الغرور نفسه في ذلك. تفضل الرياضيون بالاستماع إليها",
+      "highlight": "يسلط الضوء",
+      "find_out_more": "اكتشف المزيد",
+      "play_demo": "تشغيل العرض التوضيحي",
+      "we_offer_best_services": "نحن نقدم أفضل الخدمات",
+
+
+
+
+
+
 
     }
   },
@@ -87,7 +216,72 @@ const resources = {
       "contact_us": "Contactez nous",
       "about_us": "À propos de nous",
       "terms_and_conditions": "Termes et conditions",
-      "privacy_policy": "Politique de confidentialité"
+      "privacy_policy": "Politique de confidentialité",
+      "trip_details": "Détails du voyage",
+      "flight_number": "Numéro de vol",
+      "destination": "Destination",
+      "date_time": "Date et heure",
+      "piece": "Pièce",
+      "flight_time": "Durée du vol",
+      "status": "Statut",
+      "login": "S'identifier",
+      "logout": "Se déconnecter",
+      "profile": "Profil",
+      "dashboard": "Tableau de bord",
+      "edit_profile": "Modifier le profil",
+      "add_itinerary": "Ajouter un itinéraire",
+      "my_itineraries": "Mes itinéraires",
+      "create_advertisement": "Créer une annonce",
+      "update_advertisement": "Mettre à jour l'annonce",
+      "seller_profile": "Profil du vendeur",
+      "tourist": "Touriste",
+      "tour_guide": "Guide touristique",
+      "advertiser": "Annonceur",
+      "seller": "Vendeur",
+      "pending_accounts": "Comptes en attente",
+      "approved": "Approuvé",
+      "rejected": "Rejeté",
+      "waiting_for_approval": "En attente d'approbation",
+      "total_user": "Total des utilisateurs",
+      "total_trips": "Total des voyages",
+      "total_sellers": "Total des vendeurs",
+      "total_pending_accounts": "Total des comptes en attente",
+      "from_last_week": "de la semaine dernière",
+      "arrived": "Arrivé",
+      "boarding": "Embarquement",
+      "cancelled": "Annulé",
+      "country_campaign_table": "Tableau des détails du voyage",
+      "status_label": "Étiquette d'état",
+      "row_color": "Couleur de ligne",
+      "green_text": "Texte vert",
+      "red_text": "Texte rouge",
+      "statistics_container": "Conteneur de statistiques",
+      "stat_card": "Carte de statistiques",
+      "stat_value": "Valeur statistique",
+      "enter_username_or_email": "Entrez le nom d'utilisateur ou l'e-mail",
+      "enter_password": "Entrez le mot de passe",
+      "login_title": "Se connecter",
+      "new_to_planet": "Nouveau sur PlanET?",
+      "signup": "S'inscrire",
+      "username_or_email": "Nom d'utilisateur ou e-mail",
+      "password": "Mot de passe",
+      "forgot_password": "Mot de passe oublié? ",
+      "best_destinations_around_the_world": "Meilleures destinations autour du monde",
+      "travel,": "Voyager,",
+      "enjoy": "Profitez",
+      "and_live_a_new_and_full_life": "Et vivez une vie nouvelle et pleine",
+      "built_wicket_longer_admire_do_barton_vanity_itself_do_in_it_._preferred_to_sportsmen_it_engrossed_listening": "Construit Wicket Longer Admire Do Barton Vanity Itself Do In It. Préféré aux sportifs, il s'est absorbé en écoutant",
+      "highlight": "mettre en évidence",
+      "find_out_more": "En savoir plus",
+      "play_demo": "Lancer la démo",
+      "we_offer_best_services": "Nous offrons les meilleurs services",
+      "calculated_weather": "Météo calculée",
+      "best_flights": "Meilleurs vols",
+      "local_events": "Événements locaux",
+      "customization": "Personnalisation",
+    
+
+
 
     }
   },
@@ -117,12 +311,85 @@ const resources = {
       "contact_us": "Kontaktiere uns",
       "about_us": "Über uns",
       "terms_and_conditions": "Geschäftsbedingungen",
-      "privacy_policy": "Datenschutz-Bestimmungen"
+      "privacy_policy": "Datenschutz-Bestimmungen",
+      "trip_details": "Reisedetails",
+      "flight_number": "Flugnummer",
+      "destination": "Ziel",
+      "date_time": "Datum und Uhrzeit",
+      "piece": "Stück",
+      "flight_time": "Flugzeit",
+      "status": "Status",
+      "login": "Einloggen",
+      "logout": "Ausloggen",
+      "profile": "Profil",
+      "dashboard": "Instrumententafel",
+      "edit_profile": "Profil bearbeiten",
+      "add_itinerary": "Reiseplan hinzufügen",
+      "my_itineraries": "Meine Reisepläne",
+      "create_advertisement": "Anzeige erstellen",
+      "update_advertisement": "Anzeige aktualisieren",
+
+      "seller_profile": "Verkäuferprofil",
+      "tourist": "Tourist",
+      "tour_guide": "Reiseleiter",
+      "advertiser": "Inserent",
+      "seller": "Verkäufer",
+
+      "pending_accounts": "Ausstehende Konten",
+      "approved": "Genehmigt",
+      "rejected": "Abgelehnt",
+      "waiting_for_approval": "Warten auf Genehmigung",
+
+      "total_user": "Gesamtbenutzer",
+      "total_trips": "Gesamtzahl der Reisen",
+      "total_sellers": "Gesamtzahl der Verkäufer",
+      "total_pending_accounts": "Gesamtzahl der ausstehenden Konten",
+      "from_last_week": "vom letzten Woche",
+
+      "arrived": "Angekommen",
+      "boarding": "Einsteigen",
+      "cancelled": "Abgesagt",
+      "country_campaign_table": "Landkampagnentabelle",
+      "status_label": "Statuslabel",
+      "row_color": "Zeilenfarbe",
+      "green_text": "Grüner Text",
+      "red_text": "Roter Text",
+      "statistics_container": "Statistikcontainer",
+      "stat_card": "Statistik Karte",
+      "stat_value": "Statistikwert",
+      "enter_username_or_email": "Benutzernamen oder E-Mai;",
+      "enter_password": "Passwort eingeben",
+
+      "login_title": "Einloggen",
+      "new_to_planet": "Neu auf PlanET?",
+      "signup": "Anmelden",
+      "username_or_email": "Benutzername oder E-Mail",
+      "password": "Passwort",
+      "forgot_password": "Passwort vergessen? ",
+      "best_destinations_around_the_world": "Beste Reiseziele auf der ganzen Welt",
+      "travel,": "Reisen,",
+      "enjoy": "Genießen",
+      "and_live_a_new_and_full_life": "Und ein neues und erfülltes Leben leben",
+      "built_wicket_longer_admire_do_barton_vanity_itself_do_in_it_._preferred_to_sportsmen_it_engrossed_listening": "Gebaut Wicket Länger Bewundern Do Barton Vanity Itself Do In It. Bevorzugt von Sportlern, absorbierte es zuhörend",
+      "highlight": "hervorheben",
+      "find_out_more": "Mehr erfahren",
+      "play_demo": "Demo abspielen",
+      "we_offer_best_services": "Wir bieten die besten Dienstleistungen an",
+
+
+
 
     }
-    }
+  }
 
 };
+// i18n.on('languageChanged', (lng) => {
+//   if (lng === 'ar') {
+//     document.documentElement.dir = 'rtl';
+//   } else {
+//     document.documentElement.dir = 'ltr';
+//   }
+// })
 
 i18n
   .use(initReactI18next)
@@ -135,6 +402,9 @@ i18n
     keySeparator: false, // we do not use keys in form messages.welcome
     nsSeparator: false, // we do not use keys in form messages.welcome
     parseMissingKeyHandler: (key) => key.toLowerCase(), // normalize keys to lowercase
+
   });
+
+
 
 export default i18n;

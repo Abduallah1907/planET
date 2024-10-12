@@ -107,8 +107,8 @@ const App: React.FC = () => {
         <Route path="/ItineraryCardd" element={<ItineraryCardd />} />
 
         <Route path="/EditHistoricalLocation" element={<EditHistoricalLocation />} />
+        <Route path="/EditItinerary/:itinerary_id" element={<EditItinerary />} />
         <Route path="/UpdateProduct/:product_id" element={<UpdateProduct />} />
-        <Route path="/EditItinerary" element={<EditItinerary />} />
         <Route path="/UsersTable" element={<UsersTable />} />
         <Route path="/MyActivities" element={<MyActivities />} />
         <Route path="/MyHistoricalPlaces" element={<MyHistoricalPlaces />} />

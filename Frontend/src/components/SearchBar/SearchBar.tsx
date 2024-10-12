@@ -1,11 +1,10 @@
-import React from 'react';
 import './searchbar.css';
-import { FaSearch } from "react-icons/fa";
+import { useTranslation } from 'react-i18next';
 const SearchBar = () => {
+  const { t } = useTranslation();
   return (
     <div >
-      
-      <input type="text" className='search m-md-3' placeholder=" Search" />
+      <input type="text" className='search m-md-3' placeholder={t(" search")} />
     </div>
   );
 };
