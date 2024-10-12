@@ -9,7 +9,8 @@ const router = Router();
 
 export default (app: Router) => {
   const fileService: FileService = Container.get(FileService);
+  const upload = Container.get<any>("uploadInstance");
   app.use("/file", router);
 
-  router.post("/upload", fileService.uploadFile);
+  router.post("/upload", upload.single("file"), fileService.uploadFile);
 };

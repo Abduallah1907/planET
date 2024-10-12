@@ -13,7 +13,7 @@ import LoggerInstance from "./logger";
 export default async ({ app }: { app: Application }) => {
   const mongoConnection = await mongooseLoader();
 
-  const { gfs, upload } = await gridfsLoader({ mongoConnection }); // Load GridFS and multer upload
+  // const { gfs, upload } = await gridfsLoader({ mongoConnection }); // Load GridFS and multer upload
   LoggerInstance.info("✌️ GridFS initialized successfully");
 
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
@@ -47,18 +47,18 @@ export default async ({ app }: { app: Application }) => {
   });
 
   // File upload route - Ensure this is using the upload middleware
-  app.post("*/api/file/upload", upload.single("file"), (req, res) => {
-    console.log("Headers:", req.headers);
-    console.log("Body:", req.body);
-    console.log("File:", req.file);
-    if (!req.file) {
-      res.status(400).json({ message: "File upload failed" });
-      return;
-    }
-    res
-      .status(200)
-      .json({ message: "File uploaded successfully", file: req.file });
-  });
+  // app.post("*/api/file/upload", upload.single("file"), (req, res) => {
+  //   console.log("Headers:", req.headers);
+  //   console.log("Body:", req.body);
+  //   console.log("File:", req.file);
+  //   if (!req.file) {
+  //     res.status(400).json({ message: "File upload failed" });
+  //     return;
+  //   }
+  //   res
+  //     .status(200)
+  //     .json({ message: "File uploaded successfully", file: req.file });
+  // });
 
   // Load API routes
   app.use(config.api.prefix, routes());

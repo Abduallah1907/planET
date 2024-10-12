@@ -286,9 +286,7 @@ export default class TourGuideService {
       }
     }
     if (deletedPreviousWork) {
-      for (const work of deletedPreviousWork) {
-        const workObjectId = new mongoose.Types.ObjectId(work.previous_work_id);
-
+      for (const workObjectId of deletedPreviousWork) {
         await this.previousWorkModel.findByIdAndDelete(workObjectId);
       }
     }

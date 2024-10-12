@@ -1,9 +1,8 @@
-import { Document, ObjectId } from 'mongoose';
+import { Document, ObjectId } from "mongoose";
 
 export interface IWishlist extends Document {
-  
-  user_id: number;
-  products: number[];
+  tourist_id: ObjectId;
+  products: ObjectId[];
   createdAt?: Date;
   updatedAt?: Date;
 }

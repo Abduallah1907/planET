@@ -15,18 +15,16 @@ export class FileService {
 
   // Method to upload a single file
   uploadFile(req: any, res: any) {
-    console.log(req.body);
-    if (!this.upload || !this.upload.single) {
-      res.status(500).json({ message: "Upload instance not initialized" });
+    console.log("Headers:", req.headers);
+    console.log("Body:", req.body);
+    console.log("File:", req.file);
+    if (!req.file) {
+      res.status(400).json({ message: "File upload failed" });
+      return;
     }
-    this.upload.single("file")(req, res, (err: any) => {
-      if (err) {
-        return res
-          .status(500)
-          .json({ message: "File upload failed", error: err });
-      }
-      res.json({ file: (req as any).file });
-    });
+    res
+      .status(200)
+      .json({ message: "File uploaded successfully", file: req.file });
   }
 
   // Method to upload multiple files

@@ -44,16 +44,10 @@ export async function gridfsLoader({
     const storage = new GridFsStorage({
       db: mongoConnection.db as any, // Ensure the correct type casting
       file: (req, file) => {
-        return new Promise((resolve, reject) => {
-          const filename = `${Date.now()}-${file.originalname}`;
-          const fileInfo = {
-            filename: filename,
-            bucketName: "uploads", // Collection name for the files
-            _id: new mongoose.Types.ObjectId(),
-          };
-          console.log("Generated File Info:", fileInfo);
-          resolve(fileInfo);
-        });
+        return {
+          filename: `${Date.now()}-${file.originalname}`,
+          bucketName: "uploads", // Collection name for the files
+        };
       },
     });
 
