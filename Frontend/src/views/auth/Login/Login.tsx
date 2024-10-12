@@ -91,6 +91,7 @@ export default function Login() {
                 path: "/AdvertiserCreateUpdate",
                 label: "Update Advertisement",
               },
+              { path: "/MyActivities", label: "My Activites" },
             ])
           );
           if (user.first_time_login) {
