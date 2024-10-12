@@ -246,8 +246,10 @@ export default (app: Router) => {
     authorize([UserRoles.Tourist]),
     touristController.updateTourist
   );
+  route.post("/createTourist", touristController.createTourist);
   route.post(
-    "/createTourist",
-    touristController.createTourist
+    "/rateTour_guide/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.rateTour_guide
   );
 };

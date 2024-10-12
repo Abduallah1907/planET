@@ -14,6 +14,8 @@ import UserRoles from "@/types/enums/userRoles";
 
 import Container, { Inject, Service } from "typedi";
 import UserService from "./userService";
+import { Types } from "mongoose";
+import { IComment_Rating } from "@/interfaces/IComment_rating";
 
 @Service()
 export default class TouristService {
@@ -23,7 +25,11 @@ export default class TouristService {
     @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel,
     @Inject("historical_locationModel")
     private historical_locationsModel: Models.Historical_locationsModel,
-    @Inject("activityModel") private activityModel: Models.ActivityModel
+    @Inject("activityModel") private activityModel: Models.ActivityModel,
+    @Inject("comment_ratingModel")
+    private comment_ratingModel: Models.Comment_ratingModel,
+    @Inject("tour_guideModel") private tour_guideModel: Models.Tour_guideModel,
+    @Inject("ticketModel") private ticketModel: Models.TicketModel
   ) {}
 
   public async getTouristService(email: string) {
@@ -190,5 +196,53 @@ export default class TouristService {
     };
 
     return new response(true, touristOutput, "Tourist updated", 200);
+  }
+  public async rateTour_guideService(
+    id: string,
+    tour_guide_email: string,
+    rating: Number
+  ) {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestError("Invalid id");
+    }
+    const ticket = await this.ticketModel.findOne({
+      user_id: new Types.ObjectId(id),
+      type: "ITINERARY",
+    });
+    if (ticket instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (ticket == null) throw new NotFoundError("You did not do any itinerary");
+    const user = await this.userModel.findOne({
+      email: tour_guide_email,
+      role: UserRoles.TourGuide,
+    });
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tour_guide = await this.tour_guideModel.findOne({
+      user_id: user._id,
+      //array of iteraries,I want to get that has ticket.bookig_id in the array
+      itineraries: { $in: [ticket.booking_id] },
+    });
+
+    if (tour_guide instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tour_guide == null) throw new NotFoundError("Tour guide not found");
+    const comment_rating = new this.comment_ratingModel({
+      user_id: new Types.ObjectId(id),
+      comment: "",
+      rating: rating,
+    });
+    await comment_rating.save();
+    if (comment_rating instanceof Error)
+      throw new InternalServerError("Internal server error");
+    //now I create a new comment_rating,I want to add it to the tour guide
+    tour_guide.comment_ratings.push(comment_rating._id);
+    await tour_guide.save();
+    if (tour_guide instanceof Error)
+      throw new InternalServerError("Internal server error");
+    return new response(true, comment_rating, "Tour guide rated", 201);
   }
 }
