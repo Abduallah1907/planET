@@ -71,6 +71,17 @@ class ActivityService {
       throw error;
     }
   };
+
+  public static deleteActivity = async (activityId: string) => {
+    try {
+      const response = await axiosInstance.delete(
+        `/activity/deleteActivity/${activityId}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 export { ActivityService };
