@@ -123,7 +123,6 @@ const ItineraryForm: React.FC = () => {
 
   useEffect(() => {
     if (inputValue.startsWith("#")) {
-      console.log(tags);
       const filteredTags = tags.filter((tag: Tag) =>
         tag.type.toLowerCase().includes(inputValue.slice(1).toLowerCase())
       );

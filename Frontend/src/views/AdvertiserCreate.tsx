@@ -117,7 +117,6 @@ const AdvertiserCreate: React.FC = () => {
     const fetchCategories = async () => {
       try {
         const response = await CategoryService.getCategoryById(1); // Replace with appropriate API call
-        console.log(response.data);
         setCategories(response.data); // Assuming the response has 'data' containing the categories
       } catch (error) {
         console.error("Error fetching categories:", error);

@@ -51,7 +51,6 @@ const ProductCard = ({
   const navigate = useNavigate();
 
   const handleEdit = (product_id: string) => {
-    console.log(product_id);
     navigate(`/UpdateProduct/${product_id}`); // Navigate to the UpdateProduct page
   };
 

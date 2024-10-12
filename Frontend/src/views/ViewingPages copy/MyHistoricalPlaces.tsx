@@ -38,7 +38,6 @@ export default function HistoricalLocationsPage() {
       "engineer"
     );
     setHistorical(HistoricalData.data);
-    // console.log(HistoricalData);
   };
   const getFilteredHistorical = async () => {
     const modifiedFilter = Object.fromEntries(
