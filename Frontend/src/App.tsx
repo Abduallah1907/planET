@@ -5,7 +5,7 @@ import TopBar from "./components/TopBar/TopBar";
 import { Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import CreateGoverner from "./views/CreateGoverner/CreateGoverner";
+import CreateGoverner from "./views/CreateGoverner/CreateGovernor";
 import BookingLayout from "./views/ViewingPages/Activities";
 import Activities from "./views/ViewingPages/Activities";
 import TouristReg from "./views/auth/TouristReg/TouristReg";
@@ -14,8 +14,6 @@ import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
 
 import MainPage from "./views/Main Page/MainPage";
 import { AppProvider } from "./AppContext";
-import FilterBy from "./components/FilterBy/FilterBy";
-import Delete from "./components/Delete";
 import SellerDashboard from "./views/SellerDashboard/SellerDashboard";
 import ActivityDetails from "./views/ProductDetails/ActivityDetails";
 import Login from "./views/auth/Login/Login";
@@ -42,15 +40,14 @@ import EditHistoricalLocation from "./views/EditHistoricalLocation";
 import EditProduct from "./views/EditProduct";
 import EditItinerary from "./views/EditItinerary";
 import UsersTable from "./views/UsersTable";
-import MyActivities from "./views/ViewingPages copy/MyActivities";
-import MyHistoricalPlaces from "./views/ViewingPages copy/MyHistoricalPlaces";
-import MyItinerary from "./views/ViewingPages copy/MyItinerary";
-import MyProducts from "./views/ViewingPages copy/MyProducts";
+import MyActivities from "./views/MyViewingPages/MyActivities";
+import MyHistoricalPlaces from "./views/MyViewingPages/MyHistoricalPlaces";
+import MyItinerary from "./views/MyViewingPages/MyItinerary";
+import MyProducts from "./views/MyViewingPages/MyProducts";
 import TopBarLinks from "./views/Main Page/TopBarLinks";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { toggleSidebar } from "./store/sidebarSlice";
 import Sidebar from "./components/SideBar/Sidebar";
-import { use } from "i18next";
 import CategoryTable from "./views/CategoryTable";
 import TagsTable from "./views/TagTable";
 
@@ -96,7 +93,6 @@ const App: React.FC = () => {
         <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/SellerDashboard" element={<SellerDashboard />} />
-        <Route path="/delete" element={<Delete />} />
         <Route path="/SettingSide" element={<SettingSide />} />
         <Route path="/TourGuide" element={<ProfileFormTourGuide />} />
         <Route path="/Advertiser" element={<Advertiser />} />
@@ -107,12 +103,12 @@ const App: React.FC = () => {
         <Route path="/AddItinerary" element={<AddItinerary />} />
         <Route path="/ItineraryCardd" element={<ItineraryCardd />} />
 
-        <Route path="/EditHistoricalLocation" element={<EditHistoricalLocation />} />
-        <Route path="/EditProduct" element={<EditProduct />} />
-        <Route path="/EditItinerary" element={<EditItinerary />} />
+        <Route path="/EditHistoricalLocation/:historical_location_id" element={<EditHistoricalLocation />} />
+        <Route path="/EditItinerary/:itinerary_id" element={<EditItinerary />} />
+        <Route path="/EditProduct/:product_id" element={<EditProduct />} />
         <Route path="/UsersTable" element={<UsersTable />} />
         <Route path="/MyActivities" element={<MyActivities />} />
-        <Route path="/MyHistoricalPlaces" element={<MyHistoricalPlaces />} />
+        <Route path="/MyHistoricalLocations" element={<MyHistoricalPlaces />} />
         <Route path="/MyItinerary" element={<MyItinerary />} />
         <Route path="/MyProducts" element={<MyProducts />} />
 

@@ -219,5 +219,9 @@ export default (app: Router) => {
     "/getProductByName/:product_name",
     productController.getProductByName
   );
+  route.get(
+    "/getProductByID/:id",
+    productController.getProductById
+  );
   route.get("/getFilterComponents", productController.getFilterComponents);
 };

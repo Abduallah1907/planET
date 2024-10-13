@@ -14,6 +14,9 @@ import UserRoles from "@/types/enums/userRoles";
 
 import Container, { Inject, Service } from "typedi";
 import UserService from "./userService";
+import bcrypt from "bcryptjs";
+
+import { ObjectId } from "mongoose";
 import { Types } from "mongoose";
 import { IComment_Rating } from "@/interfaces/IComment_rating";
 
@@ -87,7 +90,7 @@ export default class TouristService {
       throw new InternalServerError("Internal server error");
 
     const newTouristData: ITouristNewUserDTO = {
-      user_id: newUser._id,
+      user_id: newUser._id as ObjectId,
       date_of_birth: touristData.date_of_birth,
       job: touristData.job,
       nation: touristData.nation,
@@ -142,11 +145,14 @@ export default class TouristService {
     //   !emailRegex.test(touristUpdateData.newEmail)
     // )
     //   throw new BadRequestError("Invalid new email");
-
+    let hashedPassword;
+    if (touristUpdateData.password) {
+      hashedPassword = await bcrypt.hash(touristUpdateData.password, 10); // Await bcrypt.hash here
+    }
     const updatedUserData = {
       name: touristUpdateData.name,
       email: touristUpdateData.newEmail,
-      password: touristUpdateData.password,
+      password: hashedPassword,
       phone_number: touristUpdateData.phone_number,
     };
     const user = await this.userModel.findOneAndUpdate(

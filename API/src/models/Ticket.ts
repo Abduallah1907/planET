@@ -19,7 +19,6 @@ const ticketSchema = new mongoose.Schema(
       required: true,
     },
     booking_id: {
-      //used for refernecing iteraries or activities or historical sites
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       // Note: You might need to add conditional references based on the type

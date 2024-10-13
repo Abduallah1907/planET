@@ -58,116 +58,112 @@ const SearchBar: React.FC = () => {
     }
   };
 
-  const handleDone = () => {
-    // console.log("Adults:", adults);
-    // console.log("Children:", children);
-    // console.log("Rooms:", rooms);
-  };
-  return (
-    <Form className="search-wrapper">
-      <Row className="border-2 rounded-2">
-        <Col className="search-container rounded-1">
-          <InputGroup>
-            <InputGroup.Text id="basic-addon1">
-              <FaSearch color="#aaa" />
-            </InputGroup.Text>
-            <Form.Control
-              style={{ border: "none" }}
-              placeholder={t("where_are_you_going")}
-              aria-label={t("where_are_you_going")}
-              value={searchTerm}
-              onChange={handleSearchChange}
-              aria-describedby="basic-addon1"
-            />
-          </InputGroup>
-        </Col>
-        <Col className="date-container rounded-1">
-          <DatePicker
-            selected={startDate || undefined}
-            onChange={handleDateChange}
-            startDate={startDate || undefined}
-            endDate={endDate || undefined}
-            selectsRange
-            customInput={
-              <CustomInput
-                value={`${startDate ? startDate.toLocaleDateString() : ""} - ${
-                  endDate ? endDate.toLocaleDateString() : ""
-                }`}
-                onClick={() => {}}
-              />
-            }
-            cursor="pointer"
-          />
-        </Col>
-        <Col className="counter-container justify-content-center">
-          <DropdownButton
-            as={ButtonGroup}
-            title={`${adults} adults · ${children} children · ${rooms} room`}
-            variant="outline-secondary"
-            id="travel-options-dropdown"
-          >
-            <Dropdown.Item as="div">
-              <Form>
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <span>Adults</span>
-                  <div>
-                    <span
-                      className="btn btn-outline-secondary"
-                      onClick={(e) => decrement(setAdults, adults, e)}
-                      style={{ cursor: "pointer" }}
+    const handleDone = () => {
+        console.log("Adults:", adults);
+        console.log("Children:", children);
+        console.log("Rooms:", rooms);
+    };
+    return (
+        <Form className="search-wrapper">
+            <Row className='border-2 rounded-2'>
+                <Col className="search-container rounded-1">
+                    <InputGroup>
+                        <InputGroup.Text id="basic-addon1"><FaSearch color='#aaa' /></InputGroup.Text>
+                        <Form.Control
+                            style={{ border: 'none' }}
+                            placeholder={t('where_are_you_going')}
+                            aria-label={t('where_are_you_going')}
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            aria-describedby="basic-addon1"
+                        />
+                    </InputGroup>
+                </Col>
+                <Col className="date-container rounded-1">
+                    <DatePicker
+                        selected={startDate || undefined}
+                        onChange={handleDateChange}
+                        startDate={startDate || undefined}
+                        endDate={endDate || undefined}
+                        selectsRange
+                        customInput={
+                            <CustomInput
+                                value={`${startDate ? startDate.toLocaleDateString() : ''} - ${endDate ? endDate.toLocaleDateString() : ''}`}
+                                onClick={() => { }}
+                            />
+                        }
+                        cursor="pointer"
+                    />
+                </Col>
+                <Col className="counter-container justify-content-center">
+                    <DropdownButton
+                        as={ButtonGroup}
+                        title={`${adults} adults · ${children} children · ${rooms} room`}
+                        variant="outline-secondary"
+                        id="travel-options-dropdown"
                     >
-                      -
-                    </span>
-                    <span className="mx-2">{adults}</span>
-                    <span
-                      className="btn btn-outline-secondary"
-                      onClick={(e) => increment(setAdults, adults, e)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      +
-                    </span>
-                  </div>
-                </div>
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <span>Children</span>
-                  <div>
-                    <span
-                      className="btn btn-outline-secondary"
-                      onClick={(e) => decrement(setChildren, children, e)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      -
-                    </span>
-                    <span className="mx-2">{children}</span>
-                    <span
-                      className="btn btn-outline-secondary"
-                      onClick={(e) => increment(setChildren, children, e)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      +
-                    </span>
-                  </div>
-                </div>
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <span>Rooms</span>
-                  <div>
-                    <span
-                      className="btn btn-outline-secondary"
-                      onClick={(e) => decrement(setRooms, rooms, e)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      -
-                    </span>
-                    <span className="mx-2">{rooms}</span>
-                    <span
-                      className="btn btn-outline-secondary"
-                      onClick={(e) => increment(setRooms, rooms, e)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      +
-                    </span>
-                  </div>
-                </div>
+                        <Dropdown.Item as="div">
+                            <Form>
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Adults</span>
+                                    <div>
+                                        <span
+                                            className="btn btn-outline-secondary"
+                                            onClick={(e) => decrement(setAdults, adults,e)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            -
+                                        </span>
+                                        <span className="mx-2">{adults}</span>
+                                        <span
+                                            className="btn btn-outline-secondary"
+                                            onClick={(e) => increment(setAdults, adults,e)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            +
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <span>{t("children")}</span>
+                                    <div>
+                                        <span
+                                            className="btn btn-outline-secondary"
+                                            onClick={(e) => decrement(setChildren, children,e)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            -
+                                        </span>
+                                        <span className="mx-2">{children}</span>
+                                        <span
+                                            className="btn btn-outline-secondary"
+                                            onClick={(e) => increment(setChildren, children,e)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            +
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Rooms</span>
+                                    <div>
+                                        <span
+                                            className="btn btn-outline-secondary"
+                                            onClick={(e) => decrement(setRooms, rooms,e)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            -
+                                        </span>
+                                        <span className="mx-2">{rooms}</span>
+                                        <span
+                                            className="btn btn-outline-secondary"
+                                            onClick={(e) => increment(setRooms, rooms,e)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            +
+                                        </span>
+                                    </div>
+                                </div>
 
                 <div className="d-grid gap-2">
                   <span className="btn btn-primary mt-3" onClick={handleDone}>

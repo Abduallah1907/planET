@@ -6,10 +6,9 @@ import Cart_ItemSchema from "@/types/Cart";
 
 const orderSchema = new mongoose.Schema(
   {
-    
-    user_id: {
+    tourist_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Tourist",
       required: true,
     },
     products: [

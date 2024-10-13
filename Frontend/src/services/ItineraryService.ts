@@ -1,5 +1,4 @@
 import axiosInstance from '../utils/axiosInstance';
-import axios from 'axios';
 
 class ItineraryService{
  public static getAllItineraries=async (page:number) => {
@@ -32,9 +31,9 @@ class ItineraryService{
   }
     
 };
-  public static editItinerary = async (id: string) => {
+  public static updateItinerary = async (id: string,itineraryBody : any) => {
     try {
-      const response = await axiosInstance.put(`/itinerary/editItinerary/${id}`);
+      const response = await axiosInstance.put(`/itinerary/updateItinerary/${id}`, itineraryBody);
       return response.data;
     } catch (error) {
       throw error;
@@ -82,7 +81,16 @@ public static getSortedItineraries=async () => {
   catch(error){
    throw error;
   }
-    
-};
 }
+    
+  public static createItinerary = async (itineraryBody : any) => {
+    try {
+      const response = await axiosInstance.post("/itinerary/createItinerary", itineraryBody);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+};
+
 export{ItineraryService};

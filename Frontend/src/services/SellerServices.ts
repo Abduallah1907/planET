@@ -8,7 +8,7 @@ class SellerServices {
   
   public static getSellerServicesByemail = async (email: string) => {
     try {
-      const response = await axiosInstance.get(`seller/getSeller/${email}`);
+      const response = await axiosInstance.get(`/seller/getSeller/${email}`);
       return response.data;
     } catch (error) {
       throw error;
@@ -17,7 +17,7 @@ class SellerServices {
 
   public static updateSellerServices = async (email: string, SellerData: object) => {
     try {
-      const response = await axiosInstance.put(`seller/updateSeller/${email}`, SellerData);
+      const response = await axiosInstance.put(`/seller/updateSeller/${email}`, SellerData);
       return response.data;
     } catch (error) {
       throw error;

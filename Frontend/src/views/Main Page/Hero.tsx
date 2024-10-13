@@ -4,8 +4,10 @@ import { FaPlay } from 'react-icons/fa';
 import './hero.css';
 import Traveller from '../../assets/Traveller.svg';
 import Plane from '../../assets/Plane.svg';
+import { useTranslation } from 'react-i18next';
 
 const Hero: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <>
    
@@ -16,17 +18,17 @@ const Hero: React.FC = () => {
           <Row className="align-items-center">
             <Col md={6}>
               <div className="hero-text">
-                <h5 className="hero-subtitle ">BEST DESTINATIONS AROUND THE WORLD</h5>
+                <h5 className="hero-subtitle ">{t("best_destinations_around_the_world")}</h5>
                 <h1>
-                  Travel, <span className="highlight">enjoy</span> and live a new and full life
+                  {t("travel,")} <span className="highlight">{t("enjoy")}</span> {t("and_live_a_new_and_full_life")}
                 </h1>
                 <p>
-                  Built Wicket longer admire do barton vanity itself do in it. Preferred to sportsmen it engrossed listening.
+                  {t("built_wicket_longer_admire_do_barton_vanity_itself_do_in_it_._preferred_to_sportsmen_it_engrossed_listening")}.
                 </p>
                 <div className="hero-buttons">
-                  <Button variant="warning" className="me-3">Find out more</Button>
+                  <Button variant="warning" className="me-3">{t("find_out_more")}</Button>
                   <Button variant="outline-secondary">
-                    <FaPlay /> Play Demo
+                    <FaPlay /> {t("play_demo")}
                   </Button>
                 </div>
               </div>

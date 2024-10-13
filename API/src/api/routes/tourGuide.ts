@@ -404,7 +404,6 @@ export default (app: Router) => {
   // Create, Read and update for profile
   router.post(
     "/createProfile",
-    authorize([UserRoles.TourGuide]),
     tourGuideController.createProfile
   );
   router.get(

@@ -1,5 +1,6 @@
 
 export interface IProduct  {
+  _id: string;
   user_id: string
   comments: string[];
   name: string;

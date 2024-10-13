@@ -6,6 +6,7 @@ import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
 import { AdminService } from "../../services/AdminService";
+import { useTranslation } from "react-i18next";
 
 interface NationalityOption {
   value: string;
@@ -18,7 +19,7 @@ interface FormData {
   fname: string;
   lname: string;
   email: string;
-  mobile: string;
+  phone: string;
   password: string;
   retypePassword: string;
   username: string;
@@ -26,11 +27,12 @@ interface FormData {
 }
 
 const CreateGoverner: React.FC = () => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<FormData>({
-    fname:"",
-    lname:"",
+    fname: "",
+    lname: "",
     email: "",
-    mobile: "",
+    phone: "",
     password: "",
     retypePassword: "",
     username: "",
@@ -46,20 +48,29 @@ const CreateGoverner: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.retypePassword) {
       alert("Passwords don't match!");
       return;
     }
+    const data = {
+      email: formData.email,
+      name: formData.fname + " " + formData.lname,
+      phone: formData.phone,
+      username: formData.username,
+      password: formData.password,
+      nation: formData.nationality,
+    };
+    await AdminService.createGovernor(data);
   };
 
   const handleCancel = () => {
     setFormData({
-      fname:"",
-      lname:"",
+      fname: "",
+      lname: "",
       email: "",
-      mobile: "",
+      phone: "",
       password: "",
       retypePassword: "",
       username: "",
@@ -67,19 +78,11 @@ const CreateGoverner: React.FC = () => {
     });
   };
 
-  
-  const OnClick = async () => {
-    await AdminService.CreateGoverner(formData);
-      
-  
-  };
-
   return (
     <div className="profile-form-container">
-      
       <Row className="align-items-center mb-4">
         <Col xs={7} className="text-left">
-          <h2 className="my-profile-heading">Create governer account</h2>
+          <h2 className="my-profile-heading">{t("create_governor_account")}</h2>
         </Col>
       </Row>
 
@@ -112,11 +115,10 @@ const CreateGoverner: React.FC = () => {
                 onChange={handleChange}
               />
             </Col>
-            
           </Row>
 
           <Row>
-          <Col>
+            <Col>
               <AdminFormGroup
                 label="Email"
                 type="email"
@@ -170,14 +172,14 @@ const CreateGoverner: React.FC = () => {
             </Col>
             <Col>
               <AdminFormGroup
-                label="Mobile Number"
+                label="Phone Number"
                 type="tel"
-                placeholder="Enter your mobile number"
-                id="mobile"
-                name="mobile"
+                placeholder="Enter your phone number"
+                id="phone"
+                name="phone"
                 disabled={false}
                 required={true}
-                value={formData.mobile}
+                value={formData.phone}
                 onChange={handleChange}
               />
             </Col>
@@ -212,27 +214,27 @@ const CreateGoverner: React.FC = () => {
             </Col>
           </Row>
           <Row>
-  <Col xs={6}>
-    <Form.Check
-      type="checkbox"
-      id="checkbox1"
-      label="Remember me"
-      name="terms"
-      onChange={handleChange}
-    />
-    <Form.Check
-      type="checkbox"
-      id="checkbox2"
-      label="I agree to all terms and privacy policy"
-      name="newsletter"
-      onChange={handleChange}
-    />
-  </Col>
-</Row>
+            <Col xs={6}>
+              <Form.Check
+                type="checkbox"
+                id="checkbox1"
+                label="Remember me"
+                name="terms"
+                onChange={handleChange}
+              />
+              <Form.Check
+                type="checkbox"
+                id="checkbox2"
+                label="I agree to all terms and privacy policy"
+                name="newsletter"
+                onChange={handleChange}
+              />
+            </Col>
+          </Row>
 
           <div className="form-actions">
-            <Button type="submit" className="update-btn" onClick={OnClick}>
-              Create governer
+            <Button type="submit" className="update-btn mt-3">
+              create governor
             </Button>
           </div>
         </Form>

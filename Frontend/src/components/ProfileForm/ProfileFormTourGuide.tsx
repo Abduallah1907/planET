@@ -2,22 +2,29 @@ import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import "./ProfileFormTourist.css";
 import Logo from "../../assets/person-circle.svg";
-import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import { Container, Row, Col, Button, Form, Table } from "react-bootstrap";
 import { useAppSelector } from "../../store/hooks";
 import { TourGuideServices } from "../../services/TourGuideServices";
 
+interface WorkExperience {
+  id?: string;
+  title: string;
+  place: string;
+  from: string;
+  to: string;
+}
+
 interface FormData {
-  yearsOfExperience: string; // Ensure this is included
+  yearsOfExperience: string;
   firstName: string;
   lastName: string;
   email: string;
   mobile: string;
-  profession: string;
-  password: string;
+  changePassword: string;
   retypePassword: string;
   username: string;
-  nationality: string;
-  dob: string;
+  logo: string;
+  previousWork: WorkExperience[];
 }
 
 const ProfileFormGuide: React.FC = () => {
@@ -26,57 +33,126 @@ const ProfileFormGuide: React.FC = () => {
     lastName: "",
     email: "",
     mobile: "",
-    profession: "",
-    password: "",
+    changePassword: "",
     retypePassword: "",
     username: "",
-    nationality: "",
-    dob: "",
-    yearsOfExperience: "", // Initialize here
+    yearsOfExperience: "",
+    logo: "",
+    previousWork: [],
   });
+
+  const [createdWork, setCreatedWork] = useState<WorkExperience[]>([]);
+  const [editedWork, setEditedWork] = useState<WorkExperience[]>([]);
+  const [deletedWork, setDeletedWork] = useState<string[]>([]);
+
   const TourGuide = useAppSelector((state) => state.user);
 
   useEffect(() => {
+    const workExperiences: WorkExperience[] =
+      TourGuide.stakeholder_id?.previous_work_description.map((work: any) => ({
+        id: work._id,
+        title: work.title,
+        place: work.place,
+        from: work.from ? new Date(work.to).toISOString().split("T")[0] : "",
+        to: work.to ? new Date(work.to).toISOString().split("T")[0] : "",
+      }));
     setFormData({
       firstName: TourGuide.name.split(" ")[0],
       lastName: TourGuide.name.split(" ")[1] || "", // Fallback for last name
       email: TourGuide.email,
       mobile: TourGuide.phone_number,
-      profession: TourGuide.stakeholder_id?.job || "",
-      password: "",
+      changePassword: "",
       retypePassword: "",
       username: TourGuide.username,
-      nationality: TourGuide.stakeholder_id?.nation || "",
-      dob: TourGuide.stakeholder_id?.date_of_birth || "",
-      yearsOfExperience: TourGuide.stakeholder_id?.years_of_experience || "", // Include yearsOfExperience here
+      yearsOfExperience: TourGuide.stakeholder_id?.years_of_experience || "",
+      logo: TourGuide.stakeholder_id?.logo || "",
+      previousWork: workExperiences || [],
     });
   }, [TourGuide]);
-  // Dependency array to rerun this effect when Tourist data changes
-  const OnClick = async () => {
-    await TourGuideServices.updateTourGuide(TourGuide.email, {
-      name: formData.firstName + " " + formData.lastName,
-      newEmail: formData.email,
-      /*password: formData.password,*/
-      job: formData.profession,
-      nation: formData.nationality,
-    });
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleAddWork = () => {
+    const newWork: WorkExperience = {
+      title: "",
+      place: "",
+      from: "",
+      to: "",
+      id: "", // Initialize as empty or undefined
+    };
+    setFormData((prev) => ({
+      ...prev,
+      previousWork: [...prev.previousWork, newWork],
+    }));
+
+    setCreatedWork((prevCreatedWork) => [...prevCreatedWork, newWork]);
+  };
+
+  const handleWorkChange = (
+    index: number,
+    field: keyof WorkExperience,
+    value: string
+  ) => {
+    const updatedWork = [...formData.previousWork];
+
+    // Update the specific field
+    updatedWork[index] = { ...updatedWork[index], [field]: value };
+
+    setFormData({ ...formData, previousWork: updatedWork });
+
+    if (updatedWork[index].id == "") {
+      setCreatedWork(
+        updatedWork.filter(
+          (work) => work.title || work.place || work.from || work.to
+        )
+      );
+    } else {
+      setEditedWork(
+        updatedWork.filter(
+          (work) => work.title || work.place || work.from || work.to
+        )
+      );
+    }
+  };
+  const handleRemoveWork = (index: number) => {
+    const workToDelete = formData.previousWork[index];
+
+    if (workToDelete && workToDelete.id != "") {
+      setDeletedWork((prev) => [...prev, workToDelete.id as string]);
+      setEditedWork((prev) => prev.filter((_, i) => i !== index));
+    }
+    const updatedWork = formData.previousWork.filter((_, i) => i !== index);
+    setFormData({ ...formData, previousWork: updatedWork });
+    setCreatedWork((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.password !== formData.retypePassword) {
+    if (formData.changePassword !== formData.retypePassword) {
       alert("Passwords don't match!");
       return;
     }
-    // Here you could also do form submission or API call
-    // console.log("Form submitted:", formData);
-    // Clear the form after submission if needed
-    handleCancel();
+
+    console.log("Created Previous Work: ", createdWork);
+    console.log("EDITED: ", editedWork);
+    console.log("Deleted Previous Work: ", deletedWork);
+
+    await TourGuideServices.updateTourGuide(TourGuide.email, {
+      name: `${formData.firstName} ${formData.lastName}`,
+      newEmail: formData.email,
+      phone_number: formData.mobile,
+      logo: formData.logo,
+      years_of_experience: formData.yearsOfExperience,
+      password: formData.changePassword,
+      //previous_work_description: formData.previousWork,
+
+      createdPreviousWork: createdWork,
+      updatedPreviousWork: editedWork,
+      deletedPreviousWork: deletedWork,
+    });
   };
 
   const handleCancel = () => {
@@ -85,14 +161,16 @@ const ProfileFormGuide: React.FC = () => {
       lastName: "",
       email: "",
       mobile: "",
-      profession: "",
-      password: "",
+      changePassword: "",
       retypePassword: "",
       username: "",
-      nationality: "",
-      dob: "",
-      yearsOfExperience: "", // Reset here
+      yearsOfExperience: "",
+      logo: "",
+      previousWork: [],
     });
+    setCreatedWork([]);
+    setEditedWork([]);
+    setDeletedWork([]);
   };
 
   return (
@@ -130,7 +208,7 @@ const ProfileFormGuide: React.FC = () => {
             </Col>
             <Col>
               <CustomFormGroup
-                label="Last Name:"
+                label="Last Name"
                 type="text"
                 placeholder="Enter your Last Name"
                 id="lastName"
@@ -145,7 +223,7 @@ const ProfileFormGuide: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="Email:"
+                label="Email"
                 type="email"
                 placeholder="Enter your email"
                 id="email"
@@ -158,15 +236,15 @@ const ProfileFormGuide: React.FC = () => {
             </Col>
             <Col>
               <CustomFormGroup
-                label="Username:"
+                label="Username"
                 type="text"
                 placeholder="Enter your username"
                 id="username"
                 name="username"
-                required={true}
+                required={false}
                 value={formData.username}
+                disabled
                 onChange={handleChange}
-                disabled={false} // Assuming this is disabled as per your original code
               />
             </Col>
           </Row>
@@ -174,20 +252,20 @@ const ProfileFormGuide: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="Password:"
+                label="Change Password"
                 type="password"
                 placeholder="Enter your password"
-                id="password"
-                name="password"
+                id="changePassword"
+                name="changePassword"
                 required={true}
-                value={formData.password}
+                value={formData.changePassword}
                 onChange={handleChange}
                 disabled={false}
               />
             </Col>
             <Col>
               <CustomFormGroup
-                label="Retype Password:"
+                label="Retype Password"
                 type="password"
                 placeholder="Retype your password"
                 id="retypePassword"
@@ -199,6 +277,7 @@ const ProfileFormGuide: React.FC = () => {
               />
             </Col>
           </Row>
+
           <Row>
             <Col>
               <CustomFormGroup
@@ -214,6 +293,7 @@ const ProfileFormGuide: React.FC = () => {
               />
             </Col>
           </Row>
+
           <Row>
             <Col>
               <CustomFormGroup
@@ -230,14 +310,88 @@ const ProfileFormGuide: React.FC = () => {
             </Col>
           </Row>
 
-          <div className="form-actions">
-            <Button type="submit" className="update-btn" onClick={OnClick}>
-              Update
-            </Button>
-            <Button type="button" className="cancel-btn" onClick={handleCancel}>
-              Cancel
-            </Button>
-          </div>
+          {/* Work Experience Table */}
+          <Row>
+            <Col>
+              <h3>Previous Work Experience</h3>
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Job Title</th>
+                    <th>Place</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {formData.previousWork.map((work, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>
+                        <Form.Control
+                          type="text"
+                          value={work.title}
+                          onChange={(e) =>
+                            handleWorkChange(index, "title", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td>
+                        <Form.Control
+                          type="text"
+                          value={work.place}
+                          onChange={(e) =>
+                            handleWorkChange(index, "place", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td>
+                        <Form.Control
+                          type="date"
+                          value={work.from}
+                          onChange={(e) =>
+                            handleWorkChange(index, "from", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td>
+                        <Form.Control
+                          type="date"
+                          value={work.to}
+                          onChange={(e) =>
+                            handleWorkChange(index, "to", e.target.value)
+                          }
+                        />
+                      </td>
+                      <td>
+                        <Button
+                          variant="danger"
+                          onClick={() => handleRemoveWork(index)}
+                        >
+                          Remove
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+              <Button onClick={handleAddWork}>Add Work Experience</Button>
+            </Col>
+          </Row>
+
+          <Button type="submit" variant="primary" className="mt-4">
+            Update Profile
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            className="mt-4 ml-2"
+            onClick={handleCancel}
+          >
+            Cancel
+          </Button>
         </Form>
       </Container>
     </div>

@@ -6,6 +6,8 @@ import Container, { Inject, Service } from "typedi";
 import { IUserInputDTO } from "@/interfaces/IUser";
 import UserService from "./userService";
 import { ISellerUpdateDTO } from "@/interfaces/ISeller";
+import bcrypt from "bcryptjs";
+
 
 @Service()
 export default class SellerService {
@@ -83,14 +85,26 @@ export default class SellerService {
   }
 
   //Takes old and new name and description of seller
+  //update seller data with new attributes in dto
   public async updateSellerService(
     searchEmail: string,
     updatedSellerData: ISellerUpdateDTO
   ) {
-    const { name, email, description } = updatedSellerData;
+    const { name, username, email, phone_number, description, password,logo } =
+      updatedSellerData;
+      let hashedPassword;
+    if (password) {
+    hashedPassword = await bcrypt.hash(password, 10);  // Await bcrypt.hash here
+    }
     const user = await this.userModel.findOneAndUpdate(
-      { searchEmail, role: UserRoles.Seller },
-      { name: name, email: email },
+      { email: searchEmail, role: UserRoles.Seller },
+      {
+        name: name,
+        email: email,
+        username: username,
+        phone_number: phone_number,
+        password:hashedPassword,
+      },
       { new: true }
     );
     if (user instanceof Error)
@@ -99,7 +113,7 @@ export default class SellerService {
 
     const updatedSeller = await this.sellerModel.findOneAndUpdate(
       { user_id: user._id },
-      { description: description },
+      { description: description, logo: logo },
       { new: true }
     );
 

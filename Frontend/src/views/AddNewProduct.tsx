@@ -3,66 +3,62 @@ import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import AdminFormGroup from "../components/FormGroup/FormGroup"; // Reuse the form group component
 import "../components/FormGroup.css"; // Reuse existing CSS
 import "./CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
+import { descriptors } from "chart.js/dist/core/core.defaults";
+import { useAppSelector } from "../store/hooks";
+import { ProductService } from "../services/ProductService";
+import { useNavigate, useParams } from "react-router-dom";
+import UserRoles from "../types/userRoles";
+
+interface FormData{
+  name: string;
+  description: string;
+  picture: File | null;
+  price: number;
+  quantity: number;
+  archive_flag: boolean;
+}
 
 const AddNewProduct: React.FC = () => {
-  const [productName, setProductName] = useState<string>("");
-  const [productDescription, setProductDescription] = useState<string>("");
-  const [productPicture, setProductPicture] = useState<File | null>(null);
-  const [productPrice, setProductPrice] = useState<string>("");
-  const [productQuantity, setProductQuantity] = useState<string>("");
-  const [isArchived, setIsArchived] = useState<boolean>(false);
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    description: "",
+    picture: null,
+    price: 0,
+    quantity: 0,
+    archive_flag: false,
+  });
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    if (type === "checkbox") {
-      setIsArchived(checked);
-    } else {
-      switch (name) {
-        case "productName":
-          setProductName(value);
-          break;
-        case "productDescription":
-          setProductDescription(value);
-          break;
-        case "productPrice":
-          setProductPrice(value);
-          break;
-        case "productQuantity":
-          if (/^\d*$/.test(value)) {
-            // Ensure only integer values
-            setProductQuantity(value);
-          }
-          break;
-        default:
-          break;
-      }
-    }
+    setFormData({
+      ...formData,
+      [name]: type === 'checkbox' ? checked : value,
+    });
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setProductPicture(e.target.files[0]);
+      setFormData({...formData,picture:e.target.files[0]});
     }
   };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const seller_id = useAppSelector((state) => state.user.stakeholder_id?._id);
+  const navigate = useNavigate();
+  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("name", productName);
-    formData.append("description", productDescription);
-    if (productPicture) formData.append("picture", productPicture);
-    formData.append("price", productPrice);
-    formData.append("quantity", productQuantity);
-    formData.append("isArchived", isArchived.toString());
-
-    // console.log("Product data submitted", formData);
-
-    setProductName("");
-    setProductDescription("");
-    setProductPicture(null);
-    setProductPrice("");
-    setProductQuantity("");
-    setIsArchived(false);
+    const productData = {
+      name: formData.name,
+      description: formData.description,
+      price: formData.price,
+      picture: formData.picture ? formData.picture.toString() : "",
+      quantity: formData.quantity,
+      archive_flag: formData.archive_flag,
+    };
+     if (seller_id) {
+       await ProductService.createProduct(seller_id, productData);
+       navigate("/MyProducts");
+     } else {
+       console.error("Seller ID is undefined");}
   };
 
   return (
@@ -79,14 +75,14 @@ const AddNewProduct: React.FC = () => {
             <Col>
               <AdminFormGroup
                 label="Product Name"
-                type="text"
+                type="textarea"
                 placeholder="Enter Product Name"
-                id="product-name"
+                id="name"
                 disabled={false}
                 required={true}
-                value={productName}
-                onChange={handleInputChange}
-                name="productName"
+                value={formData.name}
+                onChange={handleChange}
+                name="name"
               />
             </Col>
           </Row>
@@ -97,12 +93,12 @@ const AddNewProduct: React.FC = () => {
                 label="Description"
                 type="textarea"
                 placeholder="Enter Product Description"
-                id="product-description"
+                id="description"
                 disabled={false}
                 required={true}
-                value={productDescription}
-                onChange={handleInputChange}
-                name="productDescription"
+                value={formData.description}
+                onChange={handleChange}
+                name="description"
               />
             </Col>
           </Row>
@@ -127,12 +123,12 @@ const AddNewProduct: React.FC = () => {
                 label="Price"
                 type="number"
                 placeholder="Enter Product Price"
-                id="product-price"
+                id="price"
                 disabled={false}
                 required={true}
-                value={productPrice}
-                onChange={handleInputChange}
-                name="productPrice"
+                value={formData.price.toString()}
+                onChange={handleChange}
+                name="price"
               />
             </Col>
             <Col>
@@ -140,12 +136,12 @@ const AddNewProduct: React.FC = () => {
                 label="Quantity"
                 type="number"
                 placeholder="Enter Product Quantity"
-                id="product-quantity"
+                id="quantity"
                 disabled={false}
                 required={true}
-                value={productQuantity}
-                onChange={handleInputChange}
-                name="productQuantity"
+                value={formData.quantity.toString()}
+                onChange={handleChange}
+                name="quantity"
                 // Ensure only integer values
               />
             </Col>
@@ -157,15 +153,15 @@ const AddNewProduct: React.FC = () => {
                 <Form.Check
                   type="checkbox"
                   label="Archived"
-                  name="isArchived"
-                  checked={isArchived}
-                  onChange={handleInputChange}
+                  name="archive_flag"
+                  checked={formData.archive_flag}
+                  onChange={handleChange}
                 />
               </Form.Group>
             </Col>
           </Row>
 
-          <Button type="submit" className="update-btn mt-3">
+          <Button type="submit" className="update-btn mt-3" onClick={handleSubmit}>
             Add Product
           </Button>
         </Form>

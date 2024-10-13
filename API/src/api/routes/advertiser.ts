@@ -158,7 +158,6 @@ export default (app: Router) => {
    */
   router.post(
     "/createAdvertiser",
-    authorize([UserRoles.Advertiser]),
     advertiserController.createAdvertiserController
   );
   router.get(

@@ -1,45 +1,74 @@
 import axiosInstance from '../utils/axiosInstance';
 import axios from 'axios';
 
-class ProductService{
- public static getAllProducts=async () => {
-    try{
-      const response=await axiosInstance.get("/product/getAllProducts");
+class ProductService {
+  static get(product_id: string) {
+    throw new Error("Method not implemented.");
+  }
+  public static getAllProducts = async () => {
+    try {
+      const response = await axiosInstance.get("/product/getAllProducts");
       return response.data;
     }
-    catch(error){
-     throw error;
-    }
-      
- };
-  public static getProductByName=async (name:string) => {
-      try{
-        const response=await axiosInstance.get(`/product/getProductByName/${name}`);
-        return response.data;
-      }
-      catch(error){
+    catch (error) {
       throw error;
-      }
-        
+    }
+
+  };
+  public static getProductByName = async (name: string) => {
+    try {
+      const response = await axiosInstance.get(`/product/getProductByName/${name}`);
+      return response.data;
+    }
+    catch (error) {
+      throw error;
+    }
+
   };
 
   public static getFilteredProducts = async (filter: any) => {
-    try{
-      const response = await axiosInstance.get("/product/getFilteredProducts", {params: filter})
+    try {
+      const response = await axiosInstance.get("/product/getFilteredProducts", { params: filter })
       return response.data;
-    }catch (error){
+    } catch (error) {
       throw error;
     }
   }
-  public static getFilterComponents=async () => {
-    try{
-      const response=await axiosInstance.get("/product/getFilterComponents/");
+  public static getFilterComponents = async () => {
+    try {
+      const response = await axiosInstance.get("/product/getFilterComponents/");
       return response.data;
     }
-    catch(error){
-    throw error;
+    catch (error) {
+      throw error;
     }
-      
-};
+
+  };
+
+  public static createProduct = async (seller_id: string,productData:any) => {
+    try {
+      const response = await axiosInstance.post(`/product/createProduct/${seller_id}`,productData);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public static EditProduct = async (product_id: string,productData:any) => {
+    try {
+      const response = await axiosInstance.put(`/product/EditProduct/${product_id}`,productData);
+      return response.data;
+    } catch (error) { 
+      throw error;
+    }
+  }
+
+  public static getProductById = async (id: string) => {
+    try {
+      const response = await axiosInstance.get(`/product/getProductByID/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
-export{ProductService};
+export { ProductService };

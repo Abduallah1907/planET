@@ -1,68 +1,84 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import AdminFormGroup from "../components/FormGroup/FormGroup"; // Reuse the form group component
 import "../components/FormGroup.css"; // Reuse existing CSS
 import "./CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
+import { useAppSelector } from "../store/hooks";
+import { ProductService } from "../services/ProductService";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 
-const AddNewProduct: React.FC = () => {
-  const [productName, setProductName] = useState<string>("");
-  const [productDescription, setProductDescription] = useState<string>("");
-  const [productPicture, setProductPicture] = useState<File | null>(null);
-  const [productPrice, setProductPrice] = useState<string>("");
-  const [productQuantity, setProductQuantity] = useState<string>("");
-  const [isArchived, setIsArchived] = useState<boolean>(false);
+interface FormData {
+  name: string;
+  description: string;
+  picture: File | null;
+  price: number;
+  quantity: number;
+  archive_flag: boolean;
+}
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    if (type === "checkbox") {
-      setIsArchived(checked);
-    } else {
-      switch (name) {
-        case "productName":
-          setProductName(value);
-          break;
-        case "productDescription":
-          setProductDescription(value);
-          break;
-        case "productPrice":
-          setProductPrice(value);
-          break;
-        case "productQuantity":
-          if (/^\d*$/.test(value)) {
-            // Ensure only integer values
-            setProductQuantity(value);
-          }
-          break;
-        default:
-          break;
-      }
-    }
+const EditProduct: React.FC = () => {
+  const { product_id } = useParams();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    description: "",
+    picture: null,
+    price: 0,
+    quantity: 0,
+    archive_flag: false,
+  });
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setProductPicture(e.target.files[0]);
+      setFormData({ ...formData, picture: e.target.files[0] });
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const getProduct = async () => {
+    if (product_id) {
+      let product = await ProductService.getProductById(product_id);
+      product = product.data;
+      setFormData({
+        name: product.name,
+        description: product.description,
+        picture: product.picture,
+        price: product.price,
+        quantity: product.quantity,
+        archive_flag: product.archive_flag,
+      });
+    } else {
+      console.error("Product ID is undefined");
+    }
+  }
+
+  useEffect(() => {
+    getProduct();
+  }, [product_id]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("name", productName);
-    formData.append("description", productDescription);
-    if (productPicture) formData.append("picture", productPicture);
-    formData.append("price", productPrice);
-    formData.append("quantity", productQuantity);
-    formData.append("isArchived", isArchived.toString());
-
-    // console.log("Product data submitted", formData);
-
-    setProductName("");
-    setProductDescription("");
-    setProductPicture(null);
-    setProductPrice("");
-    setProductQuantity("");
-    setIsArchived(false);
+    const productData = {
+      name: formData.name,
+      description: formData.description,
+      picture: formData.picture ? formData.picture.toString() : "",
+      price: formData.price,
+      quantity: formData.quantity,
+      archive_flag: formData.archive_flag,
+    };
+    if (product_id) {
+      await ProductService.EditProduct(product_id, productData);
+      navigate("/MyProducts");
+    } else {
+      console.error("Product ID is undefined");
+    }
   };
 
   return (
@@ -81,12 +97,12 @@ const AddNewProduct: React.FC = () => {
                 label="Product Name"
                 type="text"
                 placeholder="Enter Product Name"
-                id="product-name"
+                id="name"
                 disabled={false}
                 required={true}
-                value={productName}
-                onChange={handleInputChange}
-                name="productName"
+                value={formData.name}
+                onChange={handleChange}
+                name="name"
               />
             </Col>
           </Row>
@@ -97,12 +113,12 @@ const AddNewProduct: React.FC = () => {
                 label="Description"
                 type="textarea"
                 placeholder="Enter Product Description"
-                id="product-description"
+                id="description"
                 disabled={false}
                 required={true}
-                value={productDescription}
-                onChange={handleInputChange}
-                name="productDescription"
+                value={formData.description}
+                onChange={handleChange}
+                name="description"
               />
             </Col>
           </Row>
@@ -127,12 +143,12 @@ const AddNewProduct: React.FC = () => {
                 label="Price"
                 type="number"
                 placeholder="Enter Product Price"
-                id="product-price"
+                id="price"
                 disabled={false}
                 required={true}
-                value={productPrice}
-                onChange={handleInputChange}
-                name="productPrice"
+                value={String(formData.price)}
+                onChange={handleChange}
+                name="price"
               />
             </Col>
             <Col>
@@ -140,13 +156,13 @@ const AddNewProduct: React.FC = () => {
                 label="Quantity"
                 type="number"
                 placeholder="Enter Product Quantity"
-                id="product-quantity"
+                id="quantity"
                 disabled={false}
                 required={true}
-                value={productQuantity}
-                onChange={handleInputChange}
-                name="productQuantity"
-                // Ensure only integer values
+                value={String(formData.quantity)}
+                onChange={handleChange}
+                name="quantity"
+              // Ensure only integer values
               />
             </Col>
           </Row>
@@ -157,9 +173,9 @@ const AddNewProduct: React.FC = () => {
                 <Form.Check
                   type="checkbox"
                   label="Archived"
-                  name="isArchived"
-                  checked={isArchived}
-                  onChange={handleInputChange}
+                  name="archive_flag"
+                  checked={formData.archive_flag}
+                  onChange={handleChange}
                 />
               </Form.Group>
             </Col>
@@ -174,4 +190,4 @@ const AddNewProduct: React.FC = () => {
   );
 };
 
-export default AddNewProduct;
+export default EditProduct;

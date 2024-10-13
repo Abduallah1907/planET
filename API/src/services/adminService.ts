@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import Container, { Inject, Service } from "typedi";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
@@ -15,6 +15,8 @@ import {
   BadRequestError,
 } from "@/types/Errors";
 import UserService from "./userService";
+import bcrypt from "bcryptjs";
+
 
 // User related services (delete, view, and create users)
 
@@ -55,7 +57,7 @@ export default class AdminService {
         createdAt: any;
         updatedAt: any;
       }) => ({
-        _id: user._id,
+        _id: user._id as ObjectId,
         email: user.email,
         name: user.name,
         username: user.username,
@@ -88,7 +90,7 @@ export default class AdminService {
         createdAt: any;
         updatedAt: any;
       }) => ({
-        _id: user._id,
+        _id: user._id as ObjectId,
         email: user.email,
         name: user.name,
         username: user.username,
@@ -149,7 +151,7 @@ export default class AdminService {
       throw new InternalServerError("Internal server error");
 
     let userOutput: IUserAdminViewDTO = {
-      _id: user._id,
+      _id: user._id as ObjectId,
       email: user.email,
       name: user.name,
       username: user.username,
@@ -187,7 +189,7 @@ export default class AdminService {
     });
 
     const governorOutput: IUserAdminViewDTO = {
-      _id: newGovernor.user_id,
+      _id: newGovernor.user_id as ObjectId,
       email: newGovernorUser.email,
       name: newGovernorUser.name,
       username: newGovernorUser.username,
@@ -223,7 +225,7 @@ export default class AdminService {
     const newUserResponse = await userService.createUserService(newAdminUser);
 
     const adminOutput: IUserAdminViewDTO = {
-      _id: newUserResponse.data._id,
+      _id: newUserResponse.data._id as ObjectId,
       email: newUserResponse.data.email,
       name: newUserResponse.data.name,
       username: newUserResponse.data.username,
@@ -233,6 +235,7 @@ export default class AdminService {
       createdAt: newUserResponse.data.createdAt,
       updatedAt: newUserResponse.data.updatedAt,
     };
+
     return new response(true, adminOutput, "Admin created", 201);
   }
 

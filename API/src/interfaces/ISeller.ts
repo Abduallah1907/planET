@@ -22,9 +22,13 @@ export interface ISellerInputDTO {
 }
 
 export interface ISellerUpdateDTO {
-  email?: string;
   name?: string;
+  username?: string;
+  password?: string;
+  email?: string;
+  phone_number?: string;
   description?: string;
+  logo?: string;
 }
 
 export interface ISeller extends Document {
