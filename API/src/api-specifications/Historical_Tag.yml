@@ -1,8 +1,8 @@
 openapi: "3.0.0"
 info:
-  title: Historical Location API
+  title: Historical Tag API
   version: 1.0.0
-  description: Registers routers for historical location management.
+  description: API for managing historical tags
 
 tags:
   - name: HistoricalTag
