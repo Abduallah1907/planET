@@ -38,7 +38,7 @@ export class TouristController {
   }
   public async rateTour_guide(req: any, res: any) {
     const { tourist_id } = req.params;
-    const { tour_guide_email, rating } = req.query;
+    const { tour_guide_email, rating } = req.body;
     const touristService: TouristService = Container.get(TouristService);
     const ratedTourist = await touristService.rateTour_guideService(
       tourist_id,
