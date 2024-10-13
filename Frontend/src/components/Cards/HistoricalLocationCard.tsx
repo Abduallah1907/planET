@@ -1,13 +1,14 @@
-import { Card, Badge, Row, Col, Image } from "react-bootstrap";
+import { Card, Badge, Row, Col, Image, DropdownButton, Dropdown } from "react-bootstrap";
 import Rating from '../Rating/Rating';
 import "./Cards.css";
 import { HistoricalService } from "../../services/HistoricalService";
 import { useEffect, useState } from "react";
 import { get } from "http";
 import { use } from "i18next";
+import { useNavigate } from "react-router-dom";
 
 interface InputData {
-  
+  id: string;
   Name: string;
   location: string;
   RatingVal: number; // Initial Rating
@@ -19,7 +20,7 @@ interface InputData {
   OpeningDays: string; // New property for opening days
   Description: string; // Fixed typo from Descripition to Description
   isActive: boolean;
-
+  isGoverner: boolean;
   tags?: string[];
   onChange?: () => void; // Change onChange to a function that does not take parameters
   onClick?: () => void;
@@ -27,7 +28,7 @@ interface InputData {
 }
 
 export const HistoricalLocationCard = ({
-  
+  id,
   Name,
   location,
   RatingVal,
@@ -39,24 +40,26 @@ export const HistoricalLocationCard = ({
   Description,
   isActive,
   imageUrl,
+  isGoverner,
   tags,
   onChange,
   onClick,
 }: InputData) => {
+  const navigate = useNavigate();
+  function handleEdit(id: string): void {
+    navigate(`/EditHistoricalLocation/${id}`);
+  }
+
   // Manage the state for the rating
  
-
-
-
-
   return (
-    <Card onClick={onClick}
+    <Card
       className="p-3 shadow-sm"
       style={{ borderRadius: "10px", height: "100%" }}
     >
       <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
         {/* Image Section */}
-        <Col md={2} className="p-0 d-flex align-items-stretch">
+        <Col md={2} className="p-0 d-flex align-items-stretch" onClick={onClick}>
           <Image
             src="https://via.placeholder.com/250x250"
             rounded
@@ -65,7 +68,7 @@ export const HistoricalLocationCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={7} className="d-flex align-items-stretch">
+        <Col md={isGoverner ? 6 : 7} className="d-flex align-items-stretch" onClick={onClick}>
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
@@ -110,6 +113,7 @@ export const HistoricalLocationCard = ({
         <Col
           md={3}
           className="d-flex flex-column justify-content-between align-items-end"
+          onClick={onClick}
         >
           {/* Rating and Reviews on the Far Right */}
           <div className="d-flex align-items-center justify-content-end mb-3">
@@ -137,15 +141,28 @@ export const HistoricalLocationCard = ({
           {/* Booking Badge */}
           <div className="text-right">
             <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
-            <Badge
-              bg={isActive ? "active" : "inactive"} // Change color based on booking status
-              className="mt-2 custom-status-badge rounded-4 text-center"
-              onClick={onChange} // Call onChange when clicked
-            >
-              {isActive ? "Active" : "InActive"}
-            </Badge>
+            {isGoverner ? (
+              <Badge
+                bg={isActive ? "active" : "inactive"} // Change color based on booking status
+                className="mt-2 custom-status-badge rounded-4 text-center"
+                onClick={onChange} // Call onChange when clicked
+              >
+                {isActive ? "Active" : "InActive"}
+              </Badge>
+            ) : null}
           </div>
         </Col>
+        {isGoverner ?
+          <Col md={1} className="d-flex align-items-baseline">
+            <DropdownButton
+              align="end"
+              title="⋮"  // Three-dot symbol
+              variant="light"
+              className="d-flex justify-content-end ms-3 btn-main-inverse">
+              <Dropdown.Item onClick={() => id && handleEdit(id)}>Edit</Dropdown.Item>
+            </DropdownButton>
+          </Col>
+          : null}
       </Row>
     </Card>
   );

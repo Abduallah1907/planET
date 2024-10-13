@@ -53,12 +53,12 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
     }
   };
 
-  const getHistoricalLocationById = async (id:string,nation:string,job:string) => {
-    const historicalLocation = await HistoricalService.getHistoricalLocationById(nation,job,id);
+  const getHistoricalLocationById = async (id:string) => {
+    const historicalLocation = await HistoricalService.getHistoricalLocationById(id);
     setLocalHistoricalData(historicalLocation.data);
   };
   useEffect(() => {
-    getHistoricalLocationById("masry","Engineer",id);
+    getHistoricalLocationById(id);
       }, [id]);
 
   return (

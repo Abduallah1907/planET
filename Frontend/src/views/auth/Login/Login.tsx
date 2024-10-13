@@ -129,25 +129,8 @@ export default function Login() {
               },
             ])
           );
-          if (user.first_time_login) {
-            navigate("/");
-          } else {
-            navigate("/");
-          }
-          dispatch(
-            setNavItems([
-              {
-                path: "/AddHistoricalLocation",
-                label: "Add Historical Location",
-              },
-              {
-                path: "/MyHistoricalLocations",
-                label: "My Historical Locations",
-              },
-            ])
-          );
 
-          navigate("/EditHistoricalLocation");
+          navigate("/MyHistoricalLocations");
 
           break;
         case "ADMIN":

@@ -25,7 +25,7 @@ export class FileService {
           .status(500)
           .json({ message: "File upload failed", error: err });
       }
-      res.json({ file: (req as any).file });
+      res.json({ file: (req as any).files.file });
     });
   }
 
