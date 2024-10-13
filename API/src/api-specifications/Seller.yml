@@ -1,0 +1,116 @@
+openapi: "3.0.0"
+info:
+  title: Historical Location API
+  version: 1.0.0
+  description: Registers routers for historical location management.
+
+components:
+  schemas:
+    ISellerInputDTO:
+      type: object
+      properties:
+        documents_required:
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone_number:
+          type: string
+    ISellerOutputDTO:
+      type: object
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+        username:
+          type: string
+        phone_number:
+          type: string
+        logo:
+          type: string
+        description:
+          type: string
+    ISellerUpdateDTO:
+      type: object
+      properties:
+        newEmail:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+tags:
+  - name: Seller
+    description: Seller management and retrieval
+paths:
+  /api/seller/createSeller:
+    post:
+      tags:
+        - Seller
+      summary: Posts seller in system
+      description: Create a new seller in the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ISellerInputDTO"
+      responses:
+        200:
+          description: Seller created data.
+        400:
+          description: Bad request.
+        500:
+          description: Internal server error.
+  /api/seller/getSeller/{email}:
+    get:
+      tags:
+        - Seller
+      summary: Get seller from system
+      description: Retrieve seller data by his email
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Seller data.
+        400:
+          description: Bad request.
+        500:
+          description: Internal server error.
+  /api/seller/updateSeller/{searchEmail}:
+    put:
+      tags:
+        - Seller
+      summary: Update seller in system
+      description: Update seller data by his email
+      parameters:
+        - in: path
+          name: searchEmail
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ISellerUpdateDTO"
+      responses:
+        200:
+          description: Updated Seller data.
+        400:
+          description: Bad request.
+        500:
+          description: Internal server error.
