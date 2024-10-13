@@ -1,0 +1,18 @@
+openapi: "3.0.0"
+info:
+  title: Mailer API
+  version: 1.0.0
+  description: API for mail.
+tags:
+  - name: Mailer
+    description: User management and retrieval
+paths:
+  /api/users/test:
+    get:
+      tags:
+        - Users
+      summary: Retrieve a list of users
+      description: Retrieve a list of users from the database
+      responses:
+        200:
+          description: A list of users.
