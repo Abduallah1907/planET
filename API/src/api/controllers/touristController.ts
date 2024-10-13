@@ -3,7 +3,10 @@ import {
   ITouristCreateDTO,
   ITouristUpdateDTO,
 } from "@/interfaces/ITourist";
-import { IComment_Rating } from "@/interfaces/IComment_rating";
+import {
+  IComment_Rating,
+  IComment_RatingCreateDTOfortourGuide,
+} from "@/interfaces/IComment_rating";
 import TouristService from "../../services/touristService";
 import Container, { Inject, Service } from "typedi";
 import { start } from "repl";
@@ -36,14 +39,15 @@ export class TouristController {
     );
     res.status(updatedTourist.status).json(updatedTourist);
   }
-  public async rateTour_guide(req: any, res: any) {
+  public async rateandcommentTour_guide(req: any, res: any) {
     const { tourist_id } = req.params;
-    const { tour_guide_email, rating } = req.body;
+    const data: IComment_RatingCreateDTOfortourGuide = req.body;
     const touristService: TouristService = Container.get(TouristService);
-    const ratedTourist = await touristService.rateTour_guideService(
+    const ObjectId = require("mongoose").Types.ObjectId;
+
+    const ratedTourist = await touristService.rateandcommentTour_guideService(
       tourist_id,
-      tour_guide_email,
-      rating
+      data
     );
     res.status(ratedTourist.status).json(ratedTourist);
   }

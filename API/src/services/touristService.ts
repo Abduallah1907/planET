@@ -18,7 +18,10 @@ import bcrypt from "bcryptjs";
 
 import { ObjectId } from "mongoose";
 import { Types } from "mongoose";
-import { IComment_Rating } from "@/interfaces/IComment_rating";
+import {
+  IComment_Rating,
+  IComment_RatingCreateDTOfortourGuide,
+} from "@/interfaces/IComment_rating";
 
 @Service()
 export default class TouristService {
@@ -203,22 +206,23 @@ export default class TouristService {
 
     return new response(true, touristOutput, "Tourist updated", 200);
   }
-  public async rateTour_guideService(
+  public async rateandcommentTour_guideService(
     id: string,
-    tour_guide_email: string,
-    rating: Number
+    data: IComment_RatingCreateDTOfortourGuide
   ) {
+    const { tour_guide_email, comment, rating } = data;
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid id");
     }
-    const ticket = await this.ticketModel.findOne({
-      tourist_id: new Types.ObjectId(id),
-      type: "ITINERARY",
-    });
-    if (ticket instanceof Error)
-      throw new InternalServerError("Internal sezrver error");
-    if (ticket == null) throw new NotFoundError("You did not do any itinerary");
+    if (!comment && !rating) {
+      throw new BadRequestError(
+        "Invalid input,please add either a comment or rating"
+      );
+    }
 
+    if (rating && (rating < 0 || rating > 5)) {
+      throw new BadRequestError("Invalid rating");
+    }
     const user = await this.userModel.findOne({
       email: tour_guide_email,
       role: UserRoles.TourGuide,
@@ -226,25 +230,48 @@ export default class TouristService {
     if (user instanceof Error)
       throw new InternalServerError("Internal server error");
     if (user == null) throw new NotFoundError("User not found");
-
     const tour_guide = await this.tour_guideModel.findOne({
       user_id: user._id,
-      //itineraries: { $in: [ticket.booking_id] },
     });
+    // console.log(user._id);
     if (tour_guide instanceof Error)
       throw new InternalServerError("Internal server error");
     if (tour_guide == null) throw new NotFoundError("Tour guide not found");
 
+    // go I try to loop over the tour guide iternaries and check if the tourist has visited the location by booking_id
+    let ticket;
+    for (let i = 0; i < tour_guide.itineraries.length; i++) {
+      // console.log(tour_guide.itineraries[i]);
+      ticket = await this.ticketModel.findOne({
+        type: "ITINERARY",
+        booking_id: tour_guide.itineraries[i],
+        tourist_id: new Types.ObjectId(id),
+      });
+    }
+    if (ticket instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (ticket == null)
+      throw new NotFoundError(
+        "Tourist has not visited the location or meet the tour guide"
+      );
+
+    //create a new comment_rating
     const comment_rating = new this.comment_ratingModel({
-      user_id: new Types.ObjectId(id),
-      comment: "",
+      tourist_id: new Types.ObjectId(id),
+      comment: comment,
       rating: rating,
     });
+    if (comment_rating instanceof Error)
+      throw new InternalServerError("Internal server error");
     await comment_rating.save();
     if (comment_rating instanceof Error)
       throw new InternalServerError("Internal server error");
 
-    tour_guide.comment_ratings.push(comment_rating._id);
+    //update the tour guide comment_rating array
+    if (!tour_guide.comments) {
+      tour_guide.comments = [];
+    }
+    tour_guide.comments.push(comment_rating._id);
     await tour_guide.save();
     if (tour_guide instanceof Error)
       throw new InternalServerError("Internal server error");

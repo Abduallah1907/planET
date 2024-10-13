@@ -7,3 +7,8 @@ export interface IComment_Rating extends Document {
   createdAt?: Date;
   updatedAt?: Date;
 }
+export interface IComment_RatingCreateDTOfortourGuide {
+  tour_guide_email: string;
+  comment?: string;
+  rating?: number;
+}

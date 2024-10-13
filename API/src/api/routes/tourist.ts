@@ -235,6 +235,42 @@ export default (app: Router) => {
    *         description: Bad request.
    *       500:
    *         description: Internal server error.
+   * /api/tourist/rateandcommentTourGuide/{tourist_id}:
+   *   post:
+   *     tags:
+   *       - Tourist
+   *     summary: Rate and comment tour guide
+   *     description: Rate and comment tour guide
+   *     parameters:
+   *       - in: path
+   *         name: tourist_id
+   *         required: true
+   *         description: Tourist id
+   *         schema:
+   *           type: string
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               tour_guide_email:
+   *                 type: string
+   *                 description: Email of the tour guide
+   *               comment:
+   *                 type: string
+   *                 description: Comment of the tourist
+   *               rating:
+   *                 type: number
+   *                 description: Rating of the tourist
+   *     responses:
+   *       200:
+   *         description: Tourist rated and commented tour guide
+   *       400:
+   *         description: Bad request
+   *       500:
+   *         description: Internal server error
    */
   route.get(
     "/getTourist/:email",
@@ -248,8 +284,8 @@ export default (app: Router) => {
   );
   route.post("/createTourist", touristController.createTourist);
   route.post(
-    "/rateTour_guide/:tourist_id",
+    "/rateandcommentTourGuide/:tourist_id",
     authorize([UserRoles.Tourist]),
-    touristController.rateTour_guide
+    touristController.rateandcommentTour_guide
   );
 };
