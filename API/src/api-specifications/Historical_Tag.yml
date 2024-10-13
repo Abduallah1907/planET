@@ -3,26 +3,10 @@ info:
   title: Historical Location API
   version: 1.0.0
   description: Registers routers for historical location management.
+
 tags:
   - name: HistoricalTag
     description: API for managing historical tags
-
-components:
-  schemas:
-    HistoricalTag:
-      type: object
-      required:
-        - name
-        - Values
-      properties:
-        name:
-          type: string
-          description: The name of the historical tag
-        Values:
-          type: array
-          items:
-            type: string
-          description: An array of values associated with the historical tag
 
 paths:
   /api/historical_tag/getAllHistorical_tag:
@@ -38,7 +22,19 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/HistoricalTag"
+                  type: object
+                  required:
+                    - name
+                    - Values
+                  properties:
+                    name:
+                      type: string
+                      description: The name of the historical tag
+                    Values:
+                      type: array
+                      items:
+                        type: string
+                      description: An array of values associated with the historical tag
 
   /api/historical_tag/createHistorical_tag:
     post:
@@ -50,14 +46,38 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/HistoricalTag"
+              type: object
+              required:
+                - name
+                - Values
+              properties:
+                name:
+                  type: string
+                  description: The name of the historical tag
+                Values:
+                  type: array
+                  items:
+                    type: string
+                  description: An array of values associated with the historical tag
       responses:
         "201":
           description: The created historical tag
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HistoricalTag"
+                type: object
+                required:
+                  - name
+                  - Values
+                properties:
+                  name:
+                    type: string
+                    description: The name of the historical tag
+                  Values:
+                    type: array
+                    items:
+                      type: string
+                    description: An array of values associated with the historical tag
 
   /api/historical_tag/getHistorical_tagByID/{id}:
     get:
@@ -77,7 +97,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HistoricalTag"
+                type: object
+                required:
+                  - name
+                  - Values
+                properties:
+                  name:
+                    type: string
+                    description: The name of the historical tag
+                  Values:
+                    type: array
+                    items:
+                      type: string
+                    description: An array of values associated with the historical tag
 
   /api/historical_tag/updateHistorical_tag/{id}:
     put:
@@ -96,14 +128,38 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/HistoricalTag"
+              type: object
+              required:
+                - name
+                - Values
+              properties:
+                name:
+                  type: string
+                  description: The name of the historical tag
+                Values:
+                  type: array
+                  items:
+                    type: string
+                  description: An array of values associated with the historical tag
       responses:
         "200":
           description: The updated historical tag
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HistoricalTag"
+                type: object
+                required:
+                  - name
+                  - Values
+                properties:
+                  name:
+                    type: string
+                    description: The name of the historical tag
+                  Values:
+                    type: array
+                    items:
+                      type: string
+                    description: An array of values associated with the historical tag
 
   /api/historical_tag/deleteHistorical_tag/{id}:
     delete:
