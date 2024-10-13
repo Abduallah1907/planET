@@ -38,6 +38,15 @@ export class Historical_locationController {
       );
     res.status(historical_location.status).json(historical_location);
   }
+  public async getHistorical_locationByIDForGovernerController(req: any, res: any) {
+    const historical_locationService: Historical_locationService =
+      Container.get(Historical_locationService);
+    const historical_location =
+      await historical_locationService.getHistorical_locationByIDForGovernerService(
+        req.query
+      );
+    res.status(historical_location.status).json(historical_location);
+  }
   //Get Historical_location by Governer_id
   public async getHistorical_locationsByGovernerIDController(
     req: any,

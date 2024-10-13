@@ -209,6 +209,31 @@ export default class Historical_locationService {
       200
     );
   };
+
+  public getHistorical_locationByIDForGovernerService = async (
+    data: any,
+  ) => {
+    if (!Types.ObjectId.isValid(data.historical_location_id)) {
+      throw new BadRequestError("Invalid ID format");
+    }
+    const Historical_location = await this.historical_locationsModel.findById(
+      new Types.ObjectId(data.historical_location_id)
+    );
+    if (Historical_location instanceof Error)
+      throw new InternalServerError("Internal server error");
+    // throw new Error ("Internal server error");
+
+    if (Historical_location == null)
+      throw new NotFoundError("Historical Location not found");
+
+    return new response(
+      true,
+      Historical_location,
+      "Historical Location is found",
+      200
+    );
+  };
+
   //Get Historical_location by Governer_id
   public getHistorical_locationsByGovernerIDService = async (
     Governer_id: string

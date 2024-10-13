@@ -310,6 +310,11 @@ export default (app: Router) => {
     historical_locationController.getHistorical_locationByIDController
   );
   router.get(
+    "/getHistorical_locationByIDForGoverner",
+    authorize([UserRoles.Governor]),
+    historical_locationController.getHistorical_locationByIDForGovernerController
+  );
+  router.get(
     "/getHistorical_locationsByGovernerID/:governer_id",
     authorize([UserRoles.Governor]),
     historical_locationController.getHistorical_locationsByGovernerIDController

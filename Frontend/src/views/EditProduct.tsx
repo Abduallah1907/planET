@@ -16,7 +16,7 @@ interface FormData {
   archive_flag: boolean;
 }
 
-const UpdateProduct: React.FC = () => {
+const EditProduct: React.FC = () => {
   const { product_id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
@@ -74,7 +74,7 @@ const UpdateProduct: React.FC = () => {
       archive_flag: formData.archive_flag,
     };
     if (product_id) {
-      await ProductService.updateProduct(product_id, productData);
+      await ProductService.EditProduct(product_id, productData);
       navigate("/MyProducts");
     } else {
       console.error("Product ID is undefined");
@@ -190,4 +190,4 @@ const UpdateProduct: React.FC = () => {
   );
 };
 
-export default UpdateProduct;
+export default EditProduct;

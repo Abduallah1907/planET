@@ -1,5 +1,7 @@
 import store from "../store/store"; // Import your store
 import axios from "axios";
+import showToast from "./showToast";
+import { ToastTypes } from "./toastTypes";
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:8000/api",
@@ -24,9 +26,10 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      console.error("Unauthorized! Redirecting to login...");
+    if(error.response && error.response?.status === 401) {
+      //redirectToLogin();
     }
+    showToast(error.message, ToastTypes.ERROR);
     return Promise.reject(error);
   }
 );

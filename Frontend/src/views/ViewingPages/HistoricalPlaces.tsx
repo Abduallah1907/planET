@@ -153,6 +153,7 @@ export default function HistoricalLocationsPage() {
               (location: IHistorical_location_tourist, index) => (
                 <Col key={location._id} xs={12} className="mb-4 ps-0">
                   <HistoricalLocationCard
+                    id={location._id}
                     Name={location.name}
                     location={"cairo"}
                     imageUrl={""}
@@ -165,6 +166,7 @@ export default function HistoricalLocationsPage() {
                       console.log(`${location.name} booking status changed`)
                     }
                     Price={location.price}
+                    isGoverner={false}
                     OpeningHourFrom={location.opening_hours_from}
                     OpeningHourTo={location.opening_hours_to}
                     OpeningDays={location.opening_days.join(",")}

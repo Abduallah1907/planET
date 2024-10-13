@@ -6,7 +6,6 @@ import { Col, Row, Container, Form, InputGroup, Button } from "react-bootstrap";
 import { BiSort } from "react-icons/bi";
 
 import { FaSearch } from "react-icons/fa";
-import filterOptions from "../../utils/filterOptions.json";
 import { HistoricalService } from "../../services/HistoricalService";
 import {
   IHistorical_location,
@@ -30,7 +29,6 @@ export default function HistoricalLocationsPage() {
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value);
-    setHistorical(sortedLocations);
   };
   const getHistorical = async () => {
     const HistoricalData = await HistoricalService.getAllHistorical_Location(
@@ -150,28 +148,32 @@ export default function HistoricalLocationsPage() {
                 <option value="priceHighToLow">Price: High to Low</option>
               </Form.Select>
             </div>
-            {historical.map((location: IHistorical_location_tourist, index) => (
-              <Col key={location._id} xs={12} className="mb-4 ps-0">
-                <HistoricalLocationCard
-                  Name={location.name}
-                  location={"cairo"}
-                  imageUrl={""}
-                  RatingVal={location.average_rating}
-                  Reviews={location.reviewsCount ?? 0}
-                  Description={location.description}
-                  isActive={location.active_flag}
-                  tags={location.tags ? Object.values(location.tags) : []}
-                  onChange={() =>
-                    console.log(`${location.name} booking status changed`)
-                  }
-                  Price={location.price}
-                  OpeningHourFrom={location.opening_hours_from}
-                  OpeningHourTo={location.opening_hours_to}
-                  OpeningDays={location.opening_days.join(",")}
-                  onClick={() => onHistoricalClick(location._id)}
-                />
-              </Col>
-            ))}
+            {filteredLocations.map(
+              (location: IHistorical_location_tourist, index) => (
+                <Col key={location._id} xs={12} className="mb-4 ps-0">
+                  <HistoricalLocationCard
+                    id={location._id}
+                    Name={location.name}
+                    location={"cairo"}
+                    imageUrl={""}
+                    RatingVal={location.average_rating}
+                    Reviews={location.reviewsCount ?? 0}
+                    Description={location.description}
+                    isActive={location.active_flag}
+                    tags={location.tags ? Object.values(location.tags) : []}
+                    onChange={() =>
+                      console.log(`${location.name} booking status changed`)
+                    }
+                    Price={location.price}
+                    isGoverner={true}
+                    OpeningHourFrom={location.opening_hours_from}
+                    OpeningHourTo={location.opening_hours_to}
+                    OpeningDays={location.opening_days.join(",")}
+                    onClick={() => onHistoricalClick(location._id)}
+                  />
+                </Col>
+              )
+            )}
           </Row>
         </Col>
       </Row>

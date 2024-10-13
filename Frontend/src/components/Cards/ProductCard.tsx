@@ -4,7 +4,6 @@ import Rating from "../Rating/Rating";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import UpdateProduct from "../../views/UpdateProduct";
 
 
 interface InputData {
@@ -51,7 +50,7 @@ const ProductCard = ({
   const navigate = useNavigate();
 
   const handleEdit = (product_id: string) => {
-    navigate(`/UpdateProduct/${product_id}`); // Navigate to the UpdateProduct page
+    navigate(`/EditProduct/${product_id}`); // Navigate to the EditProduct page
   };
 
   return (
