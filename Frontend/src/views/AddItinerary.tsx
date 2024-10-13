@@ -93,22 +93,6 @@ const ItineraryForm: React.FC = () => {
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Add form submission logic here
-    // console.log({
-    //   timelineActivities,
-    //   category,
-    //   name,
-    //   locations,
-    //   duration,
-    //   language,
-    //   price,
-    //   availableDates,
-    //   pickupLocation,
-    //   dropoffLocation,
-    //   tourGuideId,
-    //   selectedTags,
-    //   isAccessible,
-    //   isActive,
-    // });
   };
 
   return (

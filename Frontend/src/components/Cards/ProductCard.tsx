@@ -1,10 +1,9 @@
-import { Card, Badge, Row, Col, Image, Button, DropdownButton, Dropdown } from "react-bootstrap";
+import { Card, Badge, Row, Col, Image, Button, DropdownButton, Dropdown, Modal } from "react-bootstrap";
 import "./Cards.css";
 import Rating from "../Rating/Rating";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import UpdateProduct from "../../views/UpdateProduct";
 
 
 interface InputData {
@@ -51,10 +50,23 @@ const ProductCard = ({
   const navigate = useNavigate();
 
   const handleEdit = (product_id: string) => {
-    console.log(product_id);
-    navigate(`/UpdateProduct/${product_id}`); // Navigate to the UpdateProduct page
+    navigate(`/EditProduct/${product_id}`); // Navigate to the EditProduct page
+  };
+  
+
+  const handleDelete = () => {
+    setShowDeleteModal(true);
   };
 
+  const confirmDelete = () => {
+    // Perform the delete action here
+    console.log(`Product ${id} deleted.`);
+    setShowDeleteModal(false); // Close modal after confirming
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false); // Close modal without action
+  };
   return (
     <Card className="p-3 shadow-sm" style={{ borderRadius: "10px", height: "100%" }}>
       <Row className="h-100 d-flex align-items-stretch justify-content-between">
@@ -130,10 +142,29 @@ const ProductCard = ({
               variant="light"
               className="d-flex justify-content-end ms-3 btn-main-inverse">
               <Dropdown.Item onClick={() => id && handleEdit(id)}>Edit</Dropdown.Item>
+              <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item>
             </DropdownButton>
           </Col>
           : null}
       </Row>
+
+      {/* Delete Confirmation Modal */}
+      <Modal show={showDeleteModal} onHide={cancelDelete} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete this product?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={cancelDelete}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmDelete}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Card>
   );
 };

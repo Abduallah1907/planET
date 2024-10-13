@@ -7,17 +7,48 @@ import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon fro
 import tagsData from "./tags.json"; // Ensure this path is correct
 import "../components/FormGroup.css";
 import "./tagsinput.css";
+import { useAppSelector } from "../store/hooks";
+import { useNavigate } from "react-router-dom";
+import { ActivityService } from "../services/ActivityService";
+import CategoryService from "../services/CategoryService";
 
+interface FormData {
+  name: string;
+  tags: string;
+  inputValue: string;
+  suggestions: string;
+  date: string;
+  time: string;
+  discount: number;
+  price: number;
+  archive_flag: boolean;
+  category: string[];
+}
 const AdvertiserCreate: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    tags: "",
+    inputValue: "",
+    suggestions: "",
+    date: "",
+    time: "",
+    discount: 0,
+    price: 0,
+    archive_flag: false,
+    category: [],
+  });
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
 
-  const [activityName, setActivityName] = useState<string>("");
-  const [activityDate, setActivityDate] = useState<string>("");
-  const [activityTime, setActivityTime] = useState<string>("");
-  const [activityPrice, setActivityPrice] = useState<string>("");
-  const [specialDiscount, setSpecialDiscount] = useState<string>("");
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue) {
@@ -49,25 +80,25 @@ const AdvertiserCreate: React.FC = () => {
     setInputValue(e.target.value);
   };
 
-  const handleActivityNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setActivityName(e.target.value);
-  };
+  // const handleActivityNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   setActivityName(e.target.value);
+  // };
 
-  const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setActivityDate(e.target.value);
-  };
+  // const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   setActivityDate(e.target.value);
+  // };
 
-  const handleTimeChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setActivityTime(e.target.value);
-  };
+  // const handleTimeChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   setActivityTime(e.target.value);
+  // };
 
-  const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setActivityPrice(e.target.value);
-  };
+  // const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   setActivityPrice(e.target.value);
+  // };
 
-  const handleDiscountChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSpecialDiscount(e.target.value);
-  };
+  // const handleDiscountChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   setSpecialDiscount(e.target.value);
+  // };
 
   useEffect(() => {
     // Filter tags based on input value
@@ -81,6 +112,44 @@ const AdvertiserCreate: React.FC = () => {
     }
   }, [inputValue]);
 
+  useEffect(() => {
+    // Fetch categories when component mounts
+    const fetchCategories = async () => {
+      try {
+        const response = await CategoryService.getCategoryById(1); // Replace with appropriate API call
+        setCategories(response.data); // Assuming the response has 'data' containing the categories
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  const AdvertiserId = useAppSelector((state) => state.user.stakeholder_id._id);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const productData = {
+      name: formData.name,
+      date: formData.date,
+      time: formData.time,
+      location: { longitude: 100, latitude: 100 },
+      price: formData.price,
+      price_range: "",
+      tags: formData.tags,
+      discount: formData.discount,
+      archive_flag: formData.archive_flag,
+      advertiser_id: AdvertiserId,
+    };
+    if (AdvertiserId) {
+      await ActivityService.createActivity(productData);
+      navigate("/MyActivities");
+    } else {
+      console.error("Advertiser Id is undefined");
+    }
+  };
+
   return (
     <div className="profile-form-container">
       <Row className="align-items-center mb-4">
@@ -90,7 +159,7 @@ const AdvertiserCreate: React.FC = () => {
       </Row>
 
       <Container>
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <Row>
             <Col>
               <AdminFormGroup
@@ -100,9 +169,9 @@ const AdvertiserCreate: React.FC = () => {
                 id="activity-name"
                 disabled={false}
                 required={true}
-                value={activityName}
-                onChange={handleActivityNameChange}
-                name="activityName"
+                value={formData.name}
+                onChange={handleChange}
+                name="name"
               />
             </Col>
             <Col>
@@ -111,11 +180,14 @@ const AdvertiserCreate: React.FC = () => {
                 <div className="custom-select-container">
                   <Form.Control as="select" name="Category">
                     <option value="">Select Category</option>
-                    <option value="Category2">Category2</option>
-                    <option value="Category3">Category3</option>
-                    <option value="Category4">Category4</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.name}>
+                        {category.name}
+                      </option>
+                    ))}
                   </Form.Control>
-                  <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
+                  <BiChevronDown className="dropdown-icon" />{" "}
+                  {/* Dropdown icon */}
                 </div>
               </Form.Group>
             </Col>
@@ -130,9 +202,9 @@ const AdvertiserCreate: React.FC = () => {
                 id="activityDate"
                 disabled={false}
                 required={true}
-                value={activityDate}
-                onChange={handleDateChange}
-                name="activityDate"
+                value={formData.date}
+                onChange={handleChange}
+                name="date"
               />
             </Col>
             <Col>
@@ -143,9 +215,9 @@ const AdvertiserCreate: React.FC = () => {
                 id="activity-time"
                 disabled={false}
                 required={true}
-                value={activityTime}
-                onChange={handleTimeChange}
-                name="activityTime"
+                value={formData.time}
+                onChange={handleChange}
+                name="time"
               />
             </Col>
           </Row>
@@ -159,20 +231,25 @@ const AdvertiserCreate: React.FC = () => {
                 id="activity-price"
                 disabled={false}
                 required={true}
-                value={activityPrice}
-                onChange={handlePriceChange}
-                name="activityPrice"
+                value={formData.price?.toString() || ""}
+                onChange={handleChange}
+                name="price"
               />
             </Col>
             <Col>
               <Form.Group className="form-group" controlId="booking">
                 <Form.Label>Booking</Form.Label>
                 <div className="custom-select-container">
-                  <Form.Control placeholder="Select Booking" as="select" name="Booking">
+                  <Form.Control
+                    placeholder="Select Booking"
+                    as="select"
+                    name="Booking"
+                  >
                     <option value="Open">Open</option>
                     <option value="Closed">Closed</option>
                   </Form.Control>
-                  <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
+                  <BiChevronDown className="dropdown-icon" />{" "}
+                  {/* Dropdown icon */}
                 </div>
               </Form.Group>
             </Col>
@@ -182,14 +259,14 @@ const AdvertiserCreate: React.FC = () => {
             <Col>
               <AdminFormGroup
                 label="Special Discount"
-                type="text"
+                type="number"
                 placeholder="Enter your Special Discount"
                 id="special-discount"
                 disabled={false}
                 required={false}
-                value={specialDiscount}
-                onChange={handleDiscountChange}
-                name="specialDiscount"
+                value={formData.discount?.toString() || ""}
+                onChange={handleChange}
+                name="discount"
               />
             </Col>
             <Col>
@@ -211,7 +288,7 @@ const AdvertiserCreate: React.FC = () => {
                     ))}
                     <input
                       type="text"
-                      value={inputValue}
+                      value={formData.inputValue}
                       onChange={handleInputChange}
                       onKeyDown={handleAddTag}
                       placeholder="Add a tag (e.g., #tag)"
@@ -249,10 +326,24 @@ const AdvertiserCreate: React.FC = () => {
               </div>
               <Button className="update-btn mt-2 m-auto">Add Location</Button>
             </div>
-
+          </Row>
+          <Row>
+            <Col>
+              <Form.Group controlId="is-archived">
+                <Form.Check
+                  type="checkbox"
+                  label="Archived"
+                  name="archive_flag"
+                  checked={formData.archive_flag}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
             <div className="form-actions">
               <Button type="submit" className="update-btn">
-                Submit
+                Create Advertiser
               </Button>
             </div>
           </Row>

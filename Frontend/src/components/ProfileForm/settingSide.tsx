@@ -54,7 +54,6 @@ const SettingSide: React.FC = () => {
       alert("Passwords don't match!");
       return;
     }
-    // console.log("Form submitted:", formData);
   };
 
   const handleCancel = () => {

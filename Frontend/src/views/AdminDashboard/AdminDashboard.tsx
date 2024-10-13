@@ -4,13 +4,15 @@ import UserCoverageChart from "./UserCoverageChart";
 import TripDetailsTable from "./TripDetailsTable";
 import StatisticsCards from "./StatisticsCards";
 import SearchBar from "../../components/SearchBar/SearchBar";
+import { useTranslation } from "react-i18next";
 
 const AdminDashboard = () => {
+    const { t } = useTranslation();
     return (
         <div>
             
             <Container className='text-center'>
-                <h1 className='dash mt-3'>Dashboard</h1>
+                <h1 className='dash mt-3'>{t('dashboard')}</h1>
                 <div>
                     <SearchBar/>
                 </div>

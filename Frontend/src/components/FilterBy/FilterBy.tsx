@@ -101,7 +101,6 @@ const FilterBy: React.FC<FilterByProps> = ({
             const updatedFilter = { ...filter, [key.toLowerCase()]: dateRange };
             setFilter(updatedFilter);
             onFilterChange(updatedFilter);
-            // console.log(updatedFilter)
           };
           return (
             <Row className="border-bottom pb-2" key={key}>

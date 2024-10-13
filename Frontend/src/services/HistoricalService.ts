@@ -3,10 +3,21 @@ import axios from "axios";
 
 
 class HistoricalService {
-  public static getHistoricalLocationById = async (nation: string, job: string, historical_location_id: string) => {
+  public static getHistoricalLocationById = async (historical_location_id: string) => {
     try {
       const response = await axiosInstance.get('/historical_location/getHistorical_locationByID', {
-        params: { nation: nation, job: job, historical_location_id: historical_location_id }
+        params: { historical_location_id: historical_location_id }
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static getHistoricalLocationByIdForGoverner = async (historical_location_id: string) => {
+    try {
+      const response = await axiosInstance.get('/historical_location/getHistorical_locationByIDForGoverner', {
+        params: { historical_location_id: historical_location_id }
       });
       return response.data;
     } catch (error) {
@@ -77,6 +88,15 @@ class HistoricalService {
       } else {
         throw new Error("Editing Historical Location failed");
       }
+    }
+  }
+
+  public static async getAllHistorical_Tags(){
+    try{
+      const response = await axiosInstance.get("/historical_tag/getAllHistorical_tag");
+      return response.data;
+    }catch(error){
+      throw error;
     }
   }
 }

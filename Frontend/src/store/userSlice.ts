@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from './store';
+import { AppThunk, RootState } from './store';
+import { useNavigate } from 'react-router-dom';
 
 interface UserState {
     job: any;
-    id(id: any, arg1: { name: string; email: any; job: any; }): unknown;
     isLoggedIn: any;
     name: string;
     _id: string;
@@ -28,11 +28,7 @@ const initialState: UserState = {
     stakeholder_id: undefined,
     isLoggedIn: undefined,
     job: undefined,
-    id: function (id: any, arg1: { name: string; email: any; job: any; }): unknown {
-        throw new Error('Function not implemented.');
-    }
 };
-
 export const userSlice = createSlice({
     name: 'user',
     initialState,
@@ -51,11 +47,22 @@ export const userSlice = createSlice({
         },
         getUser: (state) => {
             return state;
+        },
+        logout: (state) => {
+            state.name = '';
+            state._id = '';
+            state.username = '';
+            state.role = '';
+            state.email = '';
+            state.phone_number = '';
+            state.status = '';
+            state.token = '';
+            state.stakeholder_id = undefined;
         }
     }
 });
 
-export const { setUser, getUser } = userSlice.actions;
+export const { setUser, getUser, logout } = userSlice.actions;
 
 export const userState = (state: RootState) => state.sidebar;
 

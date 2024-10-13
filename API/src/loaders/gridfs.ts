@@ -13,14 +13,9 @@ export async function gridfsLoader({
     let gfs: Grid.Grid | undefined;
     let upload: multer.Multer;
 
-    console.log("Checking MongoDB connection state...");
-
     if (mongoConnection.readyState !== 1) {
-      console.log("MongoDB connection is not open. Waiting for connection...");
-
       await new Promise<void>((resolve, reject) => {
         mongoConnection.once("open", () => {
-          console.log("MongoDB connection opened.");
           gfs = Grid(mongoConnection.db, mongoose.mongo);
           gfs.collection("uploads");
 
@@ -34,20 +29,23 @@ export async function gridfsLoader({
         });
       });
     } else {
-      console.log("MongoDB connection is already open.");
       gfs = Grid(mongoConnection.db, mongoose.mongo);
       gfs.collection("uploads");
       LoggerInstance.info("✌️ GridFS initialized successfully");
     }
 
-    console.log("Configuring GridFsStorage...");
     const storage = new GridFsStorage({
       db: mongoConnection.db as any, // Ensure the correct type casting
       file: (req, file) => {
-        return {
-          filename: `${Date.now()}-${file.originalname}`,
-          bucketName: "uploads", // Collection name for the files
-        };
+        return new Promise((resolve, reject) => {
+          const filename = `${Date.now()}-${file.originalname}`;
+          const fileInfo = {
+            filename: filename,
+            bucketName: "uploads", // Collection name for the files
+            _id: new mongoose.Types.ObjectId(),
+          };
+          resolve(fileInfo);
+        });
       },
     });
 
@@ -59,9 +57,7 @@ export async function gridfsLoader({
       console.error("GridFsStorage connection failed:", err);
     });
 
-    console.log("Initializing Multer with GridFsStorage...");
     upload = multer({ storage });
-    console.log("Generated Upload Info:", upload);
 
     return { gfs, upload };
   } catch (e) {

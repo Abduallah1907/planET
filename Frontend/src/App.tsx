@@ -14,7 +14,6 @@ import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
 
 import MainPage from "./views/Main Page/MainPage";
 import { AppProvider } from "./AppContext";
-import FilterBy from "./components/FilterBy/FilterBy";
 import SellerDashboard from "./views/SellerDashboard/SellerDashboard";
 import ActivityDetails from "./views/ProductDetails/ActivityDetails";
 import Login from "./views/auth/Login/Login";
@@ -38,21 +37,19 @@ import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
 import StakeholderReg from "./views/auth/StakeholderReg/StakeholderReg";
 import ItineraryCardd from "./views/ItineraryCardd";
 import EditHistoricalLocation from "./views/EditHistoricalLocation";
-import EditProduct from "./views/UpdateProduct";
+import EditProduct from "./views/EditProduct";
 import EditItinerary from "./views/EditItinerary";
 import UsersTable from "./views/UsersTable";
-import MyActivities from "./views/ViewingPages copy/MyActivities";
-import MyHistoricalPlaces from "./views/ViewingPages copy/MyHistoricalPlaces";
-import MyItinerary from "./views/ViewingPages copy/MyItinerary";
-import MyProducts from "./views/ViewingPages copy/MyProducts";
+import MyActivities from "./views/MyViewingPages/MyActivities";
+import MyHistoricalPlaces from "./views/MyViewingPages/MyHistoricalPlaces";
+import MyItinerary from "./views/MyViewingPages/MyItinerary";
+import MyProducts from "./views/MyViewingPages/MyProducts";
 import TopBarLinks from "./views/Main Page/TopBarLinks";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { toggleSidebar } from "./store/sidebarSlice";
 import Sidebar from "./components/SideBar/Sidebar";
-import { use } from "i18next";
 import CategoryTable from "./views/CategoryTable";
 import TagsTable from "./views/TagTable";
-import UpdateProduct from "./views/UpdateProduct";
 
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen)
@@ -106,12 +103,12 @@ const App: React.FC = () => {
         <Route path="/AddItinerary" element={<AddItinerary />} />
         <Route path="/ItineraryCardd" element={<ItineraryCardd />} />
 
-        <Route path="/EditHistoricalLocation" element={<EditHistoricalLocation />} />
-        <Route path="/UpdateProduct/:product_id" element={<UpdateProduct />} />
-        <Route path="/EditItinerary" element={<EditItinerary />} />
+        <Route path="/EditHistoricalLocation/:historical_location_id" element={<EditHistoricalLocation />} />
+        <Route path="/EditItinerary/:itinerary_id" element={<EditItinerary />} />
+        <Route path="/EditProduct/:product_id" element={<EditProduct />} />
         <Route path="/UsersTable" element={<UsersTable />} />
         <Route path="/MyActivities" element={<MyActivities />} />
-        <Route path="/MyHistoricalPlaces" element={<MyHistoricalPlaces />} />
+        <Route path="/MyHistoricalLocations" element={<MyHistoricalPlaces />} />
         <Route path="/MyItinerary" element={<MyItinerary />} />
         <Route path="/MyProducts" element={<MyProducts />} />
 
