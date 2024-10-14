@@ -105,6 +105,16 @@ export default class ItineraryService {
 
     return new response(true, { itinerary_id: itinerary_id }, "Itinerary activated", 200);
   }
+
+  public async flagItineraryInappropriateService(itinerary_id: Types.ObjectId): Promise<any> {
+    const itinerary = await this.itineraryModel.findById(itinerary_id);
+    if (!itinerary) throw new NotFoundError("Itinerary not found");
+
+    itinerary.inappropriate_flag = true;
+    await itinerary.save();
+    return new response(true, { itinerary_id: itinerary_id }, "Itinerary flagged", 200);
+  }
+
   // view all itineraries
   public async getAllItinerariesByTourGuideIDService(tour_guide_id: Types.ObjectId) {
     // why not use DTO for output one might ask

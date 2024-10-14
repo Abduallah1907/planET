@@ -58,6 +58,15 @@ export class ItineraryController {
     res.status(updatedItinerary.status).json(updatedItinerary);
   }
 
+  public async flagItinerary(req: Request, res: Response): Promise<any> {
+    const { itinerary_id } = req.params;
+    const itinerary_idObjectId = new Types.ObjectId(itinerary_id);
+
+    const itineraryService: ItineraryService = Container.get(ItineraryService);
+    const updatedItinerary = await itineraryService.flagItineraryInappropriateService(itinerary_idObjectId);
+    res.status(updatedItinerary.status).json(updatedItinerary);
+  }
+
   public async getAllItinerariesByTourGuideID(req: Request, res: Response): Promise<any> {
     const { tour_guide_id } = req.params;
     const tour_guide_idObjectId = new Types.ObjectId(tour_guide_id);
