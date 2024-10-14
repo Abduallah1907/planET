@@ -156,7 +156,7 @@ export class FileService {
       res.setHeader("Content-Disposition", `attachment; filename="${file.filename}"`);
 
       // Pipe the download stream to the response
-      downloadStream.pipe(createWriteStream(`./`+file.filename));
+      downloadStream.pipe(res);
       res.send(file.filename);
 
       // Handle the end of the stream
