@@ -189,7 +189,7 @@ export default class AdvertiserService {
     }
 
     const deletedAdvertiser = await this.advertiserModel.findByIdAndDelete(advertiserData._id);
-    const deletedTourGuideUser = await this.userModel.findByIdAndDelete(advertiserUser._id);
+    const deletedAdvertiserUser = await this.userModel.findByIdAndDelete(advertiserUser._id);
 
     return new response(true, {}, "Advertiser successfully deleted", 200);
   }

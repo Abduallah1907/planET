@@ -7,6 +7,7 @@ import { IUserInputDTO } from "@/interfaces/IUser";
 import UserService from "./userService";
 import { ISellerUpdateDTO } from "@/interfaces/ISeller";
 import bcrypt from "bcryptjs";
+import { IProduct } from "@/interfaces/IProduct";
 
 @Service()
 export default class SellerService {
@@ -119,9 +120,18 @@ export default class SellerService {
   public async deleteSellerAccountRequest(email: string): Promise<any> {
     const sellerUser = await this.userModel.findOne({ email });
     if (!sellerUser || sellerUser.role !== UserRoles.Seller) throw new NotFoundError("Seller user account was not found");
-    const sellerData = await this.sellerModel.findOne({ user_id: sellerUser._id });
+    const sellerData = await this.sellerModel.findOne({ user_id: sellerUser._id }).populate("products");
 
     if (!sellerData) throw new NotFoundError("Seller account was not found");
+
+    const products = sellerData.products as unknown as IProduct[];
+    products.forEach(async (product) => {
+      product.archieve_flag = true;
+      await product.save();
+    });
+
+    const deletedSeller = await this.sellerModel.findByIdAndDelete(sellerData._id);
+    const deletedSellerUser = await this.userModel.findByIdAndDelete(sellerUser._id);
 
     return new response(true, {}, "Seller successfully deleted", 200);
   }

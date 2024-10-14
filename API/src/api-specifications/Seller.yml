@@ -119,7 +119,7 @@ paths:
       tags:
         - Seller
       summary: Request deletion for seller
-      description: Deletes the account, but leaves any product created by the seller hidden
+      description: Deletes the account, but leaves any product created by the seller hidden (only viewable in order history and by admin)
       parameters:
         - in: path
           name: email
