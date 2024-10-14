@@ -134,7 +134,7 @@ export default (app: Router) => {
    *         schema:
    *           type: string
    *     responses:
-   *       200:
+   *       201:
    *         description: Tourist data.
    *       400:
    *         description: Bad request.
@@ -235,6 +235,117 @@ export default (app: Router) => {
    *         description: Bad request.
    *       500:
    *         description: Internal server error.
+   * /api/tourist/rateandcommentTourGuide/{tourist_id}:
+   *   post:
+   *     tags:
+   *       - Tourist
+   *     summary: Rate and comment tour guide
+   *     description: Rate and comment tour guide
+   *     parameters:
+   *       - in: path
+   *         name: tourist_id
+   *         required: true
+   *         description: Tourist id
+   *         schema:
+   *           type: string
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               tour_guide_email:
+   *                 type: string
+   *                 description: Email of the tour guide
+   *               comment:
+   *                 type: string
+   *                 description: Comment of the tourist
+   *               rating:
+   *                 type: number
+   *                 description: Rating of the tourist
+   *     responses:
+   *       200:
+   *         description: Tourist rated and commented tour guide
+   *       400:
+   *         description: Bad request
+   *       500:
+   *         description: Internal server error
+   * /api/tourist/rateandcommentItinerary/{tourist_id}:
+   *   post:
+   *     tags:
+   *       - Tourist
+   *     summary: Rate and comment itinerary
+   *     description: Rate and comment itinerary
+   *     parameters:
+   *       - in: path
+   *         name: tourist_id
+   *         required: true
+   *         description: Tourist id
+   *         schema:
+   *           type: string
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               tour_guide_email:
+   *                 type: string
+   *                 description: Email of the tour guide
+   *               name_of_itinerary:
+   *                 type: string
+   *                 description: Name of the itinerary
+   *               comment:
+   *                 type: string
+   *                 description: Comment of the tourist
+   *               rating:
+   *                 type: number
+   *                 description: Rating of the tourist
+   *     responses:
+   *       201:
+   *         description: Tourist rated and commented itinerary
+   *       400:
+   *         description: Bad request
+   *       500:
+   *         description: Internal server error
+   * /api/tourist/rateandcommentActivity/{tourist_id}:
+   *   post:
+   *     tags:
+   *       - Tourist
+   *     summary: Rate and comment activity
+   *     description: Rate and comment activity
+   *     parameters:
+   *       - in: path
+   *         name: tourist_id
+   *         required: true
+   *         description: Tourist id
+   *         schema:
+   *           type: string
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               name_of_activity:
+   *                 type: string
+   *                 description: Name of the activity
+   *               comment:
+   *                 type: string
+   *                 description: Comment on the activity
+   *               rating:
+   *                 type: number
+   *                 description: Rating on the activity
+   *     responses:
+   *       201:
+   *         description: Tourist rated and commented activity
+   *       400:
+   *         description: Bad request
+   *       500:
+   *         description: Internal server error
    */
   route.get(
     "/getTourist/:email",
@@ -246,8 +357,20 @@ export default (app: Router) => {
     authorize([UserRoles.Tourist]),
     touristController.updateTourist
   );
+  route.post("/createTourist", touristController.createTourist);
   route.post(
-    "/createTourist",
-    touristController.createTourist
+    "/rateandcommentTourGuide/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.rateandcommentTour_guide
+  );
+  route.post(
+    "/rateandcommentItinerary/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.rateandcommentItinerary
+  );
+  route.post(
+    "/rateandcommentActivity/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.rateandcommentActivity
   );
 };

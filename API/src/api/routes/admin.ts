@@ -329,38 +329,23 @@ export default (app: Router) => {
   // Given an email, name, phone number, username, and password,
   // automatically creates the account and returns the newly created governor
   // (excluding information about the salt and password)
-  router.post(
-    "/createGovernor",
-    authorize([]),
-    adminController.createGovernor
-  );
+  router.post("/createGovernor", authorize([]), adminController.createGovernor);
 
   // Given an email, name, phone number, username, and password,
   // automatically creates the account and returns the newly created admin
   // (excluding information about the salt and password)
-  router.post("/createAdmin",authorize([]) , adminController.createAdmin);
+  router.post("/createAdmin", authorize([]), adminController.createAdmin);
 
   // Give any string, it will create a new category
-  router.post(
-    "/createCategory",
-    authorize([]),
-    adminController.createCategory
-  );
+  router.post("/createCategory", authorize([]), adminController.createCategory);
 
   // Given a page number, it will return a list containing 10 categories
-  router.get(
-    "/getCategories/:page",
-    adminController.getCategories
-  );
+  router.get("/getCategories/:page", adminController.getCategories);
 
   // Given an two category names, it will update the first category name
   // and have its name be the second category name
   // if the category does not exist, it throws an error
-  router.put(
-    "/updateCategory",
-    authorize([]),
-    adminController.updateCategory
-  );
+  router.put("/updateCategory", authorize([]), adminController.updateCategory);
 
   // Given a category name, it will delete the category
   router.delete(
@@ -369,23 +354,8 @@ export default (app: Router) => {
     adminController.deleteCategory
   );
 
-  router.post(
-    "/createTag",
-    authorize([]),
-    adminController.createTag
-  );
-  router.get(
-    "/getTags/:page",
-    adminController.getTags
-  );
-  router.put(
-    "/updateTag",
-    authorize([]),
-    adminController.updateTag
-  );
-  router.delete(
-    "/deleteTag/:type",
-    authorize([]),
-    adminController.deleteTag
-  );
+  router.post("/createTag", authorize([]), adminController.createTag);
+  router.get("/getTags/:page", adminController.getTags);
+  router.put("/updateTag", authorize([]), adminController.updateTag);
+  router.delete("/deleteTag/:type", authorize([]), adminController.deleteTag);
 };

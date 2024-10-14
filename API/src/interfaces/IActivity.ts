@@ -19,6 +19,7 @@ export interface IActivity extends Document {
   booking_flag: boolean;
   inappropriate_flag: boolean;
   active_flag: boolean;
+  average_rating: number;
   advertiser_id: ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
