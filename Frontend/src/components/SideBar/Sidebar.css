@@ -5,12 +5,12 @@
     position: fixed; /* Fix to the side */
     height: 100%; /* Full height of the viewport */
     top: 0; /* Stick to the top of the viewport */
-    padding-top: 120px; /* Adjust for the top bar space */
+    padding-top: 150px; /* Adjust for the top bar space */
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Shadow effect */
     overflow-y: auto; /* Allow scrolling within the sidebar */
     transform: translateX(-100%); /* Initially hidden */
     transition: transform 0.3s ease; /* Smooth transition */
-    z-index: 1000; /* Ensure it is above other content */
+    z-index: 8; /* Ensure it is above other content */
 }
 
 /* Sidebar open state */

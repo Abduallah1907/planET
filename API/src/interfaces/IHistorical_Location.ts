@@ -25,7 +25,7 @@ export interface IHistorical_locationDTO {
   name: string;
   governor_id: ObjectId;
   description: string;
-  picture: string[];
+  picture: string;
   location: Location;
   opening_hours_from: string;
   opening_hours_to: string;
