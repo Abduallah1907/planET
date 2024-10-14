@@ -10,11 +10,11 @@ export default (app: Router) => {
 
   router.post("/upload", upload.single("file"), fileService.uploadFile);
 
-  // router.post(
-  //   "/uploadMultiple",
-  //   upload.array("files", 10),
-  //   fileService.uploadMultipleFiles
-  // );
+  router.post(
+    "/uploadMultiple",
+    upload.array("files", 10),
+    fileService.uploadMultipleFiles
+  );
 
-  // router.get("/download/:id", fileService.downloadFileById);
+  router.get("/download/:id", fileService.downloadFileById);
 };
