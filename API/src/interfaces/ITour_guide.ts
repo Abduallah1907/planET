@@ -1,10 +1,5 @@
 import { Document, ObjectId } from "mongoose";
-import {
-  IPrevious_work,
-  IPreviousWorkDeleteDTO,
-  IPreviousWorkInputDTO,
-  IPreviousWorkUpdateDTO,
-} from "./IPrevious_work";
+import { IPrevious_work, IPreviousWorkDeleteDTO, IPreviousWorkInputDTO, IPreviousWorkUpdateDTO } from "./IPrevious_work";
 
 export interface ITour_Guide extends Document {
   user_id: ObjectId;
