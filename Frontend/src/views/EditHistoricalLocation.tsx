@@ -11,6 +11,8 @@ import { useAppSelector } from "../store/hooks";
 import { useParams } from "react-router-dom";
 import showToast from "../utils/showToast";
 import { ToastTypes } from "../utils/toastTypes";
+import DaysModal from "../components/DaysModals";
+import { set } from "react-datepicker/dist/date_utils";
 
 interface FormData {
   name: string;
@@ -42,6 +44,8 @@ const HistoricalPlaceForm: React.FC = () => {
   const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTags, setSelectedTags] = useState<SelectedTag[]>([]);
   const [currentTags, setCurrentTags] = useState<Tag[]>([]);
+  const [showDaysModal, setShowDaysModal] = useState(false); // State to manage modal visibility
+  const [selectedDays, setSelectedDays] = useState<string[]>([]); // State to manage selected days
 
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -74,6 +78,8 @@ const HistoricalPlaceForm: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const Governer = useAppSelector((state) => state.user);
+
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Add form submission logic here
@@ -83,12 +89,12 @@ const HistoricalPlaceForm: React.FC = () => {
       //   Governer.stakeholder_id,
       //   formData
       // );
-      console.log(selectedTags)
       const tagsMap = selectedTags.reduce((acc, tag) => {
         acc[tag.id] = tag.value;
         return acc;
       }, {} as { [key: string]: string });
       console.log(tagsMap)
+      console.log(formData)
       // console.log("Historical Location updated successfully:", updatedLocation);
     } catch (error) {
       console.error("Failed to update Historical Location:", error);
@@ -109,7 +115,6 @@ const HistoricalPlaceForm: React.FC = () => {
 
   const getHistorical_Location = async () => {
     if (historical_location_id) {
-      console.log("Wasal")
       let locationData = await HistoricalService.getHistoricalLocationByIdForGoverner(
         historical_location_id
       );
@@ -127,7 +132,7 @@ const HistoricalPlaceForm: React.FC = () => {
         studentPrice: locationData.student_price,
         isActive: locationData.isActive,
       })
-      console.log(locationData)
+      setSelectedTags(Object.entries(locationData.tags).map(([key, value]) => ({ id: key, value: value as string })));
     } else {
       console.error("Historical location ID is undefined");
     }
@@ -142,21 +147,26 @@ const HistoricalPlaceForm: React.FC = () => {
   }, [historical_location_id]);
 
   const handleAddTag = () => {
-    if(currentTags.length === tags.length) {
+    if(selectedTags.length === tags.length) {
       showToast("All tags have been added", ToastTypes.ERROR);
       return;
     };
-    setCurrentTags([...currentTags, tags[0]]);
+    setSelectedTags([...selectedTags, { id: tags[0].id, value: "" }]);
   }
 
   const handleRemoveTag = (index: number) => {
-    const newCurrentTags = currentTags.filter((_, i) => i !== index);
     const newSelectedTags = selectedTags.filter((_, i) => i !== index);
-    setCurrentTags(newCurrentTags);
     setSelectedTags(newSelectedTags);
   };
 
-  const Governer = useAppSelector((state) => state.user);
+  const handleDaysInputClick = () => {
+    setShowDaysModal(true);
+  };
+
+  const handleDaysModalClose = () => {
+    setShowDaysModal(false);
+    setFormData({ ...formData, opening_days: selectedDays });
+  };
 
   return (
     <div className="profile-form-container">
@@ -191,7 +201,7 @@ const HistoricalPlaceForm: React.FC = () => {
                 label="Opening Days"
                 type="text"
                 value={formData.opening_days.join(",")}
-                onChange={handleInputChange}
+                onChange={handleDaysInputClick}
                 required
                 placeholder={""}
                 id={"opening_days"}
@@ -205,7 +215,6 @@ const HistoricalPlaceForm: React.FC = () => {
                 <Form.Control
                   type="file"
                   onChange={handleFileChange}
-                  required
                 />
               </Form.Group>
             </Col>
@@ -325,17 +334,17 @@ const HistoricalPlaceForm: React.FC = () => {
             <Col md={12}>
               <Form.Group className="form-group" controlId="tags">
                 <Form.Label>Tags</Form.Label>
-                {currentTags.map((tag: Tag, index) => {
+                {selectedTags.map((tag: SelectedTag, index) => {
                   return (
                     <Row key={index} className="mt-1">
                       <Col>
                         <div className="custom-select-container">
                           <Form.Control
                             as="select"
-                            value={selectedTags[index]?.id || ""}
+                            value={tag.id || ""}
                             onChange={(e) => {
                               const selectedKey = e.target.value;
-                              const selectedValue = selectedTags[index]?.value || "";
+                              const selectedValue = tag.value || "";
                               const newSelectedTags = [...selectedTags];
                               newSelectedTags[index] = { id: selectedKey, value: selectedValue };
                               setSelectedTags(newSelectedTags);
@@ -358,7 +367,7 @@ const HistoricalPlaceForm: React.FC = () => {
                         <div className="custom-select-container">
                           <Form.Control
                             as="select"
-                            value={selectedTags[index]?.value || ""}
+                            value={tag.value || ""}
                             onChange={(e) => {
                               const selectedValue = e.target.value;
                               const newSelectedTags = [...selectedTags];
@@ -369,7 +378,7 @@ const HistoricalPlaceForm: React.FC = () => {
                           >
                             <option value="">Select Value</option>
                             {tags
-                              .find((t) => t.id === selectedTags[index]?.id)
+                              .find((t) => t.id === tag.id)
                               ?.values.map((value, index) => (
                                 <option key={index} value={value}>
                                   {value}
@@ -421,6 +430,12 @@ const HistoricalPlaceForm: React.FC = () => {
           </Button>
         </Form>
       </Container>
+      <DaysModal
+        show={showDaysModal}
+        handleClose={handleDaysModalClose}
+        selectedDays={selectedDays}
+        setSelectedDays={setSelectedDays}
+      />
     </div>
   );
 };

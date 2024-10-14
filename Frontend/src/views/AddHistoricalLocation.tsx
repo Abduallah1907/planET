@@ -7,127 +7,159 @@ import "./tagsinput.css";
 import tagsData from "./tags.json"; // Ensure this path is correct
 import { BiChevronDown } from "react-icons/bi";
 import { HistoricalService } from "../services/HistoricalService";
+import { useAppSelector } from "../store/hooks";
+import { useParams } from "react-router-dom";
+import showToast from "../utils/showToast";
+import { ToastTypes } from "../utils/toastTypes";
+import DaysModal from "../components/DaysModals";
+import { set } from "react-datepicker/dist/date_utils";
+
+interface FormData {
+  name: string;
+  opening_days: string[];
+  description: string;
+  picture: string;
+  location: string;
+  openingFrom: string;
+  openingTo: string;
+  nativePrice: number;
+  foreignPrice: number;
+  studentPrice: number;
+  isActive: boolean;
+}
+
+interface Tag {
+  id: string;
+  name: string;
+  values: string[];
+}
+
+interface SelectedTag {
+  id: string;
+  value: string
+}
 
 const HistoricalPlaceForm: React.FC = () => {
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [inputValue, setInputValue] = useState<string>("");
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const { historical_location_id } = useParams();
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<SelectedTag[]>([]);
+  const [currentTags, setCurrentTags] = useState<Tag[]>([]);
+  const [showDaysModal, setShowDaysModal] = useState(false); // State to manage modal visibility
+  const [selectedDays, setSelectedDays] = useState<string[]>([]); // State to manage selected days
 
-  const [category, setCategory] = useState<string>("");
-  const [name, setName] = useState<string>("");
-  const [date, setDate] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [picture, setPicture] = useState<File | null>(null);
-  const [location, setLocation] = useState<string>("");
-  const [openingFrom, setOpeningFrom] = useState<string>("");
-  const [openingTo, setOpeningTo] = useState<string>("");
-  const [nativePrice, setNativePrice] = useState<string>("");
-  const [foreignPrice, setForeignPrice] = useState<string>("");
-  const [studentPrice, setStudentPrice] = useState<string>("");
-  const [isActive, setIsActive] = useState<boolean>(true);
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    opening_days: [],
+    description: "",
+    picture: "",
+    location: "",
+    openingFrom: "",
+    openingTo: "",
+    nativePrice: 0,
+    foreignPrice: 0,
+    studentPrice: 0,
+    isActive: true,
+  });
 
-  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && inputValue) {
-      const tag = inputValue.trim();
-      if (tag && !tagsData.includes(tag)) {
-        alert("Invalid tag");
-        setInputValue("");
-        return;
-      }
-      if (tag && !selectedTags.includes(tag)) {
-        setSelectedTags((prev) => [...prev, tag]);
-        setInputValue("");
-      }
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setFormData((prev) => ({
+          ...prev,
+          picture: reader.result as string,
+        }));
+      };
+      reader.readAsDataURL(e.target.files[0]);
     }
-  };
-
-  const handleDeleteTag = (tagToDelete: string) => {
-    setSelectedTags((prev) => prev.filter((tag) => tag !== tagToDelete));
-  };
-
+  }
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-  useEffect(() => {
-    if (inputValue.startsWith("#")) {
-      const filteredSuggestions = tagsData.filter((tag: string) =>
-        tag.toLowerCase().includes(inputValue.slice(1).toLowerCase())
-      );
-      setSuggestions(filteredSuggestions);
-    } else {
-      setSuggestions([]);
-    }
-  }, [inputValue]);
+  const Governer = useAppSelector((state) => state.user);
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Add form submission logic here
-    const formData = {
-      category,
-      name,
-      date,
-      description,
-      picture,
-      location,
-      openingFrom,
-      openingTo,
-      nativePrice,
-      foreignPrice,
-      studentPrice,
-      selectedTags,
-      isActive,
-    };
+    // console.log("Form submitted:", formData);
     try {
-      const historicalLocation = await HistoricalService.addHistoricalLocation(
-        formData
-      ); // Call the API
+      // const updatedLocation = await HistoricalService.editHistoricalLocation(
+      //   Governer.stakeholder_id,
+      //   formData
+      // );
+      const tagsMap = selectedTags.reduce((acc, tag) => {
+        acc[tag.id] = tag.value;
+        return acc;
+      }, {} as { [key: string]: string });
+      console.log(tagsMap)
+      // console.log("Historical Location updated successfully:", updatedLocation);
     } catch (error) {
-      console.error("Historical Location failed: ", error);
+      console.error("Failed to update Historical Location:", error);
     }
+  };
+
+  const getAllHistoricalTags = async () => {
+    const tagsData = await HistoricalService.getAllHistorical_Tags();
+    const mappedTags = tagsData.data.map((tag: any) => {
+      return {
+        id: tag._id,
+        name: tag.name,
+        values: tag.Values,
+      };
+    });
+    setTags(mappedTags);
+  }
+
+  useEffect(() => {
+    getAllHistoricalTags();
+  }, []);
+
+  const handleAddTag = () => {
+    if(selectedTags.length === tags.length) {
+      showToast("All tags have been added", ToastTypes.ERROR);
+      return;
+    };
+    setSelectedTags([...selectedTags, { id: tags[0].id, value: "" }]);
+  }
+
+  const handleRemoveTag = (index: number) => {
+    const newSelectedTags = selectedTags.filter((_, i) => i !== index);
+    setSelectedTags(newSelectedTags);
+  };
+
+  const handleDaysInputClick = () => {
+    setShowDaysModal(true);
+  };
+
+  const handleDaysModalClose = () => {
+    setShowDaysModal(false);
+    setFormData({ ...formData, opening_days: selectedDays });
   };
 
   return (
     <div className="profile-form-container">
-      <Row className="align-items-center mb-4">
+      <Row className="align-items-center mb-4 w-100">
         <Col xs={7} className="text-left">
-          <h2 className="my-profile-heading">Add Historical Place</h2>
+          <h2 className="my-profile-heading">Add Historical Location</h2>
         </Col>
       </Row>
       <Container className="mt-4">
         <Form onSubmit={handleFormSubmit}>
           <Row>
-            {/* <Col>
-              <Form.Group className="form-group" controlId="category">
-                <Form.Label>Category</Form.Label>
-                <div className="custom-select-container">
-                  <Form.Control
-                    as="select"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    <option value="Historical Site">Historical Site</option>
-                    <option value="Monument">Monument</option>
-                    <option value="Museum">Museum</option>
-                  </Form.Control>
-                  <BiChevronDown className="dropdown-icon" />
-                </div>
-              </Form.Group>
-            </Col> */}
             <Col>
               <AdminFormGroup
                 className="form-group"
                 label="Name"
                 type="text"
                 placeholder="Enter Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={formData.name}
+                onChange={handleInputChange}
                 required
-                id={""}
+                id={"name"}
                 disabled={false}
-                name={""}
+                name={"name"}
               />
             </Col>
           </Row>
@@ -136,15 +168,15 @@ const HistoricalPlaceForm: React.FC = () => {
             <Col>
               <AdminFormGroup
                 className="form-group"
-                label="Date"
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
+                label="Opening Days"
+                type="text"
+                value={formData.opening_days.join(",")}
+                onChange={handleDaysInputClick}
                 required
                 placeholder={""}
-                id={""}
+                id={"opening_days"}
                 disabled={false}
-                name={""}
+                name={"opening_days"}
               />
             </Col>
             <Col>
@@ -152,10 +184,7 @@ const HistoricalPlaceForm: React.FC = () => {
                 <Form.Label>Picture</Form.Label>
                 <Form.Control
                   type="file"
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setPicture(e.target.files ? e.target.files[0] : null)
-                  }
-                  required
+                  onChange={handleFileChange}
                 />
               </Form.Group>
             </Col>
@@ -167,13 +196,13 @@ const HistoricalPlaceForm: React.FC = () => {
                 className="form-group"
                 label="Description"
                 type="textarea"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                value={formData.description}
+                onChange={handleInputChange}
                 required
                 placeholder={""}
-                id={""}
+                id={"description"}
                 disabled={false}
-                name={""}
+                name={"description"}
               />
             </Col>
           </Row>
@@ -185,12 +214,12 @@ const HistoricalPlaceForm: React.FC = () => {
                 label="Location"
                 type="text"
                 placeholder="Enter Location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
+                value={formData.location}
+                onChange={handleInputChange}
                 required
-                id={""}
+                id={"location"}
                 disabled={false}
-                name={""}
+                name={"location"}
               />
             </Col>
           </Row>
@@ -201,13 +230,13 @@ const HistoricalPlaceForm: React.FC = () => {
                 className="form-group"
                 label="Opening Hours (From)"
                 type="time"
-                value={openingFrom}
-                onChange={(e) => setOpeningFrom(e.target.value)}
+                value={formData.openingFrom}
+                onChange={handleInputChange}
                 required
                 placeholder={""}
-                id={""}
+                id={"openingFrom"}
                 disabled={false}
-                name={""}
+                name={"openingFrom"}
               />
             </Col>
             <Col>
@@ -215,13 +244,13 @@ const HistoricalPlaceForm: React.FC = () => {
                 className="form-group"
                 label="Opening Hours (To)"
                 type="time"
-                value={openingTo}
-                onChange={(e) => setOpeningTo(e.target.value)}
+                value={formData.openingTo}
+                onChange={handleInputChange}
                 required
                 placeholder={""}
-                id={""}
+                id={"openingTo"}
                 disabled={false}
-                name={""}
+                name={"openingTo"}
               />
             </Col>
           </Row>
@@ -233,12 +262,12 @@ const HistoricalPlaceForm: React.FC = () => {
                 label="Native Price"
                 type="number"
                 placeholder="Enter Native Price"
-                value={nativePrice}
-                onChange={(e) => setNativePrice(e.target.value)}
+                value={String(formData.nativePrice)}
+                onChange={handleInputChange}
                 required
-                id={""}
+                id={"nativePrice"}
                 disabled={false}
-                name={""}
+                name={"nativePrice"}
               />
             </Col>
             <Col>
@@ -247,12 +276,12 @@ const HistoricalPlaceForm: React.FC = () => {
                 label="Foreign Price"
                 type="number"
                 placeholder="Enter Foreign Price"
-                value={foreignPrice}
-                onChange={(e) => setForeignPrice(e.target.value)}
+                value={String(formData.foreignPrice)}
+                onChange={handleInputChange}
                 required
-                id={""}
+                id={"foreignPrice"}
                 disabled={false}
-                name={""}
+                name={"foreignPrice"}
               />
             </Col>
             <Col>
@@ -261,59 +290,95 @@ const HistoricalPlaceForm: React.FC = () => {
                 label="Student Price"
                 type="number"
                 placeholder="Enter Student Price"
-                value={studentPrice}
-                onChange={(e) => setStudentPrice(e.target.value)}
+                value={String(formData.studentPrice)}
+                onChange={handleInputChange}
                 required
-                id={""}
+                id={"studentPrice"}
                 disabled={false}
-                name={""}
+                name={"studentPrice"}
               />
             </Col>
           </Row>
 
           <Row>
-            <Col>
+            <Col md={12}>
               <Form.Group className="form-group" controlId="tags">
                 <Form.Label>Tags</Form.Label>
-                <div className="tags-input">
-                  {selectedTags.map((tag) => (
-                    <span key={tag} className="tag">
-                      {tag}{" "}
-                      <button
-                        type="button"
-                        className="remove-tag"
-                        onClick={() => handleDeleteTag(tag)}
-                      >
-                        &times;
-                      </button>
-                    </span>
-                  ))}
-                  <input
-                    type="text"
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    onKeyDown={handleAddTag}
-                    placeholder="Add a tag (e.g., #historical)"
-                  />
-                </div>
-                {suggestions.length > 0 && (
-                  <ul className="suggestions-list">
-                    {suggestions.map((suggestion) => (
-                      <li
-                        key={suggestion}
-                        onClick={() => {
-                          if (!selectedTags.includes(suggestion)) {
-                            setSelectedTags((prev) => [...prev, suggestion]);
-                          }
-                          setInputValue("");
-                        }}
-                      >
-                        {suggestion}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                {selectedTags.map((tag: SelectedTag, index) => {
+                  return (
+                    <Row key={index} className="mt-1">
+                      <Col>
+                        <div className="custom-select-container">
+                          <Form.Control
+                            as="select"
+                            value={tag.id || ""}
+                            onChange={(e) => {
+                              const selectedKey = e.target.value;
+                              const selectedValue = tag.value || "";
+                              const newSelectedTags = [...selectedTags];
+                              newSelectedTags[index] = { id: selectedKey, value: selectedValue };
+                              setSelectedTags(newSelectedTags);
+                            }}
+                            required
+                          >
+                            <option value="">Select Tag</option>
+                            {tags
+                            .filter((value) => !selectedTags.some(tag => tag.id === value.id) || value.id === selectedTags[index]?.id)
+                            .map((value, index) => (
+                              <option key={index} value={value.id}>
+                                {value.name}
+                              </option>
+                            ))}
+                          </Form.Control>
+                          <BiChevronDown className="dropdown-icon" />
+                        </div>
+                      </Col>
+                      <Col>
+                        <div className="custom-select-container">
+                          <Form.Control
+                            as="select"
+                            value={tag.value || ""}
+                            onChange={(e) => {
+                              const selectedValue = e.target.value;
+                              const newSelectedTags = [...selectedTags];
+                              newSelectedTags[index].value = selectedValue;
+                              setSelectedTags(newSelectedTags);
+                            }}
+                            required
+                          >
+                            <option value="">Select Value</option>
+                            {tags
+                              .find((t) => t.id === tag.id)
+                              ?.values.map((value, index) => (
+                                <option key={index} value={value}>
+                                  {value}
+                                </option>
+                              ))}
+                          </Form.Control>
+                          <BiChevronDown className="dropdown-icon" />
+                        </div>
+                      </Col>
+                      <Col xs="auto">
+                        <Button
+                          variant="danger"
+                          onClick={() => handleRemoveTag(index)}
+                        >
+                          Remove
+                        </Button>
+                      </Col>
+                    </Row>
+                  );
+                })}
               </Form.Group>
+            </Col>
+            <Col>
+              <Button
+                className="mt-3"
+                variant="main-inverse"
+                onClick={handleAddTag}
+              >
+                Add Another Tag
+              </Button>
             </Col>
           </Row>
 
@@ -323,18 +388,24 @@ const HistoricalPlaceForm: React.FC = () => {
                 <Form.Check
                   type="checkbox"
                   label="Active"
-                  checked={isActive}
-                  onChange={(e) => setIsActive(e.target.checked)}
+                  checked={formData.isActive}
+                  onChange={handleInputChange}
                 />
               </Form.Group>
             </Col>
           </Row>
 
           <Button type="submit" className="update-btn mt-4 mb-5 ">
-            Submit
+            Update
           </Button>
         </Form>
       </Container>
+      <DaysModal
+        show={showDaysModal}
+        handleClose={handleDaysModalClose}
+        selectedDays={selectedDays}
+        setSelectedDays={setSelectedDays}
+      />
     </div>
   );
 };

@@ -7,7 +7,7 @@
     align-items: center; 
     position: fixed; /* Fix the top bar at the top */
     width: 100%; /* Full width of the screen */
-    z-index: 1100; /* Ensure the top bar is above the sidebar */
+    z-index: 10; /* Ensure the top bar is above the sidebar */
 }
 
 .sidebar-toggle-icon {
