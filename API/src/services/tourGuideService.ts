@@ -269,15 +269,18 @@ export default class TourGuideService {
     if (!tourGuideUser || tourGuideUser.role !== UserRoles.TourGuide) throw new NotFoundError("Tour guide user account was not found");
     // the reason for the explicit type is because for some reason the interfaces are set up in a wron way, and idk how to fix
     // also whether available dates acutally works is up to luck, pray
-    const { itineraries: tourGuideUpcomingItineraries } = await this.tourGuideModel.findOne({ user_id: tourGuideUser._id }).populate({
-      path: "itineraries",
-      match: { available_dates: { $elemMath: { $gt: today } } },
-    });
+    const { itineraries: tourGuideUpcomingItineraries } = await this.tourGuideModel
+      .findOne({ user_id: tourGuideUser._id })
+      .populate({
+        path: "itineraries",
+        match: { available_dates: { $elemMath: { $gt: today } } },
+      })
+      .select("itineraries");
 
     if (!tourGuideUpcomingItineraries) throw new NotFoundError("Tour guide user account was not found");
-
     const bookedItineraries = await this.ticketModel.find({ booking_id: { $in: tourGuideUpcomingItineraries } });
-    if (bookedItineraries)
+    console.log(bookedItineraries);
+    if (bookedItineraries.length !== 0)
       throw new BadRequestError("There are still upcoming itineraries that are booked. Cannot delete until these itineraries are fufilled");
 
     const tourGuideData: ITour_Guide = await this.tourGuideModel.findOne({ user_id: tourGuideUser._id }).populate("itineraries");
@@ -288,6 +291,7 @@ export default class TourGuideService {
         await itinerary.save();
       });
     }
+    console.log(tourGuideItineraries);
 
     const deletedTourGuide = await this.tourGuideModel.findByIdAndDelete(tourGuideData._id);
     const deletedTourGuideUser = await this.userModel.findByIdAndDelete(tourGuideUser._id);

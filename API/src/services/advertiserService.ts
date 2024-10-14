@@ -9,6 +9,7 @@ import UserService from "./userService";
 import user from "@/api/routes/user";
 import bcrypt from "bcryptjs";
 import { FileService } from "./fileService";
+import { IActivity } from "@/interfaces/IActivity";
 @Service()
 export default class AdvertiserService {
   constructor(
@@ -173,8 +174,22 @@ export default class AdvertiserService {
     if (!advertiserData) throw new NotFoundError("Advertiser account was not found");
 
     const bookedItineraries = await this.ticketModel.find({ booking_id: { $in: advertiserData.activities } });
-    if (bookedItineraries)
+    if (bookedItineraries.length !== 0)
       throw new BadRequestError("There are still upcoming activites that are booked. Cannot delete until these activities are fufilled");
+
+    // the reason for this retarded way of accessing the activities is because typescript complains if we directly derefernce the activities
+    // because the interfaces + models are set up in a weird way
+    const advertiserActivities = await this.advertiserModel.findById(advertiserData._id).select("activities").populate("activities");
+    if (advertiserActivities) {
+      const activities = advertiserActivities.activities as unknown as IActivity[];
+      activities.forEach(async (activity) => {
+        activity.active_flag = false;
+        await activity.save();
+      });
+    }
+
+    const deletedAdvertiser = await this.advertiserModel.findByIdAndDelete(advertiserData._id);
+    const deletedTourGuideUser = await this.userModel.findByIdAndDelete(advertiserUser._id);
 
     return new response(true, {}, "Advertiser successfully deleted", 200);
   }

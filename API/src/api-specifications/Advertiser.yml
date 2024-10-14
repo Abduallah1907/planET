@@ -151,7 +151,8 @@ paths:
       tags:
         - Advertiser
       summary: Request deletion for advertiser
-      description: Deletes the account and all their activities ONLY if no current upcoming activity has been booked by tourists.
+      description: Deletes the account and hides all their activities ONLY if no current upcoming activity has been booked by tourists.
+        Activities are shown only to the admin and in history of tourists.
       parameters:
         - in: path
           name: email
