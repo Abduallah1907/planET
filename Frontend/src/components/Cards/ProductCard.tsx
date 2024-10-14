@@ -69,7 +69,7 @@ const ProductCard = ({
   };
   return (
     <Card className="p-3 shadow-sm" style={{ borderRadius: "10px", height: "100%" }}>
-      <Row className="h-100 d-flex align-items-stretch justify-content-between">
+      <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
         {/* Image Section */}
         <Col md={2} className="p-0 d-flex align-items-stretch">
           <Image

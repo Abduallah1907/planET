@@ -1,13 +1,11 @@
-import React, { useState, ChangeEvent, useEffect } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import AdminFormGroup from "../components/FormGroup/FormGroup"; // Reuse the form group component
-import "../components/FormGroup.css"; // Reuse existing CSS
-import "./CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
-import { useAppSelector } from "../store/hooks";
-import { ProductService } from "../services/ProductService";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Reuse the form group component
+import { useAppSelector } from "../../store/hooks";
+import { ProductService } from "../../services/ProductService";
+import { useNavigate, useParams } from "react-router-dom";
 
-interface FormData {
+interface FormData{
   name: string;
   description: string;
   picture: File | null;
@@ -16,9 +14,7 @@ interface FormData {
   archive_flag: boolean;
 }
 
-const EditProduct: React.FC = () => {
-  const { product_id } = useParams();
-  const navigate = useNavigate();
+const AddNewProduct: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     description: "",
@@ -29,63 +25,43 @@ const EditProduct: React.FC = () => {
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     });
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFormData({ ...formData, picture: e.target.files[0] });
+      setFormData({...formData,picture:e.target.files[0]});
     }
   };
-
-  const getProduct = async () => {
-    if (product_id) {
-      let product = await ProductService.getProductById(product_id);
-      product = product.data;
-      setFormData({
-        name: product.name,
-        description: product.description,
-        picture: product.picture,
-        price: product.price,
-        quantity: product.quantity,
-        archive_flag: product.archive_flag,
-      });
-    } else {
-      console.error("Product ID is undefined");
-    }
-  }
-
-  useEffect(() => {
-    getProduct();
-  }, [product_id]);
-
+  const seller_id = useAppSelector((state) => state.user.stakeholder_id?._id);
+  const navigate = useNavigate();
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const productData = {
       name: formData.name,
       description: formData.description,
-      picture: formData.picture ? formData.picture.toString() : "",
       price: formData.price,
+      picture: formData.picture ? formData.picture.toString() : "",
       quantity: formData.quantity,
       archive_flag: formData.archive_flag,
     };
-    if (product_id) {
-      await ProductService.EditProduct(product_id, productData);
-      navigate("/MyProducts");
-    } else {
-      console.error("Product ID is undefined");
-    }
+     if (seller_id) {
+       await ProductService.createProduct(seller_id, productData);
+       navigate("/MyProducts");
+     } else {
+       console.error("Seller ID is undefined");}
   };
 
   return (
     <div className="profile-form-container">
       <Row className="align-items-center mb-4">
         <Col xs={7} className="text-left">
-          <h2 className="my-profile-heading">Edit Product</h2>
+          <h2 className="my-profile-heading">Add New Product</h2>
         </Col>
       </Row>
 
@@ -95,7 +71,7 @@ const EditProduct: React.FC = () => {
             <Col>
               <AdminFormGroup
                 label="Product Name"
-                type="text"
+                type="textarea"
                 placeholder="Enter Product Name"
                 id="name"
                 disabled={false}
@@ -130,6 +106,7 @@ const EditProduct: React.FC = () => {
                 <Form.Control
                   type="file"
                   name="productPicture"
+                  className="custom-form-control"
                   accept="image/*"
                   onChange={handleFileChange}
                 />
@@ -146,7 +123,7 @@ const EditProduct: React.FC = () => {
                 id="price"
                 disabled={false}
                 required={true}
-                value={String(formData.price)}
+                value={formData.price.toString()}
                 onChange={handleChange}
                 name="price"
               />
@@ -159,10 +136,10 @@ const EditProduct: React.FC = () => {
                 id="quantity"
                 disabled={false}
                 required={true}
-                value={String(formData.quantity)}
+                value={formData.quantity.toString()}
                 onChange={handleChange}
                 name="quantity"
-              // Ensure only integer values
+                // Ensure only integer values
               />
             </Col>
           </Row>
@@ -181,8 +158,8 @@ const EditProduct: React.FC = () => {
             </Col>
           </Row>
 
-          <Button type="submit" className="update-btn mt-3">
-            Update Product
+          <Button variant="main-inverse" type="submit" className="mt-3" onClick={handleSubmit}>
+            Add Product
           </Button>
         </Form>
       </Container>
@@ -190,4 +167,4 @@ const EditProduct: React.FC = () => {
   );
 };
 
-export default EditProduct;
+export default AddNewProduct;

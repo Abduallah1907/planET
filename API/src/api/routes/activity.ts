@@ -7,8 +7,7 @@ import UserRoles from "@/types/enums/userRoles";
 const router = Router();
 
 export default (app: Router) => {
-  const activityController: ActivityController =
-    Container.get(ActivityController);
+  const activityController: ActivityController = Container.get(ActivityController);
   app.use("/activity", router);
 
   /**
@@ -222,7 +221,7 @@ export default (app: Router) => {
    *                     type: string
    *                 special_discount:
    *                   type: number
-   *                 booking_flag:
+   *                 archive_flag:
    *                   type: boolean
    *       responses:
    *         '200':
@@ -368,47 +367,21 @@ export default (app: Router) => {
    *           description: Internal server error.
    */
 
-  router.post(
-    "/addActivity",
-    authorize([UserRoles.Advertiser]),
-    activityController.createActivity
-  );
+  router.post("/addActivity", authorize([UserRoles.Advertiser]), activityController.createActivity);
   router.get("/getAllActivities", activityController.getAllActivities);
 
   router.get("/getActivityByID/:id", activityController.getActivityByID);
 
-  router.get(
-    "/getActivityByAdvertiserID/:advertiserID",
-    authorize([UserRoles.Advertiser]),
-    activityController.getActivityByAdvertiserID
-  );
+  router.get("/getActivityByAdvertiserID/:advertiserID", authorize([UserRoles.Advertiser]), activityController.getActivityByAdvertiserID);
 
-  router.put(
-    "/updateActivity/:id",
-    authorize([UserRoles.Advertiser]),
-    activityController.updateActivity
-  );
+  router.put("/updateActivity/:id", authorize([UserRoles.Advertiser]), activityController.updateActivity);
 
-  router.delete(
-    "/deleteActivity/:id",
-    authorize([UserRoles.Advertiser]),
-    activityController.deleteActivity
-  );
+  router.delete("/deleteActivity/:id", authorize([UserRoles.Advertiser]), activityController.deleteActivity);
 
-  router.get(
-    "/getSearchActivity",
-    authorize([UserRoles.Tourist]),
-    activityController.getSearchActivity
-  );
-  router.get(
-    "/getUpcomingActivities",
-    activityController.getUpcomingActivities
-  );
+  router.get("/getSearchActivity", authorize([UserRoles.Tourist]), activityController.getSearchActivity);
+  router.get("/getUpcomingActivities", activityController.getUpcomingActivities);
 
-  router.get(
-    "/getFilteredActivities",
-    activityController.getFilteredActivities
-  );
+  router.get("/getFilteredActivities", activityController.getFilteredActivities);
   router.get("/getSortedActivities", activityController.getSortedActivities);
   router.get("/getFilterComponents", activityController.getFilterComponents);
 };

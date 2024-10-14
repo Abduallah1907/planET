@@ -19,6 +19,7 @@ export interface IActivity extends Document {
   booking_flag: boolean;
   inappropriate_flag: boolean;
   active_flag: boolean;
+  average_rating: number;
   advertiser_id: ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
@@ -39,6 +40,7 @@ export interface IActivityDTO {
   special_discount?: number;
   tags?: ObjectId[];
   booking_flag: boolean;
+  active_flag: boolean;
   advertiser_id: ObjectId;
 }
 export interface UpdateIActivityDTO {
@@ -55,5 +57,5 @@ export interface UpdateIActivityDTO {
   category?: ObjectId;
   special_discount?: number;
   tags?: ObjectId[];
-  booking_flag?: boolean;
+  active_flag?: boolean;
 }

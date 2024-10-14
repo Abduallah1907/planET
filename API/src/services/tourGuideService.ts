@@ -2,8 +2,8 @@ import mongoose, { ObjectId, Types, Date } from "mongoose";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import Container, { Inject, Service } from "typedi";
-import { BadRequestError, HttpError, InternalServerError, NotFoundError } from "@/types/Errors";
 import { ITour_Guide, ITour_GuideUpdateDTO } from "@/interfaces/ITour_guide";
+import { UnauthorizedError, HttpError, InternalServerError, NotFoundError, ForbiddenError, BadRequestError } from "@/types/Errors";
 import { IPreviousWorkInputDTO, IPreviousWorkOutputDTO, IPreviousWorkUpdateDTO } from "@/interfaces/IPrevious_work";
 import { ITourGuideInput, ITourGuideOutput } from "@/interfaces/ITour_guide";
 import UserService from "./userService";
@@ -16,7 +16,8 @@ export default class TourGuideService {
     @Inject("userModel") private userModel: Models.UserModel,
     @Inject("tour_guideModel") private tourGuideModel: Models.Tour_guideModel,
     @Inject("previous_workModel") private previousWorkModel: Models.Previous_workModel,
-    @Inject("ticketModel") private ticketModel: Models.TicketModel
+    @Inject("ticketModel") private ticketModel: Models.TicketModel,
+    @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel
   ) {}
 
   // CUD for work experiences

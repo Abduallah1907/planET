@@ -86,11 +86,7 @@ export default function Login() {
           dispatch(
             setNavItems([
               { path: "/Advertiser", label: "Profile" },
-              { path: "/AdvertiserCreate", label: "Create Advertisement" },
-              {
-                path: "/AdvertiserCreateUpdate",
-                label: "Update Advertisement",
-              },
+              { path: "/AddActivity", label: "Create Activity" },
               { path: "/MyActivities", label: "My Activites" },
             ])
           );
@@ -127,6 +123,10 @@ export default function Login() {
                 path: "/MyHistoricalLocations",
                 label: "My Historical Locations",
               },
+              {
+                path: "/HistoricalTags",
+                label: "Historical Tags",
+              }
             ])
           );
 
@@ -143,7 +143,8 @@ export default function Login() {
               { path: "/governer", label: "Create Governer" },
               { path: "/Categories", label: "Categories" },
               { path: "/Tags", label: "Tags" },
-              { path: "/UsersTable", label: "Get Users" },
+              { path: "/HistoricalTags", label: "Historical Tags" },
+              { path: "/UsersTable", label: "User Managment" },
             ])
           );
           navigate("/AdminDashboard");

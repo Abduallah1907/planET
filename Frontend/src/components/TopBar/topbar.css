@@ -7,7 +7,7 @@
     align-items: center; 
     position: fixed; /* Fix the top bar at the top */
     width: 100%; /* Full width of the screen */
-    z-index: 1100; /* Ensure the top bar is above the sidebar */
+    z-index: 12; /* Ensure the top bar is above the sidebar */
 }
 
 .sidebar-toggle-icon {
@@ -64,14 +64,11 @@
 
 .btn-help:hover {
     scale: 0.85; /* Adjust as needed */
-    
-   
     background-color: transparent !important;
     background-size: cover;
     background-position: center;
     border: white !important;
     cursor: pointer;
-    filter: invert(1);
 }
 
 .btn-margin {
@@ -94,7 +91,7 @@
     cursor: pointer; /* Change cursor to pointer */
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
     .navbar-collapse{
         background-color: #ffffff;
         border: 2px solid var(--main-color);

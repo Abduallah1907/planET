@@ -1,133 +1,175 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import "./CreateAdmin/CreateAdmin.css";
-import AdminFormGroup from ".././components/FormGroup/FormGroup"; // Adjust the path as necessary
-import Logo from "../assets/person-circle.svg";
+import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Adjust the path as necessary
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
-import tagsData from "./tags.json"; // Ensure this path is correct
-import "../components/FormGroup.css";
-import "./tagsinput.css";
-import CategoryService from "../services/CategoryService";
-import { useAppSelector } from "../store/hooks";
-import { useNavigate } from "react-router-dom";
-import { ActivityService } from "../services/ActivityService";
+import "../tagsinput.css";
+import CategoryService from "../../services/CategoryService";
+import { useNavigate, useParams } from "react-router-dom";
+import { ActivityService } from "../../services/ActivityService";
+import { AdminService } from "../../services/AdminService";
 
 interface FormData {
   name: string;
-  tags: string;
-  inputValue: string;
   suggestions: string;
   date: string;
   time: string;
-  discount: number;
   price: number;
-  archive_flag: boolean;
-  category: string[];
+  active_flag: boolean;
+  category: string;
+  special_discount: number;
+  booking: boolean;
+}
+
+interface Tag {
+  _id: string;
+  type: string;
+}
+
+interface Category {
+  _id: string;
+  type: string;
 }
 
 const AdvertiserCreate: React.FC = () => {
+  const { activity_id } = useParams();
   const [formData, setFormData] = useState<FormData>({
     name: "",
-    tags: "",
-    inputValue: "",
     suggestions: "",
     date: "",
     time: "",
-    discount: 0,
     price: 0,
-    archive_flag: false,
-    category: [],
+    active_flag: false,
+    category: "",
+    special_discount: 0,
+    booking: false,
   });
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
+    if (name === "booking") {
+      if (value === "Open") {
+        setFormData({
+          ...formData,
+          [name]: true,
+        });
+      } else {
+        setFormData({
+          ...formData,
+          [name]: false,
+        });
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [name]: type === "checkbox" ? checked : value,
+      });
+    }
+    console.log(name, value, formData)
   };
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue) {
       const tag = inputValue.trim();
-      if (tag && !tagsData.includes(tag)) {
+      if (tag && !tags.some(t => t.type === tag)) {
         alert("Invalid tag");
         setInputValue("");
         return;
       }
-      if (tag && !selectedTags.includes(tag)) {
-        setSelectedTags((prev) => [...prev, tag]);
+      const foundTag = tags.find(t => t.type === tag);
+      if (foundTag && !selectedTags.some(t => t._id === foundTag._id)) {
+        setSelectedTags((prev) => [...prev, foundTag]);
         setInputValue("");
       }
     }
   };
 
-  const onSuggestionClick = (suggestion: string) => {
-    if (suggestion && !selectedTags.includes(suggestion)) {
-      setSelectedTags((prev) => [...prev, suggestion]);
-      setInputValue("");
-    }
-  };
-
-  const handleDeleteTag = (tagToDelete: string) => {
-    setSelectedTags((prev) => prev.filter((tag) => tag !== tagToDelete));
+  const handleDeleteTag = (tagToDeleteID: string) => {
+    setSelectedTags((prev) => prev.filter((tag) => tag._id !== tagToDeleteID));
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
-  // const handleActivityNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setActivityName(e.target.value);
-  // };
-
-  // const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setActivityDate(e.target.value);
-  // };
-
-  // const handleTimeChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setActivityTime(e.target.value);
-  // };
-
-  // const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setActivityPrice(e.target.value);
-  // };
-
-  // const handleDiscountChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setSpecialDiscount(e.target.value);
-  // };
+  const handleSuggestionClick = (suggestion: string) => {
+    const foundTag = tags.find(t => t.type === suggestion);
+    if (foundTag && !selectedTags.some(t => t._id === foundTag._id)) {
+      setSelectedTags((prev) => [...prev, foundTag]);
+      setSuggestions((prev) => prev.filter((s) => s !== suggestion));
+      setInputValue("");
+    }
+  };
 
   useEffect(() => {
-    // Filter tags based on input value
     if (inputValue.startsWith("#")) {
-      const filteredSuggestions = tagsData.filter((tag: string) =>
-        tag.toLowerCase().includes(inputValue.slice(1).toLowerCase())
+      const filteredTags = tags.filter((tag: Tag) =>
+        tag.type.toLowerCase().includes(inputValue.slice(1).toLowerCase())
       );
-      setSuggestions(filteredSuggestions);
+      const selectedTagIds = new Set(selectedTags.map((tag) => tag._id));
+      const filteredSuggestions = filteredTags.filter((tag) => !selectedTagIds.has(tag._id));
+      setSuggestions(filteredSuggestions.map((tag) => tag.type));
     } else {
       setSuggestions([]);
     }
-  }, [inputValue]);
+  }, [inputValue, tags]);
+
+  const getTags = async (page: number) => {
+    const tagsData = await AdminService.getTags(page); // Assuming page 1 as the default
+    setTags(tagsData.data);
+  }
+
+  const getActivity = async () => {
+    try {
+      if (activity_id) {
+        const response = await ActivityService.getActivityById(activity_id);
+        const activity = response.data;
+        setFormData({
+          name: activity.name,
+          date: activity.date.toString().split("T")[0],
+          time: activity.time,
+          price: activity.price,
+          active_flag: activity.active_flag,
+          category: activity.category._id,
+          special_discount: activity.special_discount,
+          booking: activity.booking_flag,
+          suggestions: "",
+        });
+        setSelectedTags(activity.tags);
+      } else {
+        console.error("Activity ID is undefined");
+      }
+    } catch (error) {
+      console.error("Error fetching activity:", error);
+    }
+  };
+
+  const getAllCategories = async () => {
+    try {
+      const response = await CategoryService.getCategoryById(1); // Replace with appropriate API call
+      const categoryData = response.data.map((category: any) => {
+        return {
+          _id: category._id,
+          type: category.type,
+        };
+      })
+      setCategories(categoryData); // Assuming the response has 'data' containing the categories
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
   useEffect(() => {
-    // Fetch categories when component mounts
-    const fetchCategories = async () => {
-      try {
-        const response = await CategoryService.getCategoryById(1); // Replace with appropriate API call
-        console.log(response.data);
-        setCategories(response.data); // Assuming the response has 'data' containing the categories
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    fetchCategories();
+    getActivity();
+    getTags(1);
+    getAllCategories();
   }, []);
 
-  const AdvertiserId = useAppSelector((state) => state.user.stakeholder_id._id);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -138,14 +180,13 @@ const AdvertiserCreate: React.FC = () => {
       time: formData.time,
       location: { longitude: 100, latitude: 100 },
       price: formData.price,
-      price_range: "",
-      tags: formData.tags,
-      discount: formData.discount,
-      archive_flag: formData.archive_flag,
-      advertiser_id: AdvertiserId,
+      tags: selectedTags.map((tag) => tag._id),
+      category: formData.category,
+      active_flag: formData.active_flag,
+      booking_flag: formData.booking,
     };
-    if (AdvertiserId) {
-      await ActivityService.updateActivity(AdvertiserId, productData);
+    if (activity_id) {
+      await ActivityService.updateActivity(activity_id, productData);
       navigate("/MyActivities");
     } else {
       console.error("Advertiser Id is undefined");
@@ -180,11 +221,17 @@ const AdvertiserCreate: React.FC = () => {
               <Form.Group className="form-group" controlId="category">
                 <Form.Label>Category</Form.Label>
                 <div className="custom-select-container">
-                  <Form.Control as="select" name="Category">
+                  <Form.Control
+                    as="select"
+                    name="category"
+                    className="custom-form-control"
+                    value={formData.category}
+                    onChange={handleChange}
+                  >
                     <option value="">Select Category</option>
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.name}>
-                        {category.name}
+                    {categories.map((category: Category) => (
+                      <option key={category._id} value={category._id}>
+                        {category.type}
                       </option>
                     ))}
                   </Form.Control>
@@ -212,7 +259,7 @@ const AdvertiserCreate: React.FC = () => {
             <Col>
               <AdminFormGroup
                 label="Time"
-                type="text"
+                type="time"
                 placeholder="Enter activity time"
                 id="time"
                 disabled={false}
@@ -233,7 +280,7 @@ const AdvertiserCreate: React.FC = () => {
                 id="price"
                 disabled={false}
                 required={true}
-                value={formData.price?.toString() || ""}
+                value={String(formData.price)}
                 onChange={handleChange}
                 name="price"
               />
@@ -245,7 +292,10 @@ const AdvertiserCreate: React.FC = () => {
                   <Form.Control
                     placeholder="Select Booking"
                     as="select"
-                    name="Booking"
+                    name="booking"
+                    value={formData.booking ? "Open" : "Closed"}
+                    className="custom-form-control"
+                    onChange={handleChange}
                   >
                     <option value="Open">Open</option>
                     <option value="Closed">Closed</option>
@@ -263,52 +313,50 @@ const AdvertiserCreate: React.FC = () => {
                 label="Special Discount"
                 type="number"
                 placeholder="Enter your Special Discount"
-                id="discount"
+                id="special_discount"
                 disabled={false}
                 required={false}
-                value={formData.discount?.toString() || ""}
+                value={String(formData.special_discount)}
                 onChange={handleChange}
-                name="discount"
+                name="special_discount"
               />
             </Col>
             <Col>
               <Form.Group className="form-group" controlId="tags">
                 <Form.Label>Tags</Form.Label>
-                <div className="custom-select-container">
-                  <div className="tags-input ">
-                    {selectedTags.map((tag) => (
-                      <span key={tag} className="tag ps-2">
-                        {tag}{" "}
-                        <button
-                          type="button"
-                          className="remove-tag"
-                          onClick={() => handleDeleteTag(tag)}
-                        >
-                          &times;
-                        </button>
-                      </span>
-                    ))}
-                    <input
-                      type="text"
-                      value={inputValue}
-                      onChange={handleInputChange}
-                      onKeyDown={handleAddTag}
-                      placeholder="Add a tag (e.g., #tag)"
-                    />
-                  </div>
-                  {suggestions.length > 0 && (
-                    <ul className="suggestions-list">
-                      {suggestions.map((suggestion) => (
-                        <li
-                          key={suggestion}
-                          onClick={() => onSuggestionClick(suggestion)}
-                        >
-                          {suggestion}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                <div className="tags-input">
+                  {selectedTags.map((tag) => (
+                    <span key={tag._id} className="tag">
+                      {tag.type}{" "}
+                      <button
+                        type="button"
+                        className="remove-tag"
+                        onClick={() => handleDeleteTag(tag._id)}
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  ))}
+                  <input
+                    type="text"
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    onKeyDown={handleAddTag}
+                    placeholder="Add a tag (e.g., #historical)"
+                  />
                 </div>
+                {suggestions.length > 0 && (
+                  <ul className="suggestions-list">
+                    {suggestions.map((suggestion) => (
+                      <li
+                        key={suggestion}
+                        onClick={() => handleSuggestionClick(suggestion)}
+                      >
+                        {suggestion}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </Form.Group>
             </Col>
           </Row>
@@ -326,18 +374,18 @@ const AdvertiserCreate: React.FC = () => {
                   referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
               </div>
-              <Button className="update-btn mt-2 m-auto">Add Location</Button>
+              <Button variant="main-inverse" className="mt-2 m-auto">Add Location</Button>
             </div>
           </Row>
           <Row>
             <Row>
               <Col>
-                <Form.Group controlId="is-archived">
+                <Form.Group controlId="is-active">
                   <Form.Check
                     type="checkbox"
-                    label="Archived"
-                    name="archive_flag"
-                    checked={formData.archive_flag}
+                    label="Active"
+                    name="active_flag"
+                    checked={formData.active_flag}
                     onChange={handleChange}
                   />
                 </Form.Group>
@@ -346,7 +394,7 @@ const AdvertiserCreate: React.FC = () => {
           </Row>
           <Row>
             <div className="form-actions">
-              <Button type="submit" className="update-btn">
+              <Button type="submit" variant="main-inverse">
                 Update
               </Button>
             </div>

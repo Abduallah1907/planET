@@ -42,6 +42,7 @@ export default ({
     Container.set("emailTransporter", transporter);
     Container.set("gridfsInstance", gfs);
     Container.set("uploadInstance", upload);
+    Container.set("mongoConnection", mongoConnection);
     LoggerInstance.info("✌️ Agenda injected into container");
 
     return { agenda: agendaInstance };

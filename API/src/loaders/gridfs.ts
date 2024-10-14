@@ -3,6 +3,7 @@ import multer from "multer";
 import { GridFsStorage } from "multer-gridfs-storage";
 import LoggerInstance from "./logger";
 import Grid from "gridfs-stream";
+import { GridFSBucket } from "mongodb";
 
 export async function gridfsLoader({
   mongoConnection,
@@ -10,16 +11,18 @@ export async function gridfsLoader({
   mongoConnection: mongoose.Connection;
 }) {
   try {
-    let gfs: Grid.Grid | undefined;
+    let gfs: GridFSBucket | undefined;
     let upload: multer.Multer;
 
     if (mongoConnection.readyState !== 1) {
       await new Promise<void>((resolve, reject) => {
         mongoConnection.once("open", () => {
-          gfs = Grid(mongoConnection.db, mongoose.mongo);
-          gfs.collection("uploads");
-
-          LoggerInstance.info("✌️ GridFS initialized successfully");
+          if (mongoConnection.db) {
+            gfs = new GridFSBucket(mongoConnection.db, { bucketName: "uploads" });
+            LoggerInstance.info("✌️ GridFS initialized successfully");
+          } else {
+            throw new Error("MongoDB connection database is undefined");
+          }
           resolve();
         });
 
@@ -29,9 +32,12 @@ export async function gridfsLoader({
         });
       });
     } else {
-      gfs = Grid(mongoConnection.db, mongoose.mongo);
-      gfs.collection("uploads");
-      LoggerInstance.info("✌️ GridFS initialized successfully");
+      if (mongoConnection.db) {
+        gfs = new GridFSBucket(mongoConnection.db, { bucketName: "uploads" });
+        LoggerInstance.info("✌️ GridFS initialized successfully");
+      } else {
+        throw new Error("MongoDB connection database is undefined");
+      }
     }
 
     const storage = new GridFsStorage({
