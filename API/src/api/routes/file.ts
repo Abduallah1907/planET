@@ -1,9 +1,5 @@
 import { Router } from "express";
-import { ActivityController } from "../controllers/activityController";
-import express from "express";
 import Container from "typedi";
-import authorize from "../middlewares/authorize";
-import UserRoles from "@/types/enums/userRoles";
 import { FileService } from "@/services/fileService";
 const router = Router();
 
@@ -13,4 +9,12 @@ export default (app: Router) => {
   app.use("/file", router);
 
   router.post("/upload", upload.single("file"), fileService.uploadFile);
+
+  // router.post(
+  //   "/uploadMultiple",
+  //   upload.array("files", 10),
+  //   fileService.uploadMultipleFiles
+  // );
+
+  // router.get("/download/:id", fileService.downloadFileById);
 };

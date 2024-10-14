@@ -9,6 +9,7 @@ import multer from "multer"; // Import multer
 import { gridfsLoader } from "./gridfs";
 import mongooseLoader from "./moongose";
 import LoggerInstance from "./logger";
+import fileUpload from "express-fileupload";
 
 export default async ({ app }: { app: Application }) => {
   const mongoConnection = await mongooseLoader();
@@ -22,6 +23,7 @@ export default async ({ app }: { app: Application }) => {
   // Enable Cross-Origin Resource Sharing to all origins by default
   app.use(cors());
 
+  app.use(fileUpload());
   // HTTP verbs support such as PUT or DELETE
   app.use(require("method-override")());
 
@@ -29,10 +31,6 @@ export default async ({ app }: { app: Application }) => {
   app.use(express.json());
 
   // Add debug logging middleware
-  app.use((req, res, next) => {
-    console.log("Middleware hit:", req.method, req.url);
-    next();
-  });
 
   /**
    * Health Check endpoints
@@ -45,20 +43,6 @@ export default async ({ app }: { app: Application }) => {
   app.head("/status", (req, res) => {
     res.status(200).end();
   });
-
-  // File upload route - Ensure this is using the upload middleware
-  // app.post("*/api/file/upload", upload.single("file"), (req, res) => {
-  //   console.log("Headers:", req.headers);
-  //   console.log("Body:", req.body);
-  //   console.log("File:", req.file);
-  //   if (!req.file) {
-  //     res.status(400).json({ message: "File upload failed" });
-  //     return;
-  //   }
-  //   res
-  //     .status(200)
-  //     .json({ message: "File uploaded successfully", file: req.file });
-  // });
 
   // Load API routes
   app.use(config.api.prefix, routes());
@@ -100,8 +84,4 @@ export default async ({ app }: { app: Application }) => {
   });
 
   // Catch-all route for unmatched paths
-  app.all("*", (req, res) => {
-    console.log("Catch-all route hit:", req.method, req.url);
-    res.status(404).json({ message: "Route not found" });
-  });
 };
