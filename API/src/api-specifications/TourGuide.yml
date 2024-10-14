@@ -311,7 +311,7 @@ paths:
         500:
           description: Internal server error.
 
-  /api/tourGuide/deleteTouristAccountRequest/{email}:
+  /api/tourGuide/deleteTourGuideAccountRequest/{email}:
     delete:
       tags:
         - Tour Guide
