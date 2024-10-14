@@ -20,6 +20,8 @@ import { ObjectId } from "mongoose";
 import { Types } from "mongoose";
 import {
   IComment_Rating,
+  IComment_RatingCreateDTOforActivity,
+  IComment_RatingCreateDTOforItinerary,
   IComment_RatingCreateDTOfortourGuide,
 } from "@/interfaces/IComment_rating";
 
@@ -277,5 +279,162 @@ export default class TouristService {
       throw new InternalServerError("Internal server error");
 
     return new response(true, comment_rating, "Tour guide rated", 201);
+  }
+  public async rateandcommentItineraryService(
+    id: string,
+    data: IComment_RatingCreateDTOforItinerary
+  ) {
+    const { tour_guide_email, comment, rating, name_of_itinerary } = data;
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestError("Invalid id");
+    }
+    if (!comment && !rating) {
+      throw new BadRequestError(
+        "Invalid input,please add either a comment or rating"
+      );
+    }
+    if (rating && (rating < 0 || rating > 5)) {
+      throw new BadRequestError("Invalid rating");
+    }
+    //find the tour guide by email
+    const user = await this.userModel.findOne({
+      email: tour_guide_email,
+      role: UserRoles.TourGuide,
+    });
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (user == null) throw new NotFoundError("User not found");
+    const tour_guide = await this.tour_guideModel.findOne({
+      user_id: user._id,
+    });
+    console.log(tour_guide?._id);
+    if (tour_guide instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tour_guide == null) throw new NotFoundError("Tour guide not found");
+    //find the itinerary by name and tour guide id
+    const itinerary = await this.itineraryModel.findOne({
+      name: name_of_itinerary,
+      tour_guide_id: tour_guide._id,
+    });
+    console.log(itinerary?.name);
+    if (itinerary instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (itinerary == null) throw new NotFoundError("Itinerary not found");
+    //go to tickets and check if the tourist has visited the location
+    const ticket = await this.ticketModel.findOne({
+      type: "ITINERARY",
+      booking_id: itinerary._id,
+      tourist_id: new Types.ObjectId(id),
+    });
+    if (ticket instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (ticket == null)
+      throw new NotFoundError(
+        "Tourist has not visited the location or meet the tour guide"
+      );
+    //create a new comment_rating
+    const comment_rating = new this.comment_ratingModel({
+      tourist_id: new Types.ObjectId(id),
+      comment: comment,
+      rating: rating,
+    });
+    if (comment_rating instanceof Error)
+      throw new InternalServerError("Internal server error");
+    await comment_rating.save();
+    if (comment_rating instanceof Error)
+      throw new InternalServerError("Internal server error");
+    //update the itinerary comment_rating array
+    if (!itinerary.comments) {
+      itinerary.comments = [];
+    }
+    itinerary.comments.push(comment_rating._id);
+    await itinerary.save();
+    if (itinerary instanceof Error)
+      throw new InternalServerError("Internal server error");
+    //update the average rating of the itinerary
+    if (!itinerary.average_rating) {
+      itinerary.average_rating = 0;
+    }
+    if (rating) {
+      let count = itinerary.comments.length - 1;
+      let sum = count * itinerary.average_rating;
+      sum += rating;
+      count++;
+      itinerary.average_rating = sum / count;
+      await itinerary.save();
+      if (itinerary instanceof Error)
+        throw new InternalServerError("Internal server error");
+    }
+    return new response(true, comment_rating, "Itinerary rated", 201);
+  }
+  public async rateandcommentActivityService(
+    id: string,
+    data: IComment_RatingCreateDTOforActivity
+  ) {
+    const { name_of_activity, comment, rating } = data;
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestError("Invalid id");
+    }
+    if (!comment && !rating) {
+      throw new BadRequestError(
+        "Invalid input,please add either a comment or rating"
+      );
+    }
+    if (rating && (rating < 0 || rating > 5)) {
+      throw new BadRequestError("Invalid rating");
+    }
+    //find the activity by name
+    const activity = await this.activityModel.findOne({
+      name: name_of_activity,
+    });
+    if (activity instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (activity == null) throw new NotFoundError("Activity not found");
+    //go to tickets and check if the tourist has visited the location
+    const ticket = await this.ticketModel.findOne({
+      type: "ACTIVITY",
+      booking_id: activity._id,
+      tourist_id: new Types.ObjectId(id),
+    });
+    if (ticket instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (ticket == null)
+      throw new NotFoundError(
+        "Tourist has not visited the location or done this Activity"
+      );
+    //create a new comment_rating
+    const comment_rating = new this.comment_ratingModel({
+      tourist_id: new Types.ObjectId(id),
+      comment: comment,
+      rating: rating,
+    });
+    if (comment_rating instanceof Error)
+      throw new InternalServerError("Internal server error");
+    await comment_rating.save();
+    if (comment_rating instanceof Error)
+      throw new InternalServerError("Internal server error");
+    //update the activity comment_rating array
+    if (!activity.comments) {
+      activity.comments = [];
+    }
+    activity.comments.push(comment_rating._id);
+    await activity.save();
+    if (activity instanceof Error)
+      throw new InternalServerError("Internal server error");
+    //update the average rating of the activity
+    if (!activity.average_rating && rating) {
+      activity.average_rating = 0;
+    }
+    if (rating) {
+      let count = activity.comments.length - 1;
+      let sum = count * activity.average_rating;
+      sum += rating;
+      count++;
+      activity.average_rating = sum / count;
+      await activity.save();
+      if (activity instanceof Error)
+        throw new InternalServerError("Internal server error");
+    }
+    return new response(true, comment_rating, "Activity rated", 201);
   }
 }
