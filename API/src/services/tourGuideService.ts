@@ -9,8 +9,6 @@ import { ITourGuideInput, ITourGuideOutput } from "@/interfaces/ITour_guide";
 import UserService from "./userService";
 import { IUserInputDTO } from "@/interfaces/IUser";
 import bcrypt from "bcryptjs";
-import { it } from "node:test";
-import { IItinerary } from "@/interfaces/IItinerary";
 
 @Service()
 export default class TourGuideService {
@@ -18,7 +16,6 @@ export default class TourGuideService {
     @Inject("userModel") private userModel: Models.UserModel,
     @Inject("tour_guideModel") private tourGuideModel: Models.Tour_guideModel,
     @Inject("previous_workModel") private previousWorkModel: Models.Previous_workModel,
-    @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel,
     @Inject("ticketModel") private ticketModel: Models.TicketModel
   ) {}
 
@@ -272,7 +269,7 @@ export default class TourGuideService {
     // also whether available dates acutally works is up to luck, pray
     const tourGuideData: ITour_Guide | null = await this.tourGuideModel.findOne({ user_id: tourGuideUser._id }).populate({
       path: "itineraries",
-      match: { available_dates: { $gt: today } },
+      match: { available_dates: { $elemMath: { $gt: today } } },
     });
 
     if (!tourGuideData) throw new NotFoundError("Tour guide user account was not found");
