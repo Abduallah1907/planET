@@ -4,6 +4,8 @@ import multer from "multer";
 import mongoose from "mongoose";
 import response from "@/types/responses/response";
 import { Container } from "typedi";
+import { create } from "domain";
+import { createWriteStream } from "fs";
 
 @Service()
 export class FileService {
@@ -133,6 +135,12 @@ export class FileService {
     try {
       const gfs = Container.get<GridFSBucket>("gridfsInstance");
 
+      const files = await gfs.find({ _id: new ObjectId(id) }).toArray();
+      if (!files || files.length === 0) {
+        return res.status(404).json({ message: "File not found" });
+      }
+      const file = files[0];
+
       // Create a download stream for the file
       const downloadStream = gfs.openDownloadStream(new ObjectId(id));
 
@@ -144,11 +152,12 @@ export class FileService {
       });
 
       // Set the response headers
-      res.setHeader("Content-Type", "application/octet-stream");
-      res.setHeader("Content-Disposition", `attachment; filename="${id}"`);
+      res.setHeader("Content-Type", file.contentType);
+      res.setHeader("Content-Disposition", `attachment; filename="${file.filename}"`);
 
       // Pipe the download stream to the response
-      downloadStream.pipe(res);
+      downloadStream.pipe(createWriteStream(`./`+file.filename));
+      res.send(file.filename);
 
       // Handle the end of the stream
       downloadStream.on("end", () => {
