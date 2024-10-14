@@ -34,7 +34,7 @@ export default class Historical_tagService {
   ) => {
     const historical_tagData: IHistorical_tagDTO = {
       name: historical_tagInput.name,
-      Values: historical_tagInput.Values,
+      values: historical_tagInput.values,
     };
     const historical_tag = await this.historical_tagModel.create(
       historical_tagData

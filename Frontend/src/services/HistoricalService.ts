@@ -48,8 +48,7 @@ class HistoricalService {
     try {
       const response = await axiosInstance.post(
         "/historical_location/createHistorical_location",
-        formData
-          ``);
+        formData);
           return response.data;
     } catch (err) {
       throw err;
@@ -87,6 +86,24 @@ class HistoricalService {
         );
       } else {
         throw new Error("Editing Historical Location failed");
+      }
+    }
+  }
+
+  public static async deleteHistoricalLocation(id: string) {
+    try {
+      const response = await axiosInstance.delete(
+        `/historical_location/deleteHistorical_location/${id}`, // Use PUT for updates and include the location ID
+      );
+      return response.data;
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        console.error("API Error: ", error.response.data);
+        throw new Error(
+          error.response.data.message || "Deleting Historical Location failed"
+        );
+      } else {
+        throw new Error("Deleting Historical Location failed");
       }
     }
   }

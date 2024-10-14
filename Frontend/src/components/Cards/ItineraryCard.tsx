@@ -61,7 +61,7 @@ const ItineraryCard = ({
     >
       <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
         {/* Image Section */}
-        <Col md={2} className="p-0 d-flex align-items-stretch">
+        <Col md={3} className="p-0 d-flex align-items-stretch">
           <Image
             src="https://via.placeholder.com/250x250"
             rounded
@@ -70,7 +70,7 @@ const ItineraryCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={7} className="d-flex align-items-stretch">
+        <Col md={6} className="d-flex align-items-stretch">
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">

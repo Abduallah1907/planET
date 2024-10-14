@@ -40,7 +40,7 @@ export default class ActivityService {
 
     const activities = activitiesData.map((activity) => ({
       ...activity.toObject(),
-      reviewsCount: activity.comments ? activity.comments.length : 0,
+      reviews_count: activity.comments ? activity.comments.length : 0,
     }));
 
     return new response(true, activities, "All activities are fetched", 200);
@@ -58,6 +58,7 @@ export default class ActivityService {
       tags: activityDatainput.tags,
       special_discount: activityDatainput.special_discount,
       booking_flag: activityDatainput.booking_flag,
+      active_flag: activityDatainput.active_flag,
       advertiser_id: activityDatainput.advertiser_id,
     };
     if (
@@ -301,6 +302,11 @@ export default class ActivityService {
       },
       {
         $match: matchStage,
+      },
+      {
+        $addFields: {
+          reviews_count: { $size: "$comments" },
+        },
       },
     ];
 

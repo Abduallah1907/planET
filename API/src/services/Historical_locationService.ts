@@ -62,7 +62,7 @@ export default class Historical_locationService {
       }
       //We got the corresponding key to historical_tag
       //We want to see if the value is in the historical_tag value array
-      if (!historical_tag.Values.includes(value)) {
+      if (!historical_tag.values.includes(value)) {
         throw new BadRequestError(
           "Value is not in the tag,choose corresponding Value to the tag"
         );
@@ -113,6 +113,7 @@ export default class Historical_locationService {
       description: historical_locationInput.description,
       picture: historical_locationInput.picture,
       location: historical_locationInput.location,
+      opening_days: historical_locationInput.opening_days,
       opening_hours_from: historical_locationInput.opening_hours_from,
       opening_hours_to: historical_locationInput.opening_hours_to,
       native_price: historical_locationInput.native_price,

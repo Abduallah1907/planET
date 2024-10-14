@@ -1,25 +1,20 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import AdminFormGroup from "../components/FormGroup/FormGroup"; // Reuse the form group component
-import "../components/FormGroup.css"; // Reuse existing CSS
-import "./CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
-import "./tagsinput.css";
-import tagsData from "./tags.json"; // Ensure this path is correct
+import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Reuse the form group component
+import "../tagsinput.css";
 import { BiChevronDown } from "react-icons/bi";
-import { HistoricalService } from "../services/HistoricalService";
-import { useAppSelector } from "../store/hooks";
+import { HistoricalService } from "../../services/HistoricalService";
 import { useParams } from "react-router-dom";
-import showToast from "../utils/showToast";
-import { ToastTypes } from "../utils/toastTypes";
-import DaysModal from "../components/DaysModals";
-import { set } from "react-datepicker/dist/date_utils";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
+import DaysModal from "../../components/DaysModals";
 
 interface FormData {
   name: string;
-  opening_days: string[];
   description: string;
   picture: string;
   location: string;
+  openingDays: string[];
   openingFrom: string;
   openingTo: string;
   nativePrice: number;
@@ -43,13 +38,12 @@ const HistoricalPlaceForm: React.FC = () => {
   const { historical_location_id } = useParams();
   const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTags, setSelectedTags] = useState<SelectedTag[]>([]);
-  const [currentTags, setCurrentTags] = useState<Tag[]>([]);
   const [showDaysModal, setShowDaysModal] = useState(false); // State to manage modal visibility
   const [selectedDays, setSelectedDays] = useState<string[]>([]); // State to manage selected days
 
   const [formData, setFormData] = useState<FormData>({
     name: "",
-    opening_days: [],
+    openingDays: [],
     description: "",
     picture: "",
     location: "",
@@ -78,23 +72,37 @@ const HistoricalPlaceForm: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const Governer = useAppSelector((state) => state.user);
-
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Add form submission logic here
     // console.log("Form submitted:", formData);
     try {
-      // const updatedLocation = await HistoricalService.editHistoricalLocation(
-      //   Governer.stakeholder_id,
-      //   formData
-      // );
       const tagsMap = selectedTags.reduce((acc, tag) => {
         acc[tag.id] = tag.value;
         return acc;
       }, {} as { [key: string]: string });
-      console.log(tagsMap)
-      console.log(formData)
+      const reqData = {
+        name: formData.name,
+        description: formData.description,
+        // picture: formData.picture,
+        // location: formData.location,
+        opening_days: formData.openingDays,
+        opening_hours_from: formData.openingFrom,
+        opening_hours_to: formData.openingTo,
+        native_price: formData.nativePrice,
+        foreign_price: formData.foreignPrice,
+        student_price: formData.studentPrice,
+        tags: tagsMap,
+        active_flag: formData.isActive,
+      }
+      if (historical_location_id) {
+        const updatedLocation = await HistoricalService.editHistoricalLocation(
+          historical_location_id,
+          reqData
+        );
+      } else {
+        console.error("Historical location ID is undefined");
+      }
       // console.log("Historical Location updated successfully:", updatedLocation);
     } catch (error) {
       console.error("Failed to update Historical Location:", error);
@@ -107,7 +115,7 @@ const HistoricalPlaceForm: React.FC = () => {
       return {
         id: tag._id,
         name: tag.name,
-        values: tag.Values,
+        values: tag.values,
       };
     });
     setTags(mappedTags);
@@ -121,12 +129,12 @@ const HistoricalPlaceForm: React.FC = () => {
       locationData = locationData.data;
       setFormData({
         name: locationData.name,
-        opening_days: locationData.opening_days,
+        openingDays: locationData.opening_days,
         description: locationData.description,
         picture: locationData.picture,
         location: locationData.location.toString(),
-        openingFrom: locationData.openingFrom,
-        openingTo: locationData.openingTo,
+        openingFrom: locationData.opening_hours_from,
+        openingTo: locationData.opening_hours_to,
         nativePrice: locationData.native_price,
         foreignPrice: locationData.foreign_price,
         studentPrice: locationData.student_price,
@@ -151,7 +159,7 @@ const HistoricalPlaceForm: React.FC = () => {
       showToast("All tags have been added", ToastTypes.ERROR);
       return;
     };
-    setSelectedTags([...selectedTags, { id: tags[0].id, value: "" }]);
+    setSelectedTags([...selectedTags, { id: "", value: "" }]);
   }
 
   const handleRemoveTag = (index: number) => {
@@ -165,7 +173,7 @@ const HistoricalPlaceForm: React.FC = () => {
 
   const handleDaysModalClose = () => {
     setShowDaysModal(false);
-    setFormData({ ...formData, opening_days: selectedDays });
+    setFormData({ ...formData, openingDays: selectedDays });
   };
 
   return (
@@ -200,7 +208,7 @@ const HistoricalPlaceForm: React.FC = () => {
                 className="form-group"
                 label="Opening Days"
                 type="text"
-                value={formData.opening_days.join(",")}
+                value={formData.openingDays.join(",")}
                 onChange={handleDaysInputClick}
                 required
                 placeholder={""}
@@ -214,6 +222,7 @@ const HistoricalPlaceForm: React.FC = () => {
                 <Form.Label>Picture</Form.Label>
                 <Form.Control
                   type="file"
+                  className="custom-form-control"
                   onChange={handleFileChange}
                 />
               </Form.Group>
@@ -342,6 +351,7 @@ const HistoricalPlaceForm: React.FC = () => {
                           <Form.Control
                             as="select"
                             value={tag.id || ""}
+                            className="custom-form-control"
                             onChange={(e) => {
                               const selectedKey = e.target.value;
                               const selectedValue = tag.value || "";
@@ -368,6 +378,7 @@ const HistoricalPlaceForm: React.FC = () => {
                           <Form.Control
                             as="select"
                             value={tag.value || ""}
+                            className="custom-form-control"
                             onChange={(e) => {
                               const selectedValue = e.target.value;
                               const newSelectedTags = [...selectedTags];
@@ -425,7 +436,7 @@ const HistoricalPlaceForm: React.FC = () => {
             </Col>
           </Row>
 
-          <Button type="submit" className="update-btn mt-4 mb-5 ">
+          <Button type="submit" variant="main-inverse" className="mt-4 mb-5 ">
             Update
           </Button>
         </Form>

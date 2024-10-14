@@ -148,12 +148,14 @@ export default class ItineraryService {
     if (itineraries instanceof Error)
       throw new InternalServerError("Internal server error");
     if (!itineraries) throw new HttpError("Tour guide not found", 404);
-    const itinerariesOutput: IItineraryOutputDTO[] = itineraries.map(
-      (itinearary: {}) => ({})
+    const itinerariesOutput: IItineraryOutputDTO[] = itineraries.map((itinearary: any) => ({
+        ...itinearary.toObject(),
+        reviews_count: itinearary.comments ? itinearary.comments.length : 0,
+      })
     );
     return new response(
       true,
-      itineraries,
+      itinerariesOutput,
       "Returning all found itineraries!",
       201
     );
@@ -187,6 +189,7 @@ export default class ItineraryService {
         average_rating: itinerary.average_rating,
         locations: itinerary.locations,
         tags: itinerary.tags,
+        reviews_count: itinerary.comments.length,
       })
     );
 
@@ -245,6 +248,7 @@ export default class ItineraryService {
     price?: { min?: number; max?: number };
     date?: { start?: Date; end?: Date };
     preferences?: string[];
+    languages?: string[];
   }) {
     if (!filters) {
       const itineraries = await this.itineraryModel.find();
@@ -267,13 +271,32 @@ export default class ItineraryService {
     }
 
     if (filters.date) {
-      if (filters.date.start !== undefined) {
-        matchStage.date = { ...matchStage.date, $gte: filters.date.start };
-      }
-      if (filters.date.end !== undefined) {
-        matchStage.date = { ...matchStage.date, $lte: filters.date.end };
+      if (filters.date.start !== undefined && filters.date.end !== undefined) {
+        matchStage.available_dates = {
+          $elemMatch: {
+            $gte: new Date(filters.date.start),
+            $lte: new Date(filters.date.end),
+          },
+        };
+      } else if (filters.date.start !== undefined) {
+        matchStage.available_dates = {
+          $elemMatch: {
+            $gte: new Date(filters.date.start),
+          },
+        };
+      } else if (filters.date.end !== undefined) {
+        matchStage.available_dates = {
+          $elemMatch: {
+            $lte: new Date(filters.date.end),
+          },
+        };
       }
     }
+
+    if(filters.languages) {
+      matchStage.languages = { $in: filters.languages };
+    }
+
     var aggregationPipeline: any[] = [
       {
         $lookup: {
@@ -285,6 +308,11 @@ export default class ItineraryService {
       },
       {
         $match: matchStage,
+      },
+      {
+        $addFields: {
+          reviews_count: { $size: "$comments" },
+        },
       },
     ];
     if (filters.preferences) {

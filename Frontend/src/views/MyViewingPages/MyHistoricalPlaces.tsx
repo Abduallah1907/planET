@@ -66,6 +66,15 @@ export default function HistoricalLocationsPage() {
   const onFilterChange = (newFilter: { [key: string]: any }) => {
     setFilter(newFilter);
   };
+
+  const deleteHistorical = async (id: string) => {
+    const response = await HistoricalService.deleteHistoricalLocation(id);
+    if (response.status === 200) {
+      getHistorical();
+    }
+  }
+
+
   // Function to sort historical locations based on selected criteria
   const sortedLocations = [...historical].sort((a, b) => {
     switch (sortBy) {
@@ -168,8 +177,9 @@ export default function HistoricalLocationsPage() {
                     isGoverner={true}
                     OpeningHourFrom={location.opening_hours_from}
                     OpeningHourTo={location.opening_hours_to}
-                    OpeningDays={location.opening_days.join(",")}
+                    OpeningDays={location.opening_days.map(day => day.slice(0, 3)).join(", ")}
                     onClick={() => onHistoricalClick(location._id)}
+                    onDelete={() => deleteHistorical(location._id)}
                   />
                 </Col>
               )

@@ -222,7 +222,7 @@ export default (app: Router) => {
    *                     type: string
    *                 special_discount:
    *                   type: number
-   *                 booking_flag:
+   *                 archive_flag:
    *                   type: boolean
    *       responses:
    *         '200':

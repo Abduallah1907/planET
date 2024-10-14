@@ -169,7 +169,7 @@ export default function HistoricalLocationsPage() {
                     isGoverner={false}
                     OpeningHourFrom={location.opening_hours_from}
                     OpeningHourTo={location.opening_hours_to}
-                    OpeningDays={location.opening_days.join(",")}
+                    OpeningDays={location.opening_days.map(day => day.slice(0, 3)).join(", ")}
                     onClick={() => onHistoricalClick(location._id)}
                   />
                 </Col>
