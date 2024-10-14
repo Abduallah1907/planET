@@ -316,7 +316,8 @@ paths:
       tags:
         - Tour Guide
       summary: Request deletion for tour guide
-      description: Deletes the account and all their itineraries ONLY if no current upcoming itinerary has been booked by tourists.
+      description: Deletes the account and hides all their itineraries ONLY if no current upcoming itinerary has been booked by tourists.
+        Any hidden itinerary can only be viewed in the history and by the admin.
       parameters:
         - in: path
           name: email

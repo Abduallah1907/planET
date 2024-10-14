@@ -9,6 +9,7 @@ import { ITourGuideInput, ITourGuideOutput } from "@/interfaces/ITour_guide";
 import UserService from "./userService";
 import { IUserInputDTO } from "@/interfaces/IUser";
 import bcrypt from "bcryptjs";
+import { IItinerary } from "@/interfaces/IItinerary";
 
 @Service()
 export default class TourGuideService {
@@ -268,16 +269,28 @@ export default class TourGuideService {
     if (!tourGuideUser || tourGuideUser.role !== UserRoles.TourGuide) throw new NotFoundError("Tour guide user account was not found");
     // the reason for the explicit type is because for some reason the interfaces are set up in a wron way, and idk how to fix
     // also whether available dates acutally works is up to luck, pray
-    const tourGuideData: ITour_Guide | null = await this.tourGuideModel.findOne({ user_id: tourGuideUser._id }).populate({
+    const { itineraries: tourGuideUpcomingItineraries } = await this.tourGuideModel.findOne({ user_id: tourGuideUser._id }).populate({
       path: "itineraries",
       match: { available_dates: { $elemMath: { $gt: today } } },
     });
 
-    if (!tourGuideData) throw new NotFoundError("Tour guide user account was not found");
+    if (!tourGuideUpcomingItineraries) throw new NotFoundError("Tour guide user account was not found");
 
-    const bookedItineraries = await this.ticketModel.find({ booking_id: { $in: tourGuideData.itineraries } });
+    const bookedItineraries = await this.ticketModel.find({ booking_id: { $in: tourGuideUpcomingItineraries } });
     if (bookedItineraries)
       throw new BadRequestError("There are still upcoming itineraries that are booked. Cannot delete until these itineraries are fufilled");
+
+    const tourGuideData: ITour_Guide = await this.tourGuideModel.findOne({ user_id: tourGuideUser._id }).populate("itineraries");
+    const tourGuideItineraries = tourGuideData.itineraries as unknown as IItinerary[];
+    if (tourGuideItineraries) {
+      tourGuideItineraries.forEach(async (itinerary) => {
+        itinerary.active_flag = false;
+        await itinerary.save();
+      });
+    }
+
+    const deletedTourGuide = await this.tourGuideModel.findByIdAndDelete(tourGuideData._id);
+    const deletedTourGuideUser = await this.userModel.findByIdAndDelete(tourGuideUser._id);
 
     return new response(true, {}, "Tour guide successfully deleted", 200);
   }
