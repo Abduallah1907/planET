@@ -15,4 +15,6 @@ export default (app: Router) => {
   route.post("/rateandcommentTourGuide/:tourist_id", authorize([UserRoles.Tourist]), touristController.rateandcommentTour_guide);
   route.post("/rateandcommentItinerary/:tourist_id", authorize([UserRoles.Tourist]), touristController.rateandcommentItinerary);
   route.post("/rateandcommentActivity/:tourist_id", authorize([UserRoles.Tourist]), touristController.rateandcommentActivity);
+
+  route.delete("/deleteTouristAccountRequest/:email", touristController.deleteTouristAccountRequest);
 };
