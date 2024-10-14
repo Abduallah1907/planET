@@ -70,7 +70,6 @@ const AdvertiserCreate: React.FC = () => {
         [name]: type === "checkbox" ? checked : value,
       });
     }
-    console.log(name, value, formData)
   };
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {

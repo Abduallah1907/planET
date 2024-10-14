@@ -75,7 +75,6 @@ const HistoricalPlaceForm: React.FC = () => {
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Add form submission logic here
-    // console.log("Form submitted:", formData);
     const tagsMap = selectedTags.reduce((acc, tag) => {
       acc[tag.id] = tag.value;
       return acc;

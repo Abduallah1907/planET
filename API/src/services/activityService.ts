@@ -327,8 +327,6 @@ export default class ActivityService {
       },
     });
 
-    console.log(aggregationPipeline);
-
     const activities = await this.activityModel.aggregate(aggregationPipeline);
     if (activities instanceof Error)
       throw new InternalServerError("Internal server error");

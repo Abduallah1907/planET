@@ -58,7 +58,6 @@ export class FileService {
 
   // Method to upload multiple files
   uploadMultipleFiles(req: any, res: any) {
-    // console.log("Request", req);
     console.log("Headers in service:", req.headers);
     console.log("Body in service:", req.body);
     console.log("Files in service:", req.files); // Check req.files for multiple uploads

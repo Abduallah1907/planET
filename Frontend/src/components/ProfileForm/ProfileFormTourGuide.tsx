@@ -136,10 +136,6 @@ const ProfileFormGuide: React.FC = () => {
       return;
     }
 
-    console.log("Created Previous Work: ", createdWork);
-    console.log("EDITED: ", editedWork);
-    console.log("Deleted Previous Work: ", deletedWork);
-
     await TourGuideServices.updateTourGuide(TourGuide.email, {
       name: `${formData.firstName} ${formData.lastName}`,
       newEmail: formData.email,
