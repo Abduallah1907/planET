@@ -120,7 +120,7 @@ const ItineraryCard = ({
 
               {/* Date and Duration */}
               <Card.Text className="text-muted">
-                {Available_Dates.join(",")} • Duration: {Duration}
+              {Available_Dates.map(date => date.toString().split('T')[0]).join(", ")} • Duration: {Duration}
               </Card.Text>
             </div>
           </Card.Body>
