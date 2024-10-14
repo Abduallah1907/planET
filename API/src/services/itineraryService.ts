@@ -121,7 +121,7 @@ export default class ItineraryService {
     return new response(true, itineraries, "Returning all found itineraries!", 201);
   }
 
-  public async getAllItineraries(page: number): Promise<any> {
+  public async getAllItinerariesService(page: number): Promise<any> {
     const itineraries = await this.itineraryModel
       .find({})
       .limit(10)
