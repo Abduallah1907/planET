@@ -17,7 +17,6 @@ export default (app: Router) => {
   router.get("/getAdvertiserByUserID/:userID", advertiserController.getAdvertiserByUserIDController);
   router.get("/getAdvertiserByActivityID/:activityID", advertiserController.getAdvertiserByActivityIDController);
   router.put("/updateAdvertiser/:email", authorize([UserRoles.Advertiser]), advertiserController.updateAdvertiserController);
-  router.delete("/deleteAdvertiser/:email", authorize([UserRoles.Advertiser]), advertiserController.deleteAdvertiserController);
   router.post(
     "/createAdvertiserMain",
     // authorize([UserRoles.Advertiser]),

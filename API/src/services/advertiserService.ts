@@ -159,27 +159,6 @@ export default class AdvertiserService {
     if (advertiser == null) throw new NotFoundError("No Advertiser Found");
     return new response(true, advertiser, "Advertiser updated", 200);
   };
-  //Delete Advertiser
-  public deleteAdvertiserService = async (email: string) => {
-    const advertiserUser = await this.userModel.findOneAndDelete({
-      email: email,
-      role: UserRoles.Advertiser,
-    });
-    if (advertiserUser instanceof Error) {
-      throw new InternalServerError("Internal server error");
-    }
-    if (advertiserUser == null) {
-      throw new NotFoundError("No Advertiser with this email");
-    }
-    const user_id = advertiserUser._id;
-    const advertiser = await this.advertiserModel.findOneAndDelete({
-      user_id: user_id,
-    });
-
-    if (advertiser instanceof Error) throw new InternalServerError("Internal server error");
-    if (advertiser == null) throw new NotFoundError("No Advertiser Found");
-    return new response(true, null, "Advertiser deleted", 200);
-  };
 
   public async deleteAdvertiserAccountRequest(email: string): Promise<any> {
     const today = new Date();

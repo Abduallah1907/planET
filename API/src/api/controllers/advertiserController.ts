@@ -61,13 +61,6 @@ export class AdvertiserController {
     const advertiser = await advertiserService.updateAdvertiserService(email, file, req.body);
     res.status(advertiser.status).json(advertiser);
   }
-  //Delete Advertiser
-  public async deleteAdvertiserController(req: any, res: any) {
-    const { email } = req.params;
-    const advertiserService: AdvertiserService = Container.get(AdvertiserService);
-    const advertiser = await advertiserService.deleteAdvertiserService(email);
-    res.status(advertiser.status).json(advertiser);
-  }
 
   public async deleteAdvertiserAccountRequest(req: Request, res: Response) {
     const { email } = req.params;
