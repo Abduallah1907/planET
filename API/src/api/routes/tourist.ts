@@ -236,18 +236,8 @@ export default (app: Router) => {
    *       500:
    *         description: Internal server error.
    */
-  route.get(
-    "/getTourist/:email",
-    authorize([UserRoles.Tourist]),
-    touristController.getTourist
-  );
-  route.put(
-    "/updateTourist/:searchEmail",
-    authorize([UserRoles.Tourist]),
-    touristController.updateTourist
-  );
-  route.post(
-    "/createTourist",
-    touristController.createTourist
-  );
+  route.get("/getTourist/:email", authorize([UserRoles.Tourist]), touristController.getTourist);
+  route.put("/updateTourist/:searchEmail", authorize([UserRoles.Tourist]), touristController.updateTourist);
+  route.post("/createTourist", touristController.createTourist);
+  route.delete("/deleteTouristAccountRequest/:email", touristController.deleteTouristAccountRequest);
 };

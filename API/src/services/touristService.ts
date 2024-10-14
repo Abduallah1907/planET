@@ -1,14 +1,5 @@
-import {
-  BadRequestError,
-  InternalServerError,
-  NotFoundError,
-} from "@/types/Errors";
-import {
-  ITouristCreateDTO,
-  ITouristNewUserDTO,
-  ITouristOutputDTO,
-  ITouristUpdateDTO,
-} from "@/interfaces/ITourist";
+import { BadRequestError, InternalServerError, NotFoundError } from "@/types/Errors";
+import { ITouristCreateDTO, ITouristNewUserDTO, ITouristOutputDTO, ITouristUpdateDTO } from "@/interfaces/ITourist";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 
@@ -17,16 +8,21 @@ import UserService from "./userService";
 import bcrypt from "bcryptjs";
 
 import { ObjectId } from "mongoose";
+import tourist from "@/api/routes/tourist";
 
+// comment and ratings
+// complaint
+// order
+// ticket
 @Service()
 export default class TouristService {
   constructor(
     @Inject("touristModel") private touristModel: Models.TouristModel,
     @Inject("userModel") private userModel: Models.UserModel,
-    @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel,
-    @Inject("historical_locationModel")
-    private historical_locationsModel: Models.Historical_locationsModel,
-    @Inject("activityModel") private activityModel: Models.ActivityModel
+    @Inject("ticketModel") private ticketModel: Models.TicketModel,
+    @Inject("comment_ratingModel") private comment_ratingModel: Models.Comment_ratingModel,
+    @Inject("complaintModel") private complaintModel: Models.ComplaintModel,
+    @Inject("orderModel") private orderModel: Models.OrderModel
   ) {}
 
   public async getTouristService(email: string) {
@@ -34,14 +30,12 @@ export default class TouristService {
       email: email,
       role: UserRoles.Tourist,
     });
-    if (user instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (user instanceof Error) throw new InternalServerError("Internal server error");
 
     if (user == null) throw new NotFoundError("User not found");
 
     const tourist = await this.touristModel.findOne({ user_id: user._id });
-    if (tourist instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (tourist instanceof Error) throw new InternalServerError("Internal server error");
 
     if (tourist == null) throw new NotFoundError("Tourist not found");
 
@@ -80,8 +74,7 @@ export default class TouristService {
     const newUser = new this.userModel(newUserResponse.data);
     // newUser.role = UserRoles.Tourist;
     await newUser.save();
-    if (newUser instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (newUser instanceof Error) throw new InternalServerError("Internal server error");
 
     const newTouristData: ITouristNewUserDTO = {
       user_id: newUser._id as ObjectId,
@@ -91,8 +84,7 @@ export default class TouristService {
     };
     const newTourist = new this.touristModel(newTouristData);
     await newTourist.save();
-    if (newTourist instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (newTourist instanceof Error) throw new InternalServerError("Internal server error");
 
     if (newTourist == null) throw new NotFoundError("Tourist not found");
 
@@ -118,10 +110,7 @@ export default class TouristService {
     return new response(true, touristOutput, "Tourist created", 201);
   }
 
-  public async updateTouristService(
-    searchEmail: string,
-    touristUpdateData: ITouristUpdateDTO
-  ) {
+  public async updateTouristService(searchEmail: string, touristUpdateData: ITouristUpdateDTO) {
     // const phoneNumRegex =
     //   /^\+\d{1,3}[\s-]?(\d{1,4}[\s-]?\d{1,4}[\s-]?\d{1,9})$/;
     // if (
@@ -149,13 +138,8 @@ export default class TouristService {
       password: hashedPassword,
       phone_number: touristUpdateData.phone_number,
     };
-    const user = await this.userModel.findOneAndUpdate(
-      { email: searchEmail, role: UserRoles.Tourist },
-      updatedUserData,
-      { new: true }
-    );
-    if (user instanceof Error)
-      throw new InternalServerError("Internal server error");
+    const user = await this.userModel.findOneAndUpdate({ email: searchEmail, role: UserRoles.Tourist }, updatedUserData, { new: true });
+    if (user instanceof Error) throw new InternalServerError("Internal server error");
 
     if (user == null) throw new NotFoundError("User not found");
 
@@ -164,14 +148,9 @@ export default class TouristService {
       nation: touristUpdateData.nation,
       addresses: touristUpdateData.addresses,
     };
-    const tourist = await this.touristModel.findOneAndUpdate(
-      { user_id: user._id },
-      updatedTouristData,
-      { new: true }
-    );
+    const tourist = await this.touristModel.findOneAndUpdate({ user_id: user._id }, updatedTouristData, { new: true });
 
-    if (tourist instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (tourist instanceof Error) throw new InternalServerError("Internal server error");
 
     if (tourist == null) throw new NotFoundError("Tourist not found");
 
@@ -196,5 +175,26 @@ export default class TouristService {
     };
 
     return new response(true, touristOutput, "Tourist updated", 200);
+  }
+
+  public async requestTouristAccountDeletionService(email: string) {
+    const touristUserData = await this.userModel.findOne({ email });
+    if (!touristUserData || touristUserData.role !== UserRoles.Tourist) throw new NotFoundError("No tourist exists with that email");
+    const touristData = await this.touristModel.findOne({ user_id: touristUserData._id });
+    if (!touristData) throw new NotFoundError("No tourist exists with that email");
+
+    // the reason we delete ANYTHING that has this tourist's id, even when it doesn't make sense
+    // (such as comments left on an activity), is because they would reference an id that does not exist
+    // another solution (instead of outright deleting the tourist) is to edit the tourist's data such that
+    // their information is deleted, but the id is maintained for other components to use
+    // up to discussion really
+    const deletedTouristUser = await this.userModel.findByIdAndDelete(touristUserData._id);
+    const deletedTouristData = await this.touristModel.findOneAndDelete({ user_id: touristUserData._id });
+
+    await this.comment_ratingModel.deleteMany({ tourist_id: touristData._id });
+    await this.complaintModel.deleteMany({ tourist_id: touristData._id });
+    await this.orderModel.deleteMany({ tourist_id: touristData._id });
+    await this.ticketModel.deleteMany({ tourist_id: touristData._id });
+    return new response(true, { deletedUserID: touristUserData._id, deletedTouristID: touristData._id }, "Request accepted, deleted tourist", 200);
   }
 }
