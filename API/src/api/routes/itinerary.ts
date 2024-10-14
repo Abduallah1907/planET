@@ -16,6 +16,13 @@ export default (app: Router) => {
   router.put("/updateItinerary/:itinerary_id", authorize([UserRoles.TourGuide]), itineraryController.updateItinerary);
   router.delete("/deleteItinerary/:itinerary_id", authorize([UserRoles.TourGuide]), itineraryController.deleteItinerary);
 
+  // activation for itinerary (can only be done by the tourguide)
+  router.put("/activateItinerary/:itinerary_id", itineraryController.activateItinerary);
+  router.put("/deactivateItinerary/:itinerary_id", itineraryController.deactivateItinerary);
+
+  // inappropiate flag for itinerary (can only be done by admin)
+  router.put("/flagItinerary/:itinerary_id", itineraryController.flagItinerary);
+
   // get all itineraries
   router.get("/getAllItinerariesByTourGuideID/:tour_guide_id", authorize([UserRoles.TourGuide]), itineraryController.getAllItinerariesByTourGuideID);
   router.get("/getAllItineraries/:page", itineraryController.getAllItineraries);
