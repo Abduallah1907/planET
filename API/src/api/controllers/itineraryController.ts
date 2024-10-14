@@ -70,7 +70,7 @@ export class ItineraryController {
     const { page } = req.params;
     const pageNum: number = parseInt(page);
     const itineraryService: ItineraryService = Container.get(ItineraryService);
-    const itineraries = await itineraryService.getAllItineraries(pageNum);
+    const itineraries = await itineraryService.getAllItinerariesService(pageNum);
     res.status(itineraries.status).json(itineraries);
   }
   public async getSearchItinerary(req: any, res: any) {
