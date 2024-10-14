@@ -3,23 +3,13 @@ import { Inject, Service } from "typedi";
 import multer from "multer";
 import mongoose from "mongoose";
 import response from "@/types/responses/response";
+import { Container } from "typedi";
 
 @Service()
 export class FileService {
-  private gfs: GridFSBucket;
-
-  constructor(
-    @Inject("uploadInstance") private upload: multer.Multer, // GridFSBucket instance injected
-    @Inject("mongoConnection") private mongoConnection: mongoose.Connection
-  ) {
-    if (!mongoConnection.db) {
-      throw new Error("MongoDB connection is not initialized");
-    }
-    this.gfs = new GridFSBucket(mongoConnection.db, { bucketName: "uploads" });
-  }
 
   // Method to upload a single file
-  uploadFile(req: any, res: any) {
+  public async uploadFile(req: any, res: any) {
     if (!req.files) {
       res.status(400).json({ message: "File upload failed" });
       return;
@@ -29,7 +19,8 @@ export class FileService {
     const file = req.files.file;
     const filename = `${Date.now()}-${file.name}`;
 
-    const uploadStream = this.gfs.openUploadStream(filename, {
+    const gfs = Container.get<GridFSBucket>("gridfsInstance");
+    const uploadStream = gfs.openUploadStream(filename, {
       contentType: file.mimetype,
       metadata: { _id: fileId.toString() },
     });
@@ -38,7 +29,7 @@ export class FileService {
 
     uploadStream.on("finish", async () => {
       try {
-        const files = await this.gfs.find({ filename }).toArray();
+        const files = await gfs.find({ filename }).toArray();
         if (!files || files.length === 0) {
           return res
             .status(404)
