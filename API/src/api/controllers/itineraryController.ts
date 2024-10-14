@@ -94,7 +94,7 @@ export class ItineraryController {
     res.status(upcomingItineraries.status).json(upcomingItineraries);
   }
   public async getFilteredItineraries(req: any, res: any) {
-    const { price, date, tag } = req.query;
+    const { price, date, tag, language } = req.query;
     const itineraryService: ItineraryService = Container.get(ItineraryService);
     var filters = {};
     if (price) {
@@ -115,12 +115,35 @@ export class ItineraryController {
         };
       }
     }
-    if (date) filters = { ...filters, date: { start: date } };
+    if (date) {
+      if (date.includes(" ")) {
+        filters = {
+          ...filters,
+          date: {
+            start: date.split(" ")[0],
+            end: date.split(" ")[1],
+          },
+        };
+      } else {
+        filters = {
+          ...filters,
+          date: {
+            start: date,
+          },
+        };
+      }
+    }
     if (tag) {
       const preferencesList = tag.split(",").map((preference: string) => preference.trim());
       filters = { ...filters, preferences: preferencesList };
     }
-    const itineraries = await itineraryService.getFilteredItinerariesService(filters);
+    if (language) {
+      const languages = language.split(",").map((lang: string) => lang.trim());
+      filters = { ...filters, languages: languages };
+    }
+    const itineraries = await itineraryService.getFilteredItinerariesService(
+      filters
+    );
     res.status(itineraries.status).json(itineraries);
   }
   public async getSortedItineraries(req: any, res: any) {

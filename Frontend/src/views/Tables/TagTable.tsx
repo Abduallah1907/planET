@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form } from 'react-bootstrap';
-import TagService from '../services/TagService';
+import { Table, Button, Modal, Form, Container } from 'react-bootstrap';
+import TagService from '../../services/TagService';
 
 const TagsTable: React.FC = () => {
     const [tags, setTags] = useState([]);
@@ -19,8 +19,8 @@ const TagsTable: React.FC = () => {
         setTags(tags.data);
     };
 
-    const handleDelete = async (id: string) => {
-        await TagService.delete(id);
+    const handleDelete = async (type: string) => {
+        await TagService.delete(type);
         fetchTags();
     };
 
@@ -68,10 +68,10 @@ const TagsTable: React.FC = () => {
     };
 
     return (
-        <div>
+        <Container className='mt-3'>
             <h1>Tags Table</h1>
-            <Button variant="primary" onClick={handleShowCreateModal}>Create Tag</Button>
-            <Table striped bordered hover>
+            <Button variant="main-inverse" onClick={handleShowCreateModal}>Create Tag</Button>
+            <Table striped bordered hover className='mt-3'>
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -86,7 +86,7 @@ const TagsTable: React.FC = () => {
                             <td>{tag.type}</td>
                             <td>
                                 <Button variant="warning" onClick={() => handleShowUpdateModal(tag)}>Update</Button>{' '}
-                                <Button variant="danger" onClick={() => handleDelete(tag._id)}>Delete</Button>
+                                <Button variant="danger" onClick={() => handleDelete(tag.type)}>Delete</Button>
                             </td>
                         </tr>
                     ))}
@@ -146,7 +146,7 @@ const TagsTable: React.FC = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-        </div>
+        </Container>
     );
 };
 

@@ -140,7 +140,7 @@ export default function ItinerariesPage() {
                   Languages={itinerary.languages.join(",")}
                   accessibility={itinerary.accessibility}
                   RatingVal={itinerary.average_rating}
-                  Reviews={itinerary.Reviews}
+                  Reviews={itinerary.reviews_count ?? 0}
                   Price={itinerary.price}
                   Duration={itinerary.duration}
                   Available_Dates={itinerary.available_dates}

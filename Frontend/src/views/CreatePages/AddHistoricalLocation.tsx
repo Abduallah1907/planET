@@ -1,23 +1,19 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import AdminFormGroup from "../components/FormGroup/FormGroup"; // Reuse the form group component
-import "../components/FormGroup.css"; // Reuse existing CSS
-import "./CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
-import "./tagsinput.css";
-import tagsData from "./tags.json"; // Ensure this path is correct
+import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Reuse the form group component
 import { BiChevronDown } from "react-icons/bi";
-import { HistoricalService } from "../services/HistoricalService";
-import { useAppSelector } from "../store/hooks";
-import { useParams } from "react-router-dom";
-import showToast from "../utils/showToast";
-import { ToastTypes } from "../utils/toastTypes";
+import { HistoricalService } from "../../services/HistoricalService";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
+import DaysModal from "../../components/DaysModals";
+import { useAppSelector } from "../../store/hooks";
 
 interface FormData {
   name: string;
-  opening_days: string[];
   description: string;
   picture: string;
   location: string;
+  openingDays: string[];
   openingFrom: string;
   openingTo: string;
   nativePrice: number;
@@ -38,14 +34,14 @@ interface SelectedTag {
 }
 
 const HistoricalPlaceForm: React.FC = () => {
-  const { historical_location_id } = useParams();
   const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTags, setSelectedTags] = useState<SelectedTag[]>([]);
-  const [currentTags, setCurrentTags] = useState<Tag[]>([]);
+  const [showDaysModal, setShowDaysModal] = useState(false); // State to manage modal visibility
+  const [selectedDays, setSelectedDays] = useState<string[]>([]); // State to manage selected days
 
   const [formData, setFormData] = useState<FormData>({
     name: "",
-    opening_days: [],
+    openingDays: [],
     description: "",
     picture: "",
     location: "",
@@ -74,25 +70,34 @@ const HistoricalPlaceForm: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const Governer = useAppSelector((state) => state.user);
+
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Add form submission logic here
     // console.log("Form submitted:", formData);
-    try {
-      // const updatedLocation = await HistoricalService.editHistoricalLocation(
-      //   Governer.stakeholder_id,
-      //   formData
-      // );
-      console.log(selectedTags)
-      const tagsMap = selectedTags.reduce((acc, tag) => {
-        acc[tag.id] = tag.value;
-        return acc;
-      }, {} as { [key: string]: string });
-      console.log(tagsMap)
-      // console.log("Historical Location updated successfully:", updatedLocation);
-    } catch (error) {
-      console.error("Failed to update Historical Location:", error);
+    const tagsMap = selectedTags.reduce((acc, tag) => {
+      acc[tag.id] = tag.value;
+      return acc;
+    }, {} as { [key: string]: string });
+    const reqData = {
+      name: formData.name,
+      location: {latitude: 0, longitude: 0},
+      picture: "Testing",
+      description: formData.description,
+      opening_days: formData.openingDays,
+      opening_hours_from: formData.openingFrom,
+      opening_hours_to: formData.openingTo,
+      native_price: formData.nativePrice,
+      foreign_price: formData.foreignPrice,
+      student_price: formData.studentPrice,
+      tags: tagsMap,
+      governor_id: Governer.stakeholder_id._id,
+      active_flag: formData.isActive,
     }
+    await HistoricalService.addHistoricalLocation(
+      reqData
+    );
   };
 
   const getAllHistoricalTags = async () => {
@@ -101,68 +106,43 @@ const HistoricalPlaceForm: React.FC = () => {
       return {
         id: tag._id,
         name: tag.name,
-        values: tag.Values,
+        values: tag.values,
       };
     });
     setTags(mappedTags);
-  }
-
-  const getHistorical_Location = async () => {
-    if (historical_location_id) {
-      console.log("Wasal")
-      let locationData = await HistoricalService.getHistoricalLocationByIdForGoverner(
-        historical_location_id
-      );
-      locationData = locationData.data;
-      setFormData({
-        name: locationData.name,
-        opening_days: locationData.opening_days,
-        description: locationData.description,
-        picture: locationData.picture,
-        location: locationData.location.toString(),
-        openingFrom: locationData.openingFrom,
-        openingTo: locationData.openingTo,
-        nativePrice: locationData.native_price,
-        foreignPrice: locationData.foreign_price,
-        studentPrice: locationData.student_price,
-        isActive: locationData.isActive,
-      })
-      console.log(locationData)
-    } else {
-      console.error("Historical location ID is undefined");
-    }
   }
 
   useEffect(() => {
     getAllHistoricalTags();
   }, []);
 
-  useEffect(() => {
-    getHistorical_Location();
-  }, [historical_location_id]);
-
   const handleAddTag = () => {
-    if(currentTags.length === tags.length) {
+    if(selectedTags.length === tags.length) {
       showToast("All tags have been added", ToastTypes.ERROR);
       return;
     };
-    setCurrentTags([...currentTags, tags[0]]);
+    setSelectedTags([...selectedTags, { id: "", value: "" }]);
   }
 
   const handleRemoveTag = (index: number) => {
-    const newCurrentTags = currentTags.filter((_, i) => i !== index);
     const newSelectedTags = selectedTags.filter((_, i) => i !== index);
-    setCurrentTags(newCurrentTags);
     setSelectedTags(newSelectedTags);
   };
 
-  const Governer = useAppSelector((state) => state.user);
+  const handleDaysInputClick = () => {
+    setShowDaysModal(true);
+  };
+
+  const handleDaysModalClose = () => {
+    setShowDaysModal(false);
+    setFormData({ ...formData, openingDays: selectedDays });
+  };
 
   return (
     <div className="profile-form-container">
       <Row className="align-items-center mb-4 w-100">
         <Col xs={7} className="text-left">
-          <h2 className="my-profile-heading">Edit Historical Location</h2>
+          <h2 className="my-profile-heading">Add Historical Location</h2>
         </Col>
       </Row>
       <Container className="mt-4">
@@ -190,8 +170,8 @@ const HistoricalPlaceForm: React.FC = () => {
                 className="form-group"
                 label="Opening Days"
                 type="text"
-                value={formData.opening_days.join(",")}
-                onChange={handleInputChange}
+                value={formData.openingDays.join(",")}
+                onChange={handleDaysInputClick}
                 required
                 placeholder={""}
                 id={"opening_days"}
@@ -204,8 +184,8 @@ const HistoricalPlaceForm: React.FC = () => {
                 <Form.Label>Picture</Form.Label>
                 <Form.Control
                   type="file"
+                  className="custom-form-control"
                   onChange={handleFileChange}
-                  required
                 />
               </Form.Group>
             </Col>
@@ -325,17 +305,18 @@ const HistoricalPlaceForm: React.FC = () => {
             <Col md={12}>
               <Form.Group className="form-group" controlId="tags">
                 <Form.Label>Tags</Form.Label>
-                {currentTags.map((tag: Tag, index) => {
+                {selectedTags.map((tag: SelectedTag, index) => {
                   return (
                     <Row key={index} className="mt-1">
                       <Col>
                         <div className="custom-select-container">
                           <Form.Control
                             as="select"
-                            value={selectedTags[index]?.id || ""}
+                            value={tag.id || ""}
+                            className="custom-form-control"
                             onChange={(e) => {
                               const selectedKey = e.target.value;
-                              const selectedValue = selectedTags[index]?.value || "";
+                              const selectedValue = tag.value || "";
                               const newSelectedTags = [...selectedTags];
                               newSelectedTags[index] = { id: selectedKey, value: selectedValue };
                               setSelectedTags(newSelectedTags);
@@ -358,7 +339,8 @@ const HistoricalPlaceForm: React.FC = () => {
                         <div className="custom-select-container">
                           <Form.Control
                             as="select"
-                            value={selectedTags[index]?.value || ""}
+                            value={tag.value || ""}
+                            className="custom-form-control"
                             onChange={(e) => {
                               const selectedValue = e.target.value;
                               const newSelectedTags = [...selectedTags];
@@ -369,7 +351,7 @@ const HistoricalPlaceForm: React.FC = () => {
                           >
                             <option value="">Select Value</option>
                             {tags
-                              .find((t) => t.id === selectedTags[index]?.id)
+                              .find((t) => t.id === tag.id)
                               ?.values.map((value, index) => (
                                 <option key={index} value={value}>
                                   {value}
@@ -416,11 +398,17 @@ const HistoricalPlaceForm: React.FC = () => {
             </Col>
           </Row>
 
-          <Button type="submit" className="update-btn mt-4 mb-5 ">
-            Update
+          <Button type="submit" variant="main-inverse"  className="mt-4 mb-5 ">
+            Create
           </Button>
         </Form>
       </Container>
+      <DaysModal
+        show={showDaysModal}
+        handleClose={handleDaysModalClose}
+        selectedDays={selectedDays}
+        setSelectedDays={setSelectedDays}
+      />
     </div>
   );
 };

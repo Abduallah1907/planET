@@ -25,21 +25,21 @@ import ProfileFormTourGuide from "./components/ProfileForm/ProfileFormTourGuide"
 import SellerFirstProfile from "./components/ProfileForm/SellerFirstProfile";
 import TourGuideFirst from "./components/ProfileForm/TourGuideFirst";
 import AdvertiserFirst from "./components/ProfileForm/AdvertiserFirst";
-import AdvertiserCreate from "./views/AdvertiserCreate";
-import AdvertiserCreateUpdate from "./views/AdvertiserCreateUpdate";
-import AddNewProduct from "./views/AddNewProduct";
-import AddHistoricalLocation from "./views/AddHistoricalLocation";
-import AddItinerary from "./views/AddItinerary";
+import AdvertiserCreate from "./views/CreatePages/AddActivity";
+import EditActivity from "./views/EditPages/EditActivity";
+import AddNewProduct from "./views/CreatePages/AddNewProduct";
+import AddHistoricalLocation from "./views/CreatePages/AddHistoricalLocation";
+import AddItinerary from "./views/CreatePages/AddItinerary";
 import Itinerary from "./views/ViewingPages/Itinerary";
 import HistoricalPlaces from "./views/ViewingPages/HistoricalPlaces";
 import Products from "./views/ViewingPages/Products";
 import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
 import StakeholderReg from "./views/auth/StakeholderReg/StakeholderReg";
 import ItineraryCardd from "./views/ItineraryCardd";
-import EditHistoricalLocation from "./views/EditHistoricalLocation";
-import EditProduct from "./views/EditProduct";
-import EditItinerary from "./views/EditItinerary";
-import UsersTable from "./views/UsersTable";
+import EditHistoricalLocation from "./views/EditPages/EditHistoricalLocation";
+import EditProduct from "./views/EditPages/EditProduct";
+import EditItinerary from "./views/EditPages/EditItinerary";
+import UsersTable from "./views/Tables/UsersTable";
 import MyActivities from "./views/MyViewingPages/MyActivities";
 import MyHistoricalPlaces from "./views/MyViewingPages/MyHistoricalPlaces";
 import MyItinerary from "./views/MyViewingPages/MyItinerary";
@@ -49,7 +49,8 @@ import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { toggleSidebar } from "./store/sidebarSlice";
 import Sidebar from "./components/SideBar/Sidebar";
 import CategoryTable from "./views/CategoryTable";
-import TagsTable from "./views/TagTable";
+import TagsTable from "./views/Tables/TagTable";
+import HistoricalTagsTable from "./views/Tables/HistoricalTagTable";
 
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen)
@@ -96,20 +97,23 @@ const App: React.FC = () => {
         <Route path="/SettingSide" element={<SettingSide />} />
         <Route path="/TourGuide" element={<ProfileFormTourGuide />} />
         <Route path="/Advertiser" element={<Advertiser />} />
-        <Route path="/AdvertiserCreate" element={<AdvertiserCreate />} />
-        <Route path="/AdvertiserCreateUpdate" element={<AdvertiserCreateUpdate />} />
+        
         <Route path="/AddNewProduct" element={<AddNewProduct />} />
+        <Route path="/AddActivity" element={<AdvertiserCreate />} />
         <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
         <Route path="/AddItinerary" element={<AddItinerary />} />
         <Route path="/ItineraryCardd" element={<ItineraryCardd />} />
 
+        <Route path="/EditActivity/:activity_id" element={<EditActivity />} />
         <Route path="/EditHistoricalLocation/:historical_location_id" element={<EditHistoricalLocation />} />
         <Route path="/EditItinerary/:itinerary_id" element={<EditItinerary />} />
         <Route path="/EditProduct/:product_id" element={<EditProduct />} />
+
         <Route path="/UsersTable" element={<UsersTable />} />
+
         <Route path="/MyActivities" element={<MyActivities />} />
         <Route path="/MyHistoricalLocations" element={<MyHistoricalPlaces />} />
-        <Route path="/MyItinerary" element={<MyItinerary />} />
+        <Route path="/MyItineraries" element={<MyItinerary />} />
         <Route path="/MyProducts" element={<MyProducts />} />
 
         <Route path="/JoinUs" element={<StakeholderReg />} />
@@ -119,6 +123,7 @@ const App: React.FC = () => {
 
         <Route path="/Categories" element={<CategoryTable />} />
         <Route path="/Tags" element={<TagsTable />} />
+        <Route path="/HistoricalTags" element={<HistoricalTagsTable />} />
       </Routes>
     </AppProvider>
   );

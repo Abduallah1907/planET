@@ -1,15 +1,14 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import AdminFormGroup from "../components/FormGroup/FormGroup"; // Reuse the form group component
-import "../components/FormGroup.css"; // Reuse existing CSS
-import "./CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
-import "./tagsinput.css";
+import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Reuse the form group component
+import "../CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
+import "../tagsinput.css";
 import { BiChevronDown } from "react-icons/bi";
-import { ItineraryService } from "../services/ItineraryService";
-import CategoryService from "../services/CategoryService";
-import { AdminService } from "../services/AdminService";
-import { ActivityService } from "../services/ActivityService";
-import languages from "../utils/languageOptions.json";
+import { ItineraryService } from "../../services/ItineraryService";
+import CategoryService from "../../services/CategoryService";
+import { AdminService } from "../../services/AdminService";
+import { ActivityService } from "../../services/ActivityService";
+import languages from "../../utils/languageOptions.json";
 import { useParams } from "react-router-dom";
 
 
@@ -83,6 +82,15 @@ const ItineraryForm: React.FC = () => {
     setSelectedTags((prev) => prev.filter((tag) => tag._id !== tagToDeleteID));
   };
 
+  const handleSuggestionClick = (suggestion: string) => {
+    const foundTag = tags.find(t => t.type === suggestion);
+    if (foundTag && !selectedTags.some(t => t._id === foundTag._id)) {
+      setSelectedTags((prev) => [...prev, foundTag]);
+      setSuggestions((prev) => prev.filter((s) => s !== suggestion));
+      setInputValue("");
+    }
+  };
+
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
@@ -126,7 +134,9 @@ const ItineraryForm: React.FC = () => {
       const filteredTags = tags.filter((tag: Tag) =>
         tag.type.toLowerCase().includes(inputValue.slice(1).toLowerCase())
       );
-      setSuggestions(filteredTags.map((tag) => tag.type));
+      const selectedTagIds = new Set(selectedTags.map((tag) => tag._id));
+      const filteredSuggestions = filteredTags.filter((tag) => !selectedTagIds.has(tag._id));
+      setSuggestions(filteredSuggestions.map((tag) => tag.type));
     } else {
       setSuggestions([]);
     }
@@ -417,12 +427,7 @@ const ItineraryForm: React.FC = () => {
                     {suggestions.map((suggestion) => (
                       <li
                         key={suggestion}
-                        onClick={() => {
-                          const foundTag = tags.find(t => t.type === suggestion);
-                          if (foundTag && !selectedTags.some(t => t._id === foundTag._id)) {
-                            setSelectedTags((prev) => [...prev, foundTag]);
-                          }
-                        }}
+                        onClick={() => handleSuggestionClick(suggestion)}
                       >
                         {suggestion}
                       </li>
@@ -458,7 +463,7 @@ const ItineraryForm: React.FC = () => {
             </Col>
           </Row>
 
-          <Button className="update-btn mt-3 mb-5" type="submit">
+          <Button variant="main-inverse" className="mt-3 mb-5" type="submit">
             Update Itinerary
           </Button>
         </Form>

@@ -90,6 +90,6 @@ export interface IItineraryOutputAllDTO {
   available_dates: Date[];
   inappropriate_flag: Boolean;
   active_flag: Boolean;
-
+  reviews_count: Number;
   tags?: ObjectId[];
 }

@@ -127,8 +127,17 @@ export default class ItineraryService {
     });
     if (itineraries instanceof Error) throw new InternalServerError("Internal server error");
     if (!itineraries) throw new HttpError("Tour guide not found", 404);
-    const itinerariesOutput: IItineraryOutputDTO[] = itineraries.map((itinearary: {}) => ({}));
-    return new response(true, itineraries, "Returning all found itineraries!", 201);
+    const itinerariesOutput: IItineraryOutputDTO[] = itineraries.map((itinearary: any) => ({
+        ...itinearary.toObject(),
+        reviews_count: itinearary.comments ? itinearary.comments.length : 0,
+      })
+    );
+    return new response(
+      true,
+      itinerariesOutput,
+      "Returning all found itineraries!",
+      201
+    );
   }
 
   public async getAllItinerariesService(page: number): Promise<any> {
@@ -142,23 +151,26 @@ export default class ItineraryService {
       throw new InternalServerError("Internal server error");
     }
 
-    const itinerartiesOutput: IItineraryOutputAllDTO[] = itineraries.map((itinerary) => ({
-      itinerary_id: itinerary._id as ObjectId,
-      name: itinerary.name,
-      accessibility: itinerary.accessibility,
-      active_flag: itinerary.active_flag,
-      inappropriate_flag: itinerary.inappropriate_flag,
-      available_dates: itinerary.available_dates,
-      reviews: itinerary.comments,
-      drop_off_loc: itinerary.drop_off_loc,
-      duration: itinerary.duration,
-      languages: itinerary.languages,
-      pickup_loc: itinerary.pickup_loc,
-      price: itinerary.price,
-      average_rating: itinerary.average_rating,
-      locations: itinerary.locations,
-      tags: itinerary.tags,
-    }));
+    const itinerartiesOutput: IItineraryOutputAllDTO[] = itineraries.map(
+      (itinerary) => ({
+        itinerary_id: itinerary._id as ObjectId,
+        name: itinerary.name,
+        accessibility: itinerary.accessibility,
+        active_flag: itinerary.active_flag,
+        inappropriate_flag: itinerary.inappropriate_flag,
+        available_dates: itinerary.available_dates,
+        reviews: itinerary.comments,
+        drop_off_loc: itinerary.drop_off_loc,
+        duration: itinerary.duration,
+        languages: itinerary.languages,
+        pickup_loc: itinerary.pickup_loc,
+        price: itinerary.price,
+        average_rating: itinerary.average_rating,
+        locations: itinerary.locations,
+        tags: itinerary.tags,
+        reviews_count: itinerary.comments.length,
+      })
+    );
 
     return new response(true, itinerartiesOutput, "Page " + page + " of itineraries", 200);
   }
@@ -202,6 +214,7 @@ export default class ItineraryService {
     price?: { min?: number; max?: number };
     date?: { start?: Date; end?: Date };
     preferences?: string[];
+    languages?: string[];
   }) {
     if (!filters) {
       const itineraries = await this.itineraryModel.find();
@@ -219,13 +232,32 @@ export default class ItineraryService {
     }
 
     if (filters.date) {
-      if (filters.date.start !== undefined) {
-        matchStage.date = { ...matchStage.date, $gte: filters.date.start };
-      }
-      if (filters.date.end !== undefined) {
-        matchStage.date = { ...matchStage.date, $lte: filters.date.end };
+      if (filters.date.start !== undefined && filters.date.end !== undefined) {
+        matchStage.available_dates = {
+          $elemMatch: {
+            $gte: new Date(filters.date.start),
+            $lte: new Date(filters.date.end),
+          },
+        };
+      } else if (filters.date.start !== undefined) {
+        matchStage.available_dates = {
+          $elemMatch: {
+            $gte: new Date(filters.date.start),
+          },
+        };
+      } else if (filters.date.end !== undefined) {
+        matchStage.available_dates = {
+          $elemMatch: {
+            $lte: new Date(filters.date.end),
+          },
+        };
       }
     }
+
+    if(filters.languages) {
+      matchStage.languages = { $in: filters.languages };
+    }
+
     var aggregationPipeline: any[] = [
       {
         $lookup: {
@@ -237,6 +269,11 @@ export default class ItineraryService {
       },
       {
         $match: matchStage,
+      },
+      {
+        $addFields: {
+          reviews_count: { $size: "$comments" },
+        },
       },
     ];
     if (filters.preferences) {

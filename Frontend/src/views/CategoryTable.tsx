@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form } from 'react-bootstrap';
+import { Table, Button, Modal, Form, Container } from 'react-bootstrap';
 import CategoryService from '../services/CategoryService';
 
 const CategoryTable: React.FC = () => {
@@ -68,10 +68,10 @@ const CategoryTable: React.FC = () => {
     };
 
     return (
-        <div>
+        <Container className='mt-3'>
             <h1>Category Table</h1>
-            <Button variant="primary" onClick={handleShowCreateModal}>Create Category</Button>
-            <Table striped bordered hover>
+            <Button variant="main-inverse" onClick={handleShowCreateModal}>Create Category</Button>
+            <Table striped bordered hover className='mt-3'>
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -146,7 +146,7 @@ const CategoryTable: React.FC = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-        </div>
+        </Container>
     );
 };
 

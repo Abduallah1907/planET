@@ -1,4 +1,4 @@
-import { Card, Badge, Row, Col, Image, DropdownButton, Dropdown } from "react-bootstrap";
+import { Card, Badge, Row, Col, Image, DropdownButton, Dropdown, Modal, Button } from "react-bootstrap";
 import Rating from '../Rating/Rating';
 import "./Cards.css";
 import { HistoricalService } from "../../services/HistoricalService";
@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { get } from "http";
 import { use } from "i18next";
 import { useNavigate } from "react-router-dom";
+import { on } from "events";
 
 interface InputData {
   id: string;
@@ -24,7 +25,7 @@ interface InputData {
   tags?: string[];
   onChange?: () => void; // Change onChange to a function that does not take parameters
   onClick?: () => void;
-
+  onDelete?: () => void;
 }
 
 export const HistoricalLocationCard = ({
@@ -44,11 +45,28 @@ export const HistoricalLocationCard = ({
   tags,
   onChange,
   onClick,
+  onDelete,
 }: InputData) => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const navigate = useNavigate();
   function handleEdit(id: string): void {
     navigate(`/EditHistoricalLocation/${id}`);
   }
+
+  const handleDelete = () => {
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    // Perform the delete action here
+    onDelete && onDelete(); // Call the onDelete function passed as a prop
+    setShowDeleteModal(false); // Close modal after confirming
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false); // Close modal without action
+  };
 
   // Manage the state for the rating
  
@@ -131,7 +149,7 @@ export const HistoricalLocationCard = ({
               {RatingVal.toFixed(1)}
             </Badge>
           </div>
-          <p className="text-muted text-right" style={{ fontSize: "0.9rem" }}>
+          <p className="text-muted text-right" style={{ fontSize: "1.1rem" }}>
             {Reviews.toLocaleString()} Reviews
           </p>
 
@@ -160,10 +178,29 @@ export const HistoricalLocationCard = ({
               variant="light"
               className="d-flex justify-content-end ms-3 btn-main-inverse">
               <Dropdown.Item onClick={() => id && handleEdit(id)}>Edit</Dropdown.Item>
+              <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item>
             </DropdownButton>
           </Col>
           : null}
       </Row>
+
+      {/* Delete Confirmation Modal */}
+      <Modal show={showDeleteModal} onHide={cancelDelete} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete this product?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={cancelDelete}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmDelete}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Card>
   );
 };
