@@ -328,6 +328,9 @@ export default (app: Router) => {
   router.put("/updateItinerary/:itinerary_id", authorize([UserRoles.TourGuide]), itineraryController.updateItinerary);
   router.delete("/deleteItinerary/:itinerary_id", authorize([UserRoles.TourGuide]), itineraryController.deleteItinerary);
 
+  // activation for itinerary
+  router.put("/activateItinerary/:itinerary_id", itineraryController.activateItinerary);
+  router.put("/deactivateItinerary/:itinerary_id", itineraryController.deactivateItinerary);
   // get all itineraries
   router.get("/getAllItinerariesByTourGuideID/:tour_guide_id", authorize([UserRoles.TourGuide]), itineraryController.getAllItinerariesByTourGuideID);
   router.get("/getAllItineraries/:page", itineraryController.getAllItineraries);

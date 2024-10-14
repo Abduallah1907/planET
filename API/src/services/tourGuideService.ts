@@ -2,13 +2,9 @@ import mongoose, { ObjectId, Types } from "mongoose";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import Container, { Inject, Service } from "typedi";
-import { HttpError, InternalServerError, NotFoundError } from "@/types/Errors";
+import { UnauthorizedError, HttpError, InternalServerError, NotFoundError, ForbiddenError } from "@/types/Errors";
 import { ITour_GuideUpdateDTO } from "@/interfaces/ITour_guide";
-import {
-  IPreviousWorkInputDTO,
-  IPreviousWorkOutputDTO,
-  IPreviousWorkUpdateDTO,
-} from "@/interfaces/IPrevious_work";
+import { IPreviousWorkInputDTO, IPreviousWorkOutputDTO, IPreviousWorkUpdateDTO } from "@/interfaces/IPrevious_work";
 import { ITourGuideInput, ITourGuideOutput } from "@/interfaces/ITour_guide";
 import UserService from "./userService";
 import { IUserInputDTO } from "@/interfaces/IUser";
@@ -19,28 +15,23 @@ export default class TourGuideService {
   constructor(
     @Inject("userModel") private userModel: Models.UserModel,
     @Inject("tour_guideModel") private tourGuideModel: Models.Tour_guideModel,
-    @Inject("previous_workModel")
-    private previousWorkModel: Models.Previous_workModel,
+    @Inject("previous_workModel") private previousWorkModel: Models.Previous_workModel,
     @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel
   ) {}
 
   // CUD for work experiences
-  public async createPreviousWorkService(
-    previousWork: IPreviousWorkInputDTO
-  ): Promise<any> {
+  public async createPreviousWorkService(previousWork: IPreviousWorkInputDTO): Promise<any> {
     const tourGuide = await this.tourGuideModel.findOne({
       tour_guide_id: previousWork.tour_guide_id,
     });
-    if (!tourGuide)
-      throw new HttpError("Tour guide not found. Is the ID correct?", 404);
+    if (!tourGuide) throw new HttpError("Tour guide not found. Is the ID correct?", 404);
 
     const newWorkExperience = await this.previousWorkModel.create(previousWork);
 
     tourGuide.previous_work_description.push(newWorkExperience);
     await tourGuide.save();
 
-    if (newWorkExperience instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (newWorkExperience instanceof Error) throw new InternalServerError("Internal server error");
     const previousWorkOutput: IPreviousWorkOutputDTO = {
       previous_work_id: (newWorkExperience._id as Types.ObjectId).toString(),
       title: newWorkExperience.title,
@@ -48,26 +39,12 @@ export default class TourGuideService {
       from: newWorkExperience.from,
       to: newWorkExperience.to,
     };
-    return new response(
-      true,
-      previousWorkOutput,
-      "Work experience created successfully!",
-      201
-    );
+    return new response(true, previousWorkOutput, "Work experience created successfully!", 201);
   }
 
-  public async updatePreviousWorkService(
-    updatedPreviousWorkInfo: IPreviousWorkUpdateDTO
-  ): Promise<any> {
-    if (
-      !Types.ObjectId.isValid(
-        updatedPreviousWorkInfo.previous_work_id.toString()
-      )
-    )
-      throw new Error("_id is invalid");
-    const previousWork = await this.previousWorkModel.findById(
-      updatedPreviousWorkInfo.previous_work_id
-    );
+  public async updatePreviousWorkService(updatedPreviousWorkInfo: IPreviousWorkUpdateDTO): Promise<any> {
+    if (!Types.ObjectId.isValid(updatedPreviousWorkInfo.previous_work_id.toString())) throw new Error("_id is invalid");
+    const previousWork = await this.previousWorkModel.findById(updatedPreviousWorkInfo.previous_work_id);
     if (!previousWork) throw new Error("Previous work not found");
 
     if (updatedPreviousWorkInfo.title !== undefined) {
@@ -91,33 +68,20 @@ export default class TourGuideService {
       from: previousWork.from,
       to: previousWork.to,
     };
-    return new response(
-      true,
-      previousWorkOutput,
-      "Previous work updated!",
-      201
-    );
+    return new response(true, previousWorkOutput, "Previous work updated!", 201);
   }
 
-  public async deletePreviousWorkService(
-    previous_work_id: Types.ObjectId,
-    tour_guide_id: Types.ObjectId
-  ) {
-    if (!Types.ObjectId.isValid(previous_work_id.toString()))
-      throw new Error("_id is invalid");
-    if (!Types.ObjectId.isValid(tour_guide_id.toString()))
-      throw new Error("_id is invalid");
+  public async deletePreviousWorkService(previous_work_id: Types.ObjectId, tour_guide_id: Types.ObjectId) {
+    if (!Types.ObjectId.isValid(previous_work_id.toString())) throw new Error("_id is invalid");
+    if (!Types.ObjectId.isValid(tour_guide_id.toString())) throw new Error("_id is invalid");
 
     const tourGuide = await this.tourGuideModel.findById({
       tour_guide_id,
     });
     if (!tourGuide) throw new HttpError("Tour guide not found", 404);
 
-    const deletedPreviousWork = await this.previousWorkModel.findByIdAndDelete(
-      previous_work_id
-    );
-    if (!deletedPreviousWork)
-      throw new HttpError("Previous work not found", 404);
+    const deletedPreviousWork = await this.previousWorkModel.findByIdAndDelete(previous_work_id);
+    if (!deletedPreviousWork) throw new HttpError("Previous work not found", 404);
 
     tourGuide.previous_work_description.pull(deletedPreviousWork._id);
     await tourGuide.save();
@@ -126,12 +90,7 @@ export default class TourGuideService {
       previous_work_id: deletedPreviousWork._id,
       title: deletedPreviousWork.title,
     };
-    return new response(
-      true,
-      deletedPreviousWorkOutput,
-      "Previous work deleted!",
-      200
-    );
+    return new response(true, deletedPreviousWorkOutput, "Previous work deleted!", 200);
   }
 
   // CRUD for tour guide profile
@@ -148,8 +107,7 @@ export default class TourGuideService {
     const userService: UserService = Container.get(UserService);
     const newUserResponse = await userService.createUserService(userData);
 
-    if (newUserResponse.data instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (newUserResponse.data instanceof Error) throw new InternalServerError("Internal server error");
 
     const newTourGuide = await this.tourGuideModel.create({
       user_id: newUserResponse.data._id,
@@ -157,12 +115,7 @@ export default class TourGuideService {
       documents_required: tourGuideData.documents_required,
       approval: true,
     });
-    return new response(
-      true,
-      { tour_guide_user_id: newTourGuide.user_id },
-      "Tour guide created",
-      201
-    );
+    return new response(true, { tour_guide_user_id: newTourGuide.user_id }, "Tour guide created", 201);
   }
 
   public async getProfileService(email: string): Promise<any> {
@@ -173,14 +126,11 @@ export default class TourGuideService {
       })
       .select("username name phone_number");
 
-    if (userProfile instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (userProfile instanceof Error) throw new InternalServerError("Internal server error");
     if (!userProfile) throw new HttpError("Tour guide not found", 404);
 
     const tourguide_user_id = userProfile._id;
-    const tourGuideUser = await this.tourGuideModel
-      .findOne({ user_id: tourguide_user_id })
-      .populate("previous_work_description");
+    const tourGuideUser = await this.tourGuideModel.findOne({ user_id: tourguide_user_id }).populate("previous_work_description");
 
     if (!tourGuideUser) throw new HttpError("Tour guide user not found", 404);
     const tourGuideOutput: ITourGuideOutput = {
@@ -196,10 +146,7 @@ export default class TourGuideService {
     return new response(true, tourGuideOutput, "Tour guide profile", 200);
   }
 
-  public async updateProfileService(
-    updatedTourGuide: ITour_GuideUpdateDTO,
-    email: string
-  ): Promise<any> {
+  public async updateProfileService(updatedTourGuide: ITour_GuideUpdateDTO, email: string): Promise<any> {
     const {
       newEmail,
       name,
@@ -237,18 +184,10 @@ export default class TourGuideService {
     if (tourGuideUser) {
       const isAccepted = tourGuideUser.status;
       const role = tourGuideUser.role;
-      if (!isAccepted)
-        throw new HttpError(
-          "The tour guide has not been accepted by an admin yet",
-          403
-        );
-      if (role !== UserRoles.TourGuide)
-        throw new HttpError("This user is not a tour guide", 400);
+      if (!isAccepted) throw new HttpError("The tour guide has not been accepted by an admin yet", 403);
+      if (role !== UserRoles.TourGuide) throw new HttpError("This user is not a tour guide", 400);
     } else {
-      throw new HttpError(
-        "This user is not registered to our system?? This error should never be thrown :)",
-        400
-      );
+      throw new HttpError("This user is not registered to our system?? This error should never be thrown :)", 400);
     }
 
     const tour_guide_user_id = tourGuideUser._id;
@@ -269,17 +208,16 @@ export default class TourGuideService {
     if (updatedPreviousWork) {
       for (const work of updatedPreviousWork) {
         const workObjectId = new mongoose.Types.ObjectId(work.previous_work_id);
-        const updatedWorkExperience =
-          await this.previousWorkModel.findByIdAndUpdate(
-            workObjectId,
-            {
-              title: work.title,
-              place: work.place,
-              from: work.from,
-              to: work.to,
-            },
-            { new: true }
-          );
+        const updatedWorkExperience = await this.previousWorkModel.findByIdAndUpdate(
+          workObjectId,
+          {
+            title: work.title,
+            place: work.place,
+            from: work.from,
+            to: work.to,
+          },
+          { new: true }
+        );
         if (updatedWorkExperience) {
           finalUpdatedPreviousWork.push(updatedWorkExperience._id as ObjectId);
         }
@@ -320,11 +258,6 @@ export default class TourGuideService {
       name: tourGuideUser.name,
     };
 
-    return new response(
-      true,
-      tourGuideOutput,
-      "Profile updated successfully!",
-      200
-    );
+    return new response(true, tourGuideOutput, "Profile updated successfully!", 200);
   }
 }
