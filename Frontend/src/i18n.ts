@@ -88,7 +88,7 @@ const resources = {
       "play_demo": "Play Demo",
       "we_offer_best_services": "We offer the best services",
       "create_governor_account": "Create Governor Account",
-
+      "explore_historical_locations": "Explore Historical Locations"
 
 
 
@@ -182,6 +182,7 @@ const resources = {
       "play_demo": "تشغيل العرض التوضيحي",
       "we_offer_best_services": "نحن نقدم أفضل الخدمات",
       "create_governor_account": "إنشاء حساب وزير",
+      "explore_historical_locations": ""
 
 
 
@@ -377,6 +378,7 @@ const resources = {
       "play_demo": "Demo abspielen",
       "we_offer_best_services": "Wir bieten die besten Dienstleistungen an",
       "create_governor_account": "Gouverneurskonto erstellen",
+
 
 
 

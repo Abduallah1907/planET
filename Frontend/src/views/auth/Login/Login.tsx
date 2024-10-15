@@ -7,8 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store/hooks";
 import { activateSidebar, setNavItems } from "../../../store/sidebarSlice";
 import { setUser } from "../../../store/userSlice";
-import path from "path";
-import { BiLabel } from "react-icons/bi";
 import { useTranslation } from "react-i18next";
 
 export default function Login() {
@@ -53,7 +51,6 @@ export default function Login() {
         case "REJECTED":
           navigate("/login");
           return;
-          break;
         case "APPROVED":
       }
 
@@ -64,7 +61,6 @@ export default function Login() {
           );
           navigate("/Touristedit");
           return;
-          break;
         case "TOUR_GUIDE":
           dispatch(
             setNavItems([
@@ -79,8 +75,6 @@ export default function Login() {
           } else {
             navigate("/TourGuide");
           }
-          return;
-
           break;
         case "ADVERTISER":
           dispatch(
@@ -95,7 +89,6 @@ export default function Login() {
           } else {
             navigate("/Advertiser");
           }
-          return;
           break;
         case "SELLER":
           dispatch(

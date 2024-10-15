@@ -1,5 +1,4 @@
-import logo from "./assets/Logo.svg";
-import React, { useState } from "react";
+import React from "react";
 import CreateAdmin from "./views/CreateAdmin/CreateAdmin";
 import TopBar from "./components/TopBar/TopBar";
 import { Route, Routes } from "react-router-dom";
