@@ -75,7 +75,6 @@ const HistoricalPlaceForm: React.FC = () => {
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Add form submission logic here
-    // console.log("Form submitted:", formData);
     try {
       const tagsMap = selectedTags.reduce((acc, tag) => {
         acc[tag.id] = tag.value;
@@ -103,7 +102,6 @@ const HistoricalPlaceForm: React.FC = () => {
       } else {
         console.error("Historical location ID is undefined");
       }
-      // console.log("Historical Location updated successfully:", updatedLocation);
     } catch (error) {
       console.error("Failed to update Historical Location:", error);
     }

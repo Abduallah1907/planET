@@ -161,13 +161,15 @@ const CustomActivityCard = ({
           {/* Price and Active/Inactive Button */}
           <div className="text-end">
             <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
-            <Badge
-              bg={(isActive && isBooked) ? "active" : "inactive"} // Change color based on booking status
-              className="mt-2 custom-status-badge rounded-4 text-center"
-              onClick={onChange} // Call onChange when clicked
-            >
-              {!isActive ? "Inactive" : (isBooked ? "Booking On" : "Booking Off")}
-            </Badge>
+            {isAdvertiser ? (
+              <Badge
+                bg={(isActive && isBooked) ? "active" : "inactive"} // Change color based on booking status
+                className="mt-2 custom-status-badge rounded-4 text-center"
+                onClick={onChange} // Call onChange when clicked
+              >
+                {!isActive ? "Inactive" : (isBooked ? "Booking On" : "Booking Off")}
+              </Badge>
+            ) : null}
           </div>
         </Col>
         {isAdvertiser ? (

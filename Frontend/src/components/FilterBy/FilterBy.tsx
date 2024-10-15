@@ -71,12 +71,14 @@ const FilterBy: React.FC<FilterByProps> = ({
                   min={field.min}
                   max={field.max}
                   onChange={({ min, max }: { min: number; max: number }) => {
-                    const newFilter = {
-                      ...filter,
-                      [key.toString().toLowerCase()]: `${min}-${max}`,
-                    };
-                    setFilter(newFilter);
-                    onFilterChange(newFilter);
+                    setFilter((prevFilter) => {
+                      const newFilter = {
+                        ...prevFilter,
+                        [key.toString().toLowerCase()]: `${min}-${max}`,
+                      };
+                      onFilterChange(newFilter);
+                      return newFilter;
+                    });
                   }}
                 />
               </Row>
@@ -114,6 +116,7 @@ const FilterBy: React.FC<FilterByProps> = ({
                   value={filter.fromDate}
                   onChange={handleDateChange}
                   name="fromDate"
+                  className="custom-form-control"
                   min={field.start.toString().split("T")[0]}
                   max={field.end.toString().split("T")[0]}
                 />
@@ -126,6 +129,7 @@ const FilterBy: React.FC<FilterByProps> = ({
                   value={filter.toDate}
                   onChange={handleDateChange}
                   name="toDate"
+                  className="custom-form-control"
                   min={field.start.toString().split("T")[0]}
                   max={field.end.toString().split("T")[0]}
                 />
