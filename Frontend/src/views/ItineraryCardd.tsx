@@ -1,41 +1,53 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './ItineraryCardd.css';
 import { Container, Badge, Modal, Button } from 'react-bootstrap';
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa';
 import { MdTimeline } from 'react-icons/md';
 import Rating from '../components/Rating/Rating'; // Optional
+import { useParams } from 'react-router-dom';
+import { ItineraryService } from '../services/ItineraryService';
+
+
+
+
+interface ItinerarysData{
+  name: string;
+  tags: string[];
+  average_rating: number;
+  tourGuide: {
+    name: string;
+  };
+  category: string;
+  availableDates: { date: string, time: string }[];
+  price: number;
+  timeline: string[];
+} 
 
 const ItineraryCardd: React.FC = () => {
+  const {id} = useParams();
+  
   // State to handle modals and bookmarking
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showTourGuideModal, setShowTourGuideModal] = useState(false);
   const [showTimelineModal, setShowTimelineModal] = useState(false);
   const [showDatesModal, setShowDatesModal] = useState(false);
-
-  // State for selected date and time
-  const [selectedDateTime, setSelectedDateTime] = useState({
-    date: '2024-10-10',
-    time: '10:00 AM'
-  });
-
-  // Sample itinerary data
-  const itineraryData = {
-    name: 'Historical Cairo Tour',
-    tags: ['History', 'Cultural', 'Walking'],
+  const [itineraryData, setItineraryData] = useState<ItinerarysData> ({
+    name: 'Itinerary Name',
+    tags: ['Tag1', 'Tag2'],
     average_rating: 4.5,
     tourGuide: {
-      name: 'John Doe',
+      name: 'Tour Guide Name'
     },
-    category: 'Cultural Tour',
-    availableDates: [
-      { date: '2024-10-10', time: '10:00 AM' },
-      { date: '2024-10-11', time: '02:00 PM' },
-    ],
+    category: 'Category',
+    availableDates: [{ date: '2022-01-01', time: '10:00 AM' }],
     price: 100,
-    timeline: ['Visit the Pyramids', 'Lunch at a local restaurant', 'Visit the Egyptian Museum'],
-  };
+    timeline: ['Event 1', 'Event 2']
+  });
+  const [selectedDateTime, setSelectedDateTime] = useState({ date: '', time: '' }); // State for selected date and time
 
+  // State for selected date and time
+ 
   // Function to toggle bookmark state
   const toggleBookmark = () => {
     setIsBookmarked(!isBookmarked);
@@ -49,10 +61,18 @@ const ItineraryCardd: React.FC = () => {
 
   // Function to handle date selection
   const handleDateSelection = (dateObj: { date: string, time: string }) => {
-    setSelectedDateTime(dateObj); // Set the selected date and time
     setShowDatesModal(false); // Close the dates modal
   };
-
+  const getItineraryById = async (id: string) => {
+    // Fetch itinerary data by id
+    const itinerary = await ItineraryService.getItineraryById(id);
+    setItineraryData(itinerary.data);
+  }
+  useEffect(() => {
+    if (id) {
+      getItineraryById(id);
+    }
+  }, [id]);
   return (
     <Container className='mt-3'>
       <div className="activity-card">
@@ -63,9 +83,9 @@ const ItineraryCardd: React.FC = () => {
           <div className="details">
             <div className="d-flex align-items-center">
               <h2 className="me-3">{itineraryData.name}</h2>
-              {itineraryData.tags.map((tag, index) => (
+              {itineraryData && (itineraryData.tags ?? []).map((tag: any, index: number) => (
                 <Badge key={index} pill bg="tag" className="me-2 custom-badge">
-                  {tag}
+                  {tag.type}
                 </Badge>
               ))}
               <div className="d-flex align-items-center ms-5 rating-stars">
@@ -79,9 +99,9 @@ const ItineraryCardd: React.FC = () => {
             </div>
             <p className='Category'>{itineraryData.category}</p>
             
-            <p className='date' onClick={handleTourGuideModal} style={{ cursor: 'pointer', color: '#d76f30' }}>
+            {/* <p className='date' onClick={handleTourGuideModal} style={{ cursor: 'pointer', color: '#d76f30' }}>
               {itineraryData.tourGuide.name}
-            </p>
+            </p> */}
             
             <p className="date" onClick={handleDatesModal} style={{ cursor: 'pointer', color: '#d76f30' }}>
               View Available Dates
@@ -123,7 +143,7 @@ const ItineraryCardd: React.FC = () => {
           <Modal.Title>Tour Guide Information</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p><strong>Name:</strong> {itineraryData.tourGuide.name}</p>
+          {/* <p><strong>Name:</strong> {itineraryData.tourGuide.name}</p> */}
           <p><strong>Email:</strong> johndoe@example.com</p>
           <p><strong>Phone:</strong> +1 234-567-8901</p>
         </Modal.Body>
@@ -154,7 +174,7 @@ const ItineraryCardd: React.FC = () => {
       </Modal>
 
       {/* Modal for Available Dates */}
-      <Modal show={showDatesModal} onHide={handleDatesModal} centered>
+      {/* <Modal show={showDatesModal} onHide={handleDatesModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>Available Dates</Modal.Title>
         </Modal.Header>
@@ -172,7 +192,7 @@ const ItineraryCardd: React.FC = () => {
             Close
           </Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
     </Container>
   );
 };

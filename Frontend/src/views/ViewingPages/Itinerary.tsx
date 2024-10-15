@@ -72,7 +72,7 @@ export default function ItinerariesPage() {
     itinerary.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   const onItineraryClick = (id : string) => {
-    navigate(`/itinerary/${id}`);
+    navigate(`/ItineraryCard/${id}`);
   }
 
   return (
@@ -149,7 +149,11 @@ export default function ItinerariesPage() {
                   Available_Dates={itinerary.available_dates}
                   isActive={itinerary.active_flag}
                   tags={itinerary.tags}
-                  onChange={() => console.log(`${itinerary.locations} booking status changed`)}                />
+                  onChange={() => 
+                    console.log(`${itinerary.locations} booking status changed`)
+                  }    
+                  onClick  = {() => onItineraryClick(itinerary._id)}          
+                  />
               </Col>
             ))}
           </Row>

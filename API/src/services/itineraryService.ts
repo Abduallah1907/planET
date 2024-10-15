@@ -54,7 +54,8 @@ export default class ItineraryService {
     const itineraryData = await this.itineraryModel
       .findById(itinerary_id)
       .populate("comments")
-      .populate("tags");
+      .populate("tags")
+      .populate("timeline");
     if (itineraryData instanceof Error)
       throw new InternalServerError("Internal server error");
     if (!itineraryData) throw new HttpError("Itinerary not found", 404);
@@ -63,7 +64,7 @@ export default class ItineraryService {
       // tour_guide_id: itineraryData.tour_guide_id,
       // activities: itineraryData.activities,
       // category: itineraryData.category,
-      itinerary_id: itineraryData._id as ObjectId,
+      _id: itineraryData._id as ObjectId,
       name: itineraryData.name,
       accessibility: itineraryData.accessibility,
       active_flag: itineraryData.active_flag,
@@ -78,6 +79,7 @@ export default class ItineraryService {
       rating_value: itineraryData.average_rating,
       locations: itineraryData.locations,
       tags: itineraryData.tags,
+      timeline: itineraryData.timeline,
     };
     return new response(true, itineraryOutput, "Itinerary found!", 201);
   }
@@ -172,7 +174,7 @@ export default class ItineraryService {
 
     const itinerartiesOutput: IItineraryOutputAllDTO[] = itineraries.map(
       (itinerary) => ({
-        itinerary_id: itinerary._id as ObjectId,
+        _id: itinerary._id as ObjectId,
         name: itinerary.name,
         accessibility: itinerary.accessibility,
         active_flag: itinerary.active_flag,

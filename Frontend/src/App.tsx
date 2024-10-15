@@ -104,7 +104,7 @@ const App: React.FC = () => {
         <Route path="/AddNewProduct" element={<AddNewProduct />} />
         <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
         <Route path="/AddItinerary" element={<AddItinerary />} />
-        <Route path="/ItineraryCardd" element={<ItineraryCardd />} />
+        <Route path="/ItineraryCard/:id" element={<ItineraryCardd  />} />
 
         <Route path="/EditHistoricalLocation" element={<EditHistoricalLocation />} />
         <Route path="/EditItinerary/:itinerary_id" element={<EditItinerary />} />
@@ -112,7 +112,7 @@ const App: React.FC = () => {
         <Route path="/UsersTable" element={<UsersTable />} />
         <Route path="/MyActivities" element={<MyActivities />} />
         <Route path="/MyHistoricalPlaces" element={<MyHistoricalPlaces />} />
-        <Route path="/MyItinerary" element={<MyItinerary />} />
+        <Route path="/MyItineraries" element={<MyItinerary />} />
         <Route path="/MyProducts" element={<MyProducts />} />
 
         <Route path="/JoinUs" element={<StakeholderReg />} />

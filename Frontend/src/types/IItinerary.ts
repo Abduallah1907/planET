@@ -1,5 +1,6 @@
 
 export interface IItinerary {
+  _id: string;
   average_rating: number;
   Reviews: number;
   activities: string[];

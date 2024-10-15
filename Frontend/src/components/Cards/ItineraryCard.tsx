@@ -22,6 +22,7 @@ interface InputData {
   isActive: boolean;
   tags?: any; // Add tags property
   onChange?: (newStatus: boolean) => void; // Pass new booking status as parameter
+  onClick?: () => void;
 }
 
 const ItineraryCard = ({
@@ -41,6 +42,7 @@ const ItineraryCard = ({
   isActive,
   tags,
   onChange,
+  onClick
 }: InputData) => {
   // Manage the state for the booking status
   const [bookingStatus, setBookingStatus] = useState(isActive); // Initialize booking status from props
@@ -56,6 +58,7 @@ const ItineraryCard = ({
 
   return (
     <Card
+      onClick={onClick}
       className="p-3 shadow-sm"
       style={{ borderRadius: "10px", height: "100%" }}
     >
