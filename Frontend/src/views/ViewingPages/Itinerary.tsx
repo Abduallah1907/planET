@@ -134,6 +134,7 @@ export default function ItinerariesPage() {
             {filteredItineraries.map((itinerary, index) => (
               <Col key={index} xs={12} className="mb-4 ps-0"> {/* Full-width stacking */}
                 <ItineraryCard
+                  id={itinerary._id}
                   name={itinerary.name}
                   comments={""}
                   timeline={""}
@@ -149,7 +150,10 @@ export default function ItinerariesPage() {
                   Available_Dates={itinerary.available_dates}
                   isActive={itinerary.active_flag}
                   tags={itinerary.tags}
-                  onChange={() => console.log(`${itinerary.locations} booking status changed`)}                />
+                  isTourGuide={false}
+                  onChange={() => console.log(`${itinerary.locations} booking status changed`)}
+                  onClick={() => onItineraryClick(itinerary._id)}
+                  />
               </Col>
             ))}
           </Row>

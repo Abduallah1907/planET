@@ -1,12 +1,8 @@
 import { Card, Badge, Row, Col, Image, DropdownButton, Dropdown, Modal, Button } from "react-bootstrap";
 import Rating from '../Rating/Rating';
 import "./Cards.css";
-import { HistoricalService } from "../../services/HistoricalService";
-import { useEffect, useState } from "react";
-import { get } from "http";
-import { use } from "i18next";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { on } from "events";
 
 interface InputData {
   id: string;

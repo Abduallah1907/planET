@@ -95,7 +95,7 @@ const HistoricalPlaceForm: React.FC = () => {
         active_flag: formData.isActive,
       }
       if (historical_location_id) {
-        const updatedLocation = await HistoricalService.editHistoricalLocation(
+        await HistoricalService.editHistoricalLocation(
           historical_location_id,
           reqData
         );

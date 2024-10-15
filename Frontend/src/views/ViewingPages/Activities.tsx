@@ -6,7 +6,6 @@ import { FaSearch } from "react-icons/fa";
 import { BiSort } from "react-icons/bi";
 import { ActivityService } from "../../services/ActivityService";
 import { IActivity } from "../../types/IActivity";
-import { newDate } from "react-datepicker/dist/date_utils";
 import { useNavigate } from "react-router-dom";
 
 export default function ActivitiesPage() {

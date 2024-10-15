@@ -6,10 +6,8 @@ import { Col, Row, Container, Form, InputGroup, Button } from "react-bootstrap";
 import { BiSort } from "react-icons/bi";
 
 import { FaSearch } from "react-icons/fa";
-import filterOptions from "../../utils/filterOptions.json";
 import { HistoricalService } from "../../services/HistoricalService";
 import {
-  IHistorical_location,
   IHistorical_location_tourist,
 } from "../../types/IHistoricalLocation";
 import { useNavigate } from "react-router-dom";
@@ -90,7 +88,7 @@ export default function HistoricalLocationsPage() {
       <Row className="justify-content-center my-4">
         <Col md={6} className="text-center">
           <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
-            Explore Historical Locations
+            {t("explore_historical_locations")}
           </h1>
         </Col>
       </Row>

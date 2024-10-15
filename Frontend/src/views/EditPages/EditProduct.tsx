@@ -3,7 +3,7 @@ import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Reuse the form group component
 import "../CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
 import { ProductService } from "../../services/ProductService";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface FormData {
   name: string;
