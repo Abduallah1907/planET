@@ -109,4 +109,17 @@ export class AdminController {
     const deletedTag = await adminService.deleteTagService(type);
     res.status(deletedTag.status).json(deletedTag);
   }
+  public async acceptUser(req: Request, res: Response): Promise<any> {
+    const { email } = req.params;
+    const adminService: AdminService = Container.get(AdminService);
+    const acceptedUser = await adminService.acceptUserService(email);
+    res.status(acceptedUser.status).json(acceptedUser);
+  }
+
+  public async rejectUser(req: Request, res: Response): Promise<any> {
+    const { email } = req.params;
+    const adminService: AdminService = Container.get(AdminService);
+    const rejectedUser = await adminService.rejectUserService(email);
+    res.status(rejectedUser.status).json(rejectedUser);
+  }
 }

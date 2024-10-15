@@ -277,3 +277,41 @@ paths:
           description: Tag deleted successfully.
         "404":
           description: Tag not found.
+  /api/admin/acceptUser/{email}:
+    put:
+      tags:
+        - Admin
+      summary: Accept a user by email.
+      parameters:
+        - name: email
+          in: path
+          description: Email of the user to be accepted.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User accepted successfully.
+        "404":
+          description: User not found.
+        "500":
+          description: Internal Server Error.  
+  /api/admin/rejectUser/{email}:
+    put:
+      tags:
+        - Admin
+      summary: Reject a user by email.
+      parameters:
+        - name: email
+          in: path
+          description: Email of the user to be rejected.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User rejected successfully.
+        "404":
+          description: User not found.  
+        "500":
+          description: Internal Server Error.                
