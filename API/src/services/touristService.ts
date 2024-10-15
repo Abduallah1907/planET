@@ -201,6 +201,7 @@ export default class TouristService {
       loyality_points: tourist.loyality_points,
       badge: tourist.badge,
       addresses: tourist.addresses,
+      logo: tourist.logo,
 
       // cart: tourist.cart,
       // wishlist: tourist.wishlist,//out of current scope of sprint

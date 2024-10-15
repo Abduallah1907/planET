@@ -1,10 +1,10 @@
-import { Document, ObjectId } from "mongoose";
+import mongoose, { Document, ObjectId } from "mongoose";
 
 export interface IProduct extends Document {
   comments: ObjectId[];
   name: string;
   description: string;
-  picture: string;
+  image?: mongoose.Schema.Types.ObjectId;
   price: number;
   quantity: number;
   sales: number;
@@ -18,7 +18,7 @@ export interface IProduct extends Document {
 export interface IProductInputDTO {
   name?: string;
   description?: string;
-  picture?: string;
+  image?: mongoose.Schema.Types.ObjectId;
   price?: number;
   quantity?: number;
   sales?: number;

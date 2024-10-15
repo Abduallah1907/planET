@@ -24,7 +24,7 @@ export class ProductService {
     const newProduct = new this.productModel({
       name: product.name,
       description: product.description,
-      picture: product.picture,
+      image: product.image,
       price: product.price,
       quantity: product.quantity,
       sales: 0,

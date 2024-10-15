@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ProductCard from "../../components/Cards/ProductCard"; 
+import ProductCard from "../../components/Cards/ProductCard";
 import FilterBy from "../../components/FilterBy/FilterBy";
 import { Col, Row, Container, Form, InputGroup, Button } from "react-bootstrap";
 import { BiSort } from "react-icons/bi";
@@ -11,11 +11,10 @@ import { ProductService } from "../../services/ProductService";
 export default function ProductsPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [products, setProducts] = React.useState<IProduct[]>([])
-  const [ filtercomponent, setfilterComponents] = React.useState({})
-  const [sortBy, setSortBy] = useState("topPicks"); 
-  const [filter,setFilter] = React.useState({});
-
+  const [products, setProducts] = React.useState<IProduct[]>([]);
+  const [filtercomponent, setfilterComponents] = React.useState({});
+  const [sortBy, setSortBy] = useState("topPicks");
+  const [filter, setFilter] = React.useState({});
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -52,12 +51,14 @@ export default function ProductsPage() {
         Array.isArray(value) ? [key, value.join(",")] : [key, value]
       )
     );
-    const productsData = await ProductService.getFilteredProducts(modifiedFilter);
+    const productsData = await ProductService.getFilteredProducts(
+      modifiedFilter
+    );
     setProducts(productsData.data);
-  }
+  };
   const handleApplyFilters = () => {
     getFilteredProducts();
-  }
+  };
   const getFilterComponents = async () => {
     const filterData = await ProductService.getFilterComponents();
     setfilterComponents(filterData.data);
@@ -67,15 +68,15 @@ export default function ProductsPage() {
     getProducts();
     getFilterComponents();
   }, []);
-  const onProductClick = (name : string) => {
+  const onProductClick = (name: string) => {
     navigate(`/product/${name}`);
-  }
+  };
 
-  const onFilterChange = (newFilter: {[key: string]: any;}) => {
+  const onFilterChange = (newFilter: { [key: string]: any }) => {
     setFilter(newFilter);
-  }
+  };
 
-  const filteredProducts = sortedProducts.filter(product =>
+  const filteredProducts = sortedProducts.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -83,7 +84,9 @@ export default function ProductsPage() {
     <Container fluid>
       <Row className="justify-content-center my-4">
         <Col md={6} className="text-center">
-          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>Explore Our Products</h1>
+          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
+            Explore Our Products
+          </h1>
         </Col>
       </Row>
 
@@ -117,9 +120,17 @@ export default function ProductsPage() {
       </Row>
 
       <Row>
-      <Col md={3} className="border-bottom pb-2 d-flex flex-column align-items-md-center">
-          <Button variant="main-inverse" onClick={handleApplyFilters}>Apply Filters</Button>
-          <FilterBy filterOptions={filtercomponent} onFilterChange={onFilterChange}/>
+        <Col
+          md={3}
+          className="border-bottom pb-2 d-flex flex-column align-items-md-center"
+        >
+          <Button variant="main-inverse" onClick={handleApplyFilters}>
+            Apply Filters
+          </Button>
+          <FilterBy
+            filterOptions={filtercomponent}
+            onFilterChange={onFilterChange}
+          />
         </Col>
 
         <Col md={9} className="p-3">
@@ -135,24 +146,31 @@ export default function ProductsPage() {
                 <option value="reviewsHighToLow">Reviews: High to Low</option>
               </Form.Select>
             </div>
-            {filteredProducts.map((product:IProduct, index) => (
+            {filteredProducts.map((product: IProduct, index) => (
               <Col key={index} xs={12} className="mb-4 ps-0">
                 <ProductCard
-                        Name={product.name}
-                        average_rating={product.average_rating}
-                        quantity={product.quantity}
-                        price={product.price}
-                        description={product.description}
-                        sales={product.sales}
-                        Reviews={product.reviews}
-                        createdAt={product.createdAt ? new Date(product.createdAt):new Date()}
-                        updatedAt={product.updatedAt ? new Date(product.updatedAt):new Date()}
-                        imageUrl={product.picture}
-                        isActiveArchive={product.archieve_flag}
-                        onChange={() => console.log(`${product.name} booking status changed`)} 
-                        id={product.user_id} 
-                        isSeller={false}  
-                        isAdmin={false}              />
+                  Name={product.name}
+                  average_rating={product.average_rating}
+                  quantity={product.quantity}
+                  price={product.price}
+                  description={product.description}
+                  sales={product.sales}
+                  Reviews={product.reviews}
+                  createdAt={
+                    product.createdAt ? new Date(product.createdAt) : new Date()
+                  }
+                  updatedAt={
+                    product.updatedAt ? new Date(product.updatedAt) : new Date()
+                  }
+                  image={product.image}
+                  isActiveArchive={product.archieve_flag}
+                  onChange={() =>
+                    console.log(`${product.name} booking status changed`)
+                  }
+                  id={product.user_id}
+                  isSeller={false}
+                  isAdmin={false}
+                />
               </Col>
             ))}
           </Row>

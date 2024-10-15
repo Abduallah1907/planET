@@ -10,12 +10,12 @@ const sellerSchema = new mongoose.Schema(
     },
     documents_required: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
       },
     ],
     logo: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
     },
     description: {
       type: String,

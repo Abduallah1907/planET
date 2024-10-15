@@ -1,4 +1,4 @@
-import { Document, ObjectId } from "mongoose";
+import mongoose, { Document, mongo, ObjectId } from "mongoose";
 
 export interface IAdvertiser extends Document {
   email: string;
@@ -7,21 +7,21 @@ export interface IAdvertiser extends Document {
   password: string;
   phone_number: string;
   activities: ObjectId[];
-  documents_required: string[];
+  documents_required: mongoose.Schema.Types.ObjectId[];
   link_to_website: string;
   hotline: string;
   about: string;
-  logo: string;
+  logo?: mongoose.Schema.Types.ObjectId;
   company_profile: string;
 }
 export interface IAdvertiserCreateDTO {
   user_id: ObjectId;
   activities: ObjectId[];
-  documents_required: string[];
+  documents_required: mongoose.Schema.Types.ObjectId[];
   link_to_website: string;
   hotline: string;
   about: string;
-  logo: string;
+  logo?: mongoose.Schema.Types.ObjectId;
   company_profile: string;
 }
 
@@ -35,7 +35,7 @@ export interface IAdvertiserUpdateDTO {
   link_to_website?: string;
   hotline?: string;
   about?: string;
-  logo?: string;
+  logo?: mongoose.Schema.Types.ObjectId;
   company_profile?: string;
 }
 export interface IAdvertiserMain extends Document {
@@ -44,5 +44,5 @@ export interface IAdvertiserMain extends Document {
   username: string;
   password: string;
   phone_number: string;
-  documents_required: string[];
+  documents_required: mongoose.Schema.Types.ObjectId[];
 }

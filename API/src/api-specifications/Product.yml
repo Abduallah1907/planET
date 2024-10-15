@@ -34,9 +34,9 @@ paths:
                 description:
                   type: string
                   description: Product description
-                picture:
+                image:
                   type: string
-                  description: Product picture
+                  description: Product image
                 price:
                   type: number
                   format: float
@@ -55,7 +55,6 @@ paths:
               required:
                 - name
                 - description
-                - picture
                 - price
                 - quantity
                 - sales
@@ -90,9 +89,9 @@ paths:
                 description:
                   type: string
                   description: Product description
-                picture:
+                image:
                   type: string
-                  description: Product picture
+                  description: Product image
                 price:
                   type: number
                   format: float

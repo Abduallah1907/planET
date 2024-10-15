@@ -12,7 +12,7 @@ import DaysModal from "../../components/DaysModals";
 interface FormData {
   name: string;
   description: string;
-  picture: string;
+  images: string[];
   location: string;
   openingDays: string[];
   openingFrom: string;
@@ -31,7 +31,7 @@ interface Tag {
 
 interface SelectedTag {
   id: string;
-  value: string
+  value: string;
 }
 
 const HistoricalPlaceForm: React.FC = () => {
@@ -45,7 +45,7 @@ const HistoricalPlaceForm: React.FC = () => {
     name: "",
     openingDays: [],
     description: "",
-    picture: "",
+    images: [],
     location: "",
     openingFrom: "",
     openingTo: "",
@@ -61,12 +61,12 @@ const HistoricalPlaceForm: React.FC = () => {
       reader.onload = () => {
         setFormData((prev) => ({
           ...prev,
-          picture: reader.result as string,
+          images: [...prev.images, reader.result as string],
         }));
       };
       reader.readAsDataURL(e.target.files[0]);
     }
-  }
+  };
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -83,7 +83,7 @@ const HistoricalPlaceForm: React.FC = () => {
       const reqData = {
         name: formData.name,
         description: formData.description,
-        // picture: formData.picture,
+        // images: formData.images,
         // location: formData.location,
         opening_days: formData.openingDays,
         opening_hours_from: formData.openingFrom,
@@ -93,7 +93,7 @@ const HistoricalPlaceForm: React.FC = () => {
         student_price: formData.studentPrice,
         tags: tagsMap,
         active_flag: formData.isActive,
-      }
+      };
       if (historical_location_id) {
         const updatedLocation = await HistoricalService.editHistoricalLocation(
           historical_location_id,
@@ -117,19 +117,20 @@ const HistoricalPlaceForm: React.FC = () => {
       };
     });
     setTags(mappedTags);
-  }
+  };
 
   const getHistorical_Location = async () => {
     if (historical_location_id) {
-      let locationData = await HistoricalService.getHistoricalLocationByIdForGoverner(
-        historical_location_id
-      );
+      let locationData =
+        await HistoricalService.getHistoricalLocationByIdForGoverner(
+          historical_location_id
+        );
       locationData = locationData.data;
       setFormData({
         name: locationData.name,
         openingDays: locationData.opening_days,
         description: locationData.description,
-        picture: locationData.picture,
+        images: locationData.images,
         location: locationData.location.toString(),
         openingFrom: locationData.opening_hours_from,
         openingTo: locationData.opening_hours_to,
@@ -137,12 +138,17 @@ const HistoricalPlaceForm: React.FC = () => {
         foreignPrice: locationData.foreign_price,
         studentPrice: locationData.student_price,
         isActive: locationData.isActive,
-      })
-      setSelectedTags(Object.entries(locationData.tags).map(([key, value]) => ({ id: key, value: value as string })));
+      });
+      setSelectedTags(
+        Object.entries(locationData.tags).map(([key, value]) => ({
+          id: key,
+          value: value as string,
+        }))
+      );
     } else {
       console.error("Historical location ID is undefined");
     }
-  }
+  };
 
   useEffect(() => {
     getAllHistoricalTags();
@@ -153,12 +159,12 @@ const HistoricalPlaceForm: React.FC = () => {
   }, [historical_location_id]);
 
   const handleAddTag = () => {
-    if(selectedTags.length === tags.length) {
+    if (selectedTags.length === tags.length) {
       showToast("All tags have been added", ToastTypes.ERROR);
       return;
-    };
+    }
     setSelectedTags([...selectedTags, { id: "", value: "" }]);
-  }
+  };
 
   const handleRemoveTag = (index: number) => {
     const newSelectedTags = selectedTags.filter((_, i) => i !== index);
@@ -216,8 +222,8 @@ const HistoricalPlaceForm: React.FC = () => {
               />
             </Col>
             <Col>
-              <Form.Group className="form-group" controlId="picture">
-                <Form.Label>Picture</Form.Label>
+              <Form.Group className="form-group" controlId="images">
+                <Form.Label>Images</Form.Label>
                 <Form.Control
                   type="file"
                   className="custom-form-control"
@@ -354,19 +360,27 @@ const HistoricalPlaceForm: React.FC = () => {
                               const selectedKey = e.target.value;
                               const selectedValue = tag.value || "";
                               const newSelectedTags = [...selectedTags];
-                              newSelectedTags[index] = { id: selectedKey, value: selectedValue };
+                              newSelectedTags[index] = {
+                                id: selectedKey,
+                                value: selectedValue,
+                              };
                               setSelectedTags(newSelectedTags);
                             }}
                             required
                           >
                             <option value="">Select Tag</option>
                             {tags
-                            .filter((value) => !selectedTags.some(tag => tag.id === value.id) || value.id === selectedTags[index]?.id)
-                            .map((value, index) => (
-                              <option key={index} value={value.id}>
-                                {value.name}
-                              </option>
-                            ))}
+                              .filter(
+                                (value) =>
+                                  !selectedTags.some(
+                                    (tag) => tag.id === value.id
+                                  ) || value.id === selectedTags[index]?.id
+                              )
+                              .map((value, index) => (
+                                <option key={index} value={value.id}>
+                                  {value.name}
+                                </option>
+                              ))}
                           </Form.Control>
                           <BiChevronDown className="dropdown-icon" />
                         </div>
