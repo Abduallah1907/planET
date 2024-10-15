@@ -27,7 +27,7 @@ export class FileService {
       metadata: { _id: fileId.toString() },
     });
 
-    uploadStream.end(file.buffer);
+    uploadStream.end(file.data);
 
     uploadStream.on("finish", async () => {
       try {
@@ -125,46 +125,51 @@ export class FileService {
 
   async downloadFileById(req: any, res: any) {
     const { id } = req.params;
-
+  
     // Validate the ObjectId
     if (!ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid file ID" });
     }
-
+  
     try {
       const gfs = Container.get<GridFSBucket>("gridfsInstance");
-
+  
       const files = await gfs.find({ _id: new ObjectId(id) }).toArray();
       if (!files || files.length === 0) {
         return res.status(404).json({ message: "File not found" });
       }
       const file = files[0];
-
+  
       // Create a download stream for the file
       const downloadStream = gfs.openDownloadStream(new ObjectId(id));
-
+  
       // Handle errors during streaming
       downloadStream.on("error", (error) => {
         return res
           .status(404)
           .json({ message: "File not found", error: error.message });
       });
-
+  
       // Set the response headers
       res.setHeader("Content-Type", file.contentType);
-      res.setHeader("Content-Disposition", `attachment; filename="${file.filename}"`);
-
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${file.filename}"`
+      );
+  
       // Pipe the download stream to the response
       downloadStream.pipe(res);
-      res.send(file.filename);
-
+  
       // Handle the end of the stream
       downloadStream.on("end", () => {
         res.end();
       });
+  
     } catch (error) {
-      return res.status(500).json({ message: "Internal Server Error", error: (error as Error).message });
+      return res
+        .status(500)
+        .json({ message: "Internal Server Error", error: (error as Error).message });
     }
-
   }
+  
 }
