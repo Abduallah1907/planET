@@ -46,12 +46,6 @@ const AdvertiserFirst: React.FC = () => {
   };
 
   const OnClick = async () => {
-    console.log("File", file);
-    const formData2 = new FormData();
-    if (file) {
-      formData2.append("file", file);
-    }
-    console.log("Formdata", formData2);
     let fileUpload;
     if (file) {
       fileUpload = await FileService.uploadFile(file);

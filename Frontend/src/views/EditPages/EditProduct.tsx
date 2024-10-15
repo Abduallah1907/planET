@@ -1,11 +1,9 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import AdminFormGroup from "../components/FormGroup/FormGroup"; // Reuse the form group component
-import "../components/FormGroup.css"; // Reuse existing CSS
-import "./CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
-import { useAppSelector } from "../store/hooks";
-import { ProductService } from "../services/ProductService";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Reuse the form group component
+import "../CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
+import { ProductService } from "../../services/ProductService";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface FormData {
   name: string;
@@ -16,7 +14,7 @@ interface FormData {
   archive_flag: boolean;
 }
 
-const UpdateProduct: React.FC = () => {
+const EditProduct: React.FC = () => {
   const { product_id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
@@ -74,7 +72,7 @@ const UpdateProduct: React.FC = () => {
       archive_flag: formData.archive_flag,
     };
     if (product_id) {
-      await ProductService.updateProduct(product_id, productData);
+      await ProductService.EditProduct(product_id, productData);
       navigate("/MyProducts");
     } else {
       console.error("Product ID is undefined");
@@ -130,6 +128,7 @@ const UpdateProduct: React.FC = () => {
                 <Form.Control
                   type="file"
                   name="productPicture"
+                  className="custom-form-control"
                   accept="image/*"
                   onChange={handleFileChange}
                 />
@@ -181,7 +180,7 @@ const UpdateProduct: React.FC = () => {
             </Col>
           </Row>
 
-          <Button type="submit" className="update-btn mt-3">
+          <Button variant="main-inverse" type="submit" className="mt-3">
             Update Product
           </Button>
         </Form>
@@ -190,4 +189,4 @@ const UpdateProduct: React.FC = () => {
   );
 };
 
-export default UpdateProduct;
+export default EditProduct;

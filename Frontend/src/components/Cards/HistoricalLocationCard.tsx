@@ -1,13 +1,11 @@
-import { Card, Badge, Row, Col, Image } from "react-bootstrap";
+import { Card, Badge, Row, Col, Image, DropdownButton, Dropdown, Modal, Button } from "react-bootstrap";
 import Rating from '../Rating/Rating';
 import "./Cards.css";
-import { HistoricalService } from "../../services/HistoricalService";
-import { useEffect, useState } from "react";
-import { get } from "http";
-import { use } from "i18next";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface InputData {
-  
+  id: string;
   Name: string;
   location: string;
   RatingVal: number; // Initial Rating
@@ -19,15 +17,15 @@ interface InputData {
   OpeningDays: string; // New property for opening days
   Description: string; // Fixed typo from Descripition to Description
   isActive: boolean;
-
+  isGoverner: boolean;
   tags?: string[];
   onChange?: () => void; // Change onChange to a function that does not take parameters
   onClick?: () => void;
-
+  onDelete?: () => void;
 }
 
 export const HistoricalLocationCard = ({
-  
+  id,
   Name,
   location,
   RatingVal,
@@ -39,24 +37,43 @@ export const HistoricalLocationCard = ({
   Description,
   isActive,
   imageUrl,
+  isGoverner,
   tags,
   onChange,
   onClick,
+  onDelete,
 }: InputData) => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const navigate = useNavigate();
+  function handleEdit(id: string): void {
+    navigate(`/EditHistoricalLocation/${id}`);
+  }
+
+  const handleDelete = () => {
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    // Perform the delete action here
+    onDelete && onDelete(); // Call the onDelete function passed as a prop
+    setShowDeleteModal(false); // Close modal after confirming
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false); // Close modal without action
+  };
+
   // Manage the state for the rating
  
-
-
-
-
   return (
-    <Card onClick={onClick}
+    <Card
       className="p-3 shadow-sm"
       style={{ borderRadius: "10px", height: "100%" }}
     >
       <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
         {/* Image Section */}
-        <Col md={2} className="p-0 d-flex align-items-stretch">
+        <Col md={2} className="p-0 d-flex align-items-stretch" onClick={onClick}>
           <Image
             src="https://via.placeholder.com/250x250"
             rounded
@@ -65,7 +82,7 @@ export const HistoricalLocationCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={7} className="d-flex align-items-stretch">
+        <Col md={isGoverner ? 6 : 7} className="d-flex align-items-stretch" onClick={onClick}>
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
@@ -110,6 +127,7 @@ export const HistoricalLocationCard = ({
         <Col
           md={3}
           className="d-flex flex-column justify-content-between align-items-end"
+          onClick={onClick}
         >
           {/* Rating and Reviews on the Far Right */}
           <div className="d-flex align-items-center justify-content-end mb-3">
@@ -127,7 +145,7 @@ export const HistoricalLocationCard = ({
               {RatingVal.toFixed(1)}
             </Badge>
           </div>
-          <p className="text-muted text-right" style={{ fontSize: "0.9rem" }}>
+          <p className="text-muted text-right" style={{ fontSize: "1.1rem" }}>
             {Reviews.toLocaleString()} Reviews
           </p>
 
@@ -137,16 +155,48 @@ export const HistoricalLocationCard = ({
           {/* Booking Badge */}
           <div className="text-right">
             <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
-            <Badge
-              bg={isActive ? "active" : "inactive"} // Change color based on booking status
-              className="mt-2 custom-status-badge rounded-4 text-center"
-              onClick={onChange} // Call onChange when clicked
-            >
-              {isActive ? "Active" : "InActive"}
-            </Badge>
+            {isGoverner ? (
+              <Badge
+                bg={isActive ? "active" : "inactive"} // Change color based on booking status
+                className="mt-2 custom-status-badge rounded-4 text-center"
+                onClick={onChange} // Call onChange when clicked
+              >
+                {isActive ? "Active" : "InActive"}
+              </Badge>
+            ) : null}
           </div>
         </Col>
+        {isGoverner ?
+          <Col md={1} className="d-flex align-items-baseline">
+            <DropdownButton
+              align="end"
+              title="⋮"  // Three-dot symbol
+              variant="light"
+              className="d-flex justify-content-end ms-3 btn-main-inverse">
+              <Dropdown.Item onClick={() => id && handleEdit(id)}>Edit</Dropdown.Item>
+              <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item>
+            </DropdownButton>
+          </Col>
+          : null}
       </Row>
+
+      {/* Delete Confirmation Modal */}
+      <Modal show={showDeleteModal} onHide={cancelDelete} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete this product?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={cancelDelete}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmDelete}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Card>
   );
 };

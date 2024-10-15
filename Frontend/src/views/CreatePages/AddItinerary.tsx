@@ -1,14 +1,16 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import AdminFormGroup from "../components/FormGroup/FormGroup"; // Reuse the form group component
-import "../components/FormGroup.css"; // Reuse existing CSS
-import "./CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
-import "./tagsinput.css";
-import tagsData from "./tags.json"; // Ensure this path is correct
+import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Reuse the form group component
+import "../tagsinput.css";
 import { BiChevronDown } from "react-icons/bi";
 
+interface Tag {
+  _id: string;
+  type: string;
+}
+
 const ItineraryForm: React.FC = () => {
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
@@ -31,27 +33,39 @@ const ItineraryForm: React.FC = () => {
   const [newAvailableDate, setNewAvailableDate] = useState<string>("");
   const [newAvailableTime, setNewAvailableTime] = useState<string>("");
 
+  const [tags, setTags] = useState<Tag[]>([]);
+
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue) {
       const tag = inputValue.trim();
-      if (tag && !tagsData.includes(tag)) {
+      if (tag && !tags.some(t => t.type === tag)) {
         alert("Invalid tag");
         setInputValue("");
         return;
       }
-      if (tag && !selectedTags.includes(tag)) {
-        setSelectedTags((prev) => [...prev, tag]);
+      const foundTag = tags.find(t => t.type === tag);
+      if (foundTag && !selectedTags.some(t => t._id === foundTag._id)) {
+        setSelectedTags((prev) => [...prev, foundTag]);
         setInputValue("");
       }
     }
   };
 
-  const handleDeleteTag = (tagToDelete: string) => {
-    setSelectedTags((prev) => prev.filter((tag) => tag !== tagToDelete));
+  const handleDeleteTag = (tagToDeleteID: string) => {
+    setSelectedTags((prev) => prev.filter((tag) => tag._id !== tagToDeleteID));
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    const foundTag = tags.find(t => t.type === suggestion);
+    if (foundTag && !selectedTags.some(t => t._id === foundTag._id)) {
+      setSelectedTags((prev) => [...prev, foundTag]);
+      setSuggestions((prev) => prev.filter((s) => s !== suggestion));
+      setInputValue("");
+    }
   };
 
   const handleActivityChange = (index: number, value: string) => {
@@ -81,10 +95,12 @@ const ItineraryForm: React.FC = () => {
 
   useEffect(() => {
     if (inputValue.startsWith("#")) {
-      const filteredSuggestions = tagsData.filter((tag: string) =>
-        tag.toLowerCase().includes(inputValue.slice(1).toLowerCase())
+      const filteredTags = tags.filter((tag: Tag) =>
+        tag.type.toLowerCase().includes(inputValue.slice(1).toLowerCase())
       );
-      setSuggestions(filteredSuggestions);
+      const selectedTagIds = new Set(selectedTags.map((tag) => tag._id));
+      const filteredSuggestions = filteredTags.filter((tag) => !selectedTagIds.has(tag._id));
+      setSuggestions(filteredSuggestions.map((tag) => tag.type));
     } else {
       setSuggestions([]);
     }
@@ -111,6 +127,7 @@ const ItineraryForm: React.FC = () => {
                 <Form.Control
                   as="select"
                   value={category}
+                  className="custom-form-control"
                   onChange={(e) => setCategory(e.target.value)}
                   required
                 >
@@ -147,7 +164,7 @@ const ItineraryForm: React.FC = () => {
                   <div key={index} className="timeline-activity">
                     <Form.Control
                       type="text"
-                      className="mt-1"
+                      className="mt-1 custom-form-control"
                       placeholder="Enter Activity"
                       value={activity}
                       onChange={(e) =>
@@ -158,8 +175,8 @@ const ItineraryForm: React.FC = () => {
                   </div>
                 ))}
                 <Button
-                  className="update-btn mt-3"
-                  variant="outline-primary"
+                  variant="main-inverse"
+                  className="mt-3"
                   onClick={handleAddActivity}
                 >
                   Add Another Activity
@@ -234,7 +251,7 @@ const ItineraryForm: React.FC = () => {
                 <Row>
                   <Col>
                     <Form.Control
-                      className="form-group"
+                      className="form-group custom-form-control"
                       type="date"
                       value={newAvailableDate}
                       onChange={(e) => setNewAvailableDate(e.target.value)}
@@ -243,7 +260,7 @@ const ItineraryForm: React.FC = () => {
                   </Col>
                   <Col>
                     <Form.Control
-                      className="form-group"
+                      className="form-group custom-form-control"
                       type="time"
                       value={newAvailableTime}
                       onChange={(e) => setNewAvailableTime(e.target.value)}
@@ -252,8 +269,7 @@ const ItineraryForm: React.FC = () => {
                   </Col>
                   <Col>
                     <Button
-                      variant="outline-primary"
-                      className="update-btn "
+                    variant="main-inverse"
                       onClick={handleAddAvailableDate}
                     >
                       Add
@@ -264,13 +280,13 @@ const ItineraryForm: React.FC = () => {
                   <Container className="form-group">
                     <div key={index} className="available-date-time">
                       {available.date} at {available.time}{" "}
-                      <button
+                      <Button
                         type="button"
                         onClick={() => handleDeleteAvailableDate(index)}
-                        className="update-btn "
+                        variant="main-inverse"
                       >
                         &times;
-                      </button>
+                      </Button>
                     </div>
                   </Container>
                 ))}
@@ -328,16 +344,16 @@ const ItineraryForm: React.FC = () => {
 
           <Row>
             <Col>
-              <Form.Group className="form-group" controlId="tags">
+            <Form.Group className="form-group" controlId="tags">
                 <Form.Label>Tags</Form.Label>
                 <div className="tags-input">
                   {selectedTags.map((tag) => (
-                    <span key={tag} className="tag">
-                      {tag}{" "}
+                    <span key={tag._id} className="tag">
+                      {tag.type}{" "}
                       <button
                         type="button"
                         className="remove-tag"
-                        onClick={() => handleDeleteTag(tag)}
+                        onClick={() => handleDeleteTag(tag._id)}
                       >
                         &times;
                       </button>
@@ -356,9 +372,7 @@ const ItineraryForm: React.FC = () => {
                     {suggestions.map((suggestion) => (
                       <li
                         key={suggestion}
-                        onClick={() =>
-                          setSelectedTags((prev) => [...prev, suggestion])
-                        }
+                        onClick={() => handleSuggestionClick(suggestion)}
                       >
                         {suggestion}
                       </li>
@@ -392,7 +406,7 @@ const ItineraryForm: React.FC = () => {
             </Col>
           </Row>
 
-          <Button className="update-btn mt-3 mb-5" type="submit">
+          <Button variant="main-inverse" className="mt-3 mb-5" type="submit">
             Submit Itinerary
           </Button>
         </Form>

@@ -6,7 +6,6 @@ import { FaSearch } from "react-icons/fa";
 import { BiSort } from "react-icons/bi";
 import { ActivityService } from "../../services/ActivityService";
 import { IActivity } from "../../types/IActivity";
-import { newDate } from "react-datepicker/dist/date_utils";
 import { useNavigate } from "react-router-dom";
 
 export default function ActivitiesPage() {
@@ -155,7 +154,7 @@ export default function ActivitiesPage() {
                   tags={activity.tags.map((item: { type: any }) => item.type)}
                   imageUrl={""}
                   RatingVal={activity.average_rating}
-                  Reviews={100}
+                  Reviews={activity.reviews_count ?? 0}
                   Price={activity.price || 0}
                   Date_Time={new Date(activity.date)}
                   isActive={activity.active_flag}

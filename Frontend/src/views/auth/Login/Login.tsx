@@ -7,8 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../store/hooks";
 import { activateSidebar, setNavItems } from "../../../store/sidebarSlice";
 import { setUser } from "../../../store/userSlice";
-import path from "path";
-import { BiLabel } from "react-icons/bi";
 import { useTranslation } from "react-i18next";
 
 export default function Login() {
@@ -53,7 +51,6 @@ export default function Login() {
         case "REJECTED":
           navigate("/login");
           return;
-          break;
         case "APPROVED":
       }
 
@@ -64,7 +61,6 @@ export default function Login() {
           );
           navigate("/Touristedit");
           return;
-          break;
         case "TOUR_GUIDE":
           dispatch(
             setNavItems([
@@ -79,18 +75,12 @@ export default function Login() {
           } else {
             navigate("/TourGuide");
           }
-          return;
-
           break;
         case "ADVERTISER":
           dispatch(
             setNavItems([
               { path: "/Advertiser", label: "Profile" },
-              { path: "/AdvertiserCreate", label: "Create Advertisement" },
-              {
-                path: "/AdvertiserCreateUpdate",
-                label: "Update Advertisement",
-              },
+              { path: "/AddActivity", label: "Create Activity" },
               { path: "/MyActivities", label: "My Activites" },
             ])
           );
@@ -99,7 +89,6 @@ export default function Login() {
           } else {
             navigate("/Advertiser");
           }
-          return;
           break;
         case "SELLER":
           dispatch(
@@ -127,27 +116,14 @@ export default function Login() {
                 path: "/MyHistoricalLocations",
                 label: "My Historical Locations",
               },
-            ])
-          );
-          if (user.first_time_login) {
-            navigate("/");
-          } else {
-            navigate("/");
-          }
-          dispatch(
-            setNavItems([
               {
-                path: "/AddHistoricalLocation",
-                label: "Add Historical Location",
-              },
-              {
-                path: "/MyHistoricalLocations",
-                label: "My Historical Locations",
-              },
+                path: "/HistoricalTags",
+                label: "Historical Tags",
+              }
             ])
           );
 
-          navigate("/EditHistoricalLocation");
+          navigate("/MyHistoricalLocations");
 
           break;
         case "ADMIN":
@@ -160,7 +136,8 @@ export default function Login() {
               { path: "/governer", label: "Create Governer" },
               { path: "/Categories", label: "Categories" },
               { path: "/Tags", label: "Tags" },
-              { path: "/UsersTable", label: "Get Users" },
+              { path: "/HistoricalTags", label: "Historical Tags" },
+              { path: "/UsersTable", label: "User Managment" },
             ])
           );
           navigate("/AdminDashboard");

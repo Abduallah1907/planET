@@ -1,13 +1,9 @@
 import React, { useState, ChangeEvent } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import AdminFormGroup from "../components/FormGroup/FormGroup"; // Reuse the form group component
-import "../components/FormGroup.css"; // Reuse existing CSS
-import "./CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
-import { descriptors } from "chart.js/dist/core/core.defaults";
-import { useAppSelector } from "../store/hooks";
-import { ProductService } from "../services/ProductService";
-import { useNavigate, useParams } from "react-router-dom";
-import UserRoles from "../types/userRoles";
+import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Reuse the form group component
+import { useAppSelector } from "../../store/hooks";
+import { ProductService } from "../../services/ProductService";
+import { useNavigate } from "react-router-dom";
 
 interface FormData{
   name: string;
@@ -110,6 +106,7 @@ const AddNewProduct: React.FC = () => {
                 <Form.Control
                   type="file"
                   name="productPicture"
+                  className="custom-form-control"
                   accept="image/*"
                   onChange={handleFileChange}
                 />
@@ -161,7 +158,7 @@ const AddNewProduct: React.FC = () => {
             </Col>
           </Row>
 
-          <Button type="submit" className="update-btn mt-3" onClick={handleSubmit}>
+          <Button variant="main-inverse" type="submit" className="mt-3" onClick={handleSubmit}>
             Add Product
           </Button>
         </Form>

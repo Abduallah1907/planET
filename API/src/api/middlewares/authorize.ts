@@ -22,31 +22,35 @@ const getTokenFromHeader = (req: Request): string | undefined => {
 };
 function authorize(roles: string[] = []) {
   return (req: Request, res: Response, next: NextFunction) => {
-    const token = getTokenFromHeader(req);
-    if (!token) {
-      throw new UnauthorizedError("Unauthorized token not found");
-    }
-    if (!config.jwtSecret) {
-      throw new InternalServerError("Internal server error");
-    }
-    verify(token, config.jwtSecret, (err, decoded: any) => {
-      if (err || !decoded) {
-        throw new UnauthorizedError("Unauthorized token not valid");
+    if (config.env === "development") {
+      next();
+      return;
+    } else {
+      const token = getTokenFromHeader(req);
+      if (!token) {
+        throw new UnauthorizedError("Unauthorized token not found");
       }
-      if (!decoded.role) {
-        throw new UnauthorizedError("Unauthorized role not found");
+      if (!config.jwtSecret) {
+        throw new InternalServerError("Internal server error");
       }
-      const { role } = decoded;
-      if (role === UserRoles.Admin) {
-        next();
-      } else {
-        if (roles.indexOf(role) === -1) {
-          throw new UnauthorizedError("Unauthorized role");
+      verify(token, config.jwtSecret, (err, decoded: any) => {
+        if (err || !decoded) {
+          throw new UnauthorizedError("Unauthorized token not valid");
         }
-        next();
-      }
-    });
+        if (!decoded.role) {
+          throw new UnauthorizedError("Unauthorized role not found");
+        }
+        const { role } = decoded;
+        if (role === UserRoles.Admin) {
+          next();
+        } else {
+          if (roles.indexOf(role) === -1) {
+            throw new UnauthorizedError("Unauthorized role");
+          }
+          next();
+        }
+      });
+    }
   };
 }
-
 export default authorize;

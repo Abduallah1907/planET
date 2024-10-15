@@ -53,24 +53,24 @@ const MultiRangeSlider: FC<MultiRangeSliderProps> = ({
     }
   }, [maxVal, getPercent]);
 
-  // // Debounce the onChange function
-  // const debounce = (func: Function, delay: number) => {
-  //   let timer: NodeJS.Timeout;
-  //   return (...args: any[]) => {
-  //     clearTimeout(timer);
-  //     timer = setTimeout(() => {
-  //       func(...args);
-  //     }, delay);
-  //   };
-  // };
+ // Debounce the onChange function
+ const debounce = (func: Function, delay: number) => {
+  let timer: NodeJS.Timeout;
+  return (...args: any[]) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+};
 
-  //  // Get min and max values when their state changes
-  //  const debouncedOnChange = useCallback(debounce(onChange, 300), [minVal, maxVal]);
+ // Get min and max values when their state changes
+ const debouncedOnChange = useCallback(debounce(onChange, 300), [minVal, maxVal]);
 
-  // Get min and max values when their state changes
-  useEffect(() => {
-    onChange({ min: minVal, max: maxVal });
-  }, [minVal, maxVal, onChange]);
+// Get min and max values when their state changes
+useEffect(() => {
+  debouncedOnChange({ min: minVal, max: maxVal });
+}, [minVal, maxVal, onChange]);
 
   return (
     <div className="slider-container">

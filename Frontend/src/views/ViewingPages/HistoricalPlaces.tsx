@@ -6,10 +6,8 @@ import { Col, Row, Container, Form, InputGroup, Button } from "react-bootstrap";
 import { BiSort } from "react-icons/bi";
 
 import { FaSearch } from "react-icons/fa";
-import filterOptions from "../../utils/filterOptions.json";
 import { HistoricalService } from "../../services/HistoricalService";
 import {
-  IHistorical_location,
   IHistorical_location_tourist,
 } from "../../types/IHistoricalLocation";
 import { useNavigate } from "react-router-dom";
@@ -90,7 +88,7 @@ export default function HistoricalLocationsPage() {
       <Row className="justify-content-center my-4">
         <Col md={6} className="text-center">
           <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
-            Explore Historical Locations
+            {t("explore_historical_locations")}
           </h1>
         </Col>
       </Row>
@@ -153,6 +151,7 @@ export default function HistoricalLocationsPage() {
               (location: IHistorical_location_tourist, index) => (
                 <Col key={location._id} xs={12} className="mb-4 ps-0">
                   <HistoricalLocationCard
+                    id={location._id}
                     Name={location.name}
                     location={"cairo"}
                     imageUrl={""}
@@ -165,9 +164,10 @@ export default function HistoricalLocationsPage() {
                       console.log(`${location.name} booking status changed`)
                     }
                     Price={location.price}
+                    isGoverner={false}
                     OpeningHourFrom={location.opening_hours_from}
                     OpeningHourTo={location.opening_hours_to}
-                    OpeningDays={location.opening_days.join(",")}
+                    OpeningDays={location.opening_days.map(day => day.slice(0, 3)).join(", ")}
                     onClick={() => onHistoricalClick(location._id)}
                   />
                 </Col>

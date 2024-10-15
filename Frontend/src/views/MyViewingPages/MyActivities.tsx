@@ -1,25 +1,17 @@
-import { t } from "i18next";
-import { HistoricalLocationCard } from "../../components/Cards/HistoricalLocationCard";
-import FilterBy from "../../components/FilterBy/FilterBy";
 import React, { useEffect } from "react";
 import { Col, Row, Container, Form, InputGroup, Button } from "react-bootstrap";
-import { BiSort } from "react-icons/bi";
-
+import FilterBy from "../../components/FilterBy/FilterBy";
+import CustomActivityCard from "../../components/Cards/ActivityCard";
 import { FaSearch } from "react-icons/fa";
-import filterOptions from "../../utils/filterOptions.json";
-import { HistoricalService } from "../../services/HistoricalService";
-import {
-  IHistorical_location,
-  IHistorical_location_tourist,
-} from "../../types/IHistoricalLocation";
+import { BiSort } from "react-icons/bi";
+import { ActivityService } from "../../services/ActivityService";
+import { IActivity } from "../../types/IActivity";
 import { useNavigate } from "react-router-dom";
 
-export default function HistoricalLocationsPage() {
+export default function ActivitiesPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [historical, setHistorical] = React.useState<
-    IHistorical_location_tourist[]
-  >([]);
+  const [activities, setActivities] = React.useState<IActivity[]>([]);
   const [filtercomponent, setfilterComponents] = React.useState({});
   const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
   const [filter, setFilter] = React.useState({});
@@ -30,68 +22,68 @@ export default function HistoricalLocationsPage() {
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value);
-    setHistorical(sortedLocations);
   };
-  const getHistorical = async () => {
-    const HistoricalData = await HistoricalService.getAllHistorical_Location(
-      "masry",
-      "engineer"
-    );
-    setHistorical(HistoricalData.data);
+  const getActivities = async () => {
+    const activitiesData = await ActivityService.getAllActivities();
+    setActivities(activitiesData.data);
   };
-  const getFilteredHistorical = async () => {
+
+  const getFilteredActivites = async () => {
     const modifiedFilter = Object.fromEntries(
       Object.entries(filter).map(([key, value]) =>
         Array.isArray(value) ? [key, value.join(",")] : [key, value]
       )
     );
-    modifiedFilter.nation = "masry";
-    modifiedFilter.job = "student";
-    const HistoricalData =
-      await HistoricalService.getFilteredHistorical_Location(modifiedFilter);
-    setHistorical(HistoricalData.data);
+    const activitiesData = await ActivityService.getFilteredActivites(
+      modifiedFilter
+    );
+    setActivities(activitiesData.data);
   };
+
   const handleApplyFilters = () => {
-    getFilteredHistorical();
+    getFilteredActivites();
   };
+
   const getFilterComponents = async () => {
-    const filterData = await HistoricalService.getFilterComponents();
+    const filterData = await ActivityService.getFilterComponents();
     setfilterComponents(filterData.data);
   };
   useEffect(() => {
-    getHistorical();
+    getActivities();
     getFilterComponents();
   }, []);
-  const onHistoricalClick = (id: string) => {
-    navigate(`/Historical/${id}`);
-  };
-  const onFilterChange = (newFilter: { [key: string]: any }) => {
-    setFilter(newFilter);
-  };
-  // Function to sort historical locations based on selected criteria
-  const sortedLocations = [...historical].sort((a, b) => {
+  // Function to sort activities based on selected criteria
+  const sortedActivities = [...activities].sort((a, b) => {
     switch (sortBy) {
       case "topPicks":
         return b.average_rating - a.average_rating;
       case "priceHighToLow":
-        return (a.reviewsCount ?? 0) - (b.reviewsCount ?? 0);
+        return (a.price ?? 0) - (b.price ?? 0);
       case "priceLowToHigh":
-        return (b.reviewsCount ?? 0) - (a.reviewsCount ?? 0);
+        return (b.price ?? 0) - (a.price ?? 0);
       default:
         return 0;
     }
   });
 
-  const filteredLocations = sortedLocations.filter((location) =>
-    location.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const onActivityClick = (id: string) => {
+    navigate(`/activity/${id}`);
+  };
+
+  const filteredActivities = sortedActivities.filter((activity) =>
+    activity.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const onFilterChange = (newFilter: { [key: string]: any }) => {
+    setFilter(newFilter);
+  };
 
   return (
     <Container fluid>
       <Row className="justify-content-center my-4">
         <Col md={6} className="text-center">
           <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
-            Explore Historical Locations
+            Explore Activities
           </h1>
         </Col>
       </Row>
@@ -150,25 +142,28 @@ export default function HistoricalLocationsPage() {
                 <option value="priceHighToLow">Price: High to Low</option>
               </Form.Select>
             </div>
-            {historical.map((location: IHistorical_location_tourist, index) => (
-              <Col key={location._id} xs={12} className="mb-4 ps-0">
-                <HistoricalLocationCard
-                  Name={location.name}
+            {filteredActivities.map((activity: IActivity, index) => (
+              <Col key={index} xs={12} className="mb-4">
+                {" "}
+                {/* Full-width stacking */}
+                <CustomActivityCard
+                  id={activity._id}
+                  Name={activity.name}
                   location={"cairo"}
+                  category={activity.category.type}
+                  tags={activity.tags.map((item: { type: any }) => item.type)}
                   imageUrl={""}
-                  RatingVal={location.average_rating}
-                  Reviews={location.reviewsCount ?? 0}
-                  Description={location.description}
-                  isActive={location.active_flag}
-                  tags={location.tags ? Object.values(location.tags) : []}
+                  RatingVal={activity.average_rating}
+                  Reviews={activity.reviews_count ?? 0}
+                  Price={activity.price || 0}
+                  Date_Time={new Date(activity.date)}
+                  isActive={activity.active_flag}
+                  isBooked={activity.booking_flag}
                   onChange={() =>
-                    console.log(`${location.name} booking status changed`)
+                    console.log(`${activity.name} booking status changed`)
                   }
-                  Price={location.price}
-                  OpeningHourFrom={location.opening_hours_from}
-                  OpeningHourTo={location.opening_hours_to}
-                  OpeningDays={location.opening_days.join(",")}
-                  onClick={() => onHistoricalClick(location._id)}
+                  onClick={() => onActivityClick(activity._id)}
+                  isAdvertiser={true}
                 />
               </Col>
             ))}

@@ -9,6 +9,7 @@ export interface IProduct extends Document {
   quantity: number;
   sales: number;
   archieve_flag: boolean;
+  tourist_id?: ObjectId[];
   seller_id?: ObjectId;
   createdAt?: Date;
   updatedAt?: Date;

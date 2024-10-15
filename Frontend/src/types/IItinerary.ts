@@ -22,6 +22,7 @@ export interface IItinerary {
   category: string;
   createdAt?: Date;
   updatedAt?: Date;
+  reviews_count?: number;
 }
 
 export interface IItineraryCreateDTO {

@@ -8,8 +8,7 @@ const options = {
     openapi: "3.0.0",
     info: {
       title: "Mini Blog API",
-      description:
-        "API endpoints for a mini blog services documented on swagger",
+      description: "API endpoints for a mini blog services documented on swagger",
       contact: {
         name: "Desmond Obisi",
         email: "info@miniblog.com",
@@ -47,7 +46,7 @@ const options = {
     paths: {}, // Add this line to include the paths property
   },
   // looks for configuration in specified directories
-  apis: [`./api/routes/**.ts`],
+  apis: [`./api/routes/**.ts`, `./api-specifications/**.yml`],
 };
 
 function swaggerDocs(app: Application, port: number, router: Router) {

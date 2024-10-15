@@ -50,6 +50,12 @@ const productSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
+    tourist_id: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tourist",
+      },
+    ],
   },
   { timestamps: true }
 );
