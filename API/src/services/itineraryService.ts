@@ -32,8 +32,7 @@ export default class ItineraryService {
     return new response(true, { itinerary_id: newItinerary._id }, "Itinerary created successfully!", 201);
   }
   public async getItineraryByIDService(itinerary_id: Types.ObjectId) {
-    const itineraryData = await this.itineraryModel.findById(itinerary_id).populate("comments").populate("tags");
-    if (itineraryData instanceof Error) throw new InternalServerError("Internal server error");
+    
     const itineraryData = await this.itineraryModel
       .findById(itinerary_id)
       .populate("comments")

@@ -13,8 +13,9 @@ import { MdHelpOutline } from "react-icons/md";
 import { FaBars } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { toggleSidebar } from "../../store/sidebarSlice";
+import Avatar from "../Avatar/Avatar";
 
-const TopBar: React.FC= () => {
+const TopBar: React.FC = () => {
 
   const navigate = useNavigate();
   const { currentFlag, setCurrentFlag, currency, setCurrency } =
@@ -60,14 +61,18 @@ const TopBar: React.FC= () => {
 
   const sidebarState = useAppSelector((state) => state.sidebar.isActive)
   const dispatch = useAppDispatch();
+  const IsLoggedIn = useAppSelector((state) => state.user.isLoggedIn); // Assuming you have an auth slice in your Redux store
 
   return (
     <Navbar expand="lg" className="top-bar" variant="dark">
+
+
+
       <Container fluid>
         {sidebarState ?
-          <div className="sidebar-toggle-icon" onClick={()=>dispatch(toggleSidebar())}>
+          <div className="sidebar-toggle-icon" onClick={() => dispatch(toggleSidebar())}>
             <FaBars size={24} color="white" />
-          </div>: null
+          </div> : null
         }
         <Navbar.Brand onClick={() => navigate("/")} className="brand-container">
           <img
@@ -173,19 +178,29 @@ const TopBar: React.FC= () => {
             >
               <MdHelpOutline />
             </Button>
-            <Button variant="" className="btn-text" onClick={handleJoinUs}>
-              {t("join_us")}
-            </Button>
-            <Button variant="" onClick={handleRegister} className="btn-main">
-              {t("register")}
-            </Button>
-            <Button
-              variant=""
-              onClick={handleLogin}
-              className="btn-main btn-margin"
-            >
-              {t("sign_in")}
-            </Button>
+
+            {IsLoggedIn ? (
+              <>
+                <Avatar/>
+              </>
+            ) : (
+              <>
+                <Button variant="" className="btn-text" onClick={handleJoinUs}>
+                  {t("join_us")}
+                </Button>
+                <Button variant="" onClick={handleRegister} className="btn-main">
+                  {t("register")}
+                </Button>
+                <Button
+                  variant=""
+                  onClick={handleLogin}
+                  className="btn-main btn-margin"
+                >
+                  {t("sign_in")}
+                </Button>
+              </>
+            )}
+
           </Nav>
         </Navbar.Collapse>
       </Container>

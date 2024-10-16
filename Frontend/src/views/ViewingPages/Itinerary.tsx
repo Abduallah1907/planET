@@ -154,11 +154,7 @@ export default function ItinerariesPage() {
                   onChange={() => console.log(`${itinerary.locations} booking status changed`)}
                   onClick={() => onItineraryClick(itinerary._id)}
                   />
-                  onChange={() => 
-                    console.log(`${itinerary.locations} booking status changed`)
-                  }    
-                  onClick  = {() => onItineraryClick(itinerary._id)}          
-                  />
+                 
               </Col>
             ))}
           </Row>

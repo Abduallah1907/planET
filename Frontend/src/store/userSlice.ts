@@ -3,6 +3,7 @@ import { AppThunk, RootState } from './store';
 import { useNavigate } from 'react-router-dom';
 
 interface UserState {
+    avatar: string | undefined;
     job: any;
     isLoggedIn: any;
     name: string;
@@ -26,8 +27,9 @@ const initialState: UserState = {
     status: '',
     token: '',
     stakeholder_id: undefined,
-    isLoggedIn: undefined,
+    isLoggedIn: false,
     job: undefined,
+    avatar: undefined
 };
 export const userSlice = createSlice({
     name: 'user',
@@ -48,6 +50,10 @@ export const userSlice = createSlice({
         getUser: (state) => {
             return state;
         },
+        login: (state) => {
+            state.isLoggedIn = true;
+        },
+
         logout: (state) => {
             state.name = '';
             state._id = '';
@@ -58,11 +64,14 @@ export const userSlice = createSlice({
             state.status = '';
             state.token = '';
             state.stakeholder_id = undefined;
-        }
+        },
+        setLoginState: (state, action: PayloadAction<boolean>) => {
+            state.isLoggedIn = action.payload;
+        },
     }
 });
 
-export const { setUser, getUser, logout } = userSlice.actions;
+export const { setUser, getUser, logout , login,setLoginState  } = userSlice.actions;
 
 export const userState = (state: RootState) => state.sidebar;
 
