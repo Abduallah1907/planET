@@ -11,8 +11,7 @@ import {
 } from "@/interfaces/IComment_rating";
 import TouristService from "../../services/touristService";
 import Container, { Inject, Service } from "typedi";
-import { start } from "repl";
-import Comment_Rating from "@/models/Comment_rating";
+import { Types } from "mongoose";
 @Service()
 export class TouristController {
   public async getTourist(req: any, res: any) {
@@ -103,7 +102,26 @@ export class TouristController {
     res.status(bookedHistoricalLocation.status).json(bookedHistoricalLocation);
   }
 
-  public async recievePoints(req: any, res: any) {}
+  public async recievePoints(req: any, res: any) {
+    const { tourist_id, amount } = req.body;
+    const touristObjectID = new Types.ObjectId(tourist_id);
+    const touristService: TouristService = Container.get(TouristService);
+    const recievedPoints = await touristService.recievePointsService(
+      touristObjectID,
+      amount
+    );
+    res.status(recievedPoints.status).json(recievedPoints);
+  }
 
-  public async recieveBadge(req: any, res: any) {}
+  public async recieveBadge(req: any, res: any) {
+    const { tourist_id, points } = req.body;
+    const touristObjectID = new Types.ObjectId(tourist_id);
+
+    const touristService: TouristService = Container.get(TouristService);
+    const recievedBadge = await touristService.recieveBadgeService(
+      touristObjectID,
+      points
+    );
+    res.status(recievedBadge.status).json(recievedBadge);
+  }
 }

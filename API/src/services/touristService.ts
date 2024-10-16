@@ -16,8 +16,6 @@ import Container, { Inject, Service } from "typedi";
 import UserService from "./userService";
 import bcrypt from "bcryptjs";
 
-import { ObjectId } from "mongoose";
-import { Types } from "mongoose";
 import {
   IComment_Rating,
   IComment_RatingCreateDTOforActivity,
@@ -25,6 +23,8 @@ import {
   IComment_RatingCreateDTOfortourGuide,
 } from "@/interfaces/IComment_rating";
 import Historical_locationService from "./Historical_locationService";
+import TouristBadge from "@/types/enums/touristBadge";
+import { ObjectId, Types } from "mongoose";
 
 @Service()
 export default class TouristService {
@@ -493,6 +493,16 @@ export default class TouristService {
     if (ticket instanceof Error)
       throw new InternalServerError("Internal server error in saving ticket");
 
+    if (activity.price !== undefined) {
+      this.recievePointsService(tourist_id as Types.ObjectId, activity.price);
+    } else {
+      throw new BadRequestError("Activity price is undefined");
+    }
+    this.recieveBadgeService(
+      tourist_id as Types.ObjectId,
+      tourist.loyality_points
+    );
+
     return new response(true, ticket, "Activity booked", 201);
   }
 
@@ -542,6 +552,12 @@ export default class TouristService {
     ticket.save();
     if (ticket instanceof Error)
       throw new InternalServerError("Internal server error in saving ticket");
+    this.recievePointsService(tourist_id as Types.ObjectId, itinerary.price);
+
+    this.recieveBadgeService(
+      tourist_id as Types.ObjectId,
+      tourist.loyality_points
+    );
 
     return new response(true, ticket, "Itinerary booked", 201);
   }
@@ -607,10 +623,86 @@ export default class TouristService {
     if (ticket instanceof Error)
       throw new InternalServerError("Internal server error in saving ticket");
 
+    this.recievePointsService(tourist_id as Types.ObjectId, price);
+
+    this.recieveBadgeService(
+      tourist_id as Types.ObjectId,
+      tourist.loyality_points
+    );
+
     return new response(true, ticket, "Historical location booked", 201);
   }
 
-  public async recievePointsService(id: string, points: number) {}
+  public async recievePointsService(
+    tourist_id: Types.ObjectId,
+    amount: number
+  ) {
+    const tourist = await this.touristModel.findById(tourist_id);
 
-  public async recieveBadgeService(id: string, badge: string) {}
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    let points = tourist.loyality_points;
+    const badge = tourist.badge;
+
+    switch (badge) {
+      case TouristBadge.LEVEL1:
+        points += amount * 0.5;
+        break;
+      case TouristBadge.LEVEL2:
+        points += amount * 1;
+        break;
+      case TouristBadge.LEVEL3:
+        points += amount * 1.5;
+        break;
+      default:
+        throw new BadRequestError("Invalid badge");
+    }
+
+    const updatedTourist = await this.touristModel.findByIdAndUpdate(
+      tourist_id,
+      { loyality_points: points },
+      { new: true }
+    );
+
+    if (updatedTourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (updatedTourist == null) throw new NotFoundError("Tourist not found");
+
+    return new response(true, updatedTourist, "Points recieved", 200);
+  }
+
+  public async recieveBadgeService(tourist_id: Types.ObjectId, points: number) {
+    const tourist = await this.touristModel.findById(tourist_id);
+
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    let badge = tourist.badge;
+
+    if (points <= 100000) {
+      badge = TouristBadge.LEVEL1;
+    } else if (points <= 500000) {
+      badge = TouristBadge.LEVEL2;
+    } else {
+      badge = TouristBadge.LEVEL3;
+    }
+    const updatedTourist = await this.touristModel.findByIdAndUpdate(
+      tourist_id,
+      { badge: badge },
+      { new: true }
+    );
+
+    if (updatedTourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (updatedTourist == null) throw new NotFoundError("Tourist not found");
+
+    return new response(true, updatedTourist, "Badge recieved", 200);
+  }
 }

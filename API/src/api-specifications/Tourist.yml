@@ -415,3 +415,57 @@ paths:
           description: Bad request
         500:
           description: Internal server error
+
+  /api/tourist/recievePoints:
+    put:
+      tags:
+        - Tourist
+      summary: Recieve points
+      description: Recieve points for a tourist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tourist_id:
+                  type: string
+                  description: tourist_id of the tourist
+                amount:
+                  type: number
+                  description: Amount available
+      responses:
+        200:
+          description: Points recieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+
+  /api/tourist/recieveBadge:
+    put:
+      tags:
+        - Tourist
+      summary: Recieve badge
+      description: Recieve badge for a tourist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tourist_id:
+                  type: string
+                  description: tourist_id of the tourist
+                points:
+                  type: number
+                  description: Points available
+      responses:
+        200:
+          description: Badge recieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error        
