@@ -1,4 +1,7 @@
 import { Location } from "@/types/Location";
+import mongoose, { Document } from "mongoose";
+
+type ObjectId = mongoose.Schema.Types.ObjectId;
 import { Document, ObjectId } from "mongoose";
 import { ISlot } from "./ISlot";
 

@@ -27,13 +27,21 @@ class HistoricalService {
 
   public static getAllHistorical_Location = async (nation: string, job: string) => {
     try {
-
       const response = await axiosInstance.get("/historical_location/getAllHistorical_locations", { params: { nation, job } })
       return response.data;
     } catch (error) {
       throw error;
     }
   };
+
+  public static getHistorical_LocationByGovernerID = async (governer_id: string) => {
+    try{
+      const response = await axiosInstance.get(`/historical_location/getHistorical_locationsByGovernerID/${governer_id}`)
+      return response.data;
+    } catch (error){
+      throw error;
+    }
+  }
 
   public static getFilteredHistorical_Location = async (filter: any) => {
     try{

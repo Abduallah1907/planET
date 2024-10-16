@@ -89,6 +89,7 @@ const itinerarySchema = new mongoose.Schema(
     inappropriate_flag: {
       type: Boolean,
       required: true,
+      default: false,
     },
     tour_guide_id: {
       type: mongoose.Schema.Types.ObjectId,

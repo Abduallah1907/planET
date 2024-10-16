@@ -15,7 +15,7 @@ export default (app: Router) => {
 
   router.get("/getActivityByID/:id", activityController.getActivityByID);
 
-  router.get("/getActivityByAdvertiserID/:advertiserID", authorize([UserRoles.Advertiser]), activityController.getActivityByAdvertiserID);
+  router.get("/getActivitiesByAdvertiserID/:advertiserID", authorize([UserRoles.Advertiser]), activityController.getActivitiesByAdvertiserID);
 
   router.put("/updateActivity/:id", authorize([UserRoles.Advertiser]), activityController.updateActivity);
 

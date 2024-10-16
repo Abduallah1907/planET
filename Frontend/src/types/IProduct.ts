@@ -13,7 +13,7 @@ export interface IProduct  {
   archieve_flag: boolean;
   createdAt?: Date;
   updatedAt?: Date;
-  reviews:number
+  reviews_count:number
 }
 
 export interface IProductInputDTO {

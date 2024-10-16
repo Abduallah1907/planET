@@ -47,7 +47,7 @@ import TopBarLinks from "./views/Main Page/TopBarLinks";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { toggleSidebar } from "./store/sidebarSlice";
 import Sidebar from "./components/SideBar/Sidebar";
-import CategoryTable from "./views/CategoryTable";
+import CategoryTable from "./views/Tables/CategoryTable";
 import TagsTable from "./views/Tables/TagTable";
 import HistoricalTagsTable from "./views/Tables/HistoricalTagTable";
 

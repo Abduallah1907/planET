@@ -29,7 +29,7 @@ export class ProductController {
   }
 
   public async getFilteredProducts(req: any, res: any) {
-    const { price } = req.query;
+    const { price, seller_id } = req.query;
     const productService: ProductService = Container.get(ProductService);
     var filters = {};
     if (price) {
@@ -50,6 +50,12 @@ export class ProductController {
         };
       }
     }
+    if (seller_id) {
+      filters = {
+        ...filters,
+        seller_id: seller_id,
+      };
+    }
     const products = await productService.getFilteredProductsService(filters);
     res.status(products.status).json(products);
   }
@@ -66,6 +72,13 @@ export class ProductController {
   public async getAllProducts(req: any, res: any) {
     const productService: ProductService = Container.get(ProductService);
     const products = await productService.getAllProductsService();
+    res.status(products.status).json(products);
+  }
+
+  public async getProductsBySellerId(req: any, res: any) {
+    const productService: ProductService = Container.get(ProductService);
+    const { seller_id } = req.params;
+    const products = await productService.getProductsBySellerIdService(seller_id);
     res.status(products.status).json(products);
   }
 

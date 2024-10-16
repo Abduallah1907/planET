@@ -6,11 +6,13 @@ const HistoricalTagsTable: React.FC = () => {
     const [tags, setTags] = useState([]);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedTag, setSelectedTag] = useState<{ _id: string; type: string } | null>(null);
     const [newType, setNewType] = useState("");
     const [newTagType, setNewTagType] = useState("");
     const [values, setValues] = useState<string[]>([]);
     const [newTagValues, setNewTagValues] = useState<string[]>([]);
+    const [deletedId, setDeletedId] = useState("");
 
     useEffect(() => {
         fetchTags();
@@ -30,11 +32,6 @@ const HistoricalTagsTable: React.FC = () => {
         await HistoricalTagService.create({ name, values });
         fetchTags();
     };
-
-    const handleDelete = async (id: string) => {
-        await HistoricalTagService.delete(id);
-        fetchTags();
-    }
 
     const handleShowUpdateModal = (tag: any) => {
         setSelectedTag(tag);
@@ -100,6 +97,22 @@ const HistoricalTagsTable: React.FC = () => {
         setNewTagValues(newValues);
     };
 
+    const handleDelete = (id: string) => {
+        setDeletedId(id);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async() => {
+        // Perform the delete action here
+        await HistoricalTagService.delete(deletedId);
+        fetchTags();
+        setShowDeleteModal(false); // Close modal after confirming
+    };
+
+    const cancelDelete = () => {
+        setShowDeleteModal(false); // Close modal without action
+    };
+
     return (
         <Container className='mt-3'>
             <h1>Tags Table</h1>
@@ -139,6 +152,7 @@ const HistoricalTagsTable: React.FC = () => {
                         <Form.Group controlId="formTagType">
                             <Form.Label>Tag Type</Form.Label>
                             <Form.Control
+                                className='custom-form-control'
                                 type="text"
                                 value={newType}
                                 onChange={(e) => setNewType(e.target.value)}
@@ -152,7 +166,7 @@ const HistoricalTagsTable: React.FC = () => {
                                         type="text"
                                         value={value}
                                         onChange={(e) => handleValueChange(index, e.target.value)}
-                                        className='me-2'
+                                        className='me-2 custom-form-control'
                                     />
                                     <Button variant="danger" onClick={() => handleRemoveValue(index)} className="ml-2">Remove</Button>
                                 </div>
@@ -165,7 +179,7 @@ const HistoricalTagsTable: React.FC = () => {
                     <Button variant="secondary" onClick={handleCloseUpdateModal}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleSaveUpdateChanges}>
+                    <Button variant="success" onClick={handleSaveUpdateChanges}>
                         Save Changes
                     </Button>
                 </Modal.Footer>
@@ -181,6 +195,7 @@ const HistoricalTagsTable: React.FC = () => {
                         <Form.Group controlId="formNewTagType">
                             <Form.Label>Tag Type</Form.Label>
                             <Form.Control
+                                className='custom-form-control'
                                 type="text"
                                 value={newTagType}
                                 onChange={(e) => setNewTagType(e.target.value)}
@@ -194,7 +209,7 @@ const HistoricalTagsTable: React.FC = () => {
                                         type="text"
                                         value={value}
                                         onChange={(e) => handleNewTagValueChange(index, e.target.value)}
-                                        className='me-2'
+                                        className='me-2 custom-form-control'
                                     />
                                     <Button variant="danger" onClick={() => handleRemoveNewTagValue(index)} className="ml-2">Remove</Button>
                                 </div>
@@ -207,8 +222,26 @@ const HistoricalTagsTable: React.FC = () => {
                     <Button variant="secondary" onClick={handleCloseCreateModal}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleSaveCreateChanges}>
+                    <Button variant="success" onClick={handleSaveCreateChanges}>
                         Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Delete Confirmation Modal */}
+            <Modal show={showDeleteModal} onHide={cancelDelete} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Delete Product</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Are you sure you want to delete this Tag?
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={cancelDelete}>
+                        Cancel
+                    </Button>
+                    <Button variant="danger" onClick={confirmDelete}>
+                        Confirm
                     </Button>
                 </Modal.Footer>
             </Modal>

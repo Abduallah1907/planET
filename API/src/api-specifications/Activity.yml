@@ -103,7 +103,7 @@ paths:
           description: Activity not found.
         "500":
           description: Internal Server Error.
-  /api/activity/getActivityByAdvertiserID/{advertiserID}:
+  /api/activity/getActivitiesByAdvertiserID/{advertiserID}:
     get:
       tags:
         - Activity

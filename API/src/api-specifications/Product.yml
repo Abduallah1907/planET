@@ -167,6 +167,27 @@ paths:
           description: All products are fetched
         "500":
           description: Internal Server Error
+  
+  /api/product/getProductsBySellerId/{seller_id}:
+    get:
+      tags:
+        - Product
+      summary: Get products by seller ID
+      description: Get products by seller ID
+      parameters:
+        - in: path
+          name: seller_id
+          required: true
+          schema:
+            type: string
+          description: Seller ID
+      responses:
+        "200":
+          description: Products are fetched
+        "404":
+          description: Products not found
+        "500":
+          description: Internal Server Error
 
   /api/product/getProductByName/{product_name}:
     get:

@@ -10,7 +10,10 @@ interface InputData {
   location: string;
   RatingVal: number; // Initial Rating
   Reviews: number;
-  Price: number;
+  Price?: number;
+  nativePrice?: number;
+  foreignPrice?: number;
+  studentPrice?: number;
   imageUrl: string;
   OpeningHourFrom: string; // Using string for time representation
   OpeningHourTo: string; // Using string for time representation
@@ -31,6 +34,9 @@ export const HistoricalLocationCard = ({
   RatingVal,
   Reviews,
   Price,
+  nativePrice,
+  foreignPrice,
+  studentPrice,
   OpeningHourFrom,
   OpeningHourTo,
   OpeningDays, // New property
@@ -153,17 +159,25 @@ export const HistoricalLocationCard = ({
 
 
           {/* Booking Badge */}
-          <div className="text-right">
-            <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
+          <div className="text-end">
             {isGoverner ? (
-              <Badge
-                bg={isActive ? "active" : "inactive"} // Change color based on booking status
-                className="mt-2 custom-status-badge rounded-4 text-center"
-                onClick={onChange} // Call onChange when clicked
-              >
-                {isActive ? "Active" : "InActive"}
-              </Badge>
-            ) : null}
+              <>
+                {nativePrice && foreignPrice && studentPrice && (
+                  <>
+                    <p>Native Price: ${nativePrice.toFixed(2)}</p>
+                    <p>Foreign Price: ${foreignPrice.toFixed(2)}</p>
+                    <p>Student Price: ${studentPrice.toFixed(2)}</p>
+                  </>
+                )}
+                <Badge
+                  bg={isActive ? "active" : "inactive"} // Change color based on booking status
+                  className="mt-2 custom-status-badge rounded-4 text-center"
+                  onClick={onChange} // Call onChange when clicked
+                >
+                  {isActive ? "Active" : "InActive"}
+                </Badge>
+              </>
+            ) : (Price !== undefined ? <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4> : null)}
           </div>
         </Col>
         {isGoverner ?

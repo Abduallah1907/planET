@@ -71,7 +71,7 @@ export default class Historical_locationService {
     }
   };
   public getAllHistorical_locationsService = async (data: any) => {
-    const Historical_location = await this.historical_locationsModel.find({});
+    const Historical_location = await this.historical_locationsModel.find({ active_flag: true });
     if (Historical_location instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
@@ -223,9 +223,6 @@ export default class Historical_locationService {
     if (Historical_location instanceof Error)
       throw new InternalServerError("Internal server error");
     // throw new Error ("Internal server error");
-
-    if (Historical_location == null)
-      throw new NotFoundError("Historical Location not found");
 
     return new response(
       true,
@@ -409,9 +406,16 @@ export default class Historical_locationService {
     tags?: string[];
     nation: string;
     job: string;
+    governer_id?: string;
   }) {
-    if (!filters) {
-      const historical_locations = await this.historical_locationsModel.find();
+    if (!filters || Object.keys(filters).length === 0 || (filters.governer_id && Object.keys(filters).length === 1)) {
+      const checks: any = {}
+      if (filters.governer_id) {
+        checks.governer_id = filters.governer_id;
+      } else {
+        checks.active_flag = true;
+      }
+      const historical_locations = await this.historical_locationsModel.find(checks);
       return new response(
         true,
         historical_locations,
@@ -420,6 +424,11 @@ export default class Historical_locationService {
       );
     }
     const matchStage: any = {};
+    if (filters.governer_id) {
+      matchStage.governer_id = new Types.ObjectId(filters.governer_id);
+    } else {
+      matchStage.active_flag = true;
+    }
     var aggregationPipeline: any[] = [
       {
         $addFields: {
@@ -443,16 +452,25 @@ export default class Historical_locationService {
     if (historical_locations instanceof Error)
       throw new InternalServerError("Internal server error");
 
-    const historical_locations_with_prices = await Promise.all( historical_locations.map(async location => {
-      location.price = await this.choosePrice(location,{ nation: filters.nation, job: filters.job });
-      return location;
-    }));
-    return new response(
-      true,
-      historical_locations_with_prices,
-      "Filtered itineraries are fetched",
-      200
-    );
+    if (!filters.governer_id) {
+      const historical_locations_with_prices = await Promise.all(historical_locations.map(async location => {
+        location.price = await this.choosePrice(location, { nation: filters.nation, job: filters.job });
+        return location;
+      }));
+      return new response(
+        true,
+        historical_locations_with_prices,
+        "Filtered itineraries are fetched",
+        200
+      );
+    } else {
+      return new response(
+        true,
+        historical_locations,
+        "Filtered itineraries are fetched",
+        200
+      );
+    }
   }
 
   public async getFilterComponentsService() {
