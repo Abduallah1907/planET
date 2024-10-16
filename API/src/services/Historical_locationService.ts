@@ -23,7 +23,7 @@ export default class Historical_locationService {
     @Inject("governorModel") private governorModel: Models.GovernorModel
   ) {}
   //this function is to choose the price based on the user data
-  private choosePrice = async (location: any, data: any) => {
+  public choosePrice = async (location: any, data: any) => {
     if (data.job.toLowerCase() == "student") {
       return location.student_price;
     } else {

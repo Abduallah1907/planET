@@ -337,3 +337,81 @@ paths:
           description: Bad request
         500:
           description: Internal server error
+  /api/tourist/bookActivity:
+    post:
+      tags:
+        - Tourist
+      summary: Book an activity
+      description: Book an activity for a tourist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email of the tourist
+                activity_id:
+                  type: string
+                  description: ID of the activity
+      responses:
+        200:
+          description: Activity booked successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+  /api/tourist/bookItinerary:
+    post:
+      tags:
+        - Tourist
+      summary: Book an itinerary
+      description: Book an itinerary for a tourist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email of the tourist
+                itinerary_id:
+                  type: string
+                  description: ID of the itinerary
+      responses:
+        200:
+          description: Itinerary booked successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+  /api/tourist/bookHistoricalLocation:
+    post:
+      tags:
+        - Tourist
+      summary: Book a historical location
+      description: Book a historical location for a tourist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email of the tourist
+                historical_location_id:
+                  type: string
+                  description: ID of the historical location
+      responses:
+        200:
+          description: Historical location booked successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error

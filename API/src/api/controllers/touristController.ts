@@ -71,4 +71,39 @@ export class TouristController {
     );
     res.status(ratedTourist.status).json(ratedTourist);
   }
+
+  public async bookActivity(req: any, res: any) {
+    const { email, activity_id } = req.body;
+    const touristService: TouristService = Container.get(TouristService);
+    const bookedActivity = await touristService.bookActivityService(
+      email,
+      activity_id
+    );
+    res.status(bookedActivity.status).json(bookedActivity);
+  }
+
+  public async bookItinerary(req: any, res: any) {
+    const { email, itinerary_id } = req.body;
+    const touristService: TouristService = Container.get(TouristService);
+    const bookedItinerary = await touristService.bookItineraryService(
+      email,
+      itinerary_id
+    );
+    res.status(bookedItinerary.status).json(bookedItinerary);
+  }
+
+  public async bookHistoricalLocation(req: any, res: any) {
+    const { email, historical_location_id } = req.body;
+    const touristService: TouristService = Container.get(TouristService);
+    const bookedHistoricalLocation =
+      await touristService.bookHistoricalLocationService(
+        email,
+        historical_location_id
+      );
+    res.status(bookedHistoricalLocation.status).json(bookedHistoricalLocation);
+  }
+
+  public async recievePoints(req: any, res: any) {}
+
+  public async recieveBadge(req: any, res: any) {}
 }

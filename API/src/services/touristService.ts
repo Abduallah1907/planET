@@ -24,6 +24,7 @@ import {
   IComment_RatingCreateDTOforItinerary,
   IComment_RatingCreateDTOfortourGuide,
 } from "@/interfaces/IComment_rating";
+import Historical_locationService from "./Historical_locationService";
 
 @Service()
 export default class TouristService {
@@ -434,4 +435,182 @@ export default class TouristService {
     }
     return new response(true, comment_rating, "Activity rated", 201);
   }
+
+  public async bookActivityService(email: string, activity_id: string) {
+    if (!Types.ObjectId.isValid(activity_id)) {
+      throw new BadRequestError("Invalid id");
+    }
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+    });
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const tourist_id = tourist._id;
+
+    const activity = await this.activityModel.findById({ _id: activity_id });
+
+    if (activity instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (activity == null) throw new NotFoundError("Activity not found");
+
+    if (activity.booking_flag == false)
+      throw new BadRequestError("Activity is not available for booking");
+
+    if (activity.inappropriate_flag == true)
+      throw new BadRequestError("Activity is inappropriate");
+
+    if (activity.active_flag == false)
+      throw new BadRequestError("Activity is not active");
+
+    if (activity.special_discount) {
+      if (activity.price !== undefined) {
+        activity.price =
+          activity.price - activity.price * (activity.special_discount / 100);
+      }
+    }
+    const ticket = new this.ticketModel({
+      tourist_id: tourist_id,
+      type: "ACTIVITY",
+      price: activity.price,
+      booking_id: activity_id,
+      cancelled: false,
+    });
+
+    await ticket.save();
+
+    if (ticket instanceof Error)
+      throw new InternalServerError("Internal server error in saving ticket");
+
+    return new response(true, ticket, "Activity booked", 201);
+  }
+
+  public async bookItineraryService(email: string, itinerary_id: string) {
+    if (!Types.ObjectId.isValid(itinerary_id)) {
+      throw new BadRequestError("Invalid id");
+    }
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+    });
+
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const tourist_id = tourist._id;
+
+    const itinerary = await this.itineraryModel.findById({ _id: itinerary_id });
+
+    if (itinerary instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (itinerary == null) throw new NotFoundError("Itinerary not found");
+
+    if (itinerary.active_flag == false)
+      throw new BadRequestError("Itinerary is not active for booking");
+
+    if (itinerary.inappropriate_flag == true)
+      throw new BadRequestError("Itinerary is inappropriate");
+
+    const ticket = new this.ticketModel({
+      tourist_id: tourist_id,
+      type: "ITINERARY",
+      price: itinerary.price,
+      booking_id: itinerary_id,
+      cancelled: false,
+    });
+    ticket.save();
+    if (ticket instanceof Error)
+      throw new InternalServerError("Internal server error in saving ticket");
+
+    return new response(true, ticket, "Itinerary booked", 201);
+  }
+
+  public async bookHistoricalLocationService(
+    email: string,
+    historical_location_id: string
+  ) {
+    const historicalLocationService = Container.get(Historical_locationService);
+
+    if (!Types.ObjectId.isValid(historical_location_id)) {
+      throw new BadRequestError("Invalid id");
+    }
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+    });
+
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const tourist_id = tourist._id;
+
+    const historical_location = await this.historical_locationsModel.findById({
+      _id: historical_location_id,
+    });
+
+    if (historical_location instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (historical_location == null)
+      throw new NotFoundError("Historical location not found");
+
+    if (historical_location.active_flag == false)
+      throw new BadRequestError(
+        "Historical location is not active for booking"
+      );
+    //check right price for tourist
+
+    const price = await historicalLocationService.choosePrice(
+      historical_location,
+      tourist
+    );
+
+    const ticket = new this.ticketModel({
+      tourist_id: tourist_id,
+      type: "HISTORICAL_LOCATION",
+      price: price,
+      booking_id: historical_location_id,
+      cancelled: false,
+    });
+    ticket.save();
+
+    if (ticket instanceof Error)
+      throw new InternalServerError("Internal server error in saving ticket");
+
+    return new response(true, ticket, "Historical location booked", 201);
+  }
+
+  public async recievePointsService(id: string, points: number) {}
+
+  public async recieveBadgeService(id: string, badge: string) {}
 }
