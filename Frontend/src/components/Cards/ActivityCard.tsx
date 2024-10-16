@@ -12,7 +12,8 @@ import {
 import "./Cards.css";
 import Rating from "../Rating/Rating";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useAppContext } from "../../AppContext";
 
 interface InputData {
   Name: string;
@@ -51,6 +52,11 @@ const CustomActivityCard = ({
   isAdvertiser,
 }: InputData) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
+
+  const convertedPrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(Price, baseCurrency, currency);
+  }, [Price, baseCurrency, currency]);
 
   // Manage the state for the rating
   const navigate = useNavigate();
@@ -71,6 +77,7 @@ const CustomActivityCard = ({
   const cancelDelete = () => {
     setShowDeleteModal(false); // Close modal without action
   };
+
   return (
     <Card
       className="p-3 shadow-sm"
@@ -160,7 +167,7 @@ const CustomActivityCard = ({
 
           {/* Price and Active/Inactive Button */}
           <div className="text-end">
-            <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
+            <h4 style={{ fontWeight: "bold" }}>{convertedPrice}</h4>
             {isAdvertiser ? (
               <Badge
                 bg={(isActive && isBooked) ? "active" : "inactive"} // Change color based on booking status

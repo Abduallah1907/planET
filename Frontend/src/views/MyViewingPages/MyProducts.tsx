@@ -146,7 +146,7 @@ export default function ProductsPage() {
               <Col key={index} xs={12} className="mb-4 ps-0">
                 <ProductCard
                         id={product._id}
-                        Name={product.name}
+                        name={product.name}
                         average_rating={product.average_rating}
                         quantity={product.quantity}
                         price={product.price}

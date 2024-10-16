@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Card, Badge, Row, Col, Image, DropdownButton, Dropdown, Modal, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkedAlt, faMap } from "@fortawesome/free-solid-svg-icons"; // Import travel-related icons
 import "./Cards.css";
 import Rating from "../Rating/Rating";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../AppContext";
 
 interface InputData {
   id: string;
@@ -54,6 +55,11 @@ const ItineraryCard = ({
   // Manage the state for the booking status
   const [bookingStatus, setBookingStatus] = useState(isActive); // Initialize booking status from props
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
+
+  const convertedPrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(Price, baseCurrency, currency);
+  }, [Price, baseCurrency, currency]);
 
   // Function to handle edit action
   const navigate = useNavigate();
@@ -190,7 +196,7 @@ const ItineraryCard = ({
 
           {/* Price and Active/Inactive Button */}
           <div className="text-end">
-            <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
+            <h4 style={{ fontWeight: "bold" }}>{convertedPrice}</h4>
             {isTourGuide ? (
               <Badge
                 bg={bookingStatus ? "active" : "inactive"} // Change color based on booking status

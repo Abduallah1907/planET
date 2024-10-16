@@ -1,8 +1,9 @@
 import { Card, Badge, Row, Col, Image, DropdownButton, Dropdown, Modal, Button } from "react-bootstrap";
 import Rating from '../Rating/Rating';
 import "./Cards.css";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../AppContext";
 
 interface InputData {
   id: string;
@@ -50,6 +51,23 @@ export const HistoricalLocationCard = ({
   onDelete,
 }: InputData) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
+
+  const convertedPrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(Price ?? 0, baseCurrency, currency);
+  }, [Price, baseCurrency, currency]);
+
+  const convertedNativePrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(nativePrice ?? 0, baseCurrency, currency);
+  }, [nativePrice, baseCurrency, currency]);
+
+  const convertedForeignPrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(foreignPrice ?? 0, baseCurrency, currency);
+  }, [foreignPrice, baseCurrency, currency]);
+
+  const convertedStudentPrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(studentPrice ?? 0, baseCurrency, currency);
+  }, [studentPrice, baseCurrency, currency]);
 
   const navigate = useNavigate();
   function handleEdit(id: string): void {
@@ -164,9 +182,9 @@ export const HistoricalLocationCard = ({
               <>
                 {nativePrice && foreignPrice && studentPrice && (
                   <>
-                    <p>Native Price: ${nativePrice.toFixed(2)}</p>
-                    <p>Foreign Price: ${foreignPrice.toFixed(2)}</p>
-                    <p>Student Price: ${studentPrice.toFixed(2)}</p>
+                    <p>Native Price: {convertedNativePrice}</p>
+                    <p>Foreign Price: {convertedForeignPrice}</p>
+                    <p>Student Price: {convertedStudentPrice}</p>
                   </>
                 )}
                 <Badge
@@ -177,7 +195,7 @@ export const HistoricalLocationCard = ({
                   {isActive ? "Active" : "InActive"}
                 </Badge>
               </>
-            ) : (Price !== undefined ? <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4> : null)}
+            ) : (Price !== undefined ? <h4 style={{ fontWeight: "bold" }}>{convertedPrice}</h4> : null)}
           </div>
         </Col>
         {isGoverner ?

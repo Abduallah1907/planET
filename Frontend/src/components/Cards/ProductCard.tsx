@@ -2,12 +2,13 @@ import { Card, Badge, Row, Col, Image, Button, DropdownButton, Dropdown, Modal }
 import "./Cards.css";
 import Rating from "../Rating/Rating";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../AppContext";
 
 
 interface InputData {
-  Name: string;
+  name: string;
   id?: string;
   average_rating: number;
   Reviews: number;
@@ -26,7 +27,7 @@ interface InputData {
 
 const ProductCard = ({
   id,
-  Name,
+  name,
   average_rating,
   Reviews,
   price,
@@ -43,6 +44,11 @@ const ProductCard = ({
 }: InputData) => {
   // Determine if the product is active or archived
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
+
+  const convertedPrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(price, baseCurrency, currency);
+  }, [price, baseCurrency, currency]);
 
 
   // Function to handle edit action
@@ -86,7 +92,7 @@ const ProductCard = ({
               <div className="d-flex align-items-center mb-1">
                 {/* Product Name */}
                 <Card.Title className="mb-0" style={{ fontWeight: "bold", marginRight: "10px" }}>
-                  {Name}
+                  {name}
                 </Card.Title>
               </div>
 

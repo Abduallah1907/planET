@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ProductCard from "../../components/Cards/ProductCard"; 
+import ProductCard from "../../components/Cards/ProductCard";
 import FilterBy from "../../components/FilterBy/FilterBy";
 import { Col, Row, Container, Form, InputGroup, Button } from "react-bootstrap";
 import { BiSort } from "react-icons/bi";
@@ -12,9 +12,9 @@ export default function ProductsPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [products, setProducts] = React.useState<IProduct[]>([])
-  const [ filtercomponent, setfilterComponents] = React.useState({})
-  const [sortBy, setSortBy] = useState("topPicks"); 
-  const [filter,setFilter] = React.useState({});
+  const [filtercomponent, setfilterComponents] = React.useState({})
+  const [sortBy, setSortBy] = useState("topPicks");
+  const [filter, setFilter] = React.useState({});
 
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,11 +67,11 @@ export default function ProductsPage() {
     getProducts();
     getFilterComponents();
   }, []);
-  const onProductClick = (name : string) => {
+  const onProductClick = (name: string) => {
     navigate(`/product/${name}`);
   }
 
-  const onFilterChange = (newFilter: {[key: string]: any;}) => {
+  const onFilterChange = (newFilter: { [key: string]: any; }) => {
     setFilter(newFilter);
   }
 
@@ -117,9 +117,9 @@ export default function ProductsPage() {
       </Row>
 
       <Row>
-      <Col md={3} className="border-bottom pb-2 d-flex flex-column align-items-md-center">
+        <Col md={3} className="border-bottom pb-2 d-flex flex-column align-items-md-center">
           <Button variant="main-inverse" onClick={handleApplyFilters}>Apply Filters</Button>
-          <FilterBy filterOptions={filtercomponent} onFilterChange={onFilterChange}/>
+          <FilterBy filterOptions={filtercomponent} onFilterChange={onFilterChange} />
         </Col>
 
         <Col md={9} className="p-3">
@@ -135,24 +135,25 @@ export default function ProductsPage() {
                 <option value="ratingLowToHigh">Rating: Low to High</option>
               </Form.Select>
             </div>
-            {filteredProducts.map((product:IProduct, index) => (
+            {filteredProducts.map((product: IProduct, index) => (
               <Col key={index} xs={12} className="mb-4 ps-0">
                 <ProductCard
-                        Name={product.name}
-                        average_rating={product.average_rating}
-                        quantity={product.quantity}
-                        price={product.price}
-                        description={product.description}
-                        sales={product.sales}
-                        Reviews={product.reviews_count}
-                        createdAt={product.createdAt ? new Date(product.createdAt):new Date()}
-                        updatedAt={product.updatedAt ? new Date(product.updatedAt):new Date()}
-                        imageUrl={product.picture}
-                        isActiveArchive={product.archieve_flag}
-                        onChange={() => console.log(`${product.name} booking status changed`)} 
-                        id={product.user_id} 
-                        isSeller={false}  
-                        isAdmin={false}              />
+                  id={product.user_id}
+                  name={product.name}
+                  average_rating={product.average_rating}
+                  quantity={product.quantity}
+                  price={product.price}
+                  description={product.description}
+                  sales={product.sales}
+                  Reviews={product.reviews_count}
+                  createdAt={product.createdAt ? new Date(product.createdAt) : new Date()}
+                  updatedAt={product.updatedAt ? new Date(product.updatedAt) : new Date()}
+                  imageUrl={product.picture}
+                  isActiveArchive={product.archieve_flag}
+                  onChange={() => console.log(`${product.name} booking status changed`)}
+                  isSeller={false}
+                  isAdmin={false}
+                />
               </Col>
             ))}
           </Row>
