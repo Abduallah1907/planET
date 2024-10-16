@@ -1,5 +1,7 @@
 import { Location } from "@/types/Location";
-import { Document, ObjectId } from "mongoose";
+import mongoose, { Document } from "mongoose";
+
+type ObjectId = mongoose.Schema.Types.ObjectId;
 
 export interface IActivity extends Document {
   category: ObjectId;

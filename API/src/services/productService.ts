@@ -9,6 +9,8 @@ import response from "@/types/responses/response";
 import { Service, Inject } from "typedi";
 import { ObjectId, Types } from "mongoose";
 
+import { ObjectId as MongoObjectID } from "mongodb";
+
 @Service()
 export class ProductService {
   constructor(
@@ -77,13 +79,25 @@ export class ProductService {
       min?: number;
       max?: number;
     };
+    seller_id?: string;
   }) {
-    if (!filters) {
-      const products = await this.productModel.find();
+    if (!filters || Object.keys(filters).length === 0 || (filters.seller_id && Object.keys(filters).length === 1)) {
+      const checks: any = {}
+      if(filters.seller_id){
+        checks.seller_id = filters.seller_id;
+      }else{
+        checks.archieve_flag = false
+      }
+      const products = await this.productModel.find(checks);
       return new response(false, products, "No filters provided", 200);
     }
 
     const matchStage: any = {};
+    if(filters.seller_id){
+      matchStage.seller_id = new MongoObjectID(filters.seller_id);
+    }else{
+    matchStage.archieve_flag = false;
+    }
 
     if (filters.price) {
       if (filters.price.min !== undefined) {
@@ -98,6 +112,11 @@ export class ProductService {
       {
         $match: matchStage,
       },
+      {
+        $addFields: {
+          reviews_count: { $size: "$comments" }
+        }
+      }
     ]);
     if (products instanceof Error)
       throw new InternalServerError("Internal Server Error");
@@ -129,12 +148,30 @@ export class ProductService {
   }
 
   public async getAllProductsService() {
-    const products = await this.productModel.find({ archieve_flag: false });
+    const products = await this.productModel.aggregate([
+      { $match: { archieve_flag: false } },
+      {
+        $addFields: {
+          reviews_count: { $size: "$comments" }
+        }
+      }
+    ]);
+    
     if (products instanceof Error)
       throw new InternalServerError("Internal Server Error");
 
     return new response(true, products, "All products are fetched", 200);
   }
+
+
+  public async getProductsBySellerIdService(seller_id: string) {
+    const products = await this.productModel.find({ seller_id: seller_id });
+    if (products instanceof Error)
+      throw new InternalServerError("Internal Server Error");
+
+    return new response(true, products, "Products are fetched", 200);
+  }
+
   public async getProductByIdService(product_id: Types.ObjectId) {
     const product = await this.productModel.findById(product_id);
     if (product instanceof Error)

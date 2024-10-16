@@ -27,13 +27,13 @@ export default function ProductsPage() {
       case "topPicks":
         return b.average_rating - a.average_rating;
       case "priceHighToLow":
-        return a.price - b.price;
+        return (b.price ?? 0) - (a.price ?? 0);
       case "priceLowToHigh":
-        return b.price - a.price;
-      case "reviewsLowToHigh":
-        return a.reviews - b.reviews;
-      case "reviewsHighToLow":
-        return b.reviews - a.reviews;
+        return (a.price ?? 0) - (b.price ?? 0);
+      case "ratingHighToLow":
+        return (b.average_rating ?? 0) - (a.average_rating ?? 0);
+      case "ratingLowToHigh":
+        return (a.average_rating ?? 0) - (b.average_rating ?? 0);
       default:
         return 0;
     }
@@ -131,8 +131,8 @@ export default function ProductsPage() {
                 <option value="topPicks">Our Top Picks</option>
                 <option value="priceLowToHigh">Price: Low to High</option>
                 <option value="priceHighToLow">Price: High to Low</option>
-                <option value="reviewsLowToHigh">Reviews: Low to High</option>
-                <option value="reviewsHighToLow">Reviews: High to Low</option>
+                <option value="ratingHighToLow">Rating: High to Low</option>
+                <option value="ratingLowToHigh">Rating: Low to High</option>
               </Form.Select>
             </div>
             {filteredProducts.map((product:IProduct, index) => (
@@ -144,7 +144,7 @@ export default function ProductsPage() {
                         price={product.price}
                         description={product.description}
                         sales={product.sales}
-                        Reviews={product.reviews}
+                        Reviews={product.reviews_count}
                         createdAt={product.createdAt ? new Date(product.createdAt):new Date()}
                         updatedAt={product.updatedAt ? new Date(product.updatedAt):new Date()}
                         imageUrl={product.picture}

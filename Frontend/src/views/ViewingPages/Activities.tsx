@@ -58,9 +58,13 @@ export default function ActivitiesPage() {
       case "topPicks":
         return b.average_rating - a.average_rating;
       case "priceHighToLow":
-        return (a.price ?? 0) - (b.price ?? 0);
-      case "priceLowToHigh":
         return (b.price ?? 0) - (a.price ?? 0);
+      case "priceLowToHigh":
+        return (a.price ?? 0) - (b.price ?? 0);
+      case "ratingHighToLow":
+        return (b.average_rating ?? 0) - (a.average_rating ?? 0);
+      case "ratingLowToHigh":
+        return (a.average_rating ?? 0) - (b.average_rating ?? 0);
       default:
         return 0;
     }
@@ -140,6 +144,8 @@ export default function ActivitiesPage() {
                 <option value="topPicks">Our Top Picks</option>
                 <option value="priceLowToHigh">Price: Low to High</option>
                 <option value="priceHighToLow">Price: High to Low</option>
+                <option value="ratingHighToLow">Rating: High to Low</option>
+                <option value="ratingLowToHigh">Rating: Low to High</option>
               </Form.Select>
             </div>
             {filteredActivities.map((activity: IActivity, index) => (

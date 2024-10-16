@@ -1,4 +1,6 @@
-import { Document, ObjectId } from "mongoose";
+import mongoose, { Document } from "mongoose";
+
+type ObjectId = mongoose.Schema.Types.ObjectId;
 
 export interface IAdvertiser extends Document {
   email: string;

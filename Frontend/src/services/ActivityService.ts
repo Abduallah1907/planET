@@ -20,6 +20,17 @@ class ActivityService {
     }
   };
 
+  public static getActivitiesByAdvertiserId = async (id: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/activity/getActivitiesByAdvertiserID/${id}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   public static getFilteredActivites = async (filter: any) => {
     try {
       const response = await axiosInstance.get(

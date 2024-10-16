@@ -1,10 +1,12 @@
-import { Document, ObjectId } from "mongoose";
+import mongoose, { Document } from "mongoose";
 import {
   IPrevious_work,
   IPreviousWorkDeleteDTO,
   IPreviousWorkInputDTO,
   IPreviousWorkUpdateDTO,
 } from "./IPrevious_work";
+
+type ObjectId = mongoose.Schema.Types.ObjectId;
 
 export interface ITour_Guide extends Document {
   user_id: ObjectId;

@@ -19,7 +19,7 @@ interface FormData {
   nativePrice: number;
   foreignPrice: number;
   studentPrice: number;
-  isActive: boolean;
+  active_flag: boolean;
 }
 
 interface Tag {
@@ -50,7 +50,7 @@ const HistoricalPlaceForm: React.FC = () => {
     nativePrice: 0,
     foreignPrice: 0,
     studentPrice: 0,
-    isActive: true,
+    active_flag: true,
   });
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -66,8 +66,8 @@ const HistoricalPlaceForm: React.FC = () => {
     }
   }
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+    setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
 
   const Governer = useAppSelector((state) => state.user);
@@ -92,7 +92,7 @@ const HistoricalPlaceForm: React.FC = () => {
       student_price: formData.studentPrice,
       tags: tagsMap,
       governor_id: Governer.stakeholder_id._id,
-      active_flag: formData.isActive,
+      active_flag: formData.active_flag,
     }
     await HistoricalService.addHistoricalLocation(
       reqData
@@ -386,11 +386,13 @@ const HistoricalPlaceForm: React.FC = () => {
 
           <Row>
             <Col>
-              <Form.Group controlId="isActive">
+              <Form.Group controlId="active_flag">
                 <Form.Check
+                  id="active_flag"
                   type="checkbox"
                   label="Active"
-                  checked={formData.isActive}
+                  name="active_flag"
+                  checked={formData.active_flag}
                   onChange={handleInputChange}
                 />
               </Form.Group>

@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal, Form, Container } from 'react-bootstrap';
-import CategoryService from '../services/CategoryService';
+import CategoryService from '../../services/CategoryService';
 
 const CategoryTable: React.FC = () => {
     const [categories, setCategories] = useState([]);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<{ _id: string; type: string } | null>(null);
     const [newName, setNewName] = useState("");
     const [newCategoryName, setNewCategoryName] = useState("");
+    const [deletedId, setDeletedId] = useState("");
 
     useEffect(() => {
         fetchCategories();
@@ -17,11 +19,6 @@ const CategoryTable: React.FC = () => {
     const fetchCategories = async () => {
         const categories = await CategoryService.getAll();
         setCategories(categories.data);
-    };
-
-    const handleDelete = async (id: string) => {
-        await CategoryService.delete(id);
-        fetchCategories();
     };
 
     const handleUpdate = async (id: string, name: string) => {
@@ -67,6 +64,22 @@ const CategoryTable: React.FC = () => {
         handleCloseCreateModal();
     };
 
+    const handleDelete = (id: string) => {
+        setDeletedId(id);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async() => {
+        // Perform the delete action here
+        await CategoryService.delete(deletedId);
+        fetchCategories();
+        setShowDeleteModal(false); // Close modal after confirming
+    };
+
+    const cancelDelete = () => {
+        setShowDeleteModal(false); // Close modal without action
+    };
+
     return (
         <Container className='mt-3'>
             <h1>Category Table</h1>
@@ -103,6 +116,7 @@ const CategoryTable: React.FC = () => {
                         <Form.Group controlId="formCategoryName">
                             <Form.Label>Category Name</Form.Label>
                             <Form.Control
+                                className='custom-form-control'
                                 type="text"
                                 value={newName}
                                 onChange={(e) => setNewName(e.target.value)}
@@ -114,7 +128,7 @@ const CategoryTable: React.FC = () => {
                     <Button variant="secondary" onClick={handleCloseUpdateModal}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleSaveUpdateChanges}>
+                    <Button variant="success" onClick={handleSaveUpdateChanges}>
                         Save Changes
                     </Button>
                 </Modal.Footer>
@@ -130,6 +144,7 @@ const CategoryTable: React.FC = () => {
                         <Form.Group controlId="formNewCategoryName">
                             <Form.Label>Category Name</Form.Label>
                             <Form.Control
+                                className='custom-form-control'
                                 type="text"
                                 value={newCategoryName}
                                 onChange={(e) => setNewCategoryName(e.target.value)}
@@ -141,8 +156,26 @@ const CategoryTable: React.FC = () => {
                     <Button variant="secondary" onClick={handleCloseCreateModal}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleSaveCreateChanges}>
+                    <Button variant="success" onClick={handleSaveCreateChanges}>
                         Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Delete Confirmation Modal */}
+            <Modal show={showDeleteModal} onHide={cancelDelete} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Delete Product</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Are you sure you want to delete this Category?
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={cancelDelete}>
+                        Cancel
+                    </Button>
+                    <Button variant="danger" onClick={confirmDelete}>
+                        Confirm
                     </Button>
                 </Modal.Footer>
             </Modal>

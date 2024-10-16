@@ -71,9 +71,13 @@ export default function HistoricalLocationsPage() {
       case "topPicks":
         return b.average_rating - a.average_rating;
       case "priceHighToLow":
-        return (a.reviewsCount ?? 0) - (b.reviewsCount ?? 0);
+        return (b.price ?? 0) - (a.price ?? 0);
       case "priceLowToHigh":
-        return (b.reviewsCount ?? 0) - (a.reviewsCount ?? 0);
+        return (a.price ?? 0) - (b.price ?? 0);
+      case "ratingHighToLow":
+        return (b.average_rating ?? 0) - (a.average_rating ?? 0);
+      case "ratingLowToHigh":
+        return (a.average_rating ?? 0) - (b.average_rating ?? 0);
       default:
         return 0;
     }
@@ -145,6 +149,8 @@ export default function HistoricalLocationsPage() {
                 <option value="topPicks">Our Top Picks</option>
                 <option value="priceLowToHigh">Price: Low to High</option>
                 <option value="priceHighToLow">Price: High to Low</option>
+                <option value="ratingHighToLow">Rating: High to Low</option>
+                <option value="ratingLowToHigh">Rating: Low to High</option>
               </Form.Select>
             </div>
             {filteredLocations.map(

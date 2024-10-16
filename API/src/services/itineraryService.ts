@@ -2,8 +2,10 @@ import { IItineraryCreateDTO, IItineraryOutputAllDTO, IItineraryOutputDTO, IItin
 import { BadRequestError, ForbiddenError, HttpError, InternalServerError, NotFoundError, UnauthorizedError } from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
-import { ObjectId, Types } from "mongoose";
+import mongoose, { ObjectId, Types } from "mongoose";
 import { IFilterComponents } from "@/interfaces/IFilterComponents";
+import path from "path";
+import { ObjectId as MongoObjectID } from "mongodb";
 
 @Service()
 export default class ItineraryService {
@@ -116,7 +118,10 @@ export default class ItineraryService {
   }
 
   // view all itineraries
-  public async getAllItinerariesByTourGuideIDService(tour_guide_id: Types.ObjectId) {
+  public async getAllItinerariesByTourGuideIDService(tour_guide_id: string) {
+    if (!Types.ObjectId.isValid(tour_guide_id)) {
+      throw new BadRequestError("Invalid Tour Guide ID format");
+    }
     // why not use DTO for output one might ask
     // it is because i do not want to write all the attributes thanks
     // this also leaves activities' subdocuments as is, if the front end needs that info i will fix it
@@ -126,7 +131,7 @@ export default class ItineraryService {
       populate: [{ path: "activities" }, { path: "comments" }, { path: "category" }],
     });
     if (itineraries instanceof Error) throw new InternalServerError("Internal server error");
-    if (!itineraries) throw new HttpError("Tour guide not found", 404);
+    
     const itinerariesOutput: IItineraryOutputDTO[] = itineraries.map((itinearary: any) => ({
         ...itinearary.toObject(),
         reviews_count: itinearary.comments ? itinearary.comments.length : 0,
@@ -136,13 +141,13 @@ export default class ItineraryService {
       true,
       itinerariesOutput,
       "Returning all found itineraries!",
-      201
+      200
     );
   }
 
   public async getAllItinerariesService(page: number): Promise<any> {
     const itineraries = await this.itineraryModel
-      .find({})
+      .find({active_flag:true, inappropriate_flag: false})
       .limit(10)
       .populate("comments")
       .populate("tags")
@@ -215,13 +220,27 @@ export default class ItineraryService {
     date?: { start?: Date; end?: Date };
     preferences?: string[];
     languages?: string[];
+    tour_guide_id?: string;
   }) {
-    if (!filters) {
-      const itineraries = await this.itineraryModel.find();
+    if (!filters || Object.keys(filters).length === 0 || (filters.tour_guide_id && Object.keys(filters).length === 1)) {
+      const checks: any = {}
+      if(filters.tour_guide_id) {
+        checks.tour_guide_id = filters.tour_guide_id;
+      }else {
+        checks.active_flag = true;
+        checks.inappropriate_flag = false;
+      }
+      const itineraries = await this.itineraryModel.find(checks);
       return new response(true, itineraries, "All itineraries are fetched no filter applied", 200);
     }
     const matchStage: any = {};
-    matchStage.active_flag = true;
+    if(filters.tour_guide_id) {
+      matchStage.tour_guide_id = new MongoObjectID(filters.tour_guide_id);
+    }else{
+      matchStage.active_flag = true;
+      matchStage.inappropriate_flag = false;
+    }
+
     if (filters.price) {
       if (filters.price.min !== undefined) {
         matchStage.price = { ...matchStage.price, $gte: filters.price.min };

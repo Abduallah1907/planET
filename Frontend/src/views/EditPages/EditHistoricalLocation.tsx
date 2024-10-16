@@ -4,7 +4,7 @@ import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Reuse the 
 import "../tagsinput.css";
 import { BiChevronDown } from "react-icons/bi";
 import { HistoricalService } from "../../services/HistoricalService";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
 import DaysModal from "../../components/DaysModals";
@@ -20,7 +20,7 @@ interface FormData {
   nativePrice: number;
   foreignPrice: number;
   studentPrice: number;
-  isActive: boolean;
+  active_flag: boolean;
 }
 
 interface Tag {
@@ -52,8 +52,10 @@ const HistoricalPlaceForm: React.FC = () => {
     nativePrice: 0,
     foreignPrice: 0,
     studentPrice: 0,
-    isActive: true,
+    active_flag: true,
   });
+
+  const navigate = useNavigate()
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -68,8 +70,8 @@ const HistoricalPlaceForm: React.FC = () => {
     }
   }
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+    setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -92,13 +94,14 @@ const HistoricalPlaceForm: React.FC = () => {
         foreign_price: formData.foreignPrice,
         student_price: formData.studentPrice,
         tags: tagsMap,
-        active_flag: formData.isActive,
+        active_flag: formData.active_flag,
       }
       if (historical_location_id) {
         await HistoricalService.editHistoricalLocation(
           historical_location_id,
           reqData
         );
+        navigate('/MyHistoricalLocations')
       } else {
         console.error("Historical location ID is undefined");
       }
@@ -136,7 +139,7 @@ const HistoricalPlaceForm: React.FC = () => {
         nativePrice: locationData.native_price,
         foreignPrice: locationData.foreign_price,
         studentPrice: locationData.student_price,
-        isActive: locationData.isActive,
+        active_flag: locationData.active_flag,
       })
       setSelectedTags(Object.entries(locationData.tags).map(([key, value]) => ({ id: key, value: value as string })));
     } else {
@@ -423,11 +426,13 @@ const HistoricalPlaceForm: React.FC = () => {
 
           <Row>
             <Col>
-              <Form.Group controlId="isActive">
+              <Form.Group controlId="active_flag">
                 <Form.Check
+                  id="active_flag"
                   type="checkbox"
                   label="Active"
-                  checked={formData.isActive}
+                  name="active_flag"
+                  checked={formData.active_flag}
                   onChange={handleInputChange}
                 />
               </Form.Group>

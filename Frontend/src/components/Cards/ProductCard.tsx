@@ -21,7 +21,7 @@ interface InputData {
   updatedAt: Date;
   onChange?: () => void;
   isSeller: boolean;
-  isAdmin:boolean; // Check if the user is the seller
+  isAdmin: boolean; // Check if the user is the seller
 }
 
 const ProductCard = ({
@@ -42,7 +42,6 @@ const ProductCard = ({
   isAdmin,
 }: InputData) => {
   // Determine if the product is active or archived
-  const isBooked = isActiveArchive;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
 
@@ -52,7 +51,7 @@ const ProductCard = ({
   const handleEdit = (product_id: string) => {
     navigate(`/EditProduct/${product_id}`); // Navigate to the EditProduct page
   };
-  
+
 
   const handleDelete = () => {
     setShowDeleteModal(true);
@@ -81,7 +80,7 @@ const ProductCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={(isSeller ||isAdmin) ? 6 : 7} className="d-flex align-items-stretch">
+        <Col md={(isSeller || isAdmin) ? 6 : 7} className="d-flex align-items-stretch">
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
@@ -94,12 +93,15 @@ const ProductCard = ({
               {/* Product Description */}
               <Card.Text className="mt-2">Description: {description}</Card.Text>
               <Card.Text className="text-muted">
-                {(isSeller ||isAdmin)? `Sales: ${sales} | Quantity: ${quantity}` : `Quantity: ${quantity}`}
+                {(isSeller || isAdmin) ? `Sales: ${sales} | Quantity: ${quantity}` : `Quantity: ${quantity}`}
               </Card.Text>
             </div>
-            <Card.Text className="text-muted">
-              Created: {createdAt.toLocaleDateString()} | Updated: {updatedAt.toLocaleDateString()}
-            </Card.Text>
+            {/* Created and Updated Date */}
+            {(isSeller || isAdmin) &&
+              <Card.Text className="text-muted">
+                Created: {createdAt.toLocaleDateString()} | Updated: {updatedAt.toLocaleDateString()}
+              </Card.Text>
+            }
           </Card.Body>
         </Col>
 
@@ -122,19 +124,19 @@ const ProductCard = ({
             <h4 style={{ fontWeight: "bold" }}>${price.toFixed(2)}</h4>
 
             {/* Show Active/Archive button if the user is the seller */}
-            {(isSeller ||isAdmin) ? (
+            {(isSeller || isAdmin) ? (
               <Badge
-                bg={isBooked ? "active" : "inactive"}
+                bg={!isActiveArchive ? "active" : "inactive"}
                 className="mt-2 custom-status-badge rounded-4 text-center"
                 onClick={onChange}
                 style={{ cursor: "pointer" }}
               >
-                {isBooked ? "Active" : "Archive"}
+                {!isActiveArchive ? "Active" : "Archive"}
               </Badge>
             ) : null}
           </div>
         </Col>
-        {(isSeller ||isAdmin) ?
+        {(isSeller || isAdmin) ?
           <Col md={1} className="d-flex align-items-baseline">
             <DropdownButton
               align="end"

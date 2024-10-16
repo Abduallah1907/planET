@@ -16,6 +16,7 @@ export default (app: Router) => {
   route.get("/getFilteredProducts", productController.getFilteredProducts);
   route.get("/getSortedProducts", productController.getSortedProducts);
   route.get("/getAllProducts", productController.getAllProducts);
+  route.get("/getProductsBySellerId/:seller_id", productController.getProductsBySellerId);
   route.get("/getProductByName/:product_name", productController.getProductByName);
   route.get("/getProductByID/:id", productController.getProductById);
   route.get("/getFilterComponents", productController.getFilterComponents);

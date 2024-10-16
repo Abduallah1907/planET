@@ -6,9 +6,11 @@ const TagsTable: React.FC = () => {
     const [tags, setTags] = useState([]);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedTag, setSelectedTag] = useState<{ _id: string; type: string } | null>(null);
     const [newType, setNewType] = useState("");
     const [newTagType, setNewTagType] = useState("");
+    const [deletedType, setDeletedType] = useState("");
 
     useEffect(() => {
         fetchTags();
@@ -17,11 +19,6 @@ const TagsTable: React.FC = () => {
     const fetchTags = async () => {
         const tags = await TagService.getAll();
         setTags(tags.data);
-    };
-
-    const handleDelete = async (type: string) => {
-        await TagService.delete(type);
-        fetchTags();
     };
 
     const handleUpdate = async (oldType: string, newType: string) => {
@@ -67,6 +64,22 @@ const TagsTable: React.FC = () => {
         handleCloseCreateModal();
     };
 
+    const handleDelete = (type: string) => {
+        setDeletedType(type);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async() => {
+        // Perform the delete action here
+        await TagService.delete(deletedType);
+        fetchTags();
+        setShowDeleteModal(false); // Close modal after confirming
+    };
+
+    const cancelDelete = () => {
+        setShowDeleteModal(false); // Close modal without action
+    };
+
     return (
         <Container className='mt-3'>
             <h1>Tags Table</h1>
@@ -103,6 +116,7 @@ const TagsTable: React.FC = () => {
                         <Form.Group controlId="formTagType">
                             <Form.Label>Tag Type</Form.Label>
                             <Form.Control
+                                className='custom-form-control'
                                 type="text"
                                 value={newType}
                                 onChange={(e) => setNewType(e.target.value)}
@@ -114,7 +128,7 @@ const TagsTable: React.FC = () => {
                     <Button variant="secondary" onClick={handleCloseUpdateModal}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleSaveUpdateChanges}>
+                    <Button variant="success" onClick={handleSaveUpdateChanges}>
                         Save Changes
                     </Button>
                 </Modal.Footer>
@@ -130,6 +144,7 @@ const TagsTable: React.FC = () => {
                         <Form.Group controlId="formNewTagType">
                             <Form.Label>Tag Type</Form.Label>
                             <Form.Control
+                                className='custom-form-control'
                                 type="text"
                                 value={newTagType}
                                 onChange={(e) => setNewTagType(e.target.value)}
@@ -141,8 +156,26 @@ const TagsTable: React.FC = () => {
                     <Button variant="secondary" onClick={handleCloseCreateModal}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleSaveCreateChanges}>
+                    <Button variant="success" onClick={handleSaveCreateChanges}>
                         Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Delete Confirmation Modal */}
+            <Modal show={showDeleteModal} onHide={cancelDelete} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Delete Product</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Are you sure you want to delete this Tag?
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={cancelDelete}>
+                        Cancel
+                    </Button>
+                    <Button variant="danger" onClick={confirmDelete}>
+                        Confirm
                     </Button>
                 </Modal.Footer>
             </Modal>

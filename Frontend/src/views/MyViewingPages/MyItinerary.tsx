@@ -7,6 +7,7 @@ import { BiSort } from "react-icons/bi";
 import { ItineraryService } from "../../services/ItineraryService";
 import { IItinerary } from "../../types/IItinerary";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../store/hooks";
 
 export default function ItinerariesPage() {
   const navigate = useNavigate();
@@ -20,16 +21,22 @@ export default function ItinerariesPage() {
     const filterData = await ItineraryService.getFilterComponents();
     setfilterComponents(filterData.data);
   };
+
+  const Tourist = useAppSelector((state) => state.user);
+
   const getItinerary = async () => {
-    const ItinerariesData = await ItineraryService.getAllItineraries(1);
+    const ItinerariesData = await ItineraryService.getItinerariesByTourGuideId(Tourist.stakeholder_id._id);
     setItineraries(ItinerariesData.data);
   };
+
+  const Tour_guide = useAppSelector((state) => state.user);
   const getFilteredItineraries = async () => {
     const modifiedFilter = Object.fromEntries(
       Object.entries(filter).map(([key, value]) =>
         Array.isArray(value) ? [key, value.join(",")] : [key, value]
       )
     );
+    modifiedFilter["tour_guide_id"] = Tour_guide.stakeholder_id._id;
     const ItinerariesData = await ItineraryService.getFilteredItineraries(modifiedFilter);
     setItineraries(ItinerariesData.data);
   }
@@ -61,9 +68,13 @@ export default function ItinerariesPage() {
       case "topPicks":
         return b.average_rating - a.average_rating;
       case "priceHighToLow":
-        return a.price - b.price;
+        return (b.price ?? 0) - (a.price ?? 0);
       case "priceLowToHigh":
-        return b.price - a.price;
+        return (a.price ?? 0) - (b.price ?? 0);
+      case "ratingHighToLow":
+        return (b.average_rating ?? 0) - (a.average_rating ?? 0);
+      case "ratingLowToHigh":
+        return (a.average_rating ?? 0) - (b.average_rating ?? 0);
       default:
         return 0;
     }
@@ -124,6 +135,8 @@ export default function ItinerariesPage() {
                 <option value="topPicks">Our Top Picks</option>
                 <option value="priceLowToHigh">Price: Low to High</option>
                 <option value="priceHighToLow">Price: High to Low</option>
+                <option value="ratingHighToLow">Rating: High to Low</option>
+                <option value="ratingLowToHigh">Rating: Low to High</option>
               </Form.Select>
             </div>
 

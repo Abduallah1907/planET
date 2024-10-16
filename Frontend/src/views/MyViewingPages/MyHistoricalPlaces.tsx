@@ -8,15 +8,17 @@ import { BiSort } from "react-icons/bi";
 import { FaSearch } from "react-icons/fa";
 import { HistoricalService } from "../../services/HistoricalService";
 import {
+  IHistorical_location,
   IHistorical_location_tourist,
 } from "../../types/IHistoricalLocation";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../store/hooks";
 
 export default function HistoricalLocationsPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [historical, setHistorical] = React.useState<
-    IHistorical_location_tourist[]
+    IHistorical_location[]
   >([]);
   const [filtercomponent, setfilterComponents] = React.useState({});
   const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
@@ -29,11 +31,11 @@ export default function HistoricalLocationsPage() {
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value);
   };
+  
+  const Governer = useAppSelector((state) => state.user);
+
   const getHistorical = async () => {
-    const HistoricalData = await HistoricalService.getAllHistorical_Location(
-      "masry",
-      "engineer"
-    );
+    const HistoricalData = await HistoricalService.getHistorical_LocationByGovernerID(Governer.stakeholder_id._id);
     setHistorical(HistoricalData.data);
   };
   const getFilteredHistorical = async () => {
@@ -44,6 +46,7 @@ export default function HistoricalLocationsPage() {
     );
     modifiedFilter.nation = "masry";
     modifiedFilter.job = "student";
+    modifiedFilter.governer_id = Governer.stakeholder_id._id;
     const HistoricalData =
       await HistoricalService.getFilteredHistorical_Location(modifiedFilter);
     setHistorical(HistoricalData.data);
@@ -79,10 +82,10 @@ export default function HistoricalLocationsPage() {
     switch (sortBy) {
       case "topPicks":
         return b.average_rating - a.average_rating;
-      case "priceHighToLow":
-        return (a.reviewsCount ?? 0) - (b.reviewsCount ?? 0);
-      case "priceLowToHigh":
-        return (b.reviewsCount ?? 0) - (a.reviewsCount ?? 0);
+      case "ratingHighToLow":
+        return (b.average_rating ?? 0) - (a.average_rating ?? 0);
+      case "ratingLowToHigh":
+        return (a.average_rating ?? 0) - (b.average_rating ?? 0);
       default:
         return 0;
     }
@@ -152,12 +155,12 @@ export default function HistoricalLocationsPage() {
               <BiSort />
               <Form.Select value={sortBy} onChange={handleSortChange}>
                 <option value="topPicks">Our Top Picks</option>
-                <option value="priceLowToHigh">Price: Low to High</option>
-                <option value="priceHighToLow">Price: High to Low</option>
+                <option value="ratingHighToLow">Rating: High to Low</option>
+                <option value="ratingLowToHigh">Rating: Low to High</option>
               </Form.Select>
             </div>
             {filteredLocations.map(
-              (location: IHistorical_location_tourist, index) => (
+              (location: IHistorical_location, index) => (
                 <Col key={location._id} xs={12} className="mb-4 ps-0">
                   <HistoricalLocationCard
                     id={location._id}
@@ -172,7 +175,9 @@ export default function HistoricalLocationsPage() {
                     onChange={() =>
                       console.log(`${location.name} booking status changed`)
                     }
-                    Price={location.price}
+                    nativePrice={location.native_price}
+                    foreignPrice={location.foreign_price}
+                    studentPrice={location.student_price}
                     isGoverner={true}
                     OpeningHourFrom={location.opening_hours_from}
                     OpeningHourTo={location.opening_hours_to}
