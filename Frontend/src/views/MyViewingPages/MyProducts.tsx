@@ -78,6 +78,10 @@ export default function ProductsPage() {
     navigate(`/product/${name}`);
   }
 
+  const filteredProducts = sortedProducts.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const onFilterChange = (newFilter: {[key: string]: any;}) => {
     setFilter(newFilter);
   }
@@ -138,7 +142,7 @@ export default function ProductsPage() {
                 <option value="ratingLowToHigh">Rating: Low to High</option>
               </Form.Select>
             </div>
-            {products.map((product:IProduct, index) => (
+            {filteredProducts.map((product:IProduct, index) => (
               <Col key={index} xs={12} className="mb-4 ps-0">
                 <ProductCard
                         id={product._id}

@@ -61,7 +61,7 @@ const ItineraryCard = ({
   const handleEdit = (itinerary_id: string) => {
     navigate(`/EditItinerary/${itinerary_id}`); // Navigate to the EditProduct page
   };
-  
+
 
   const handleDelete = () => {
     setShowDeleteModal(true);
@@ -102,13 +102,18 @@ const ItineraryCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={isTourGuide? 5 : 6} className="d-flex align-items-stretch" onClick={onClick}>
+        <Col md={isTourGuide ? 5 : 6} className="d-flex align-items-stretch" onClick={onClick}>
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
-                <h5>{name}</h5>
+                <Card.Title
+                  className="mb-0"
+                  style={{ fontWeight: "bold", marginRight: "10px" }}
+                >
+                  {name}
+                </Card.Title>
                 {/* Badges next to Activity Name */}
-                {tags?.map((tag:any, index:any) => (
+                {tags?.map((tag: any, index: any) => (
                   <Badge pill bg="tag" className="me-2 custom-badge" key={index}>
                     {tag.type}
                   </Badge>
@@ -152,7 +157,7 @@ const ItineraryCard = ({
 
               {/* Date and Duration */}
               <Card.Text className="text-muted">
-              {Available_Dates.map(date => date.toString().split('T')[0]).join(", ")} • Duration: {Duration}
+                {Available_Dates.map(date => date.toString().split('T')[0]).join(", ")} • Duration: {Duration}
               </Card.Text>
             </div>
           </Card.Body>
@@ -187,13 +192,13 @@ const ItineraryCard = ({
           <div className="text-end">
             <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
             {isTourGuide ? (
-            <Badge
-              bg={bookingStatus ? "active" : "inactive"} // Change color based on booking status
-              className="mt-2 custom-status-badge rounded-4 text-center"
-              onClick={handleBookingToggle} // Toggle booking status
-            >
-              {bookingStatus ? "Booking On" : "Booking Off"}
-            </Badge>
+              <Badge
+                bg={bookingStatus ? "active" : "inactive"} // Change color based on booking status
+                className="mt-2 custom-status-badge rounded-4 text-center"
+                onClick={handleBookingToggle} // Toggle booking status
+              >
+                {bookingStatus ? "Booking On" : "Booking Off"}
+              </Badge>
             ) : null}
           </div>
         </Col>
@@ -217,7 +222,7 @@ const ItineraryCard = ({
           <Modal.Title>Delete Product</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to delete this product?
+          Are you sure you want to delete this Itinerary?
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={cancelDelete}>

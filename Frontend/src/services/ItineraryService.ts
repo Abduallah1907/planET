@@ -101,6 +101,15 @@ class ItineraryService {
       throw error;
     }
   }
+
+  public static deleteItinerary = async (id: string) => {
+    try {
+      const response = await axiosInstance.delete(`/itinerary/deleteItinerary/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 };
 
 export { ItineraryService };

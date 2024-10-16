@@ -74,7 +74,7 @@ const HistoricalPlaceForm: React.FC = () => {
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
 
-  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Add form submission logic here
     try {
@@ -185,7 +185,7 @@ const HistoricalPlaceForm: React.FC = () => {
         </Col>
       </Row>
       <Container className="mt-4">
-        <Form onSubmit={handleFormSubmit}>
+        <Form onSubmit={handleSubmit}>
           <Row>
             <Col>
               <AdminFormGroup

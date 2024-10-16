@@ -131,7 +131,7 @@ const ProductCard = ({
                 onClick={onChange}
                 style={{ cursor: "pointer" }}
               >
-                {!isActiveArchive ? "Active" : "Archive"}
+                {!isActiveArchive ? "Active" : "Archived"}
               </Badge>
             ) : null}
           </div>

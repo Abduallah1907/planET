@@ -9,23 +9,21 @@ import CategoryService from "../../services/CategoryService";
 import { AdminService } from "../../services/AdminService";
 import { ActivityService } from "../../services/ActivityService";
 import languages from "../../utils/languageOptions.json";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import SlotsModal from "../../components/SlotsModals"; // Import SlotModal component
 
 
 interface FormData {
   name?: string;
   category?: string;
-  activities?: string[];
-  timeline?: string[];
+  choosen?: string[];
   locations?: Location[];
   duration?: string;
   languages?: string[];
   price?: number;
-  available_dates?: Date[];
   accessibility?: boolean;
   pickup_loc?: Location;
   drop_off_loc?: Location;
-  tags?: string[];
   active_flag?: boolean;
 }
 
@@ -42,6 +40,15 @@ interface Activity {
   name: string;
 }
 
+interface Slot {
+  title: string;
+  description: string;
+  from: string;
+  to: string;
+  index?: number; // Add the index property
+}
+
+
 const ItineraryForm: React.FC = () => {
   const { itinerary_id } = useParams();
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
@@ -53,14 +60,18 @@ const ItineraryForm: React.FC = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
 
   const [formData, setFormData] = useState<FormData>({});
-  const [filteredLanguages, setFilteredLanguages] = useState<{ label: string; value: string }[]>(languages);
+  const [filteredLanguages, setFilteredLanguages] = useState<{ label: string; value: string }[]>([]);
 
-  const [timelineActivities, setTimelineActivities] = useState<Activity[]>([]);
+  const [choosenActivities, setChoosenActivities] = useState<Activity[]>([]);
   const [locations, setLocations] = useState<string>("");
   const [availableDates, setAvailableDates] = useState<{ date: string; time: string }[]>([]);
 
   const [newAvailableDate, setNewAvailableDate] = useState<string>("");
   const [newAvailableTime, setNewAvailableTime] = useState<string>("");
+
+  const [slots, setSlots] = useState<Slot[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [currentSlot, setCurrentSlot] = useState<Slot>();
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue) {
@@ -96,23 +107,72 @@ const ItineraryForm: React.FC = () => {
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+    setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
 
 
   const handleActivityChange = (index: number, value: string) => {
-    const newActivities = [...timelineActivities];
-    const activity = activities.find(activity => activity.name === value);
+    const newActivities = [...choosenActivities];
+    const activity = activities.find(activity => activity._id === value);
     if (activity) {
       newActivities[index] = activity;
-      setTimelineActivities(newActivities);
+      setChoosenActivities(newActivities);
     }
   };
 
   const handleAddActivity = () => {
-    setTimelineActivities((prev) => [...prev, { _id: "", name: "" }]);
+    setChoosenActivities((prev) => [...prev, { _id: "", name: "" }]);
   };
+
+  const handleDeleteActivity = (index: number) => {
+    setChoosenActivities((prevActivities) =>
+      prevActivities.filter((_, i) => i !== index)
+    );
+  };
+
+  const handleLanguageChange = (index: number, value: string) => {
+    const newLanguages = [...filteredLanguages];
+    const language = languages.find(language => language.value === value);
+    if (language) {
+      newLanguages[index] = language;
+      setFilteredLanguages(newLanguages);
+    }
+  }
+
+  const handleAddLanguage = () => {
+    setFilteredLanguages((prev) => [...prev, { label: "", value: "" }]);
+  }
+
+  const handleDeleteLanguage = (index: number) => {
+    setFilteredLanguages((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  const handleAddSlot = () => {
+    setCurrentSlot({ title: "", description: "", from: "", to: "", index: slots.length });
+    setShowModal(true);
+  };
+
+  const handleEditSlot = (index: number) => {
+    setCurrentSlot(slots[index]);
+    setShowModal(true);
+  };
+
+  const handleSaveSlot = (slot: Slot) => {
+    if (currentSlot?.index !== undefined) {
+      const updatedSlots = [...slots];
+      updatedSlots[currentSlot.index] = slot;
+      setSlots(updatedSlots);
+    } else {
+      setSlots([...slots, slot]);
+    }
+  };
+
+  const handleDeleteSlot = (index: number) => {
+    setSlots(slots.filter((_, i) => i !== index));
+  };
+
+  const handleCloseModal = () => setShowModal(false);
 
   const handleAddAvailableDate = () => {
     if (newAvailableDate && newAvailableTime) {
@@ -150,7 +210,18 @@ const ItineraryForm: React.FC = () => {
   const getItineraryById = async () => {
     if (itinerary_id) {
       const itinerary = await ItineraryService.getItineraryById(itinerary_id);
-      setFormData(itinerary.data);
+      setFormData({
+        name: itinerary.data.name,
+        category: itinerary.data.category._id,
+        duration: itinerary.data.duration,
+        price: itinerary.data.price,
+        accessibility: itinerary.data.accessibility,
+        active_flag: itinerary.data.active_flag,
+        pickup_loc: itinerary.data.pickup_loc,
+        drop_off_loc: itinerary.data.drop_off_loc,
+      });
+      setChoosenActivities(itinerary.data.activities.map((activity: Activity) => ({ _id: activity._id, name: activity.name })));
+      setSelectedTags(itinerary.data.tags);
       setFilteredLanguages(itinerary.data.languages.map((language: string) => ({ label: language, value: language })));
     }
   }
@@ -171,11 +242,26 @@ const ItineraryForm: React.FC = () => {
   const getAllActivities = async () => {
     const activities = await ActivityService.getAllActivities();
     setActivities(activities.data);
-    setTimelineActivities(activities.data.map((activity: Activity) => activity.name));
   }
 
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const navigate = useNavigate()
+
+  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const itineraryData = {
+      ...formData,
+      activities: choosenActivities.map(activity => activity._id),
+      tags: selectedTags.map(tag => tag._id),
+      languages: filteredLanguages.map(language => language.value),
+      available_dates: availableDates.map(date => new Date(`${date.date}T${date.time}`)),
+      slots: slots,
+    };
+    if (itinerary_id) {
+      await ItineraryService.updateItinerary(itinerary_id, itineraryData);
+      navigate("/MyItineraries");
+    } else {
+      console.error("Itinerary ID is undefined");
+    }
 
   };
 
@@ -187,30 +273,8 @@ const ItineraryForm: React.FC = () => {
         </Col>
       </Row>
       <Container>
-        <Form onSubmit={handleFormSubmit}>
+        <Form onSubmit={handleSubmit}>
           <Row>
-            <Col>
-              <Form.Group className="form-group" controlId="category">
-                <Form.Label>Category</Form.Label>
-                <div className="custom-select-container">
-                  <Form.Control
-                    as="select"
-                    name="category"
-                    className="custom-form-control"
-                    value={formData.category}
-                    onChange={handleChange}
-                    required
-                  >
-                    {categories.map((category) => (
-                      <option key={category.type} value={category._id}>
-                        {category.type}
-                      </option>
-                    ))}
-                  </Form.Control>
-                  <BiChevronDown className="dropdown-icon" />
-                </div>
-              </Form.Group>
-            </Col>
             <Col>
               <AdminFormGroup className="form-group"
                 label="Name"
@@ -223,38 +287,112 @@ const ItineraryForm: React.FC = () => {
                 disabled={false}
                 name={"name"} />
             </Col>
+            <Col>
+              <Form.Group className="form-group" controlId="category">
+                <Form.Label>Category</Form.Label>
+                <div className="custom-select-container">
+                  <Form.Control
+                    as="select"
+                    name="category"
+                    className="custom-form-control"
+                    value={formData.category}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((category) => (
+                      <option key={category.type} value={category._id}>
+                        {category.type}
+                      </option>
+                    ))}
+                  </Form.Control>
+                  <BiChevronDown className="dropdown-icon" />
+                </div>
+              </Form.Group>
+            </Col>
           </Row>
 
           <Row>
             <Col>
-              <Form.Group className="form-group" controlId="timelineActivities">
-                <Form.Label>Timeline Activities</Form.Label>
-                {timelineActivities.map((activity, index) => (
-                  <div key={index} className="timeline-activity custom-select-container">
-                    <Form.Control
-                      as="select"
-                      onChange={(e) => handleActivityChange(index, e.target.value)}
-                      className="mt-1 custom-form-control"
-                      value={activity.name}
-                      required>
-                      {activities.map((activity) => (
-                        <option key={activity.name} value={activity._id}>
-                          {activity.name}
-                        </option>
-                      ))}
-                    </Form.Control>
-                    <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
-                  </div>
+              <Form.Group className="form-group" controlId="choosenActivities">
+                <Form.Label>Activities</Form.Label>
+                {choosenActivities.map((activity, index) => (
+                  <Row className="align-items-center">
+                    <Col key={index} className="choosen-activity custom-select-container pe-0">
+                      <Form.Control
+                        as="select"
+                        onChange={(e) => handleActivityChange(index, e.target.value)}
+                        className="mt-1 custom-form-control"
+                        value={activity._id}
+                        required>
+                        <option value="">Select Activity</option>
+                        {activities.map((activity) => (
+                          <option key={activity.name} value={activity._id}>
+                            {activity.name}
+                          </option>
+                        ))}
+                      </Form.Control>
+                      <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
+                    </Col>
+                    <Col md="auto">
+                      <Button
+                        variant="danger"
+                        className="ml-2"
+                        onClick={() => handleDeleteActivity(index)}
+                      >
+                        Delete
+                      </Button>
+                    </Col>
+                  </Row>
                 ))}
                 <Button
-                  className="update-btn mt-3"
-                  variant="outline-primary"
+                  className="mt-3"
+                  variant="main-inverse"
                   onClick={handleAddActivity}
                 >
                   Add Another Activity
                 </Button>
               </Form.Group>
             </Col>
+            <Col>
+              <Form.Group className="form-group" controlId="slots">
+                <Form.Label>Slots</Form.Label>
+                <div>
+                  {slots.map((slot, index) => (
+                    <Row>
+                      <Col className="pe-0">
+                        <Form.Control
+                          className="mt-1 custom-form-control"
+                          type="text"
+                          value={`${slot.title} (${slot.from} - ${slot.to})`}
+                          readOnly
+                          onClick={() => handleEditSlot(index)}
+                        />
+                      </Col>
+                      <Col md="auto">
+                        <Button
+                          variant="danger"
+                          className="ml-2"
+                          onClick={() => handleDeleteSlot(index)}
+                        >
+                          Remove
+                        </Button>
+                      </Col>
+                    </Row>
+                  ))}
+                  <Button
+                    className="mt-3"
+                    variant="main-inverse"
+                    onClick={handleAddSlot}
+                  >
+                    Add Slot
+                  </Button>
+                </div>
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Row>
             <Col>
               <AdminFormGroup className="form-group"
                 label="Locations"
@@ -265,9 +403,6 @@ const ItineraryForm: React.FC = () => {
                 value={locations}
                 onChange={(e) => setLocations(e.target.value)} disabled={false} name={""} />
             </Col>
-          </Row>
-
-          <Row>
             <Col>
               <AdminFormGroup className="form-group"
                 label="Duration"
@@ -280,45 +415,46 @@ const ItineraryForm: React.FC = () => {
                 disabled={false}
                 name={"duration"} />
             </Col>
-            <Col>
-              <Form.Group className="form-group" controlId="timelineActivities">
-                <Form.Label>Languages</Form.Label>
-                {filteredLanguages.map((filteredLanguage, index) => (
-                  <div key={index} className="timeline-activity custom-select-container">
-                    <Form.Control
-                      as="select"
-                      // onChange={(e) => handleLanguageChange(index, e.target.value)}
-                      className="mt-1 custom-form-control"
-                      value={filteredLanguage.value}
-                      required>
-                      {languages.map((language) => (
-                        <option key={language.value} value={language.value}>
-                          {language.label}
-                        </option>
-                      ))}
-                    </Form.Control>
-                    <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
-                  </div>
-                ))}
-                <Button className="update-btn mt-3" variant="outline-primary" onClick={handleAddActivity}>
-                  Add Another Language
-                </Button>
-              </Form.Group>
-            </Col>
           </Row>
 
           <Row>
             <Col>
-              <AdminFormGroup className="form-group"
-                label="Price"
-                type="number"
-                placeholder="Enter Price"
-                id="price"
-                required={true}
-                value={formData.price?.toString()}
-                onChange={handleChange}
-                disabled={false}
-                name={""} />
+              <Form.Group className="form-group" controlId="choosenActivities">
+                <Form.Label>Languages</Form.Label>
+                {filteredLanguages.map((filteredLanguage, index) => (
+                  <Row className="align-items-center">
+                    <Col key={index} className="choosen-activity custom-select-container pe-0">
+                      <Form.Control
+                        as="select"
+                        // onChange={(e) => handleLanguageChange(index, e.target.value)}
+                        className="mt-1 custom-form-control"
+                        value={filteredLanguage.value}
+                        onChange={(e) => handleLanguageChange(index, e.target.value)}
+                        required>
+                        <option value="">Select Language</option>
+                        {languages.map((language) => (
+                          <option key={language.value} value={language.value}>
+                            {language.label}
+                          </option>
+                        ))}
+                      </Form.Control>
+                      <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
+                    </Col>
+                    <Col md="auto">
+                      <Button
+                        variant="danger"
+                        className="ml-2"
+                        onClick={() => handleDeleteLanguage(index)}
+                      >
+                        Delete
+                      </Button>
+                    </Col>
+                  </Row>
+                ))}
+                <Button className="mt-3" variant="main-inverse" onClick={handleAddLanguage}>
+                  Add Another Language
+                </Button>
+              </Form.Group>
             </Col>
             <Col>
               <Form.Group className="form-group" controlId="availableDates">
@@ -326,7 +462,7 @@ const ItineraryForm: React.FC = () => {
                 <Row>
                   <Col>
                     <Form.Control
-                      className="form-group"
+                      className="form-group custom-form-control"
                       type="date"
                       value={newAvailableDate}
                       onChange={(e) => setNewAvailableDate(e.target.value)}
@@ -335,7 +471,7 @@ const ItineraryForm: React.FC = () => {
                   </Col>
                   <Col>
                     <Form.Control
-                      className="form-group"
+                      className="form-group custom-form-control"
                       type="time"
                       value={newAvailableTime}
                       onChange={(e) => setNewAvailableTime(e.target.value)}
@@ -344,8 +480,7 @@ const ItineraryForm: React.FC = () => {
                   </Col>
                   <Col>
                     <Button
-                      variant="outline-primary"
-                      className="update-btn "
+                      variant="main-inverse"
                       onClick={handleAddAvailableDate}
                     >
                       Add
@@ -356,13 +491,13 @@ const ItineraryForm: React.FC = () => {
                   <Container className="form-group">
                     <div key={index} className="available-date-time">
                       {available.date} at {available.time}{" "}
-                      <button
+                      <Button
                         type="button"
                         onClick={() => handleDeleteAvailableDate(index)}
-                        className="update-btn "
+                        variant="danger"
                       >
                         &times;
-                      </button>
+                      </Button>
                     </div>
                   </Container>
                 ))}
@@ -398,6 +533,18 @@ const ItineraryForm: React.FC = () => {
           </Row>
 
           <Row>
+            <Col>
+              <AdminFormGroup className="form-group"
+                label="Price"
+                type="number"
+                placeholder="Enter Price"
+                id="price"
+                required={true}
+                value={String(formData.price)}
+                onChange={handleChange}
+                disabled={false}
+                name={"price"} />
+            </Col>
             <Col>
               <Form.Group className="form-group" controlId="tags">
                 <Form.Label>Tags</Form.Label>
@@ -468,6 +615,14 @@ const ItineraryForm: React.FC = () => {
           </Button>
         </Form>
       </Container>
+
+      <SlotsModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        handleSave={handleSaveSlot}
+        slot={currentSlot || { title: "", description: "", from: "", to: "", index: -1 }}
+        setSlot={setCurrentSlot}
+      />
     </div>
   );
 };
