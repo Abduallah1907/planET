@@ -1,46 +1,62 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
-import './searchbar.css';
-import CustomInput from './CustomInput';
-import { ButtonGroup, Col, Dropdown, DropdownButton, Form, InputGroup, Row } from 'react-bootstrap';
-import { FaSearch } from 'react-icons/fa';
+import "./searchbar.css";
+import CustomInput from "./CustomInput";
+import {
+  ButtonGroup,
+  Col,
+  Dropdown,
+  DropdownButton,
+  Form,
+  InputGroup,
+  Row,
+} from "react-bootstrap";
+import { FaSearch } from "react-icons/fa";
 
 const SearchBar: React.FC = () => {
-    const { t } = useTranslation();
-    const [searchTerm, setSearchTerm] = useState('');
-    const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
-    const [startDate, endDate] = dateRange;
-    const [adults, setAdults] = useState(1);
-    const [children, setChildren] = useState(0);
-    const [rooms, setRooms] = useState<number>(1);
+  const { t } = useTranslation();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
+    null,
+    null,
+  ]);
+  const [startDate, endDate] = dateRange;
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
+  const [rooms, setRooms] = useState<number>(1);
 
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value);
-    };
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
-    const handleDateChange = (update: [Date | null, Date | null]) => {
-        setDateRange(update);
-    };
+  const handleDateChange = (update: [Date | null, Date | null]) => {
+    setDateRange(update);
+  };
 
-    const increment = (setter: React.Dispatch<React.SetStateAction<number>>, value: number, e: React.MouseEvent) => {
-        e.stopPropagation();  // Prevent dropdown from closing
-        setter(value + 1);
-      };
-    
-      const decrement = (setter: React.Dispatch<React.SetStateAction<number>>, value: number, e: React.MouseEvent) => {
-        e.stopPropagation();  // Prevent dropdown from closing
-        if (value > 0) {
-          setter(value - 1);
-        }
-      };
-    
+  const increment = (
+    setter: React.Dispatch<React.SetStateAction<number>>,
+    value: number,
+    e: React.MouseEvent
+  ) => {
+    e.stopPropagation(); // Prevent dropdown from closing
+    setter(value + 1);
+  };
 
-
+  const decrement = (
+    setter: React.Dispatch<React.SetStateAction<number>>,
+    value: number,
+    e: React.MouseEvent
+  ) => {
+    e.stopPropagation(); // Prevent dropdown from closing
+    if (value > 0) {
+      setter(value - 1);
+    }
+  };
 
     const handleDone = () => {
         console.log("Adults:", adults);
@@ -109,7 +125,7 @@ const SearchBar: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="d-flex justify-content-between align-items-center mb-2">
-                                    <span>Children</span>
+                                    <span>{t("children")}</span>
                                     <div>
                                         <span
                                             className="btn btn-outline-secondary"
@@ -149,21 +165,23 @@ const SearchBar: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="d-grid gap-2">
-                                    <span className="btn btn-primary mt-3" onClick={handleDone}>
-                                        Done
-                                    </span>
-                                </div>
-                            </Form>
-                        </Dropdown.Item>
-                    </DropdownButton>
-                </Col>
-                <div className='col col-auto search-container submit-btn'>
-                    <button type='submit' className="btn-custom">{t('search')}</button>
+                <div className="d-grid gap-2">
+                  <span className="btn btn-primary mt-3" onClick={handleDone}>
+                    Done
+                  </span>
                 </div>
-            </Row>
-        </Form>
-    );
+              </Form>
+            </Dropdown.Item>
+          </DropdownButton>
+        </Col>
+        <div className="col col-auto search-container submit-btn">
+          <button type="submit" className="btn-custom">
+            {t("search")}
+          </button>
+        </div>
+      </Row>
+    </Form>
+  );
 };
 
 export default SearchBar;

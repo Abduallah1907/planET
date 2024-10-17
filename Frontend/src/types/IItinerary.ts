@@ -1,5 +1,6 @@
 
 export interface IItinerary {
+  _id: string;
   average_rating: number;
   Reviews: number;
   activities: string[];
@@ -21,6 +22,7 @@ export interface IItinerary {
   category: string;
   createdAt?: Date;
   updatedAt?: Date;
+  reviews_count?: number;
 }
 
 export interface IItineraryCreateDTO {

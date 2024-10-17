@@ -1,5 +1,6 @@
 
 export interface IProduct  {
+  _id: string;
   user_id: string
   comments: string[];
   name: string;
@@ -12,7 +13,7 @@ export interface IProduct  {
   archieve_flag: boolean;
   createdAt?: Date;
   updatedAt?: Date;
-  reviews:number
+  reviews_count:number
 }
 
 export interface IProductInputDTO {

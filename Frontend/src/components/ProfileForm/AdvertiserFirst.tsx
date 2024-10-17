@@ -1,72 +1,67 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import "./ProfileFormTourist.css";
-import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
-import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
-import { AdvertiserService } from "../../services/AdvertiserService";
+import LogoPlaceholder from "../../assets/person-circle.svg"; // Placeholder logo
 import { useAppSelector } from "../../store/hooks";
+import { AdvertiserService } from "../../services/AdvertiserService";
+import axios from "axios";
+import { FileService } from "../../services/FileService";
+import { set } from "react-datepicker/dist/date_utils";
 
 interface FormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  mobile: string;
-  profession: string;
-  password: string;
-  retypePassword: string;
-  username: string;
-  nationality: string;
-  dob: string;
-  description: string;
-  logo: File | null; // Added logo field
-  about: string; // New 'About' field
+  about: string;
+  website: string;
+  hotline: string;
+  companyProfile: string;
+  logo: File | undefined; // Update logo to handle file
 }
 
 const AdvertiserFirst: React.FC = () => {
+  const AdvertiserFirst = useAppSelector((state) => state.user);
+  const [file, setFile] = useState<File | undefined>(undefined);
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    mobile: "",
-    profession: "",
-    password: "",
-    retypePassword: "",
-    username: "",
-    nationality: "",
-    dob: "",
-    description: "",
-    logo: null, // Initialize logo as null
-    about: "", // Initialize about section
+    about: "",
+    website: "",
+    hotline: "",
+    companyProfile: "",
+    logo: undefined, // Initialize logo
   });
-  const Advertiser = useAppSelector((state) => state.user);
 
   useEffect(() => {
     setFormData({
-      firstName: Advertiser.name?.split(" ")[0] || "",
-      lastName: Advertiser.name?.split(" ")[1] || "", // Adding fallback if there's no last name
-      email: Advertiser.email || "",
-      mobile: Advertiser.phone_number || "",
-      profession: Advertiser.stakeholder_id?.job || "", // Optional chaining to prevent errors
-      password: "",
-      retypePassword: "",
-      username: Advertiser.username || "",
-      nationality: Advertiser.stakeholder_id?.nation || "", // Optional chaining
-      dob: Advertiser.stakeholder_id?.date_of_birth || "", // Optional chaining
-      description: formData.description || "",
-      logo: formData.logo || null,
-      about: Advertiser.stakeholder_id?.about || formData.about || "", // Fallback to formData.about if unavailable
+      about: AdvertiserFirst.stakeholder_id?.about || "",
+      website: AdvertiserFirst.stakeholder_id?.link_to_website || "",
+      hotline: AdvertiserFirst.stakeholder_id?.hotline || "",
+      companyProfile: AdvertiserFirst.stakeholder_id?.company_profile || "",
+      logo: AdvertiserFirst.stakeholder_id?.logo || "",
     });
-  }, [Advertiser, formData.description, formData.logo, formData.about]);
+  }, [AdvertiserFirst]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+      setFormData({ ...formData, logo: e.target.files[0] });
+    }
+  };
 
   const OnClick = async () => {
-    await AdvertiserService.updateAdvertiser(Advertiser.email, {
-      name: formData.firstName + " " + formData.lastName,
-      newEmail: formData.email,
-      /*password: formData.password,*/
-      About: formData.about,
-    });
+    let fileUpload;
+    if (file) {
+      fileUpload = await FileService.uploadFile(file);
+    }
+    const updatedData = {
+      about: formData.about,
+      link_to_website: formData.website,
+      hotline: formData.hotline,
+      company_profile: formData.companyProfile,
+      logo: fileUpload,
+    };
+
+    await AdvertiserService.updateAdvertiser(
+      AdvertiserFirst.email,
+      updatedData
+    );
   };
 
   const handleChange = (
@@ -78,37 +73,18 @@ const AdvertiserFirst: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFormData({ ...formData, logo: e.target.files[0] });
-    }
+  const handleCancel = () => {
+    setFormData({
+      about: "",
+      website: "",
+      hotline: "",
+      companyProfile: "",
+      logo: undefined, // Reset logo
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.password !== formData.retypePassword) {
-      alert("Passwords don't match!");
-      return;
-    }
-    // Handle form submission, including the logo file and about text
-  };
-
-  const handleCancel = () => {
-    setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      mobile: "",
-      profession: "",
-      password: "",
-      retypePassword: "",
-      username: "",
-      nationality: "",
-      dob: "",
-      description: "",
-      logo: null, // Reset logo
-      about: "", // Reset about section
-    });
   };
 
   return (
@@ -119,11 +95,11 @@ const AdvertiserFirst: React.FC = () => {
         </Col>
         <Col xs={3} className="text-center">
           <img
-            src={Logo}
+            src={LogoPlaceholder}
             width="70"
             height="50"
             className="align-top logo"
-            alt="Travel Agency logo"
+            alt="Advertiser logo"
           />
         </Col>
       </Row>
@@ -133,98 +109,72 @@ const AdvertiserFirst: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="First Name"
-                type="text"
-                placeholder="Enter your First Name"
-                id="firstName"
-                name="firstName"
-                disabled={false}
-                required={true}
-                value={formData.firstName}
-                onChange={handleChange}
-              />
-            </Col>
-            <Col>
-              <CustomFormGroup
-                label="Last Name:"
-                type="text"
-                placeholder="Enter your Last Name"
-                id="lastName"
-                name="lastName"
-                disabled={false}
-                required={true}
-                value={formData.lastName}
-                onChange={handleChange}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <CustomFormGroup
-                label="Email:"
-                type="email"
-                placeholder="Enter your email"
-                id="email"
-                name="email"
-                disabled={false}
-                required={true}
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <CustomFormGroup
-                label="Password:"
-                type="password"
-                placeholder="Enter your password"
-                id="password"
-                name="password"
-                disabled={false}
-                required={true}
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </Col>
-            <Col>
-              <CustomFormGroup
-                label="Retype Password:"
-                type="password"
-                placeholder="Retype your password"
-                id="retypePassword"
-                name="retypePassword"
-                disabled={false}
-                required={true}
-                value={formData.retypePassword}
-                onChange={handleChange}
-              />
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <CustomFormGroup
                 label="About:"
                 type="text"
-                placeholder="About"
-                id="description"
-                name="description"
+                placeholder="about...."
+                id="about"
+                name="about"
                 disabled={false}
                 required={true}
-                value={formData.description} // Correctly referencing description
+                value={formData.about}
                 onChange={handleChange}
               />
             </Col>
           </Row>
 
-          {/* New row for logo upload */}
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="Link to Website:"
+                type="text"
+                placeholder="Enter your website URL"
+                id="website"
+                name="website"
+                disabled={false}
+                required={true}
+                value={formData.website}
+                onChange={handleChange}
+              />
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="Hotline:"
+                type="text"
+                placeholder="Enter your hotline number"
+                id="hotline"
+                name="hotline"
+                disabled={false}
+                required={true}
+                value={formData.hotline}
+                onChange={handleChange}
+              />
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="Company Profile:"
+                type="text"
+                placeholder="Enter your company profile"
+                id="companyProfile"
+                name="companyProfile"
+                disabled={false}
+                required={true}
+                value={formData.companyProfile}
+                onChange={handleChange}
+              />
+            </Col>
+          </Row>
+
           <Row>
             <Col>
               <Form.Group controlId="formFile" className="mb-3">
                 <Form.Label>
-                  <h3>Upload Seller Logo</h3> {/* Added 'Seller Logo' label */}
+                  <h3>Upload Logo</h3>
                 </Form.Label>
                 <Form.Control
                   type="file"
@@ -236,11 +186,9 @@ const AdvertiserFirst: React.FC = () => {
             </Col>
           </Row>
 
-          {/* New row for 'About' section */}
-
           <div className="form-actions">
             <Button type="submit" className="update-btn" onClick={OnClick}>
-              Confirm
+              Update
             </Button>
             <Button type="button" className="cancel-btn" onClick={handleCancel}>
               Cancel

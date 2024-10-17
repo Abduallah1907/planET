@@ -9,6 +9,9 @@ export default (app: Router) => {
   const sellerController: SellerController = Container.get(SellerController);
 
   app.use("/seller", route);
+  route.post("/createSeller", sellerController.createSeller);
+  route.get("/getSeller/:email", authorize([UserRoles.Seller]), sellerController.getSeller);
+  route.put("/updateSeller/:searchEmail", authorize([UserRoles.Seller]), sellerController.updateSeller);
   /**
    * @swagger
    * components:

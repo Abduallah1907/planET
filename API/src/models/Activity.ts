@@ -53,7 +53,8 @@ const activitySchema = new mongoose.Schema(
     },
     inappropriate_flag: {
       type: Boolean,
-      required: false,
+      required: true,
+      default: false,
     },
     active_flag: {
       type: Boolean,

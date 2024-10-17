@@ -5,6 +5,7 @@ import {
   Update_IHistorical_locationDTO,
 } from "@/interfaces/IHistorical_Location";
 import { Types } from "mongoose";
+import e from "express";
 
 @Service()
 export class Historical_locationController {
@@ -34,6 +35,15 @@ export class Historical_locationController {
       Container.get(Historical_locationService);
     const historical_location =
       await historical_locationService.getHistorical_locationByIDService(
+        req.query
+      );
+    res.status(historical_location.status).json(historical_location);
+  }
+  public async getHistorical_locationByIDForGovernerController(req: any, res: any) {
+    const historical_locationService: Historical_locationService =
+      Container.get(Historical_locationService);
+    const historical_location =
+      await historical_locationService.getHistorical_locationByIDForGovernerService(
         req.query
       );
     res.status(historical_location.status).json(historical_location);
@@ -99,7 +109,7 @@ export class Historical_locationController {
       .json(upcomingHistorical_locations);
   }
   public async getFilteredHistorical_locations(req: any, res: any) {
-    const { tag, nation, job } = req.query;
+    const { tag, nation, job, governer_id } = req.query;
     const historical_locationService: Historical_locationService =
       Container.get(Historical_locationService);
     var filters: any = {};
@@ -107,7 +117,16 @@ export class Historical_locationController {
       const tagsList = tag.split(",").map((tag: string) => tag.trim());
       filters = { ...filters, tags: tagsList };
     }
-    filters = { ...filters , nation , job}
+    if (governer_id) {
+      filters = { ...filters, governer_id };
+    }else{
+      if (nation) {
+        filters = { ...filters, nation };
+      }
+      if (job) {
+        filters = { ...filters, job };
+      }
+    }
     const historical_locations =
       await historical_locationService.getFilteredHistorical_locationsService(
         filters

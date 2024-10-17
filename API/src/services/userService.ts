@@ -17,6 +17,7 @@ import { log } from "console";
 import jwt, { Algorithm } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import config from "@/config";
+import { ObjectId } from "mongoose";
 
 @Service()
 export default class UserService {
@@ -86,6 +87,7 @@ export default class UserService {
     const role = user.role;
     let stakeholder_id;
     switch (role) {
+      case UserRoles.Admin:
       case UserRoles.Seller:
         const seller = await this.sellerModel.findOne({ user_id });
         if (seller instanceof Error)
@@ -141,7 +143,7 @@ export default class UserService {
     );
 
     const userOutput: IUserLoginOutputDTO = {
-      _id: user._id,
+      _id: user._id as ObjectId,
       name: user.name,
       username: user.username,
       email: user.email,

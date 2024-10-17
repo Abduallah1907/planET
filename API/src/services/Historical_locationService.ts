@@ -62,7 +62,7 @@ export default class Historical_locationService {
       }
       //We got the corresponding key to historical_tag
       //We want to see if the value is in the historical_tag value array
-      if (!historical_tag.Values.includes(value)) {
+      if (!historical_tag.values.includes(value)) {
         throw new BadRequestError(
           "Value is not in the tag,choose corresponding Value to the tag"
         );
@@ -71,7 +71,7 @@ export default class Historical_locationService {
     }
   };
   public getAllHistorical_locationsService = async (data: any) => {
-    const Historical_location = await this.historical_locationsModel.find({});
+    const Historical_location = await this.historical_locationsModel.find({ active_flag: true });
     if (Historical_location instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
@@ -113,13 +113,14 @@ export default class Historical_locationService {
       description: historical_locationInput.description,
       picture: historical_locationInput.picture,
       location: historical_locationInput.location,
+      opening_days: historical_locationInput.opening_days,
       opening_hours_from: historical_locationInput.opening_hours_from,
       opening_hours_to: historical_locationInput.opening_hours_to,
       native_price: historical_locationInput.native_price,
       foreign_price: historical_locationInput.foreign_price,
       student_price: historical_locationInput.student_price,
       tags: historical_locationInput.tags,
-      active_flag: true,
+      active_flag: historical_locationInput.active_flag ? historical_locationInput.active_flag : true,
     };
     //Code to check if the value corresponds to the key in the object
     const tags_keys = historical_locationData.tags
@@ -209,6 +210,28 @@ export default class Historical_locationService {
       200
     );
   };
+
+  public getHistorical_locationByIDForGovernerService = async (
+    data: any,
+  ) => {
+    if (!Types.ObjectId.isValid(data.historical_location_id)) {
+      throw new BadRequestError("Invalid ID format");
+    }
+    const Historical_location = await this.historical_locationsModel.findById(
+      new Types.ObjectId(data.historical_location_id)
+    );
+    if (Historical_location instanceof Error)
+      throw new InternalServerError("Internal server error");
+    // throw new Error ("Internal server error");
+
+    return new response(
+      true,
+      Historical_location,
+      "Historical Location is found",
+      200
+    );
+  };
+
   //Get Historical_location by Governer_id
   public getHistorical_locationsByGovernerIDService = async (
     Governer_id: string
@@ -383,9 +406,16 @@ export default class Historical_locationService {
     tags?: string[];
     nation: string;
     job: string;
+    governer_id?: string;
   }) {
-    if (!filters) {
-      const historical_locations = await this.historical_locationsModel.find();
+    if (!filters || Object.keys(filters).length === 0 || (filters.governer_id && Object.keys(filters).length === 1)) {
+      const checks: any = {}
+      if (filters.governer_id) {
+        checks.governer_id = filters.governer_id;
+      } else {
+        checks.active_flag = true;
+      }
+      const historical_locations = await this.historical_locationsModel.find(checks);
       return new response(
         true,
         historical_locations,
@@ -394,6 +424,11 @@ export default class Historical_locationService {
       );
     }
     const matchStage: any = {};
+    if (filters.governer_id) {
+      matchStage.governer_id = new Types.ObjectId(filters.governer_id);
+    } else {
+      matchStage.active_flag = true;
+    }
     var aggregationPipeline: any[] = [
       {
         $addFields: {
@@ -417,16 +452,25 @@ export default class Historical_locationService {
     if (historical_locations instanceof Error)
       throw new InternalServerError("Internal server error");
 
-    const historical_locations_with_prices = await Promise.all( historical_locations.map(async location => {
-      location.price = await this.choosePrice(location,{ nation: filters.nation, job: filters.job });
-      return location;
-    }));
-    return new response(
-      true,
-      historical_locations_with_prices,
-      "Filtered itineraries are fetched",
-      200
-    );
+    if (!filters.governer_id) {
+      const historical_locations_with_prices = await Promise.all(historical_locations.map(async location => {
+        location.price = await this.choosePrice(location, { nation: filters.nation, job: filters.job });
+        return location;
+      }));
+      return new response(
+        true,
+        historical_locations_with_prices,
+        "Filtered itineraries are fetched",
+        200
+      );
+    } else {
+      return new response(
+        true,
+        historical_locations,
+        "Filtered itineraries are fetched",
+        200
+      );
+    }
   }
 
   public async getFilterComponentsService() {

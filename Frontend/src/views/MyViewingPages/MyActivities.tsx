@@ -6,19 +6,16 @@ import { FaSearch } from "react-icons/fa";
 import { BiSort } from "react-icons/bi";
 import { ActivityService } from "../../services/ActivityService";
 import { IActivity } from "../../types/IActivity";
-import { newDate } from "react-datepicker/dist/date_utils";
 import { useNavigate } from "react-router-dom";
-
-
+import { useAppSelector } from "../../store/hooks";
 
 export default function ActivitiesPage() {
-
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [ activities, setActivities] = React.useState<IActivity[]>([])
-  const [ filtercomponent, setfilterComponents] = React.useState({})
+  const [activities, setActivities] = React.useState<IActivity[]>([]);
+  const [filtercomponent, setfilterComponents] = React.useState({});
   const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
-  const [filter,setFilter] = React.useState({});
+  const [filter, setFilter] = React.useState({});
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -26,10 +23,12 @@ export default function ActivitiesPage() {
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value);
-    setActivities(sortedActivities)
   };
+
+  const Advertiser = useAppSelector((state) => state.user);
+
   const getActivities = async () => {
-    const activitiesData = await ActivityService.getAllActivities();
+    const activitiesData = await ActivityService.getActivitiesByAdvertiserId(Advertiser.stakeholder_id._id);
     setActivities(activitiesData.data);
   };
 
@@ -39,13 +38,16 @@ export default function ActivitiesPage() {
         Array.isArray(value) ? [key, value.join(",")] : [key, value]
       )
     );
-    const activitiesData = await ActivityService.getFilteredActivites(modifiedFilter);
+    modifiedFilter["advertiser_id"] = Advertiser.stakeholder_id._id;
+    const activitiesData = await ActivityService.getFilteredActivites(
+      modifiedFilter
+    );
     setActivities(activitiesData.data);
-  }
+  };
 
   const handleApplyFilters = () => {
     getFilteredActivites();
-  }
+  };
 
   const getFilterComponents = async () => {
     const filterData = await ActivityService.getFilterComponents();
@@ -61,25 +63,29 @@ export default function ActivitiesPage() {
       case "topPicks":
         return b.average_rating - a.average_rating;
       case "priceHighToLow":
-        return (a.price ?? 0) - (b.price ?? 0);
-      case "priceLowToHigh":
         return (b.price ?? 0) - (a.price ?? 0);
+      case "priceLowToHigh":
+        return (a.price ?? 0) - (b.price ?? 0);
+      case "ratingHighToLow":
+        return (b.average_rating ?? 0) - (a.average_rating ?? 0);
+      case "ratingLowToHigh":
+        return (a.average_rating ?? 0) - (b.average_rating ?? 0);
       default:
         return 0;
     }
   });
 
-  const onActivityClick = (id : string) => {
+  const onActivityClick = (id: string) => {
     navigate(`/activity/${id}`);
-  }
+  };
 
   const filteredActivities = sortedActivities.filter((activity) =>
     activity.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const onFilterChange = (newFilter: {[key: string]: any;}) => {
+  const onFilterChange = (newFilter: { [key: string]: any }) => {
     setFilter(newFilter);
-  }
+  };
 
   return (
     <Container fluid>
@@ -121,9 +127,17 @@ export default function ActivitiesPage() {
       </Row>
 
       <Row>
-        <Col md={3} className="border-bottom pb-2 d-flex flex-column align-items-md-center">
-          <Button variant="main-inverse" onClick={handleApplyFilters}>Apply Filters</Button>
-          <FilterBy filterOptions={filtercomponent} onFilterChange={onFilterChange}/>
+        <Col
+          md={3}
+          className="border-bottom pb-2 d-flex flex-column align-items-md-center"
+        >
+          <Button variant="main-inverse" onClick={handleApplyFilters}>
+            Apply Filters
+          </Button>
+          <FilterBy
+            filterOptions={filtercomponent}
+            onFilterChange={onFilterChange}
+          />
         </Col>
 
         <Col md={9} className="p-3">
@@ -135,21 +149,24 @@ export default function ActivitiesPage() {
                 <option value="topPicks">Our Top Picks</option>
                 <option value="priceLowToHigh">Price: Low to High</option>
                 <option value="priceHighToLow">Price: High to Low</option>
+                <option value="ratingHighToLow">Rating: High to Low</option>
+                <option value="ratingLowToHigh">Rating: Low to High</option>
               </Form.Select>
             </div>
-            {activities.map((activity:IActivity, index) => (
+            {filteredActivities.map((activity: IActivity, index) => (
               <Col key={index} xs={12} className="mb-4">
                 {" "}
                 {/* Full-width stacking */}
                 <CustomActivityCard
+                  id={activity._id}
                   Name={activity.name}
                   location={"cairo"}
                   category={activity.category.type}
-                  tags={activity.tags.map((item: { type: any; }) => item.type)}
+                  tags={activity.tags.map((item: { type: any }) => item.type)}
                   imageUrl={""}
                   RatingVal={activity.average_rating}
-                  Reviews={100}
-                  Price={activity.price||0}
+                  Reviews={activity.reviews_count ?? 0}
+                  Price={activity.price || 0}
                   Date_Time={new Date(activity.date)}
                   isActive={activity.active_flag}
                   isBooked={activity.booking_flag}
@@ -157,6 +174,7 @@ export default function ActivitiesPage() {
                     console.log(`${activity.name} booking status changed`)
                   }
                   onClick={() => onActivityClick(activity._id)}
+                  isAdvertiser={true}
                 />
               </Col>
             ))}

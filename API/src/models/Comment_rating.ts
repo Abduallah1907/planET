@@ -3,20 +3,18 @@ import mongoose from "mongoose";
 
 const commentRatingSchema = new mongoose.Schema(
   {
-    user_id: {
+    tourist_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Tourist",
       required: true,
     },
     comment: {
       type: String,
-      required: true,
     },
     rating: {
       type: Number,
       min: 0,
       max: 5,
-      required: true,
     },
   },
   { timestamps: true }

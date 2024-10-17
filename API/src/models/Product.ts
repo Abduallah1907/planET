@@ -3,9 +3,9 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
   {
-    user_id: {
+    seller_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Seller",
       required: true,
     },
     comments: [
@@ -50,6 +50,12 @@ const productSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
+    tourist_id: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tourist",
+      },
+    ],
   },
   { timestamps: true }
 );

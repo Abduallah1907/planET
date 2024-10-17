@@ -6,8 +6,9 @@ import {
 } from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
-import mongoose, { model, Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { IFilterComponents } from "@/interfaces/IFilterComponents";
+import { ObjectId } from "mongodb";
 @Service()
 export default class ActivityService {
   constructor(
@@ -19,7 +20,7 @@ export default class ActivityService {
 
 
   public getAllActivitiesService = async () => {
-    const activitiesData = await this.activityModel.find({})
+    const activitiesData = await this.activityModel.find({active_flag:true, booking_flag:true, inappropriate_flag: false})
       .populate("category")
       .populate("tags")
       .populate({
@@ -40,7 +41,7 @@ export default class ActivityService {
 
     const activities = activitiesData.map((activity) => ({
       ...activity.toObject(),
-      reviewsCount: activity.comments ? activity.comments.length : 0,
+      reviews_count: activity.comments ? activity.comments.length : 0,
     }));
 
     return new response(true, activities, "All activities are fetched", 200);
@@ -58,7 +59,8 @@ export default class ActivityService {
       tags: activityDatainput.tags,
       special_discount: activityDatainput.special_discount,
       booking_flag: activityDatainput.booking_flag,
-      advertiser_id: activityDatainput.advertiser_id,
+      active_flag: activityDatainput.active_flag,
+      advertiser_id: activityDatainput.advertiser_id
     };
     if (
       activityData.price &&
@@ -113,23 +115,28 @@ export default class ActivityService {
     // throw new Error ("Internal server error");
 
     if (activity == null) throw new NotFoundError("Activity not found");
+    
     return new response(true, activity, "Activity is found", 200);
   }
 
-  public async getActivityByAdvertiserIDService(advertiserID: string) {
+  public async getActivitiesByAdvertiserIDService(advertiserID: string) {
     if (!Types.ObjectId.isValid(advertiserID)) {
       throw new BadRequestError("Invalid Adverstier ID format");
     }
-    const activities = await this.activityModel.find({
+    const activitiesData = await this.activityModel.find({
       advertiser_id: advertiserID,
-    });
-    if (activities instanceof Error) {
+    })
+    .populate("category")
+    .populate("tags");
+    if (activitiesData instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
-    if (activities == null) {
-      throw new NotFoundError("No Activity with this Adverstier ID");
-    }
-    return new response(true, activities, "Activity is found", 200);
+
+    const activities = activitiesData.map((activity) => ({
+      ...activity.toObject(),
+      reviews_count: activity.comments ? activity.comments.length : 0,
+    }));
+    return new response(true, activities, "Activities are found", 200);
   }
 
   public async updateActivityService(
@@ -242,9 +249,18 @@ export default class ActivityService {
     date?: { start?: Date; end?: Date };
     category?: string[];
     rating?: { min?: number; max?: number };
+    advertiser_id?: string;
   }) {
-    if (!filters) {
-      const activities = await this.activityModel.find();
+    if (!filters || Object.keys(filters).length === 0 || (filters.advertiser_id && Object.keys(filters).length === 1)) {
+      const checks: any = {}
+      if (filters.advertiser_id) {
+        checks.advertiser_id = filters.advertiser_id;
+      }else{
+        checks.booking_flag = true;
+        checks.active_flag = true;
+        checks.inappropriate_flag = false;
+      }
+      const activities = await this.activityModel.find(checks);
       return new response(
         true,
         activities,
@@ -253,6 +269,13 @@ export default class ActivityService {
       );
     }
     const matchStage: any = {};
+    if (filters.advertiser_id) {
+      matchStage.advertiser_id =  new ObjectId(filters.advertiser_id);
+    } else {
+      matchStage.booking_flag = true;
+      matchStage.active_flag = true;
+      matchStage.inappropriate_flag = false;
+    }
 
     if (filters.price) {
       if (filters.price.min !== undefined) {
@@ -301,6 +324,11 @@ export default class ActivityService {
       },
       {
         $match: matchStage,
+      },
+      {
+        $addFields: {
+          reviews_count: { $size: "$comments" },
+        },
       },
     ];
 

@@ -1,20 +1,21 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
+import e from "express";
 
 // Set the NODE_ENV to 'development' by default
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+process.env.NODE_ENV = process.env.NODE_ENV || "development";
 
 const envFound = dotenv.config();
 if (envFound.error) {
-    // This error should crash whole process
+  // This error should crash whole process
 
-    throw new Error("⚠️  Couldn't find .env file  ⚠️");
+  throw new Error("⚠️  Couldn't find .env file  ⚠️");
 }
 
 export default {
-    /**
+  /**
    * Your favorite port
    */
-  port: parseInt(process.env.PORT || '8000', 10),
+  port: parseInt(process.env.PORT || "8000", 10),
 
   /**
    * That long string from mlab
@@ -31,7 +32,7 @@ export default {
    * Used by winston logger
    */
   logs: {
-    level: process.env.LOG_LEVEL || 'silly',
+    level: process.env.LOG_LEVEL || "silly",
   },
 
   /**
@@ -40,21 +41,21 @@ export default {
   agenda: {
     dbCollection: process.env.AGENDA_DB_COLLECTION,
     pooltime: process.env.AGENDA_POOL_TIME,
-    concurrency: parseInt(process.env.AGENDA_CONCURRENCY || '10' , 10),
+    concurrency: parseInt(process.env.AGENDA_CONCURRENCY || "10", 10),
   },
 
   /**
    * Agendash config
    */
   agendash: {
-    user: 'agendash',
-    password: '123456'
+    user: "agendash",
+    password: "123456",
   },
   /**
    * API configs
    */
   api: {
-    prefix: '/api',
+    prefix: "/api",
   },
 
   /**
@@ -69,5 +70,7 @@ export default {
     clientID: process.env.OAUTH_MAIL_CLIENTID,
     clientSecret: process.env.OAUTH_MAIL_CLIENT_SECRET,
     refershToken: process.env.OAUTH_MAIL_REFRESH_TOKEN,
-  }
+  },
+
+  env: process.env.NODE_ENV || "development",
 };

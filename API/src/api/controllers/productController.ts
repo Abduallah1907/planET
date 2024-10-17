@@ -9,9 +9,9 @@ export class ProductController {
   public async createProduct(req: any, res: any) {
     const productService: ProductService = Container.get(ProductService);
     const product: IProduct = req.body;
-    const { user_id } = req.params;
+    const { seller_id } = req.params;
     const newProduct = await productService.createProductService(
-      user_id,
+      seller_id,
       product
     );
     res.status(newProduct.status).json(newProduct);
@@ -29,7 +29,7 @@ export class ProductController {
   }
 
   public async getFilteredProducts(req: any, res: any) {
-    const { price } = req.query;
+    const { price, seller_id } = req.query;
     const productService: ProductService = Container.get(ProductService);
     var filters = {};
     if (price) {
@@ -50,6 +50,12 @@ export class ProductController {
         };
       }
     }
+    if (seller_id) {
+      filters = {
+        ...filters,
+        seller_id: seller_id,
+      };
+    }
     const products = await productService.getFilteredProductsService(filters);
     res.status(products.status).json(products);
   }
@@ -69,10 +75,24 @@ export class ProductController {
     res.status(products.status).json(products);
   }
 
+  public async getProductsBySellerId(req: any, res: any) {
+    const productService: ProductService = Container.get(ProductService);
+    const { seller_id } = req.params;
+    const products = await productService.getProductsBySellerIdService(seller_id);
+    res.status(products.status).json(products);
+  }
+
   public async getProductByName(req: any, res: any) {
     const productService: ProductService = Container.get(ProductService);
     const { product_name } = req.params;
     const product = await productService.getProductByNameService(product_name);
+    res.status(product.status).json(product);
+  }
+  public async getProductById(req: any, res: any) {
+    const productService: ProductService = Container.get(ProductService);    
+    const { id } = req.params;
+    const idObject = new Types.ObjectId(id);
+    const product = await productService.getProductByIdService(idObject);
     res.status(product.status).json(product);
   }
   public async getFilterComponents(req: any, res: any) {

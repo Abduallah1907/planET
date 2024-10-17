@@ -8,7 +8,7 @@ class TourGuideServices {
   
   public static getTourGuideByemail = async (email: string) => {
     try {
-      const response = await axiosInstance.get(`tourGuide/getProfile/${email}`);
+      const response = await axiosInstance.get(`/tourGuide/getProfile/${email}`);
       return response.data;
     } catch (error) {
       throw error;
@@ -17,7 +17,7 @@ class TourGuideServices {
 
   public static updateTourGuide = async (email: string, TourGuideData: object) => {
     try {
-      const response = await axiosInstance.put(`tourGuide/updateProfile/${email}`, TourGuideData);
+      const response = await axiosInstance.put(`/tourGuide/updateProfile/${email}`, TourGuideData);
       return response.data;
     } catch (error) {
       throw error;

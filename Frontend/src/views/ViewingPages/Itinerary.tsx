@@ -60,9 +60,13 @@ export default function ItinerariesPage() {
       case "topPicks":
         return b.average_rating - a.average_rating;
       case "priceHighToLow":
-        return a.price - b.price;
+        return (b.price ?? 0) - (a.price ?? 0);
       case "priceLowToHigh":
-        return b.price - a.price;
+        return (a.price ?? 0) - (b.price ?? 0);
+      case "ratingHighToLow":
+        return (b.average_rating ?? 0) - (a.average_rating ?? 0);
+      case "ratingLowToHigh":
+        return (a.average_rating ?? 0) - (b.average_rating ?? 0);
       default:
         return 0;
     }
@@ -127,6 +131,8 @@ export default function ItinerariesPage() {
                 <option value="topPicks">Our Top Picks</option>
                 <option value="priceLowToHigh">Price: Low to High</option>
                 <option value="priceHighToLow">Price: High to Low</option>
+                <option value="ratingHighToLow">Rating: High to Low</option>
+                <option value="ratingLowToHigh">Rating: Low to High</option>
               </Form.Select>
             </div>
 
@@ -134,6 +140,7 @@ export default function ItinerariesPage() {
             {filteredItineraries.map((itinerary, index) => (
               <Col key={index} xs={12} className="mb-4 ps-0"> {/* Full-width stacking */}
                 <ItineraryCard
+                  id={itinerary._id}
                   name={itinerary.name}
                   comments={""}
                   timeline={""}
@@ -143,13 +150,16 @@ export default function ItinerariesPage() {
                   Languages={itinerary.languages.join(",")}
                   accessibility={itinerary.accessibility}
                   RatingVal={itinerary.average_rating}
-                  Reviews={itinerary.Reviews}
+                  Reviews={itinerary.reviews_count ?? 0}
                   Price={itinerary.price}
                   Duration={itinerary.duration}
                   Available_Dates={itinerary.available_dates}
                   isActive={itinerary.active_flag}
                   tags={itinerary.tags}
-                  onChange={() => console.log(`${itinerary.locations} booking status changed`)}                />
+                  isTourGuide={false}
+                  onChange={() => console.log(`${itinerary.locations} booking status changed`)}
+                  onClick={() => onItineraryClick(itinerary._id)}
+                  />
               </Col>
             ))}
           </Row>

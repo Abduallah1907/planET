@@ -15,6 +15,8 @@ import User from "@/models/user";
 import UserRoles from "@/types/enums/userRoles";
 import UserService from "./userService";
 import user from "@/api/routes/user";
+import bcrypt from "bcryptjs";
+import { FileService } from "./fileService";
 @Service()
 export default class AdvertiserService {
   constructor(
@@ -141,35 +143,51 @@ export default class AdvertiserService {
   //Update Advertiser
   public updateAdvertiserService = async (
     email: string,
+    file: Express.Multer.File,
     advertiserData: IAdvertiserUpdateDTO
   ) => {
-    const advertiserUser = await this.userModel.findOne({
-      email: email,
-      role: UserRoles.Advertiser,
-    });
+    const {
+      newEmail,
+      name,
+      username,
+      password,
+      phone_number,
+      link_to_website,
+      hotline,
+      about,
+      logo,
+      company_profile,
+    } = advertiserData;
+    let hashedPassword;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10); // Await bcrypt.hash here
+    }
+    const advertiserUser = await this.userModel.findOneAndUpdate(
+      { email: email, role: UserRoles.Advertiser },
+      {
+        email: newEmail,
+        name: name,
+        username: username,
+        password: hashedPassword,
+        phone_number: phone_number,
+      },
+      { new: true }
+    );
     if (advertiserUser instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
     if (advertiserUser == null) {
       throw new NotFoundError("No Advertiser with this email");
     }
-
-    const advertisercheck = await this.advertiserModel.findOne({
-      user_id: advertiserUser._id,
-    });
-    if (advertisercheck instanceof Error) {
-      throw new InternalServerError("Internal server error");
-    }
-    if (advertisercheck == null) {
-      throw new NotFoundError("No Activity with this ID");
-    }
-    if (!advertiserData) {
-      throw new BadRequestError("Advertiser data is undefined");
-    }
-
     const advertiser = await this.advertiserModel.findOneAndUpdate(
       { user_id: advertiserUser._id },
-      advertiserData,
+      {
+        link_to_website: link_to_website,
+        hotline: hotline,
+        about: about,
+        logo: logo,
+        company_profile: company_profile,
+      },
       { new: true }
     );
 

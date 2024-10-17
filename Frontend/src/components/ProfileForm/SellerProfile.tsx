@@ -13,12 +13,9 @@ interface FormData {
   lastName: string;
   email: string;
   mobile: string;
-  profession: string;
   password: string;
   retypePassword: string;
   username: string;
-  nationality: string;
-  dob: string;
   description: string;
   logo: File | null; // Added logo field
 }
@@ -29,12 +26,9 @@ const SellerProfile: React.FC = () => {
     lastName: "",
     email: "",
     mobile: "",
-    profession: "",
     password: "",
     retypePassword: "",
     username: "",
-    nationality: "",
-    dob: "",
     description: "",
     logo: null, // Initialize logo as null
   });
@@ -43,27 +37,25 @@ const SellerProfile: React.FC = () => {
   useEffect(() => {
     setFormData({
       firstName: Seller.name.split(" ")[0],
-      lastName: Seller.name.split(" ")[1] || "", // Adding a fallback for lastName in case there's no space
+      lastName: Seller.name.split(" ")[1] || "",
       email: Seller.email,
       mobile: Seller.phone_number,
-      profession: Seller.stakeholder_id?.job || "", // Optional chaining in case stakeholder_id is undefined
       password: "",
       retypePassword: "",
       username: Seller.username,
-      nationality: Seller.stakeholder_id?.nation || "", // Optional chaining
-      dob: Seller.stakeholder_id?.date_of_birth || "", // Optional chaining
-      description: "", // Initialize description
-      logo: null, // Initialize logo as null
+      description: Seller.stakeholder_id?.description || "",
+      logo: null,
     });
   }, [Seller]);
-  // Dependency array to rerun this effect when Tourist data changes
+
   const OnClick = async () => {
     await SellerServices.updateSellerServices(Seller.email, {
       name: formData.firstName + " " + formData.lastName,
-      newEmail: formData.email,
-      /*password: formData.password,*/
-      job: formData.profession,
-      nation: formData.nationality,
+      email: formData.email,
+      username: formData.username,
+      description: formData.description,
+      phone_number: formData.mobile,
+      password: formData.password,
     });
   };
 
@@ -97,12 +89,9 @@ const SellerProfile: React.FC = () => {
       lastName: "",
       email: "",
       mobile: "",
-      profession: "",
       password: "",
       retypePassword: "",
       username: "",
-      nationality: "",
-      dob: "",
       description: "",
       logo: null, // Reset logo
     });
@@ -176,8 +165,8 @@ const SellerProfile: React.FC = () => {
                 placeholder="Enter your username"
                 id="username"
                 name="username"
-                disabled={false}
-                required={true}
+                disabled={true}
+                required={false}
                 value={formData.username}
                 onChange={handleChange}
               />
@@ -187,9 +176,9 @@ const SellerProfile: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="Password:"
+                label="Chnage your password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Change your password"
                 id="password"
                 name="password"
                 disabled={false}
@@ -228,6 +217,21 @@ const SellerProfile: React.FC = () => {
               />
             </Col>
           </Row>
+          <Row>
+            <Col>
+              <CustomFormGroup
+                label="Mobile Number"
+                type="text"
+                placeholder="Enter your mobile number"
+                id="mobile"
+                name="mobile"
+                disabled={false}
+                required={true}
+                value={formData.mobile} // Correctly referencing description
+                onChange={handleChange}
+              />
+            </Col>
+          </Row>
 
           {/* New row for logo upload */}
           <Row>
@@ -247,7 +251,7 @@ const SellerProfile: React.FC = () => {
           </Row>
 
           <div className="form-actions">
-            <Button type="submit" className="update-btn">
+            <Button type="submit" className="update-btn" onClick={OnClick}>
               Update
             </Button>
             <Button type="button" className="cancel-btn" onClick={handleCancel}>

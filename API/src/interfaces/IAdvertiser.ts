@@ -1,4 +1,6 @@
-import { Document, ObjectId } from "mongoose";
+import mongoose, { Document } from "mongoose";
+
+type ObjectId = mongoose.Schema.Types.ObjectId;
 
 export interface IAdvertiser extends Document {
   email: string;
@@ -26,7 +28,12 @@ export interface IAdvertiserCreateDTO {
 }
 
 export interface IAdvertiserUpdateDTO {
-  activities?: ObjectId[];
+  newEmail?: string;
+  name?: string;
+  phone_number?: string;
+  username?: string;
+  password?: string;
+
   link_to_website?: string;
   hotline?: string;
   about?: string;

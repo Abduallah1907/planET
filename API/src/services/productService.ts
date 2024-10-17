@@ -7,7 +7,9 @@ import {
 } from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Service, Inject } from "typedi";
-import { Types } from "mongoose";
+import { ObjectId, Types } from "mongoose";
+
+import { ObjectId as MongoObjectID } from "mongodb";
 
 @Service()
 export class ProductService {
@@ -19,18 +21,17 @@ export class ProductService {
 
   public async createProductService(
     seller_id: Types.ObjectId,
-    product: IProduct
+    product: IProductInputDTO
   ) {
     const newProduct = new this.productModel({
-      comments: product.comments,
       name: product.name,
       description: product.description,
       picture: product.picture,
       price: product.price,
       quantity: product.quantity,
-      sales: product.sales,
+      sales: 0,
       archieve_flag: product.archieve_flag,
-      user_id: seller_id,
+      seller_id: seller_id,
     });
 
     const resultProduct = await newProduct.save();
@@ -40,7 +41,7 @@ export class ProductService {
         "Internal Server Error cannot save product"
       );
 
-    const product_id = resultProduct._id;
+    const product_id = resultProduct._id as ObjectId;
 
     const seller = await this.sellerModel.findById(seller_id);
 
@@ -78,13 +79,25 @@ export class ProductService {
       min?: number;
       max?: number;
     };
+    seller_id?: string;
   }) {
-    if (!filters) {
-      const products = await this.productModel.find();
+    if (!filters || Object.keys(filters).length === 0 || (filters.seller_id && Object.keys(filters).length === 1)) {
+      const checks: any = {}
+      if(filters.seller_id){
+        checks.seller_id = filters.seller_id;
+      }else{
+        checks.archieve_flag = false
+      }
+      const products = await this.productModel.find(checks);
       return new response(false, products, "No filters provided", 200);
     }
 
     const matchStage: any = {};
+    if(filters.seller_id){
+      matchStage.seller_id = new MongoObjectID(filters.seller_id);
+    }else{
+    matchStage.archieve_flag = false;
+    }
 
     if (filters.price) {
       if (filters.price.min !== undefined) {
@@ -99,6 +112,11 @@ export class ProductService {
       {
         $match: matchStage,
       },
+      {
+        $addFields: {
+          reviews_count: { $size: "$comments" }
+        }
+      }
     ]);
     if (products instanceof Error)
       throw new InternalServerError("Internal Server Error");
@@ -130,13 +148,37 @@ export class ProductService {
   }
 
   public async getAllProductsService() {
-    const products = await this.productModel.find({ archieve_flag: false });
+    const products = await this.productModel.aggregate([
+      { $match: { archieve_flag: false } },
+      {
+        $addFields: {
+          reviews_count: { $size: "$comments" }
+        }
+      }
+    ]);
+    
     if (products instanceof Error)
       throw new InternalServerError("Internal Server Error");
 
     return new response(true, products, "All products are fetched", 200);
   }
 
+
+  public async getProductsBySellerIdService(seller_id: string) {
+    const products = await this.productModel.find({ seller_id: seller_id });
+    if (products instanceof Error)
+      throw new InternalServerError("Internal Server Error");
+
+    return new response(true, products, "Products are fetched", 200);
+  }
+
+  public async getProductByIdService(product_id: Types.ObjectId) {
+    const product = await this.productModel.findById(product_id);
+    if (product instanceof Error)
+      throw new InternalServerError("Internal Server Error");
+    if (!product) throw new NotFoundError("Product not found");
+    return new response(true, product, "Product is fetched", 200);
+  }
   public async getProductByNameService(product_name: string) {
     const product = await this.productModel.findOne({ name: product_name });
     if (product instanceof Error)

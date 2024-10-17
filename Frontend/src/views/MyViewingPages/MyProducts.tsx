@@ -7,6 +7,7 @@ import { FaSearch } from "react-icons/fa";
 import { IProduct } from "../../types/IProduct";
 import { useNavigate } from "react-router-dom";
 import { ProductService } from "../../services/ProductService";
+import { useAppSelector } from "../../store/hooks";
 
 export default function ProductsPage() {
   const navigate = useNavigate();
@@ -27,13 +28,13 @@ export default function ProductsPage() {
       case "topPicks":
         return b.average_rating - a.average_rating;
       case "priceHighToLow":
-        return a.price - b.price;
+        return (b.price ?? 0) - (a.price ?? 0);
       case "priceLowToHigh":
-        return b.price - a.price;
-      case "reviewsLowToHigh":
-        return a.reviews - b.reviews;
-      case "reviewsHighToLow":
-        return b.reviews - a.reviews;
+        return (a.price ?? 0) - (b.price ?? 0);
+      case "ratingHighToLow":
+        return (b.average_rating ?? 0) - (a.average_rating ?? 0);
+      case "ratingLowToHigh":
+        return (a.average_rating ?? 0) - (b.average_rating ?? 0);
       default:
         return 0;
     }
@@ -43,16 +44,21 @@ export default function ProductsPage() {
     setSortBy(e.target.value);
     setProducts(sortedProducts)
   };
+
+  const Seller = useAppSelector((state) => state.user);
+
   const getProducts = async () => {
-    const productsData = await ProductService.getAllProducts();
+    const productsData = await ProductService.getProductsBySellerId(Seller.stakeholder_id._id);
     setProducts(productsData.data);
   };
+
   const getFilteredProducts = async () => {
     const modifiedFilter = Object.fromEntries(
       Object.entries(filter).map(([key, value]) =>
         Array.isArray(value) ? [key, value.join(",")] : [key, value]
       )
     );
+    modifiedFilter["seller_id"] = Seller.stakeholder_id._id;
     const productsData = await ProductService.getFilteredProducts(modifiedFilter);
     setProducts(productsData.data);
   }
@@ -71,6 +77,10 @@ export default function ProductsPage() {
   const onProductClick = (name : string) => {
     navigate(`/product/${name}`);
   }
+
+  const filteredProducts = sortedProducts.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const onFilterChange = (newFilter: {[key: string]: any;}) => {
     setFilter(newFilter);
@@ -128,25 +138,28 @@ export default function ProductsPage() {
                 <option value="topPicks">Our Top Picks</option>
                 <option value="priceLowToHigh">Price: Low to High</option>
                 <option value="priceHighToLow">Price: High to Low</option>
-                <option value="reviewsLowToHigh">Reviews: Low to High</option>
-                <option value="reviewsHighToLow">Reviews: High to Low</option>
+                <option value="ratingHighToLow">Rating: High to Low</option>
+                <option value="ratingLowToHigh">Rating: Low to High</option>
               </Form.Select>
             </div>
-            {products.map((product:IProduct, index) => (
+            {filteredProducts.map((product:IProduct, index) => (
               <Col key={index} xs={12} className="mb-4 ps-0">
                 <ProductCard
-                        Name={product.name}
+                        id={product._id}
+                        name={product.name}
                         average_rating={product.average_rating}
                         quantity={product.quantity}
                         price={product.price}
                         description={product.description}
                         sales={product.sales}
-                        Reviews={product.reviews}
+                        Reviews={product.reviews_count}
                         createdAt={product.createdAt ? new Date(product.createdAt):new Date()}
                         updatedAt={product.updatedAt ? new Date(product.updatedAt):new Date()}
                         imageUrl={product.picture}
                         isActiveArchive={product.archieve_flag}
-                        onChange={() => console.log(`${product.name} booking status changed`)} id={product.user_id} isSeller={true}                />
+                        onChange={() => console.log(`${product.name} booking status changed`)}
+                        isSeller={true}
+                        isAdmin={true}             />
               </Col>
             ))}
           </Row>

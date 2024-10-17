@@ -1,6 +1,6 @@
 import React from 'react';
 import '../TourGuideDashboard/TourGuidedashboard.css';
-
+import { useTranslation } from 'react-i18next';
 const trips = [
   { flight: 'MS731', destination: 'Cairo-Egypt', date: '12.09.2019', time: '12:53 PM', piece: 423, duration: '3 Hrs', status: 'Arrived' },
   { flight: 'MS732', destination: 'Berlin-Germany', date: '12.09.2019', time: '12:53 PM', piece: 423, duration: '6 Hrs', status: 'Boarding' },
@@ -8,18 +8,19 @@ const trips = [
 ];
 
 const TripDetailsTable = () => {
+  const { t } = useTranslation();
   return (
     <div className="country-campaign-table">
-      <h4 className='dashl'>Trip Details</h4>
+      <h4 className='dashl'>{t('trip_details')}</h4>
       <table className="trip-table">
         <thead>
           <tr className='row-color'>
-            <th>Flight Number</th>
-            <th>Destination</th>
-            <th>Date - Time</th>
-            <th>Piece</th>
-            <th>Flight Time</th>
-            <th>Status</th>
+          <th>{t('flight_number')}</th>
+            <th>{t('destination')}</th>
+            <th>{t('date_time')}</th>
+            <th>{t('piece')}</th>
+            <th>{t('flight_time')}</th>
+            <th>{t('status')}</th>
           </tr>
         </thead>
         <tbody>

@@ -85,6 +85,6 @@ export interface IUserLoginOutputDTO {
   phone_number: string;
   status: UserStatus;
   first_time_login: boolean;
-  stakeholder_id: any ;
+  stakeholder_id: any;
   token: string;
 }

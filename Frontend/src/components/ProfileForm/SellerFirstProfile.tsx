@@ -2,69 +2,30 @@ import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import "./ProfileFormTourist.css";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import LogoPlaceholder from "../../assets/person-circle.svg"; // Placeholder logo import
+import LogoPlaceholder from "../../assets/person-circle.svg";
 import { SellerServices } from "../../services/SellerServices";
 import { useAppSelector } from "../../store/hooks";
 
 interface FormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  mobile: string;
-  profession: string;
-  password: string;
-  retypePassword: string;
-  username: string;
-  nationality: string;
-  dob: string;
   description: string;
-  logo: File | null; // Added logo field
+  logo: File | null;
 }
 
 const SellerFirstProfile: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    mobile: "",
-    profession: "",
-    password: "",
-    retypePassword: "",
-    username: "",
-    nationality: "",
-    dob: "",
     description: "",
-    logo: null, // Initialize logo as null
+    logo: null,
   });
 
-  const [logoPreview, setLogoPreview] = useState<string | null>(null); // For previewing the logo
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const SellerFirst = useAppSelector((state) => state.user);
+
   useEffect(() => {
     setFormData({
-      firstName: SellerFirst.name.split(" ")[0],
-      lastName: SellerFirst.name.split(" ")[1] || "",
-      email: SellerFirst.email,
-      mobile: SellerFirst.phone_number,
-      profession: SellerFirst.stakeholder_id?.job || "",
-      password: "",
-      retypePassword: "",
-      username: SellerFirst.username,
-      nationality: SellerFirst.stakeholder_id?.nation || "",
-      dob: SellerFirst.stakeholder_id?.date_of_birth || "",
-      description: "",
+      description: SellerFirst.stakeholder_id?.description || "",
       logo: null,
     });
   }, [SellerFirst]);
-
-  const OnClick = async () => {
-    await SellerServices.updateSellerServices(SellerFirst.email, {
-      name: formData.firstName + " " + formData.lastName,
-      newEmail: formData.email,
-      /*password: formData.password,*/
-      job: formData.profession,
-      nation: formData.nationality,
-    });
-  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -79,35 +40,24 @@ const SellerFirstProfile: React.FC = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setFormData({ ...formData, logo: file });
-      setLogoPreview(URL.createObjectURL(file)); // Preview the selected logo
+      setLogoPreview(URL.createObjectURL(file));
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.password !== formData.retypePassword) {
-      alert("Passwords don't match!");
-      return;
-    }
-    // Handle form submission, including the logo file
+
+    await SellerServices.updateSellerServices(SellerFirst.email, {
+      description: formData.description,
+      logo: formData.logo,
+    });
   };
 
   const handleCancel = () => {
     setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      mobile: "",
-      profession: "",
-      password: "",
-      retypePassword: "",
-      username: "",
-      nationality: "",
-      dob: "",
       description: "",
-      logo: null, // Reset logo
+      logo: null,
     });
-    setLogoPreview(null); // Reset the logo preview
   };
 
   return (
@@ -117,9 +67,8 @@ const SellerFirstProfile: React.FC = () => {
           <h2 className="my-profile-heading">Welcome Seller!</h2>
         </Col>
         <Col xs={3} className="text-center">
-          {/* Use LogoPlaceholder as the default logo until changed */}
           <img
-            src={logoPreview || LogoPlaceholder} // Use logo preview or placeholder
+            src={logoPreview || LogoPlaceholder}
             width="70"
             height="50"
             className="align-top logo"
@@ -140,13 +89,12 @@ const SellerFirstProfile: React.FC = () => {
                 name="description"
                 disabled={false}
                 required={true}
-                value={formData.description} // Correctly referencing description
+                value={formData.description}
                 onChange={handleChange}
               />
             </Col>
           </Row>
 
-          {/* New row for logo upload */}
           <Row>
             <Col>
               <Form.Group controlId="formFile" className="mb-3">
