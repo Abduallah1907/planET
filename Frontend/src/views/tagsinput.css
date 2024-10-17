@@ -47,8 +47,7 @@
   background-color: var(--main-color);
   color: white;
   border-radius: 12px;
-  padding: 0.1rem 0.2rem;
-  padding-left: 0.4rem;
+  padding: 0.1rem 0.2rem 0.1rem 0.4rem;
   margin-right: 0.3rem;
   display: inline-flex;
   align-items: center;

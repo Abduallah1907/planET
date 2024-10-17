@@ -1,39 +1,77 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Reuse the form group component
+import "../CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
 import "../tagsinput.css";
 import { BiChevronDown } from "react-icons/bi";
+import { ItineraryService } from "../../services/ItineraryService";
+import CategoryService from "../../services/CategoryService";
+import { AdminService } from "../../services/AdminService";
+import { ActivityService } from "../../services/ActivityService";
+import languages from "../../utils/languageOptions.json";
+import { useNavigate, useParams } from "react-router-dom";
+import SlotsModal from "../../components/SlotsModals"; // Import SlotModal component
+import { useAppSelector } from "../../store/hooks";
+
+
+interface FormData {
+  name?: string;
+  category?: string;
+  choosen?: string[];
+  locations?: Location[];
+  duration?: string;
+  languages?: string[];
+  price?: number;
+  accessibility?: boolean;
+  pickup_loc?: Location;
+  drop_off_loc?: Location;
+  active_flag?: boolean;
+}
 
 interface Tag {
   _id: string;
   type: string;
 }
+interface Category {
+  _id: string;
+  type: string;
+}
+interface Activity {
+  _id: string;
+  name: string;
+}
+
+interface Slot {
+  title: string;
+  description: string;
+  from: string;
+  to: string;
+  index?: number; // Add the index property
+}
+
 
 const ItineraryForm: React.FC = () => {
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
-  const [timelineActivities, setTimelineActivities] = useState<string[]>([""]);
-  const [category, setCategory] = useState<string>("");
-  const [name, setName] = useState<string>("");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
+
+  const [formData, setFormData] = useState<FormData>({});
+  const [filteredLanguages, setFilteredLanguages] = useState<{ label: string; value: string }[]>([]);
+
+  const [choosenActivities, setChoosenActivities] = useState<Activity[]>([]);
   const [locations, setLocations] = useState<string>("");
-  const [duration, setDuration] = useState<string>("");
-  const [language, setLanguage] = useState<string>("");
-  const [price, setPrice] = useState<string>("");
-  const [availableDates, setAvailableDates] = useState<
-    { date: string; time: string }[]
-  >([]);
-  const [pickupLocation, setPickupLocation] = useState<string>("");
-  const [dropoffLocation, setDropoffLocation] = useState<string>("");
-  const [tourGuideId, setTourGuideId] = useState<string>("");
-  const [isAccessible, setIsAccessible] = useState<boolean>(false);
-  const [isActive, setIsActive] = useState<boolean>(true);
+  const [availableDates, setAvailableDates] = useState<{ date: string; time: string }[]>([]);
 
   const [newAvailableDate, setNewAvailableDate] = useState<string>("");
   const [newAvailableTime, setNewAvailableTime] = useState<string>("");
 
-  const [tags, setTags] = useState<Tag[]>([]);
+  const [slots, setSlots] = useState<Slot[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [currentSlot, setCurrentSlot] = useState<Slot>();
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue) {
@@ -55,10 +93,6 @@ const ItineraryForm: React.FC = () => {
     setSelectedTags((prev) => prev.filter((tag) => tag._id !== tagToDeleteID));
   };
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
   const handleSuggestionClick = (suggestion: string) => {
     const foundTag = tags.find(t => t.type === suggestion);
     if (foundTag && !selectedTags.some(t => t._id === foundTag._id)) {
@@ -68,15 +102,78 @@ const ItineraryForm: React.FC = () => {
     }
   };
 
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
+    console.log(name,value,formData)
+  };
+
+
   const handleActivityChange = (index: number, value: string) => {
-    const newActivities = [...timelineActivities];
-    newActivities[index] = value;
-    setTimelineActivities(newActivities);
+    const newActivities = [...choosenActivities];
+    const activity = activities.find(activity => activity._id === value);
+    if (activity) {
+      newActivities[index] = activity;
+      setChoosenActivities(newActivities);
+    }
   };
 
   const handleAddActivity = () => {
-    setTimelineActivities((prev) => [...prev, ""]);
+    setChoosenActivities((prev) => [...prev, { _id: "", name: "" }]);
   };
+
+  const handleDeleteActivity = (index: number) => {
+    setChoosenActivities((prevActivities) =>
+      prevActivities.filter((_, i) => i !== index)
+    );
+  };
+
+  const handleLanguageChange = (index: number, value: string) => {
+    const newLanguages = [...filteredLanguages];
+    const language = languages.find(language => language.value === value);
+    if (language) {
+      newLanguages[index] = language;
+      setFilteredLanguages(newLanguages);
+    }
+  }
+
+  const handleAddLanguage = () => {
+    setFilteredLanguages((prev) => [...prev, { label: "", value: "" }]);
+  }
+
+  const handleDeleteLanguage = (index: number) => {
+    setFilteredLanguages((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  const handleAddSlot = () => {
+    setCurrentSlot({ title: "", description: "", from: "", to: "", index: slots.length });
+    setShowModal(true);
+  };
+
+  const handleEditSlot = (index: number) => {
+    setCurrentSlot(slots[index]);
+    setShowModal(true);
+  };
+
+  const handleSaveSlot = (slot: Slot) => {
+    if (currentSlot?.index !== undefined) {
+      const updatedSlots = [...slots];
+      updatedSlots[currentSlot.index] = slot;
+      setSlots(updatedSlots);
+    } else {
+      setSlots([...slots, slot]);
+    }
+  };
+
+  const handleDeleteSlot = (index: number) => {
+    setSlots(slots.filter((_, i) => i !== index));
+  };
+
+  const handleCloseModal = () => setShowModal(false);
 
   const handleAddAvailableDate = () => {
     if (newAvailableDate && newAvailableTime) {
@@ -104,11 +201,50 @@ const ItineraryForm: React.FC = () => {
     } else {
       setSuggestions([]);
     }
-  }, [inputValue]);
+  }, [inputValue, tags]);
 
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const getTags = async (page: number) => {
+    const tagsData = await AdminService.getTags(page); // Assuming page 1 as the default
+    setTags(tagsData.data);
+  }
+
+  useEffect(() => {
+    getAllCategories();
+    getTags(1);
+    getAllActivities();
+  }, []);
+
+
+  const getAllCategories = async () => {
+    const categories = await CategoryService.getAll();
+    setCategories(categories.data);
+  };
+
+  const getAllActivities = async () => {
+    const activities = await ActivityService.getAllActivities();
+    setActivities(activities.data);
+  }
+
+  const Tour_guide = useAppSelector((state) => state.user)
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Add form submission logic here
+    const {pickup_loc,drop_off_loc, ...restData} = formData
+    const itineraryData = {
+      ...restData,
+      pickup_loc: {latitude: 10, longitude: 10},
+      drop_off_loc: {latitude: 10, longitude: 10},
+      activities: choosenActivities.map(activity => activity._id),
+      tags: selectedTags.map(tag => tag._id),
+      languages: filteredLanguages.map(language => language.value),
+      available_dates: availableDates.map(date => new Date(`${date.date}T${date.time}`)),
+      slots: slots,
+      tour_guide_id: Tour_guide.stakeholder_id._id
+    };
+    await ItineraryService.createItinerary(itineraryData);
+    navigate("/MyItineraries");
   };
 
   return (
@@ -119,64 +255,81 @@ const ItineraryForm: React.FC = () => {
         </Col>
       </Row>
       <Container>
-        <Form onSubmit={handleFormSubmit}>
+        <Form onSubmit={handleSubmit}>
           <Row>
             <Col>
-              <Form.Group className="form-group" controlId="category">
-                <Form.Label>Category</Form.Label>
-                <Form.Control
-                  as="select"
-                  value={category}
-                  className="custom-form-control"
-                  onChange={(e) => setCategory(e.target.value)}
-                  required
-                >
-                  <option value="">Select Category</option>
-                  <option value="Adventure">Adventure</option>
-                  <option value="Historical">Historical</option>
-                  <option value="Cultural">Cultural</option>
-                  <option value="Relaxation">Relaxation</option>
-                </Form.Control>
-                <BiChevronDown className="dropdown-icon" />
-              </Form.Group>
-            </Col>
-            <Col>
-              <AdminFormGroup
-                className="form-group"
+              <AdminFormGroup className="form-group"
                 label="Name"
                 type="text"
                 placeholder="Enter Itinerary Name"
-                id="itinerary-name"
+                id="name"
                 required={true}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={formData.name}
+                onChange={handleChange}
                 disabled={false}
-                name={""}
-              />
+                name={"name"} />
+            </Col>
+            <Col>
+              <Form.Group className="form-group" controlId="category">
+                <Form.Label>Category</Form.Label>
+                <div className="custom-select-container">
+                  <Form.Control
+                    as="select"
+                    name="category"
+                    className="custom-form-control"
+                    value={formData.category}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((category) => (
+                      <option key={category.type} value={category._id}>
+                        {category.type}
+                      </option>
+                    ))}
+                  </Form.Control>
+                  <BiChevronDown className="dropdown-icon" />
+                </div>
+              </Form.Group>
             </Col>
           </Row>
 
           <Row>
             <Col>
-              <Form.Group className="form-group" controlId="timelineActivities">
-                <Form.Label>Timeline Activities</Form.Label>
-                {timelineActivities.map((activity, index) => (
-                  <div key={index} className="timeline-activity">
-                    <Form.Control
-                      type="text"
-                      className="mt-1 custom-form-control"
-                      placeholder="Enter Activity"
-                      value={activity}
-                      onChange={(e) =>
-                        handleActivityChange(index, e.target.value)
-                      }
-                      required
-                    />
-                  </div>
+              <Form.Group className="form-group" controlId="choosenActivities">
+                <Form.Label>Activities</Form.Label>
+                {choosenActivities.map((activity, index) => (
+                  <Row className="align-items-center">
+                    <Col key={index} className="choosen-activity custom-select-container pe-0">
+                      <Form.Control
+                        as="select"
+                        onChange={(e) => handleActivityChange(index, e.target.value)}
+                        className="mt-1 custom-form-control"
+                        value={activity._id}
+                        required>
+                        <option value="">Select Activity</option>
+                        {activities.map((activity) => (
+                          <option key={activity.name} value={activity._id}>
+                            {activity.name}
+                          </option>
+                        ))}
+                      </Form.Control>
+                      <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
+                    </Col>
+                    <Col md="auto">
+                      <Button
+                        variant="danger"
+                        className="ml-2"
+                        onClick={() => handleDeleteActivity(index)}
+                      >
+                        Delete
+                      </Button>
+                    </Col>
+                  </Row>
                 ))}
                 <Button
-                  variant="main-inverse"
                   className="mt-3"
+                  variant="main-inverse"
                   onClick={handleAddActivity}
                 >
                   Add Another Activity
@@ -184,66 +337,106 @@ const ItineraryForm: React.FC = () => {
               </Form.Group>
             </Col>
             <Col>
-              <AdminFormGroup
-                className="form-group"
+              <Form.Group className="form-group" controlId="slots">
+                <Form.Label>Slots</Form.Label>
+                <div>
+                  {slots.map((slot, index) => (
+                    <Row>
+                      <Col className="pe-0">
+                        <Form.Control
+                          className="mt-1 custom-form-control"
+                          type="text"
+                          value={`${slot.title} (${slot.from} - ${slot.to})`}
+                          readOnly
+                          onClick={() => handleEditSlot(index)}
+                        />
+                      </Col>
+                      <Col md="auto">
+                        <Button
+                          variant="danger"
+                          className="ml-2"
+                          onClick={() => handleDeleteSlot(index)}
+                        >
+                          Remove
+                        </Button>
+                      </Col>
+                    </Row>
+                  ))}
+                  <Button
+                    className="mt-3"
+                    variant="main-inverse"
+                    onClick={handleAddSlot}
+                  >
+                    Add Slot
+                  </Button>
+                </div>
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <AdminFormGroup className="form-group"
                 label="Locations"
                 type="text"
                 placeholder="Enter Locations to be visited"
                 id="locations"
                 required={true}
                 value={locations}
-                onChange={(e) => setLocations(e.target.value)}
-                disabled={false}
-                name={""}
-              />
+                onChange={(e) => setLocations(e.target.value)} disabled={false} name={""} />
             </Col>
-          </Row>
-
-          <Row>
             <Col>
-              <AdminFormGroup
-                className="form-group"
+              <AdminFormGroup className="form-group"
                 label="Duration"
                 type="text"
                 placeholder="Enter Duration (e.g., 3 hours)"
                 id="duration"
                 required={true}
-                value={duration}
-                onChange={(e) => setDuration(e.target.value)}
+                value={formData.duration}
+                onChange={handleChange}
                 disabled={false}
-                name={""}
-              />
-            </Col>
-            <Col>
-              <AdminFormGroup
-                className="form-group"
-                label="Language of Tour"
-                type="text"
-                placeholder="Enter Language"
-                id="language"
-                required={true}
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                disabled={false}
-                name={""}
-              />
+                name={"duration"} />
             </Col>
           </Row>
 
           <Row>
             <Col>
-              <AdminFormGroup
-                className="form-group"
-                label="Price"
-                type="number"
-                placeholder="Enter Price"
-                id="price"
-                required={true}
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                disabled={false}
-                name={""}
-              />
+              <Form.Group className="form-group" controlId="choosenActivities">
+                <Form.Label>Languages</Form.Label>
+                {filteredLanguages.map((filteredLanguage, index) => (
+                  <Row className="align-items-center">
+                    <Col key={index} className="choosen-activity custom-select-container pe-0">
+                      <Form.Control
+                        as="select"
+                        // onChange={(e) => handleLanguageChange(index, e.target.value)}
+                        className="mt-1 custom-form-control"
+                        value={filteredLanguage.value}
+                        onChange={(e) => handleLanguageChange(index, e.target.value)}
+                        required>
+                        <option value="">Select Language</option>
+                        {languages.map((language) => (
+                          <option key={language.value} value={language.value}>
+                            {language.label}
+                          </option>
+                        ))}
+                      </Form.Control>
+                      <BiChevronDown className="dropdown-icon" /> {/* Dropdown icon */}
+                    </Col>
+                    <Col md="auto">
+                      <Button
+                        variant="danger"
+                        className="ml-2"
+                        onClick={() => handleDeleteLanguage(index)}
+                      >
+                        Delete
+                      </Button>
+                    </Col>
+                  </Row>
+                ))}
+                <Button className="mt-3" variant="main-inverse" onClick={handleAddLanguage}>
+                  Add Another Language
+                </Button>
+              </Form.Group>
             </Col>
             <Col>
               <Form.Group className="form-group" controlId="availableDates">
@@ -269,7 +462,7 @@ const ItineraryForm: React.FC = () => {
                   </Col>
                   <Col>
                     <Button
-                    variant="main-inverse"
+                      variant="main-inverse"
                       onClick={handleAddAvailableDate}
                     >
                       Add
@@ -283,7 +476,7 @@ const ItineraryForm: React.FC = () => {
                       <Button
                         type="button"
                         onClick={() => handleDeleteAvailableDate(index)}
-                        variant="main-inverse"
+                        variant="danger"
                       >
                         &times;
                       </Button>
@@ -296,55 +489,46 @@ const ItineraryForm: React.FC = () => {
 
           <Row>
             <Col>
-              <AdminFormGroup
-                className="form-group"
+              <AdminFormGroup className="form-group"
                 label="Pickup Location"
                 type="text"
                 placeholder="Enter Pickup Location"
-                id="pickup-location"
+                id="pickup_loc"
                 required={true}
-                value={pickupLocation}
-                onChange={(e) => setPickupLocation(e.target.value)}
+                value={formData.pickup_loc ? formData.pickup_loc.toString() : ""}
+                onChange={handleChange}
                 disabled={false}
-                name={""}
-              />
+                name={"pickup_loc"} />
             </Col>
             <Col>
-              <AdminFormGroup
-                className="form-group"
+              <AdminFormGroup className="form-group"
                 label="Drop-off Location"
                 type="text"
                 placeholder="Enter Drop-off Location"
                 id="dropoff-location"
                 required={true}
-                value={dropoffLocation}
-                onChange={(e) => setDropoffLocation(e.target.value)}
+                value={formData.drop_off_loc ? formData.drop_off_loc.toString() : ""}
+                onChange={handleChange}
                 disabled={false}
-                name={""}
-              />
+                name={"drop_off_loc"} />
             </Col>
           </Row>
 
           <Row>
             <Col>
-              <AdminFormGroup
-                className="form-group"
-                label="Tour Guide ID"
-                type="text"
-                placeholder="Enter Tour Guide ID"
-                id="tour-guide-id"
+              <AdminFormGroup className="form-group"
+                label="Price"
+                type="number"
+                placeholder="Enter Price"
+                id="price"
                 required={true}
-                value={tourGuideId}
-                onChange={(e) => setTourGuideId(e.target.value)}
+                value={String(formData.price)}
+                onChange={handleChange}
                 disabled={false}
-                name={""}
-              />
+                name={"price"} />
             </Col>
-          </Row>
-
-          <Row>
             <Col>
-            <Form.Group className="form-group" controlId="tags">
+              <Form.Group className="form-group" controlId="tags">
                 <Form.Label>Tags</Form.Label>
                 <div className="tags-input">
                   {selectedTags.map((tag) => (
@@ -389,8 +573,9 @@ const ItineraryForm: React.FC = () => {
                 <Form.Check
                   type="checkbox"
                   label="Accessibility"
-                  checked={isAccessible}
-                  onChange={(e) => setIsAccessible(e.target.checked)}
+                  checked={formData.accessibility}
+                  name="accessibility"
+                  onChange={handleChange}
                 />
               </Form.Group>
             </Col>
@@ -399,18 +584,27 @@ const ItineraryForm: React.FC = () => {
                 <Form.Check
                   type="checkbox"
                   label="Active"
-                  checked={isActive}
-                  onChange={(e) => setIsActive(e.target.checked)}
+                  checked={formData.active_flag}
+                  name="active_flag"
+                  onChange={handleChange}
                 />
               </Form.Group>
             </Col>
           </Row>
 
           <Button variant="main-inverse" className="mt-3 mb-5" type="submit">
-            Submit Itinerary
+            Add Itinerary
           </Button>
         </Form>
       </Container>
+
+      <SlotsModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        handleSave={handleSaveSlot}
+        slot={currentSlot || { title: "", description: "", from: "", to: "", index: -1 }}
+        setSlot={setCurrentSlot}
+      />
     </div>
   );
 };

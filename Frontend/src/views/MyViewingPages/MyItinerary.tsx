@@ -79,8 +79,20 @@ export default function ItinerariesPage() {
         return 0;
     }
   });
+
+  const filteredItineraries= sortedItineraries.filter((itinerary) =>
+    itinerary.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const onItineraryClick = (id : string) => {
     navigate(`/itinerary/${id}`);
+  }
+
+  const deleteItinerary = async (id: string) => {
+    const response = await ItineraryService.deleteItinerary(id);
+    if (response.status === 200) {
+      getItinerary();
+    }
   }
 
   return (
@@ -141,7 +153,7 @@ export default function ItinerariesPage() {
             </div>
 
             {/* Display Itinerary Cards */}
-            {itineraries.map((itinerary, index) => (
+            {filteredItineraries.map((itinerary, index) => (
               <Col key={index} xs={12} className="mb-4 ps-0"> {/* Full-width stacking */}
                 <ItineraryCard
                   id={itinerary._id}
@@ -160,9 +172,10 @@ export default function ItinerariesPage() {
                   Available_Dates={itinerary.available_dates}
                   isActive={itinerary.active_flag}
                   tags={itinerary.tags}
-                  isTourGuide={false}
+                  isTourGuide={true}
                   onChange={() => console.log(`${itinerary.locations} booking status changed`)}
                   onClick={() => onItineraryClick(itinerary._id)}
+                  onDelete={() => deleteItinerary(itinerary._id)}
                   />
               </Col>
             ))}

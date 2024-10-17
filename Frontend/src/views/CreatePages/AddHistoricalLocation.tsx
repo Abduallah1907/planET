@@ -7,6 +7,7 @@ import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
 import DaysModal from "../../components/DaysModals";
 import { useAppSelector } from "../../store/hooks";
+import { useNavigate } from "react-router-dom";
 
 interface FormData {
   name: string;
@@ -72,7 +73,9 @@ const HistoricalPlaceForm: React.FC = () => {
 
   const Governer = useAppSelector((state) => state.user);
 
-  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const navigate = useNavigate()
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Add form submission logic here
     const tagsMap = selectedTags.reduce((acc, tag) => {
@@ -97,6 +100,8 @@ const HistoricalPlaceForm: React.FC = () => {
     await HistoricalService.addHistoricalLocation(
       reqData
     );
+    navigate('/MyHistoricalLocations')
+
   };
 
   const getAllHistoricalTags = async () => {
@@ -145,7 +150,7 @@ const HistoricalPlaceForm: React.FC = () => {
         </Col>
       </Row>
       <Container className="mt-4">
-        <Form onSubmit={handleFormSubmit}>
+        <Form onSubmit={handleSubmit}>
           <Row>
             <Col>
               <AdminFormGroup
