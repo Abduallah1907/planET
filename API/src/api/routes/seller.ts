@@ -124,7 +124,7 @@ export default (app: Router) => {
 
   route.post(
     "/createSeller",
-    authorize([UserRoles.Seller]),
+   //authorize([UserRoles.Seller]),
     sellerController.createSeller
   );
   route.get(

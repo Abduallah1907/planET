@@ -134,8 +134,6 @@ export default (app: Router) => {
    *                   type: string
    *                 password:
    *                   type: string
-   *                 nation:
-   *                   type: string
    *       responses:
    *         '201':
    *           description: Admin created successfully.
