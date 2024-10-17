@@ -9,25 +9,27 @@ const UsersTable = () => {
   const [viewableUsers, setViewableUsers] = useState<IUserManagmentDTO[]>([]);
   const [page, setPage] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
-  const [usersPerPage] = useState(10);
+  const usersPerPage = 10; // Number of users to show per page
   const [showModal, setShowModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
+
+  // Fetch all users from the backend
+  const getUsers = async () => {
+    const response = await AdminService.getUsers(1); // Get all users from the backend
+    setUsers(response.data); // Store all users
+    setTotalUsers(response.total); // Total number of users from the response
+  };
+
+  // Update the viewable users based on the current page
+  const updateViewableUsers = (currentPage: number) => {
+    const startIndex = (currentPage - 1) * usersPerPage;
+    const endIndex = startIndex + usersPerPage;
+    setViewableUsers(users.slice(startIndex, endIndex)); // Set the users for the current page
+  };
 
   const handleDelete = (email: string) => {
     setUserToDelete(email);
     setShowModal(true);
-  };
-
-  const getUsers = async (page: number) => {
-    const response = await AdminService.getUsers(page);
-    setUsers((prevUsers) => [...prevUsers, ...response.data]); // Append new users
-    setTotalUsers(response.total); // Update total users count
-  };
-
-  const updateViewableUsers = () => {
-    const startIndex = (page - 1) * usersPerPage;
-    const endIndex = startIndex + usersPerPage;
-    setViewableUsers(users.slice(startIndex, endIndex)); // Update viewable users based on current page
   };
 
   const confirmDelete = async () => {
@@ -40,18 +42,37 @@ const UsersTable = () => {
   const deleteUser = async (email: string) => {
     await AdminService.deleteUser(email);
     setUsers(users.filter((user) => user.email !== email));
+    updateViewableUsers(page); // Update the viewable users after deletion
   };
-  
-   
-  useEffect(() => {
-    getUsers(page);
-  }, [page]);
 
+  // Fetch users on mount
   useEffect(() => {
-    updateViewableUsers(); // Update viewable users whenever users or page changes
+    getUsers();
+  }, []);
+
+  // Update viewable users when users or page changes
+  useEffect(() => {
+    updateViewableUsers(page);
   }, [users, page]);
 
-  const totalPages = Math.ceil(totalUsers / usersPerPage);
+  const totalPages = Math.ceil(totalUsers / usersPerPage); // Calculate total pages
+
+  // Pagination control
+  const renderPagination = () => {
+    const paginationItems = [];
+    for (let i = 1; i <= totalPages; i++) {
+      paginationItems.push(
+        <Pagination.Item
+          key={i}
+          active={i === page}
+          onClick={() => setPage(i)} // Set the current page and update viewable users
+        >
+          {i}
+        </Pagination.Item>
+      );
+    }
+    return paginationItems;
+  };
 
   return (
     <div className="profile-form-container">
@@ -102,18 +123,18 @@ const UsersTable = () => {
         </table>
       </div>
 
-      <div className="d-flex justify-content-center">
+      {/* Pagination Slider */}
+      <div className="d-flex justify-content-center mt-3">
         <Pagination>
-          {totalPages > 0 &&
-            [...Array(totalPages)].map((_, index) => (
-              <Pagination.Item
-                key={index}
-                active={index + 1 === page}
-                onClick={() => setPage(index + 1)}
-              >
-                {index + 1}
-              </Pagination.Item>
-            ))}
+          <Pagination.Prev
+            onClick={() => setPage(Math.max(page - 1, 1))}
+            disabled={page === 1}
+          />
+          {renderPagination()}
+          <Pagination.Next
+            onClick={() => setPage(Math.min(page + 1, totalPages))}
+            disabled={page === totalPages}
+          />
         </Pagination>
       </div>
 

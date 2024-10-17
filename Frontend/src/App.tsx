@@ -52,6 +52,8 @@ import Sidebar from "./components/SideBar/Sidebar";
 import { use } from "i18next";
 import CategoryTable from "./views/CategoryTable";
 import TagsTable from "./views/TagTable";
+import Rating from "./components/Rating/Rating";
+
 
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen)
@@ -121,6 +123,7 @@ const App: React.FC = () => {
 
         <Route path="/Categories" element={<CategoryTable />} />
         <Route path="/Tags" element={<TagsTable />} />
+
       </Routes>
     </AppProvider>
   );
