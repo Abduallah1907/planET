@@ -14,6 +14,7 @@ import advertiser from "./routes/advertiser";
 import historical_tag from "./routes/historical_tag";
 import product from "./routes/product";
 import itinerary from "./routes/itinerary";
+import file from "./routes/file";
 export default () => {
   const app = Router();
 
@@ -30,6 +31,7 @@ export default () => {
   mailer(app);
   product(app);
   itinerary(app);
+  file(app);
 
   return app;
 };

@@ -3,10 +3,21 @@ import axios from "axios";
 
 
 class HistoricalService {
-  public static getHistoricalLocationById = async (nation: string, job: string, historical_location_id: string) => {
+  public static getHistoricalLocationById = async (historical_location_id: string) => {
     try {
       const response = await axiosInstance.get('/historical_location/getHistorical_locationByID', {
-        params: { nation: nation, job: job, historical_location_id: historical_location_id }
+        params: { historical_location_id: historical_location_id }
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static getHistoricalLocationByIdForGoverner = async (historical_location_id: string) => {
+    try {
+      const response = await axiosInstance.get('/historical_location/getHistorical_locationByIDForGoverner', {
+        params: { historical_location_id: historical_location_id }
       });
       return response.data;
     } catch (error) {
@@ -16,13 +27,21 @@ class HistoricalService {
 
   public static getAllHistorical_Location = async (nation: string, job: string) => {
     try {
-
       const response = await axiosInstance.get("/historical_location/getAllHistorical_locations", { params: { nation, job } })
       return response.data;
     } catch (error) {
       throw error;
     }
   };
+
+  public static getHistorical_LocationByGovernerID = async (governer_id: string) => {
+    try{
+      const response = await axiosInstance.get(`/historical_location/getHistorical_locationsByGovernerID/${governer_id}`)
+      return response.data;
+    } catch (error){
+      throw error;
+    }
+  }
 
   public static getFilteredHistorical_Location = async (filter: any) => {
     try{
@@ -37,8 +56,7 @@ class HistoricalService {
     try {
       const response = await axiosInstance.post(
         "/historical_location/createHistorical_location",
-        formData
-          ``);
+        formData);
           return response.data;
     } catch (err) {
       throw err;
@@ -77,6 +95,33 @@ class HistoricalService {
       } else {
         throw new Error("Editing Historical Location failed");
       }
+    }
+  }
+
+  public static async deleteHistoricalLocation(id: string) {
+    try {
+      const response = await axiosInstance.delete(
+        `/historical_location/deleteHistorical_location/${id}`, // Use PUT for updates and include the location ID
+      );
+      return response.data;
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        console.error("API Error: ", error.response.data);
+        throw new Error(
+          error.response.data.message || "Deleting Historical Location failed"
+        );
+      } else {
+        throw new Error("Deleting Historical Location failed");
+      }
+    }
+  }
+
+  public static async getAllHistorical_Tags(){
+    try{
+      const response = await axiosInstance.get("/historical_tag/getAllHistorical_tag");
+      return response.data;
+    }catch(error){
+      throw error;
     }
   }
 }

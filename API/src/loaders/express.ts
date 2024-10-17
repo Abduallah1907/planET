@@ -5,8 +5,30 @@ import routes from "@/api";
 import config from "@/config";
 import "express-async-errors";
 import swaggerDocs from "@/swagger";
+import multer from "multer"; // Import multer
+import { gridfsLoader } from "./gridfs";
+import mongooseLoader from "./moongose";
+import LoggerInstance from "./logger";
+import fileUpload from "express-fileupload";
 
-export default ({ app }: { app: Application }) => {
+export default async ({ app }: { app: Application }) => {
+  const mongoConnection = await mongooseLoader();
+
+  // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
+  app.enable("trust proxy");
+
+  // Enable Cross-Origin Resource Sharing to all origins by default
+  app.use(cors());
+
+  app.use(fileUpload());
+  // HTTP verbs support such as PUT or DELETE
+  app.use(require("method-override")());
+
+  // Transforms the raw string of req.body into json
+  app.use(express.json());
+
+  // Add debug logging middleware
+
   /**
    * Health Check endpoints
    * @TODO Explain why they are here
@@ -18,18 +40,6 @@ export default ({ app }: { app: Application }) => {
   app.head("/status", (req, res) => {
     res.status(200).end();
   });
-
-  // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
-  app.enable("trust proxy");
-
-  // Enable Cross-Origin Resource Sharing to all origins by default
-  app.use(cors());
-
-  // HTTP verbs support such as PUT or DELETE
-  app.use(require("method-override")());
-
-  // Transforms the raw string of req.body into json
-  app.use(express.json());
 
   // Load API routes
   app.use(config.api.prefix, routes());
@@ -69,4 +79,6 @@ export default ({ app }: { app: Application }) => {
       });
     }
   });
+
+  // Catch-all route for unmatched paths
 };

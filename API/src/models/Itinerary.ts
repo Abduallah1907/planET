@@ -89,6 +89,7 @@ const itinerarySchema = new mongoose.Schema(
     inappropriate_flag: {
       type: Boolean,
       required: true,
+      default: false,
     },
     tour_guide_id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -99,6 +100,9 @@ const itinerarySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Itinerary = mongoose.model<IItinerary & mongoose.Document>("Itinerary", itinerarySchema);
+const Itinerary = mongoose.model<IItinerary & mongoose.Document>(
+  "Itinerary",
+  itinerarySchema
+);
 
 export default Itinerary;

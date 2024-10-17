@@ -1,9 +1,9 @@
-import OrderStatus from '@/types/enums/orderStatus';
-import PaymentType from '@/types/enums/paymentType';
-import { Document, ObjectId } from 'mongoose';
+import OrderStatus from "@/types/enums/orderStatus";
+import PaymentType from "@/types/enums/paymentType";
+import { Document, ObjectId } from "mongoose";
 
 export interface IOrder extends Document {
-  user_id: ObjectId;
+  tourist_id: ObjectId;
   products: ObjectId[];
   date: Date;
   cost: number;

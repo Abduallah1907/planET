@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
-import { Db } from "mongodb";
 import config from "@/config";
 
-export default async (): Promise<Db> => {
+export default async (): Promise<mongoose.Connection> => {
   const databaseURL: string | undefined = config.databaseURL;
   if (!databaseURL) {
     throw new Error("⚠️  Database URL not found in configuration  ⚠️");
@@ -27,5 +26,9 @@ export default async (): Promise<Db> => {
     autoIndex: true,
     autoCreate: true,
   });
-  return connection.connection.db;
+  if (!connection.connection.db) {
+    throw new Error("⚠️  Database connection failed  ⚠️");
+  }
+
+  return connection.connection;
 };

@@ -2,6 +2,7 @@ import React from "react";
 import "./FilterBy.css";
 import { Col, Form, Row } from "react-bootstrap";
 import MultiRangeSlider from "../MultiSelectRange/MultiSliderRange";
+import { set } from "react-datepicker/dist/date_utils";
 
 interface filterData {
   [key: string]: any;
@@ -70,12 +71,14 @@ const FilterBy: React.FC<FilterByProps> = ({
                   min={field.min}
                   max={field.max}
                   onChange={({ min, max }: { min: number; max: number }) => {
-                    const newFilter = {
-                      ...filter,
-                      [key.toString().toLowerCase()]: `${min}-${max}`,
-                    };
-                    setFilter(newFilter);
-                    onFilterChange(newFilter);
+                    setFilter((prevFilter) => {
+                      const newFilter = {
+                        ...prevFilter,
+                        [key.toString().toLowerCase()]: `${min}-${max}`,
+                      };
+                      onFilterChange(newFilter);
+                      return newFilter;
+                    });
                   }}
                 />
               </Row>
@@ -86,22 +89,21 @@ const FilterBy: React.FC<FilterByProps> = ({
         case "date-range":
           const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             const { name, value } = e.target;
-            const newDateFilter = { ...filter, [name]: value };
-            const fromDate = newDateFilter.fromDate || "";
-            const toDate = newDateFilter.toDate || "";
+            let updatedFilter = { ...filter, [name]: value };
+            const fromDate = updatedFilter.fromDate || "";
+            const toDate = updatedFilter.toDate || "";
             let dateRange = "";
 
             if (fromDate && toDate) {
-              dateRange = `${fromDate}-${toDate}`;
+              dateRange = `${fromDate} ${toDate}`;
             } else if (fromDate) {
               dateRange = fromDate;
             } else if (toDate) {
               dateRange = toDate;
             }
-            const updatedFilter = { ...filter, [key.toLowerCase()]: dateRange };
+            updatedFilter = { ...updatedFilter, [key.toLowerCase()]: dateRange };
             setFilter(updatedFilter);
             onFilterChange(updatedFilter);
-            // console.log(updatedFilter)
           };
           return (
             <Row className="border-bottom pb-2" key={key}>
@@ -111,9 +113,12 @@ const FilterBy: React.FC<FilterByProps> = ({
                 <Form.Control
                   type="date"
                   placeholder="dd/mm/yyyy"
-                  value={filter.fromDate || ""}
+                  value={filter.fromDate}
                   onChange={handleDateChange}
                   name="fromDate"
+                  className="custom-form-control"
+                  min={field.start.toString().split("T")[0]}
+                  max={field.end.toString().split("T")[0]}
                 />
               </Form.Group>
               <Form.Group className="form-group" id="toDate">
@@ -121,9 +126,12 @@ const FilterBy: React.FC<FilterByProps> = ({
                 <Form.Control
                   type="date"
                   placeholder="dd/mm/yyyy"
-                  value={filter.toDate || ""}
+                  value={filter.toDate}
                   onChange={handleDateChange}
                   name="toDate"
+                  className="custom-form-control"
+                  min={field.start.toString().split("T")[0]}
+                  max={field.end.toString().split("T")[0]}
                 />
               </Form.Group>
             </Row>

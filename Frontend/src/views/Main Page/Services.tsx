@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import './services.css'; // Ensure this path is correct
+import { useTranslation } from 'react-i18next';
 
 const servicesData = [
   {
@@ -26,9 +27,10 @@ const servicesData = [
 ];
 
 const Services: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <Container className='ser-container'>
-      <h2 className="text-center font-weight-bold services-text ">We Offer Best Services</h2>
+      <h2 className="text-center font-weight-bold services-text ">{t("we_offer_best_services")}</h2>
       <Row>
         {servicesData.map((service, index) => (
           <Col md={3} key={index}>

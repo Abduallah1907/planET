@@ -6,6 +6,7 @@ import { MdSell } from "react-icons/md";
 import { MdOutlineManageAccounts } from "react-icons/md";
 import { HiOutlineTrendingDown, HiOutlineTrendingUp } from 'react-icons/hi';
 import { Badge, Card, Col, Row } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 
 const stats = [
   { title: 'Total User', value: '40,689', icon: <FaUser />, percentage: '8.5%', direction: 'up' },
@@ -15,6 +16,7 @@ const stats = [
 ];
 
 const StatisticsCards = () => {
+  const { t } = useTranslation();
   return (
     <div className="statistics-container">
       {stats.map((stat, index) => (

@@ -114,14 +114,6 @@ const TourGuideFirst: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Form data before submission: ", {
-      years_of_experience: formData.yearsOfExperience,
-      logo: formData.logo,
-    });
-
-    // Log the arrays
-    console.log("Created Previous Work: ", createdWork);
-
     await TourGuideServices.updateTourGuide(TourGuideFirst.email, {
       years_of_experience: formData.yearsOfExperience,
       logo: formData.logo,

@@ -25,8 +25,9 @@ export interface IHistorical_locationDTO {
   name: string;
   governor_id: ObjectId;
   description: string;
-  picture: string[];
+  picture: string;
   location: Location;
+  opening_days?: string[];
   opening_hours_from: string;
   opening_hours_to: string;
   native_price: number;
@@ -42,13 +43,14 @@ export interface Update_IHistorical_locationDTO {
   description?: string;
   picture?: string[];
   location?: Location;
+  opening_days?: string[];
   opening_hours_from?: string;
   opening_hours_to?: string;
   native_price?: number;
   foreign_price?: number;
   student_price?: number;
   tags?: Map<string, string>;
-  average_rating: Number;
+  active_flag: boolean;
 }
 export interface IHistorical_locationOutputDTO {
   name: string;

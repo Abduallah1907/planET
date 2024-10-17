@@ -16,6 +16,7 @@ import UserRoles from "@/types/enums/userRoles";
 import UserService from "./userService";
 import user from "@/api/routes/user";
 import bcrypt from "bcryptjs";
+import { FileService } from "./fileService";
 @Service()
 export default class AdvertiserService {
   constructor(
@@ -142,6 +143,7 @@ export default class AdvertiserService {
   //Update Advertiser
   public updateAdvertiserService = async (
     email: string,
+    file: Express.Multer.File,
     advertiserData: IAdvertiserUpdateDTO
   ) => {
     const {
@@ -157,9 +159,9 @@ export default class AdvertiserService {
       company_profile,
     } = advertiserData;
     let hashedPassword;
-  if (password) {
-    hashedPassword = await bcrypt.hash(password, 10);  // Await bcrypt.hash here
-  }
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10); // Await bcrypt.hash here
+    }
     const advertiserUser = await this.userModel.findOneAndUpdate(
       { email: email, role: UserRoles.Advertiser },
       {
@@ -177,7 +179,6 @@ export default class AdvertiserService {
     if (advertiserUser == null) {
       throw new NotFoundError("No Advertiser with this email");
     }
-
     const advertiser = await this.advertiserModel.findOneAndUpdate(
       { user_id: advertiserUser._id },
       {
