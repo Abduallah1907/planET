@@ -19,15 +19,19 @@ export interface IPreviousWorkInputDTO {
 }
 
 export interface IPreviousWorkUpdateDTO {
-  previous_work_id: ObjectId;
-  title: string;
-  place: string;
-  from: Date;
-  to: Date;
+  previous_work_id: string;
+  title?: string;
+  place?: string;
+  from?: Date;
+  to?: Date;
+}
+export interface IPreviousWorkDeleteDTO {
+  previous_work_id: string;
+  tour_guide_id: ObjectId;
 }
 
 export interface IPreviousWorkOutputDTO {
-  previous_work_id: ObjectId;
+  previous_work_id: string;
   title: string;
   place: string;
   from: Date;

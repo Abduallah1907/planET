@@ -112,7 +112,7 @@ export default class UserService {
         break;
 
       case UserRoles.TourGuide:
-        const tourGuide = await this.tourGuideModel.findOne({ user_id });
+        const tourGuide = await this.tourGuideModel.findOne({ user_id }).populate("previous_work_description");
         if (tourGuide instanceof Error)
           throw new InternalServerError("Internal server error");
         if (tourGuide == null) throw new NotFoundError("Tour Guide not found");
