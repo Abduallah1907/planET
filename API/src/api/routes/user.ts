@@ -14,4 +14,7 @@ export default (app: Router) => {
   route.get("/forgetPassword/:email", userController.forgetPassword);
 
   route.put("/updateGovernor/:email", userController.updateGovernor);
+  route.get("/requestOTP/:email", userController.requestOTP);
+  route.get("/verifyOTP/:email/:otp", userController.verifyOTP);
+  route.post("/resetPassword/:email", userController.resetPassword);
 };

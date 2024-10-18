@@ -150,7 +150,7 @@ const ProductCard = ({
           </p>
 
           <div className="text-end">
-            <h4 style={{ fontWeight: "bold" }}>${price.toFixed(2)}</h4>
+            <h4 style={{ fontWeight: "bold" }}>{convertedPrice}</h4>
 
             {/* Show Active/Archive button if the user is the seller */}
             {(isSeller || isAdmin) ? (

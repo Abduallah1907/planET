@@ -40,4 +40,27 @@ export class UserController {
     );
     res.status(user.status).json(user);
   }
+
+  public async requestOTP(req: any, res: any){
+    const userService: UserService = Container.get(UserService);
+    const { email } = req.params;
+    const user = await userService.requestOTPService(email);
+    res.status(user.status).json(user);
+  }
+
+  public async verifyOTP(req: any, res: any){
+    const userService: UserService = Container.get(UserService);
+    const { email, otp } = req.params;
+    const user = await userService.verifyOTPService(email, otp);
+    res.status(user.status).json(user);
+  }
+
+  public async resetPassword(req: any, res: any){
+    const userService: UserService = Container.get(UserService);
+    const { email} = req.params;
+    const { password, otp } = req.body;
+    const user = await userService.resetPasswordService(email, password, otp);
+    res.status(user.status).json(user);
+  }
+
 }

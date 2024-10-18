@@ -102,14 +102,36 @@ class AuthService {
     }
   }
 
-  private setToken(token: string) {
-    localStorage.setItem("authToken", token);
-    axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  public static async requestOTP(email: string) {
+    try {
+      const response = await axiosInstance.get(`/users/requestOTP/${email}`);
+      return response.data;
+    } catch (error: any) {
+      throw error;
+    }
   }
 
-  private clearToken() {
-    localStorage.removeItem("authToken");
-    delete axiosInstance.defaults.headers.common["Authorization"];
+  public static async verifyOTP(email: string, otp: string) {
+    try {
+      const response = await axiosInstance.get(
+        `/users/verifyOTP/${email}/${otp}`
+      );
+      return response.data;
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
+  public static async resetPassword(email: string, password: string, otp: string) {
+    try {
+      const response = await axiosInstance.post(`/users/resetPassword/${email}`, {
+        password,
+        otp,
+      });
+      return response.data;
+    } catch (error: any) {
+      throw error;
+    }
   }
 }
 
