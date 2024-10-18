@@ -1,0 +1,178 @@
+openapi: "3.0.0"
+info:
+  title: Historical Tag API
+  version: 1.0.0
+  description: API for managing historical tags
+
+tags:
+  - name: HistoricalTag
+    description: API for managing historical tags
+
+paths:
+  /api/historical_tag/getAllHistorical_tag:
+    get:
+      tags:
+        - HistoricalTag
+      summary: Get all historical tags
+      responses:
+        "200":
+          description: A list of historical tags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - name
+                    - Values
+                  properties:
+                    name:
+                      type: string
+                      description: The name of the historical tag
+                    Values:
+                      type: array
+                      items:
+                        type: string
+                      description: An array of values associated with the historical tag
+
+  /api/historical_tag/createHistorical_tag:
+    post:
+      tags:
+        - HistoricalTag
+      summary: Create a new historical tag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - Values
+              properties:
+                name:
+                  type: string
+                  description: The name of the historical tag
+                Values:
+                  type: array
+                  items:
+                    type: string
+                  description: An array of values associated with the historical tag
+      responses:
+        "201":
+          description: The created historical tag
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - name
+                  - Values
+                properties:
+                  name:
+                    type: string
+                    description: The name of the historical tag
+                  Values:
+                    type: array
+                    items:
+                      type: string
+                    description: An array of values associated with the historical tag
+
+  /api/historical_tag/getHistorical_tagByID/{id}:
+    get:
+      tags:
+        - HistoricalTag
+      summary: Get a historical tag by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the historical tag
+      responses:
+        "200":
+          description: The requested historical tag
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - name
+                  - Values
+                properties:
+                  name:
+                    type: string
+                    description: The name of the historical tag
+                  Values:
+                    type: array
+                    items:
+                      type: string
+                    description: An array of values associated with the historical tag
+
+  /api/historical_tag/updateHistorical_tag/{id}:
+    put:
+      tags:
+        - HistoricalTag
+      summary: Update a historical tag by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the historical tag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - Values
+              properties:
+                name:
+                  type: string
+                  description: The name of the historical tag
+                Values:
+                  type: array
+                  items:
+                    type: string
+                  description: An array of values associated with the historical tag
+      responses:
+        "200":
+          description: The updated historical tag
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - name
+                  - Values
+                properties:
+                  name:
+                    type: string
+                    description: The name of the historical tag
+                  Values:
+                    type: array
+                    items:
+                      type: string
+                    description: An array of values associated with the historical tag
+
+  /api/historical_tag/deleteHistorical_tag/{id}:
+    delete:
+      tags:
+        - HistoricalTag
+      summary: Delete a historical tag by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the historical tag
+      responses:
+        "204":
+          description: Historical tag deleted successfully

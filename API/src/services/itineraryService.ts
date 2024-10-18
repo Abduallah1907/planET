@@ -2,8 +2,10 @@ import { IItineraryCreateDTO, IItineraryOutputAllDTO, IItineraryOutputDTO, IItin
 import { BadRequestError, ForbiddenError, HttpError, InternalServerError, NotFoundError, UnauthorizedError } from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
-import { ObjectId, Types } from "mongoose";
+import mongoose, { ObjectId, Types } from "mongoose";
 import { IFilterComponents } from "@/interfaces/IFilterComponents";
+import path from "path";
+import { ObjectId as MongoObjectID } from "mongodb";
 
 @Service()
 export default class ItineraryService {
@@ -11,15 +13,23 @@ export default class ItineraryService {
     @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel,
     @Inject("tour_guideModel") private tourGuideModel: Models.Tour_guideModel,
     @Inject("tagModel") private tagModel: Models.TagModel,
-    @Inject("ticketModel") private ticketModel: Models.TicketModel
+    @Inject("ticketModel") private ticketModel: Models.TicketModel,
+    @Inject("slotModel") private slotModel: Models.SlotModel
   ) {}
   // we also need timeline object???
   public async createItineraryService(itineraryData: IItineraryCreateDTO) {
     const tour_guide = await this.tourGuideModel.findById(itineraryData.tour_guide_id);
+
+    const { slots, ...restData } = itineraryData;
+    // Create new slots and get their ObjectIds
+    const createdSlots = await this.slotModel.insertMany(slots);
+    const slotIds = createdSlots.map((slot) => slot._id);
+
     const itineraryDataCreation = {
-      ...itineraryData,
+      ...restData,
+      timeline: slotIds,
       comments: [],
-      active_flag: true,
+      average_rating: 0,
       inappropriate_flag: false,
     };
     const newItinerary = await this.itineraryModel.create(itineraryDataCreation);
@@ -32,7 +42,13 @@ export default class ItineraryService {
     return new response(true, { itinerary_id: newItinerary._id }, "Itinerary created successfully!", 201);
   }
   public async getItineraryByIDService(itinerary_id: Types.ObjectId) {
-    const itineraryData = await this.itineraryModel.findById(itinerary_id).populate("comments").populate("tags");
+    const itineraryData = await this.itineraryModel
+      .findById(itinerary_id)
+      .populate("comments")
+      .populate("tags")
+      .populate("category")
+      .populate("activities")
+      .populate("timeline");
     if (itineraryData instanceof Error) throw new InternalServerError("Internal server error");
     if (!itineraryData) throw new HttpError("Itinerary not found", 404);
 
@@ -56,10 +72,30 @@ export default class ItineraryService {
       locations: itineraryData.locations,
       tags: itineraryData.tags,
     };
-    return new response(true, itineraryOutput, "Itinerary found!", 201);
+    return new response(true, itineraryData, "Itinerary found!", 201);
   }
   public async updateItineraryService(itinerary_id: Types.ObjectId, itineraryUpdatedData: IItineraryUpdateDTO) {
-    const updatedItinerary = await this.itineraryModel.findByIdAndUpdate(itinerary_id, itineraryUpdatedData, { new: true });
+    // Find the itinerary by ID
+    const itinerary = await this.itineraryModel.findById(itinerary_id);
+    if (!itinerary) throw new NotFoundError("Itinerary not found");
+
+    // Delete all slots with ObjectIds in itinerary.timeline
+    await this.slotModel.deleteMany({ _id: { $in: itinerary.timeline } });
+
+    // Extract slot data from itineraryUpdatedData
+    const { slots, ...restUpdatedData } = itineraryUpdatedData;
+
+    // Create new slots and get their ObjectIds
+    const createdSlots = await this.slotModel.insertMany(slots);
+    const slotIds = createdSlots.map((slot) => slot._id);
+
+    // Update itineraryUpdatedData with the new timeline
+    const updatedData = {
+      ...restUpdatedData,
+      timeline: slotIds,
+    };
+
+    const updatedItinerary = await this.itineraryModel.findByIdAndUpdate(itinerary_id, updatedData, { new: true });
     if (!updatedItinerary) throw new HttpError("Itinerary not found", 404);
     if (updatedItinerary instanceof Error) throw new InternalServerError("Internal server error");
     return new response(true, { itinerary_id: updatedItinerary._id }, "Itinerary updated!", 201);
@@ -116,15 +152,21 @@ export default class ItineraryService {
   }
 
   // view all itineraries
-  public async getAllItinerariesByTourGuideIDService(tour_guide_id: Types.ObjectId) {
+  public async getAllItinerariesByTourGuideIDService(tour_guide_id: string) {
+    if (!Types.ObjectId.isValid(tour_guide_id)) {
+      throw new BadRequestError("Invalid Tour Guide ID format");
+    }
     const { itineraries } = await this.tourGuideModel.findById(tour_guide_id).populate({
       path: "itineraries",
-      populate: [{ path: "activities" }, { path: "comments" }, { path: "category" }],
+      populate: [{ path: "tags" }, { path: "category" }],
     });
     if (itineraries instanceof Error) throw new InternalServerError("Internal server error");
-    if (!itineraries) throw new HttpError("Tour guide not found", 404);
-    const itinerariesOutput: IItineraryOutputDTO[] = itineraries.map((itinearary: {}) => ({}));
-    return new response(true, itineraries, "Returning all found itineraries!", 201);
+
+    const itinerariesOutput: IItineraryOutputDTO[] = itineraries.map((itinearary: any) => ({
+      ...itinearary.toObject(),
+      reviews_count: itinearary.comments ? itinearary.comments.length : 0,
+    }));
+    return new response(true, itinerariesOutput, "Returning all found itineraries!", 200);
   }
 
   public async getAllItinerariesService(page: number): Promise<any> {
@@ -154,6 +196,7 @@ export default class ItineraryService {
       average_rating: itinerary.average_rating,
       locations: itinerary.locations,
       tags: itinerary.tags,
+      reviews_count: itinerary.comments.length,
     }));
 
     return new response(true, itinerartiesOutput, "Page " + page + " of itineraries", 200);
@@ -198,13 +241,28 @@ export default class ItineraryService {
     price?: { min?: number; max?: number };
     date?: { start?: Date; end?: Date };
     preferences?: string[];
+    languages?: string[];
+    tour_guide_id?: string;
   }) {
-    if (!filters) {
-      const itineraries = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false });
+    if (!filters || Object.keys(filters).length === 0 || (filters.tour_guide_id && Object.keys(filters).length === 1)) {
+      const checks: any = {};
+      if (filters.tour_guide_id) {
+        checks.tour_guide_id = filters.tour_guide_id;
+      } else {
+        checks.active_flag = true;
+        checks.inappropriate_flag = false;
+      }
+      const itineraries = await this.itineraryModel.find(checks);
       return new response(true, itineraries, "All itineraries are fetched no filter applied", 200);
     }
     const matchStage: any = {};
-    matchStage.active_flag = true;
+    if (filters.tour_guide_id) {
+      matchStage.tour_guide_id = new MongoObjectID(filters.tour_guide_id);
+    } else {
+      matchStage.active_flag = true;
+      matchStage.inappropriate_flag = false;
+    }
+
     if (filters.price) {
       if (filters.price.min !== undefined) {
         matchStage.price = { ...matchStage.price, $gte: filters.price.min };
@@ -215,13 +273,32 @@ export default class ItineraryService {
     }
 
     if (filters.date) {
-      if (filters.date.start !== undefined) {
-        matchStage.date = { ...matchStage.date, $gte: filters.date.start };
-      }
-      if (filters.date.end !== undefined) {
-        matchStage.date = { ...matchStage.date, $lte: filters.date.end };
+      if (filters.date.start !== undefined && filters.date.end !== undefined) {
+        matchStage.available_dates = {
+          $elemMatch: {
+            $gte: new Date(filters.date.start),
+            $lte: new Date(filters.date.end),
+          },
+        };
+      } else if (filters.date.start !== undefined) {
+        matchStage.available_dates = {
+          $elemMatch: {
+            $gte: new Date(filters.date.start),
+          },
+        };
+      } else if (filters.date.end !== undefined) {
+        matchStage.available_dates = {
+          $elemMatch: {
+            $lte: new Date(filters.date.end),
+          },
+        };
       }
     }
+
+    if (filters.languages) {
+      matchStage.languages = { $in: filters.languages };
+    }
+
     var aggregationPipeline: any[] = [
       {
         $lookup: {
@@ -233,6 +310,11 @@ export default class ItineraryService {
       },
       {
         $match: matchStage,
+      },
+      {
+        $addFields: {
+          reviews_count: { $size: "$comments" },
+        },
       },
     ];
     if (filters.preferences) {

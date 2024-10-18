@@ -1,12 +1,11 @@
-
 //import { IHistorical_tag } from "./IHistorical_tag";
-export interface IHistorical_location  {
+export interface IHistorical_location {
   _id: string;
   governor_id: string;
   comments: string[];
   name: string;
   description: string;
-  picture: string[];
+  images?: string[];
   location: Location;
   opening_hours_from: string;
   opening_hours_to: string;
@@ -15,7 +14,7 @@ export interface IHistorical_location  {
   foreign_price: number;
   student_price: number;
   active_flag: boolean;
-  average_rating:number;
+  average_rating: number;
   tags?: Map<string, string>;
   date_time?: Date;
   createdAt?: Date;
@@ -29,7 +28,7 @@ export interface IHistorical_locationDTO {
 
   description: string;
 
-  picture: string[];
+  images?: string[];
 
   location: Location;
 
@@ -54,7 +53,7 @@ export interface Update_IHistorical_locationDTO {
 
   description?: string;
 
-  picture?: string[];
+  images?: string[];
 
   location?: Location;
 
@@ -73,20 +72,20 @@ export interface Update_IHistorical_locationDTO {
   tags?: Map<string, string>;
   reviewsCount?: number;
 }
-export interface IHistorical_location_tourist  {
+export interface IHistorical_location_tourist {
   _id: string;
   governor_id: string;
   comments: string[];
   name: string;
   description: string;
-  picture: string[];
+  images?: string[];
   location: Location;
   opening_hours_from: string;
   opening_hours_to: string;
   opening_days: string[];
   price: number;
   active_flag: boolean;
-  average_rating:number;
+  average_rating: number;
   tags?: Map<string, string>;
   date_time?: Date;
   createdAt?: Date;

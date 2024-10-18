@@ -87,8 +87,8 @@ const resources = {
       "find_out_more": "Find out more",
       "play_demo": "Play Demo",
       "we_offer_best_services": "We offer the best services",
-
-
+      "create_governor_account": "Create Governor Account",
+      "explore_historical_locations": "Explore Historical Locations"
 
 
 
@@ -181,7 +181,8 @@ const resources = {
       "find_out_more": "اكتشف المزيد",
       "play_demo": "تشغيل العرض التوضيحي",
       "we_offer_best_services": "نحن نقدم أفضل الخدمات",
-
+      "create_governor_account": "إنشاء حساب وزير",
+      "explore_historical_locations": ""
 
 
 
@@ -279,6 +280,7 @@ const resources = {
       "best_flights": "Meilleurs vols",
       "local_events": "Événements locaux",
       "customization": "Personnalisation",
+      "create_governor_account": "Créer un compte de gouverneur",
     
 
 
@@ -375,6 +377,8 @@ const resources = {
       "find_out_more": "Mehr erfahren",
       "play_demo": "Demo abspielen",
       "we_offer_best_services": "Wir bieten die besten Dienstleistungen an",
+      "create_governor_account": "Gouverneurskonto erstellen",
+
 
 
 

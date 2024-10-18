@@ -25,10 +25,10 @@ export class ActivityController {
     const activity = await activityService.getActivityByIDService(id);
     res.status(activity.status).json(activity);
   }
-  public async getActivityByAdvertiserID(req: any, res: any) {
+  public async getActivitiesByAdvertiserID(req: any, res: any) {
     const { advertiserID } = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activity = await activityService.getActivityByAdvertiserIDService(
+    const activity = await activityService.getActivitiesByAdvertiserIDService(
       advertiserID
     );
     res.status(activity.status).json(activity);
@@ -71,7 +71,7 @@ export class ActivityController {
   }
 
   public async getFilteredActivities(req: any, res: any) {
-    const { price, date, category, rating } = req.query;
+    const { price, date, category, rating, tag, advertiser_id } = req.query;
     const activityService: ActivityService = Container.get(ActivityService);
     var filters = {};
     if (price)
@@ -91,10 +91,19 @@ export class ActivityController {
           },
         };
       }
-    if (date) filters = { ...filters, date: { start: date } };
+    if (date) {
+      const [start, end] = date.split("-");
+      filters = { ...filters, date: { start, end: end || start } };
+    }
     if (category) {
       const categoryList = category.split(",").map((cat: string) => cat.trim());
       filters = { ...filters, category: categoryList };
+    }
+    if (tag) {
+      const preferencesList = tag
+        .split(",")
+        .map((preference: string) => preference.trim());
+      filters = { ...filters, preferences: preferencesList };
     }
 
     if (rating) {
@@ -115,6 +124,7 @@ export class ActivityController {
         };
       }
     }
+    if (advertiser_id) filters = { ...filters, advertiser_id: advertiser_id };
     const activities = await activityService.getFilteredActivitiesService(
       filters
     );

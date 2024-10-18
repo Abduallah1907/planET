@@ -1,11 +1,19 @@
-import { Card, Badge, Row, Col, Image, DropdownButton, Dropdown } from "react-bootstrap";
-import Rating from '../Rating/Rating';
+import {
+  Card,
+  Badge,
+  Row,
+  Col,
+  Image,
+  DropdownButton,
+  Dropdown,
+  Modal,
+  Button,
+} from "react-bootstrap";
+import Rating from "../Rating/Rating";
 import "./Cards.css";
-import { HistoricalService } from "../../services/HistoricalService";
-import { useEffect, useState } from "react";
-import { get } from "http";
-import { use } from "i18next";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../AppContext";
 
 interface InputData {
   id: string;
@@ -13,8 +21,11 @@ interface InputData {
   location: string;
   RatingVal: number; // Initial Rating
   Reviews: number;
-  Price: number;
-  imageUrl: string;
+  image?: string;
+  Price?: number;
+  nativePrice?: number;
+  foreignPrice?: number;
+  studentPrice?: number;
   OpeningHourFrom: string; // Using string for time representation
   OpeningHourTo: string; // Using string for time representation
   OpeningDays: string; // New property for opening days
@@ -24,7 +35,7 @@ interface InputData {
   tags?: string[];
   onChange?: () => void; // Change onChange to a function that does not take parameters
   onClick?: () => void;
-
+  onDelete?: () => void;
 }
 
 export const HistoricalLocationCard = ({
@@ -34,24 +45,61 @@ export const HistoricalLocationCard = ({
   RatingVal,
   Reviews,
   Price,
+  nativePrice,
+  foreignPrice,
+  studentPrice,
   OpeningHourFrom,
   OpeningHourTo,
   OpeningDays, // New property
   Description,
   isActive,
-  imageUrl,
+  image,
   isGoverner,
   tags,
   onChange,
   onClick,
+  onDelete,
 }: InputData) => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
+
+  const convertedPrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(Price ?? 0, baseCurrency, currency);
+  }, [Price, baseCurrency, currency]);
+
+  const convertedNativePrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(nativePrice ?? 0, baseCurrency, currency);
+  }, [nativePrice, baseCurrency, currency]);
+
+  const convertedForeignPrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(foreignPrice ?? 0, baseCurrency, currency);
+  }, [foreignPrice, baseCurrency, currency]);
+
+  const convertedStudentPrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(studentPrice ?? 0, baseCurrency, currency);
+  }, [studentPrice, baseCurrency, currency]);
+
   const navigate = useNavigate();
   function handleEdit(id: string): void {
     navigate(`/EditHistoricalLocation/${id}`);
   }
 
+  const handleDelete = () => {
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    // Perform the delete action here
+    onDelete && onDelete(); // Call the onDelete function passed as a prop
+    setShowDeleteModal(false); // Close modal after confirming
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false); // Close modal without action
+  };
+
   // Manage the state for the rating
- 
+
   return (
     <Card
       className="p-3 shadow-sm"
@@ -59,7 +107,11 @@ export const HistoricalLocationCard = ({
     >
       <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
         {/* Image Section */}
-        <Col md={2} className="p-0 d-flex align-items-stretch" onClick={onClick}>
+        <Col
+          md={2}
+          className="p-0 d-flex align-items-stretch"
+          onClick={onClick}
+        >
           <Image
             src="https://via.placeholder.com/250x250"
             rounded
@@ -68,7 +120,11 @@ export const HistoricalLocationCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={isGoverner ? 6 : 7} className="d-flex align-items-stretch" onClick={onClick}>
+        <Col
+          md={isGoverner ? 6 : 7}
+          className="d-flex align-items-stretch"
+          onClick={onClick}
+        >
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
@@ -81,7 +137,12 @@ export const HistoricalLocationCard = ({
                 </Card.Title>
                 {/* Badges next to Activity Name */}
                 {tags?.map((tag, index) => (
-                  <Badge pill bg="tag" className="me-2 custom-badge" key={index}>
+                  <Badge
+                    pill
+                    bg="tag"
+                    className="me-2 custom-badge"
+                    key={index}
+                  >
                     {tag}
                   </Badge>
                 ))}
@@ -118,10 +179,7 @@ export const HistoricalLocationCard = ({
           {/* Rating and Reviews on the Far Right */}
           <div className="d-flex align-items-center justify-content-end mb-3">
             {/* Rating Stars */}
-            <Rating
-              rating={RatingVal}
-              readOnly={true}
-            />
+            <Rating rating={RatingVal} readOnly={true} />
             <Badge
               className="ms-2 review-badge text-center"
               style={{
@@ -131,40 +189,64 @@ export const HistoricalLocationCard = ({
               {RatingVal.toFixed(1)}
             </Badge>
           </div>
-          <p className="text-muted text-right" style={{ fontSize: "0.9rem" }}>
+          <p className="text-muted text-right" style={{ fontSize: "1.1rem" }}>
             {Reviews.toLocaleString()} Reviews
           </p>
 
-
-
-
           {/* Booking Badge */}
-          <div className="text-right">
-            <h4 style={{ fontWeight: "bold" }}>${Price.toFixed(2)}</h4>
+          <div className="text-end">
             {isGoverner ? (
-              <Badge
-                bg={isActive ? "active" : "inactive"} // Change color based on booking status
-                className="mt-2 custom-status-badge rounded-4 text-center"
-                onClick={onChange} // Call onChange when clicked
-              >
-                {isActive ? "Active" : "InActive"}
-              </Badge>
-            ) : null}
+              <>
+                {nativePrice && foreignPrice && studentPrice && (
+                  <>
+                    <p>Native Price: {convertedNativePrice}</p>
+                    <p>Foreign Price: {convertedForeignPrice}</p>
+                    <p>Student Price: {convertedStudentPrice}</p>
+                  </>
+                )}
+                <Badge
+                  bg={isActive ? "active" : "inactive"} // Change color based on booking status
+                  className="mt-2 custom-status-badge rounded-4 text-center"
+                  onClick={onChange} // Call onChange when clicked
+                >
+                  {isActive ? "Active" : "InActive"}
+                </Badge>
+              </>
+            ) : (Price !== undefined ? <h4 style={{ fontWeight: "bold" }}>{convertedPrice}</h4> : null)}
           </div>
         </Col>
-        {isGoverner ?
+        {isGoverner ? (
           <Col md={1} className="d-flex align-items-baseline">
             <DropdownButton
               align="end"
-              title="⋮"  // Three-dot symbol
+              title="⋮" // Three-dot symbol
               variant="light"
-              className="d-flex justify-content-end ms-3 btn-main-inverse">
-              <Dropdown.Item onClick={() => id && handleEdit(id)}>Edit</Dropdown.Item>
+              className="d-flex justify-content-end ms-3 btn-main-inverse"
+            >
+              <Dropdown.Item onClick={() => id && handleEdit(id)}>
+                Edit
+              </Dropdown.Item>
+              <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item>
             </DropdownButton>
           </Col>
-          : null}
+        ) : null}
       </Row>
+
+      {/* Delete Confirmation Modal */}
+      <Modal show={showDeleteModal} onHide={cancelDelete} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this product?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={cancelDelete}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmDelete}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Card>
   );
 };
-

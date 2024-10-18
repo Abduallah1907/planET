@@ -4,6 +4,7 @@ import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
 import {
+  IAdminUpdateDTO,
   IUserAdminCreateAdminDTO,
   IUserAdminCreateGovernorDTO,
   IUserAdminViewDTO,
@@ -13,10 +14,10 @@ import {
   InternalServerError,
   HttpError,
   BadRequestError,
+  NotFoundError,
 } from "@/types/Errors";
 import UserService from "./userService";
 import bcrypt from "bcryptjs";
-
 
 // User related services (delete, view, and create users)
 
@@ -337,5 +338,95 @@ export default class AdminService {
     if (!deletedTag) throw new HttpError("Tag not found", 404);
 
     return new response(true, deletedTag, "Tag deleted!", 200);
+  }
+
+  public async acceptUserService(email: string): Promise<any> {
+    const user = await this.userModel.findOneAndUpdate(
+      { email: email },
+      { status: UserStatus.APPROVED },
+      { new: true }
+    );
+
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (!user) throw new NotFoundError("User not found");
+
+    if (user.status != UserStatus.WAITING_FOR_APPROVAL) {
+      throw new BadRequestError(
+        "User must be waiting for approval to be accepted"
+      );
+    }
+
+    if (
+      user.role !== UserRoles.Seller &&
+      user.role !== UserRoles.TourGuide &&
+      user.role !== UserRoles.Advertiser
+    ) {
+      throw new BadRequestError(
+        "User must be a Seller, TourGuide, or Advertiser to be accepted"
+      );
+    }
+
+    return new response(true, user, "User accepted", 200);
+    // TODO
+  }
+
+  public async rejectUserService(email: string): Promise<any> {
+    const user = await this.userModel.findOneAndUpdate(
+      { email: email },
+      { status: UserStatus.REJECTED },
+      { new: true }
+    );
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (!user) throw new NotFoundError("User not found");
+
+    if (user.status != UserStatus.WAITING_FOR_APPROVAL) {
+      throw new BadRequestError(
+        "User must be waiting for approval to be accepted"
+      );
+    }
+    if (
+      user.role !== UserRoles.Seller &&
+      user.role !== UserRoles.TourGuide &&
+      user.role !== UserRoles.Advertiser
+    ) {
+      throw new BadRequestError(
+        "User must be a Seller, TourGuide, or Advertiser to be accepted"
+      );
+    }
+
+    return new response(true, user, "User rejected", 200);
+
+    // TODO
+  }
+
+  public async updateAdminService(
+    email: string,
+    AdminUpdateDTO: IAdminUpdateDTO
+  ) {
+    const { newEmail, name, phone_number, password } = AdminUpdateDTO;
+    let hashedPassword;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10); // Await bcrypt.hash here
+    }
+    const user = await this.userModel.findOneAndUpdate(
+      { email: email, role: UserRoles.Admin },
+      {
+        email: newEmail,
+        name: name,
+        phone_number: phone_number,
+        password: hashedPassword,
+      },
+      { new: true }
+    );
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (!user) throw new NotFoundError("User not found");
+
+    return new response(true, user, "Admin updated", 200);
   }
 }

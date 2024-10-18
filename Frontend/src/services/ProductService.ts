@@ -2,9 +2,6 @@ import axiosInstance from '../utils/axiosInstance';
 import axios from 'axios';
 
 class ProductService {
-  static get(product_id: string) {
-    throw new Error("Method not implemented.");
-  }
   public static getAllProducts = async () => {
     try {
       const response = await axiosInstance.get("/product/getAllProducts");
@@ -13,8 +10,18 @@ class ProductService {
     catch (error) {
       throw error;
     }
-
   };
+
+  public static getProductsBySellerId = async (seller_id: string) => {
+    try {
+      const response = await axiosInstance.get(`/product/getProductsBySellerId/${seller_id}`);
+      return response.data;
+    }
+    catch (error) {
+      throw error;
+    }
+  };
+
   public static getProductByName = async (name: string) => {
     try {
       const response = await axiosInstance.get(`/product/getProductByName/${name}`);

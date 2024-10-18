@@ -1,18 +1,14 @@
 import React, { useState, ChangeEvent } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import AdminFormGroup from "../components/FormGroup/FormGroup"; // Reuse the form group component
-import "../components/FormGroup.css"; // Reuse existing CSS
-import "./CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
-import { descriptors } from "chart.js/dist/core/core.defaults";
-import { useAppSelector } from "../store/hooks";
-import { ProductService } from "../services/ProductService";
-import { useNavigate, useParams } from "react-router-dom";
-import UserRoles from "../types/userRoles";
+import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Reuse the form group component
+import { useAppSelector } from "../../store/hooks";
+import { ProductService } from "../../services/ProductService";
+import { useNavigate } from "react-router-dom";
 
-interface FormData{
+interface FormData {
   name: string;
   description: string;
-  picture: File | null;
+  image: File | null;
   price: number;
   quantity: number;
   archive_flag: boolean;
@@ -22,7 +18,7 @@ const AddNewProduct: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     description: "",
-    picture: null,
+    image: null,
     price: 0,
     quantity: 0,
     archive_flag: false,
@@ -32,33 +28,34 @@ const AddNewProduct: React.FC = () => {
     const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFormData({...formData,picture:e.target.files[0]});
+      setFormData({ ...formData, image: e.target.files[0] });
     }
   };
   const seller_id = useAppSelector((state) => state.user.stakeholder_id?._id);
   const navigate = useNavigate();
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const productData = {
       name: formData.name,
       description: formData.description,
       price: formData.price,
-      picture: formData.picture ? formData.picture.toString() : "",
+      image: formData.image ? formData.image.toString() : "",
       quantity: formData.quantity,
       archive_flag: formData.archive_flag,
     };
-     if (seller_id) {
-       await ProductService.createProduct(seller_id, productData);
-       navigate("/MyProducts");
-     } else {
-       console.error("Seller ID is undefined");}
+    if (seller_id) {
+      await ProductService.createProduct(seller_id, productData);
+      navigate("/MyProducts");
+    } else {
+      console.error("Seller ID is undefined");
+    }
   };
 
   return (
@@ -105,11 +102,12 @@ const AddNewProduct: React.FC = () => {
 
           <Row>
             <Col>
-              <Form.Group className="form-group" controlId="product-picture">
-                <Form.Label>Picture</Form.Label>
+              <Form.Group className="form-group" controlId="product-image">
+                <Form.Label>Image</Form.Label>
                 <Form.Control
                   type="file"
-                  name="productPicture"
+                  name="productImage"
+                  className="custom-form-control"
                   accept="image/*"
                   onChange={handleFileChange}
                 />
@@ -161,7 +159,12 @@ const AddNewProduct: React.FC = () => {
             </Col>
           </Row>
 
-          <Button type="submit" className="update-btn mt-3" onClick={handleSubmit}>
+          <Button
+            variant="main-inverse"
+            type="submit"
+            className="mt-3"
+            onClick={handleSubmit}
+          >
             Add Product
           </Button>
         </Form>

@@ -1,0 +1,492 @@
+openapi: "3.0.0"
+info:
+  title: Mailer API
+  version: 1.0.0
+  description: API for mail.
+components:
+  schemas:
+    ITouristCreateDTO:
+      type: object
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [Tourist]
+        phone_number:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+    ITouristUpdateDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        newEmail:
+          type: string
+        password:
+          type: string
+        phone_number:
+          type: string
+        job:
+          type: string
+        nation:
+          type: string
+        addresses:
+          type: array
+          items:
+            type: string
+    ITourist:
+      type: object
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+        phone_number:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+    ITouristOutputDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+        phone_number:
+          type: string
+        status:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+        job:
+          type: string
+        nation:
+          type: string
+        wallet:
+          type: number
+        loyality_points:
+          type: number
+        badge:
+          type: string
+        addresses:
+          type: array
+          items:
+            type: string
+    ITouristNewUserDTO:
+      type: object
+      properties:
+        user_id:
+          type: string
+        job:
+          type: string
+        nation:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+tags:
+  - name: Tourist
+    description: Tourist management and retrieval
+paths:
+  /api/tourist/getTourist/{email}:
+    get:
+      tags:
+        - Tourist
+      summary: Retrieve tourist from system
+      description: Retrieve data of tourist by email
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        201:
+          description: Tourist data.
+        400:
+          description: Bad request.
+        500:
+          description: Internal server error.
+  /api/tourist/updateTourist/{searchEmail}:
+    put:
+      tags:
+        - Tourist
+      summary: Update tourist in system
+      description: Update tourist data by email
+      parameters:
+        - in: path
+          name: searchEmail
+          required: true
+          description: Email of the tourist to update for
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the tourist
+                newEmail:
+                  type: string
+                  description: New email of the tourist
+                password:
+                  type: string
+                  description: Password of the tourist
+                phone_number:
+                  type: string
+                  description: Phone number of the tourist
+                job:
+                  type: string
+                  description: Job of the tourist
+                nation:
+                  type: string
+                  description: Nation of the tourist
+                addresses:
+                  type: array
+                  items:
+                    type: string
+                  description: Addresses of the tourist
+      responses:
+        200:
+          description: Updated Tourist data.
+        400:
+          description: Bad request.
+        500:
+          description: Internal server error.
+  /api/tourist/createTourist:
+    post:
+      tags:
+        - Tourist
+      summary: Create tourist in system
+      description: Create a new tourist in the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email of the tourist
+                name:
+                  type: string
+                  description: Name of the tourist
+                username:
+                  type: string
+                  description: Username of the tourist
+                password:
+                  type: string
+                  description: Password of the tourist
+                phone_number:
+                  type: string
+                  description: Phone number of the tourist
+                date_of_birth:
+                  type: string
+                  format: date
+                  description: Date of birth of the tourist
+                job:
+                  type: string
+                  description: Job of the tourist
+                nation:
+                  type: string
+                  description: Nation of the tourist
+      responses:
+        200:
+          description: Tourist created data.
+        400:
+          description: Bad request.
+        500:
+          description: Internal server error.
+  /api/tourist/rateandcommentTourGuide/{tourist_id}:
+    post:
+      tags:
+        - Tourist
+      summary: Rate and comment tour guide
+      description: Rate and comment tour guide
+      parameters:
+        - in: path
+          name: tourist_id
+          required: true
+          description: Tourist id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tour_guide_email:
+                  type: string
+                  description: Email of the tour guide
+                comment:
+                  type: string
+                  description: Comment of the tourist
+                rating:
+                  type: number
+                  description: Rating of the tourist
+      responses:
+        200:
+          description: Tourist rated and commented tour guide
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+  /api/tourist/rateandcommentItinerary/{tourist_id}:
+    post:
+      tags:
+        - Tourist
+      summary: Rate and comment itinerary
+      description: Rate and comment itinerary
+      parameters:
+        - in: path
+          name: tourist_id
+          required: true
+          description: Tourist id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tour_guide_email:
+                  type: string
+                  description: Email of the tour guide
+                name_of_itinerary:
+                  type: string
+                  description: Name of the itinerary
+                comment:
+                  type: string
+                  description: Comment of the tourist
+                rating:
+                  type: number
+                  description: Rating of the tourist
+      responses:
+        201:
+          description: Tourist rated and commented itinerary
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+  /api/tourist/rateandcommentActivity/{tourist_id}:
+    post:
+      tags:
+        - Tourist
+      summary: Rate and comment activity
+      description: Rate and comment activity
+      parameters:
+        - in: path
+          name: tourist_id
+          required: true
+          description: Tourist id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name_of_activity:
+                  type: string
+                  description: Name of the activity
+                comment:
+                  type: string
+                  description: Comment on the activity
+                rating:
+                  type: number
+                  description: Rating on the activity
+      responses:
+        201:
+          description: Tourist rated and commented activity
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+  /api/tourist/bookActivity:
+    post:
+      tags:
+        - Tourist
+      summary: Book an activity
+      description: Book an activity for a tourist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email of the tourist
+                activity_id:
+                  type: string
+                  description: ID of the activity
+      responses:
+        200:
+          description: Activity booked successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+  /api/tourist/bookItinerary:
+    post:
+      tags:
+        - Tourist
+      summary: Book an itinerary
+      description: Book an itinerary for a tourist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email of the tourist
+                itinerary_id:
+                  type: string
+                  description: ID of the itinerary
+      responses:
+        200:
+          description: Itinerary booked successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+  /api/tourist/bookHistoricalLocation:
+    post:
+      tags:
+        - Tourist
+      summary: Book a historical location
+      description: Book a historical location for a tourist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email of the tourist
+                historical_location_id:
+                  type: string
+                  description: ID of the historical location
+      responses:
+        200:
+          description: Historical location booked successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+
+  /api/tourist/recievePoints:
+    put:
+      tags:
+        - Tourist
+      summary: Recieve points
+      description: Recieve points for a tourist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tourist_id:
+                  type: string
+                  description: tourist_id of the tourist
+                amount:
+                  type: number
+                  description: Amount available
+      responses:
+        200:
+          description: Points recieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+
+  /api/tourist/recieveBadge:
+    put:
+      tags:
+        - Tourist
+      summary: Recieve badge
+      description: Recieve badge for a tourist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tourist_id:
+                  type: string
+                  description: tourist_id of the tourist
+                points:
+                  type: number
+                  description: Points available
+      responses:
+        200:
+          description: Badge recieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error        
+
+  /api/tourist/redeemPoints/{email}:
+    put:
+      tags:
+        - Tourist
+      summary: Redeem points
+      description: Redeem points for a tourist
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        200:
+          description: Points redeemed successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error

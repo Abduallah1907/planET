@@ -6,10 +6,8 @@ import { Col, Row, Container, Form, InputGroup, Button } from "react-bootstrap";
 import { BiSort } from "react-icons/bi";
 
 import { FaSearch } from "react-icons/fa";
-import filterOptions from "../../utils/filterOptions.json";
 import { HistoricalService } from "../../services/HistoricalService";
 import {
-  IHistorical_location,
   IHistorical_location_tourist,
 } from "../../types/IHistoricalLocation";
 import { useNavigate } from "react-router-dom";
@@ -73,9 +71,13 @@ export default function HistoricalLocationsPage() {
       case "topPicks":
         return b.average_rating - a.average_rating;
       case "priceHighToLow":
-        return (a.reviewsCount ?? 0) - (b.reviewsCount ?? 0);
+        return (b.price ?? 0) - (a.price ?? 0);
       case "priceLowToHigh":
-        return (b.reviewsCount ?? 0) - (a.reviewsCount ?? 0);
+        return (a.price ?? 0) - (b.price ?? 0);
+      case "ratingHighToLow":
+        return (b.average_rating ?? 0) - (a.average_rating ?? 0);
+      case "ratingLowToHigh":
+        return (a.average_rating ?? 0) - (b.average_rating ?? 0);
       default:
         return 0;
     }
@@ -90,7 +92,7 @@ export default function HistoricalLocationsPage() {
       <Row className="justify-content-center my-4">
         <Col md={6} className="text-center">
           <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
-            Explore Historical Locations
+            {t("explore_historical_locations")}
           </h1>
         </Col>
       </Row>
@@ -147,6 +149,8 @@ export default function HistoricalLocationsPage() {
                 <option value="topPicks">Our Top Picks</option>
                 <option value="priceLowToHigh">Price: Low to High</option>
                 <option value="priceHighToLow">Price: High to Low</option>
+                <option value="ratingHighToLow">Rating: High to Low</option>
+                <option value="ratingLowToHigh">Rating: Low to High</option>
               </Form.Select>
             </div>
             {filteredLocations.map(
@@ -156,7 +160,7 @@ export default function HistoricalLocationsPage() {
                     id={location._id}
                     Name={location.name}
                     location={"cairo"}
-                    imageUrl={""}
+                    image={""}
                     RatingVal={location.average_rating}
                     Reviews={location.reviewsCount ?? 0}
                     Description={location.description}
@@ -169,7 +173,9 @@ export default function HistoricalLocationsPage() {
                     isGoverner={false}
                     OpeningHourFrom={location.opening_hours_from}
                     OpeningHourTo={location.opening_hours_to}
-                    OpeningDays={location.opening_days.join(",")}
+                    OpeningDays={location.opening_days
+                      .map((day) => day.slice(0, 3))
+                      .join(", ")}
                     onClick={() => onHistoricalClick(location._id)}
                   />
                 </Col>
