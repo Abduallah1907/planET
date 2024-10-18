@@ -1,15 +1,16 @@
-import mongoose, { ObjectId, Types } from "mongoose";
+import mongoose, { ObjectId, Types, Date } from "mongoose";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import Container, { Inject, Service } from "typedi";
+import { ITour_Guide, ITour_GuideUpdateDTO } from "@/interfaces/ITour_guide";
 import {
   UnauthorizedError,
   HttpError,
   InternalServerError,
   NotFoundError,
   ForbiddenError,
+  BadRequestError,
 } from "@/types/Errors";
-import { ITour_GuideUpdateDTO } from "@/interfaces/ITour_guide";
 import {
   IPreviousWorkInputDTO,
   IPreviousWorkOutputDTO,
@@ -19,14 +20,15 @@ import { ITourGuideInput, ITourGuideOutput } from "@/interfaces/ITour_guide";
 import UserService from "./userService";
 import { IUserInputDTO } from "@/interfaces/IUser";
 import bcrypt from "bcryptjs";
+import { IItinerary } from "@/interfaces/IItinerary";
 
 @Service()
 export default class TourGuideService {
   constructor(
     @Inject("userModel") private userModel: Models.UserModel,
     @Inject("tour_guideModel") private tourGuideModel: Models.Tour_guideModel,
-    @Inject("previous_workModel")
-    private previousWorkModel: Models.Previous_workModel,
+    @Inject("previous_workModel") private previousWorkModel: Models.Previous_workModel,
+    @Inject("ticketModel") private ticketModel: Models.TicketModel,
     @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel
   ) {}
 
@@ -332,5 +334,41 @@ export default class TourGuideService {
       "Profile updated successfully!",
       200
     );
+  }
+
+  public async deleteTourGuideAccountRequest(email: string): Promise<any> {
+    const today = new Date();
+    const tourGuideUser = await this.userModel.findOne({ email });
+    if (!tourGuideUser || tourGuideUser.role !== UserRoles.TourGuide) throw new NotFoundError("Tour guide user account was not found");
+    // the reason for the explicit type is because for some reason the interfaces are set up in a wron way, and idk how to fix
+    // also whether available dates acutally works is up to luck, pray
+    const { itineraries: tourGuideUpcomingItineraries } = await this.tourGuideModel
+      .findOne({ user_id: tourGuideUser._id })
+      .populate({
+        path: "itineraries",
+        match: { available_dates: { $elemMath: { $gt: today } } },
+      })
+      .select("itineraries");
+
+    if (!tourGuideUpcomingItineraries) throw new NotFoundError("Tour guide user account was not found");
+    const bookedItineraries = await this.ticketModel.find({ booking_id: { $in: tourGuideUpcomingItineraries } });
+    console.log(bookedItineraries);
+    if (bookedItineraries.length !== 0)
+      throw new BadRequestError("There are still upcoming itineraries that are booked. Cannot delete until these itineraries are fufilled");
+
+    const tourGuideData: ITour_Guide = await this.tourGuideModel.findOne({ user_id: tourGuideUser._id }).populate("itineraries");
+    const tourGuideItineraries = tourGuideData.itineraries as unknown as IItinerary[];
+    if (tourGuideItineraries) {
+      tourGuideItineraries.forEach(async (itinerary) => {
+        itinerary.active_flag = false;
+        await itinerary.save();
+      });
+    }
+    console.log(tourGuideItineraries);
+
+    const deletedTourGuide = await this.tourGuideModel.findByIdAndDelete(tourGuideData._id);
+    const deletedTourGuideUser = await this.userModel.findByIdAndDelete(tourGuideUser._id);
+
+    return new response(true, {}, "Tour guide successfully deleted", 200);
   }
 }

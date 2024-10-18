@@ -38,6 +38,7 @@ export default class MailerService {
     // the pattern Chain of Responsibility can help here.
     return { delivered: 1, status: "ok" };
   }
+
   public async SendPasswordReminderEmail(user: Partial<IUser>) {
     if (!user.email || !user.password) {
       throw new Error("Email or password not provided");
@@ -61,4 +62,47 @@ export default class MailerService {
       return { delivered: 0, status: "error" };
     }
   }
+
+
+  public async SendPasswordOTPEmail(user: Partial<IUser>) {
+    if (!user.email || !user.password) {
+      throw new Error("Email or password not provided");
+    }
+
+    // Dehash the password
+    const saltRounds = 10;
+    const decryptedPassword = await bcrypt.hash(user.password, saltRounds);
+
+    const data = {
+      from: config.emails.user,
+      to: [user.email],
+      subject: "Password Reminder",
+      text: `Your old password is: ${decryptedPassword}`,
+    };
+
+    try {
+      this.emailTransporter.sendMail(data);
+      return { delivered: 1, status: "ok" };
+    } catch (e) {
+      return { delivered: 0, status: "error" };
+    }
+  }
+
+  public async sendOTPMail(email: string,otp: string) {
+    const data = {
+      from: config.emails.user,
+      to: [email],
+      subject: "Password reset OTP",
+      text: `Your OTP is: ${otp}\nThis OTP is valid for 10 minutes.`,
+    };
+
+    try {
+      this.emailTransporter.sendMail(data);
+      return { delivered: 1, status: "ok" };
+    } catch (e) {
+      return { delivered: 0, status: "error" };
+    }
+    
+  }
+
 }

@@ -117,7 +117,76 @@ paths:
         400:
           description: Bad request.
         500:
-          description: Internal server error.           
+          description: Internal server error.     
+  /api/users/requsetOTP/{email}:
+    get:
+      tags:
+        - Users
+      summary: Request OTP
+      description: Request OTP
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OTP sent to email.
+        400:
+          description: Bad request.
+        500:
+          description: Internal server error. 
+  /api/users/verifyOTP/{email}/{otp}:
+    get:
+      tags:
+        - Users
+      summary: Verify OTP
+      description: Verify OTP
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: otp
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OTP verified.
+        400:
+          description: Bad request.
+        500:
+          description: Internal server error.
+  /api/users/resetPassword:
+    put:
+      tags:
+        - Users
+      summary: Reset password
+      description: Reset password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                otp:
+                  type: string
+      responses:
+        200:
+          description: Password reset.
+        400:
+          description: Bad request.
+        500:
+          description: Internal server error.
 components:
   schemas:
     IUserInputDTO:

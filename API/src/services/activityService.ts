@@ -16,11 +16,11 @@ export default class ActivityService {
     @Inject("categoryModel") private categoryModel: Models.CategoryModel,
     @Inject("advertiserModel") private advertiserModel: Models.AdvertiserModel,
     @Inject("tagModel") private tagModel: Models.TagModel
-  ) {}
+  ) { }
 
   public getAllActivitiesService = async () => {
     const activitiesData = await this.activityModel
-      .find({active_flag:true, booking_flag:true, inappropriate_flag: false})
+      .find({ active_flag: true, booking_flag: true, inappropriate_flag: false })
       .populate("category")
       .populate("tags")
       .populate({
@@ -116,7 +116,7 @@ export default class ActivityService {
     // throw new Error ("Internal server error");
 
     if (activity == null) throw new NotFoundError("Activity not found");
-    
+
     return new response(true, activity, "Activity is found", 200);
   }
 
@@ -127,8 +127,8 @@ export default class ActivityService {
     const activitiesData = await this.activityModel.find({
       advertiser_id: advertiserID,
     })
-    .populate("category")
-    .populate("tags");
+      .populate("category")
+      .populate("tags");
     if (activitiesData instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
@@ -257,7 +257,7 @@ export default class ActivityService {
       const checks: any = {}
       if (filters.advertiser_id) {
         checks.advertiser_id = filters.advertiser_id;
-      }else{
+      } else {
         checks.booking_flag = true;
         checks.active_flag = true;
         checks.inappropriate_flag = false;
@@ -272,7 +272,7 @@ export default class ActivityService {
     }
     const matchStage: any = {};
     if (filters.advertiser_id) {
-      matchStage.advertiser_id =  new ObjectId(filters.advertiser_id);
+      matchStage.advertiser_id = new ObjectId(filters.advertiser_id);
     } else {
       matchStage.booking_flag = true;
       matchStage.active_flag = true;
@@ -326,19 +326,27 @@ export default class ActivityService {
       },
       {
         $lookup: {
-          from: "tags", // The name of the tag collection
-          localField: "tags", // The field in the activities collection
-          foreignField: "_id", // The field in the tags collection
-          as: "tags",
-        },
-      },
-      {
-        $match: matchStage,
+          from: "tags",
+          let: { tagIds: "$tags" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ["$_id", { $map: { input: "$$tagIds", as: "tagId", in: { $toObjectId: "$$tagId" } } }]
+                }
+              }
+            }
+          ],
+          as: "tags"
+        }
       },
       {
         $addFields: {
           reviews_count: { $size: "$comments" },
         },
+      },
+      {
+        $match: matchStage,
       },
     ];
 
@@ -361,7 +369,7 @@ export default class ActivityService {
         $match: { "tags.type": { $in: filters.preferences } },
       });
     }
-
+    
     const activities = await this.activityModel.aggregate(aggregationPipeline);
     if (activities instanceof Error)
       throw new InternalServerError("Internal server error");

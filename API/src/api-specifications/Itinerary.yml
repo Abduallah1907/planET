@@ -310,3 +310,84 @@ paths:
           description: Bad request.
         500:
           description: Internal server error.
+
+  /api/itinerary/activateItinerary/{itinerary_id}:
+    put:
+      tags:
+        - Itinerary
+        - Tour Guide
+      summary: Activate an itinerary ONLY if there are no bookings
+      description: An itinerary cannot be activated if a single tourist books it, even if the itinerary has multiple dates and the other dates are not booked.
+      parameters:
+        - name: itinerary_id
+          in: path
+          description: The itinerary we want to activate.
+          required: true
+          schema:
+            type: string
+            format: objectId
+            example: "6700067cce53c3263e1f8e5c"
+      responses:
+        200:
+          description: Itinerary activated successfully
+        400:
+          description: Tourists have booked this itinerary, and it cannot be activated.
+        404:
+          description: Itinerary not found.
+        409:
+          description: The itinerary is already activated
+        500:
+          description: Internal server error.
+  /api/itinerary/deactivateItinerary/{itinerary_id}:
+    put:
+      tags:
+        - Itinerary
+        - Tour Guide
+      summary: Deactivate an itinerary
+      description: Deactivating an itinerary is possibly irreversible if the itinerary has bookings. Make sure to warn the user of such a thing.
+        This does not prevent the tour guide who created the itinerary to see it. The admin should also be to see it, but this logic is not handled yet.
+      parameters:
+        - name: itinerary_id
+          in: path
+          description: The itinerary we want to deactivate.
+          required: true
+          schema:
+            type: string
+            format: objectId
+            example: "6700067cce53c3263e1f8e5c"
+      responses:
+        200:
+          description: Itinerary deactivated successfully
+        404:
+          description: Itinerary not found.
+        409:
+          description: The itinerary is already deactivated
+        500:
+          description: Internal server error.
+  /api/itinerary/flagItinerary/{itinerary_id}:
+    put:
+      tags:
+        - Itinerary
+        - Admin
+      summary: Flag an itinerary and prevent it to be shown to tourists.
+      description: Flagging an itinerary is a permanent action. Make sure to warn the admin of such thing. This does not prevent the tour guide who
+        created it to see it, but the admin cannot see it after flagging it (ironically enough). This logic will be changed. This does not affect any tourist
+        who booked the itinerary, but maybe it should.
+      parameters:
+        - name: itinerary_id
+          in: path
+          description: The itinerary we want to flag.
+          required: true
+          schema:
+            type: string
+            format: objectId
+            example: "6700067cce53c3263e1f8e5c"
+      responses:
+        200:
+          description: Itinerary flagged successfully
+        404:
+          description: Itinerary not found.
+        409:
+          description: The itinerary is already flagged
+        500:
+          description: Internal server error.

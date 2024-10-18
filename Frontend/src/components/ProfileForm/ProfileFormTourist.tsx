@@ -7,7 +7,6 @@ import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adj
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
 import { TouristService } from "../../services/TouristService";
 import { useAppSelector } from "../../store/hooks";
-import { json } from "stream/consumers";
 
 interface NationalityOption {
   value: string;
@@ -79,7 +78,7 @@ const ProfileForm: React.FC = () => {
     await TouristService.updateTourist(Tourist.email, {
       name: formData.firstName + " " + formData.lastName,
       newEmail: formData.email,
-      /*password: formData.password,*/
+      password: formData.password,
       job: formData.profession,
       nation: formData.nationality,
     });

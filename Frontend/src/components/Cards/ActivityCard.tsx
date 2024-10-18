@@ -56,7 +56,7 @@ const CustomActivityCard = ({
 
   const convertedPrice = useMemo(() => {
     return getConvertedCurrencyWithSymbol(Price, baseCurrency, currency);
-  }, [Price, baseCurrency, currency]);
+  }, [Price, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
 
   // Manage the state for the rating
   const navigate = useNavigate();

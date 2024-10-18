@@ -17,6 +17,10 @@ const complaintSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    body: {
+      type: String,
+      required: true,
+    },
     status: {
       type: String,
       enum: Object.values(ComplaintStatus),

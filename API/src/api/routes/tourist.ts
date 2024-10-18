@@ -36,6 +36,11 @@ export default (app: Router) => {
     touristController.rateandcommentActivity
   );
 
+  route.delete(
+    "/deleteTouristAccountRequest/:email",
+    touristController.deleteTouristAccountRequest
+  );
+
   route.post("/bookActivity", touristController.bookActivity);
 
   route.post("/bookItinerary", touristController.bookItinerary);
@@ -55,6 +60,27 @@ export default (app: Router) => {
     "/recieveBadge",
     authorize([UserRoles.Tourist]),
     touristController.recieveBadge
+  );
+
+  route.get(
+    "/checkTourGuide/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.checkTourGuide
+  );
+  route.get(
+    "/checkItinerary/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.checkItinerary
+  );
+  route.get(
+    "/checkActivity/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.checkActivity
+  );
+  route.post(
+    "/fileComplaint/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.fileComplaint
   );
   route.put("/redeemPoints", touristController.redeemPoints);
 };
