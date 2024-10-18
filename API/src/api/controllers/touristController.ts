@@ -124,4 +124,10 @@ export class TouristController {
     );
     res.status(recievedBadge.status).json(recievedBadge);
   }
+  public async redeemPoints(req: any, res: any) {
+    const { email } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const redeemedPoints = await touristService.redeemPointsService(email);
+    res.status(redeemedPoints.status).json(redeemedPoints);
+  }
 }

@@ -705,4 +705,47 @@ export default class TouristService {
 
     return new response(true, updatedTourist, "Badge recieved", 200);
   }
+
+  public async redeemPointsService(email: string) {
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+    });
+
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    let points = tourist.loyality_points;
+
+    if (points < 10000) {
+      throw new BadRequestError(
+        "Insufficient points must have atleast 10000 for 100EGP"
+      );
+    }
+
+    const updatedTourist = await this.touristModel.findByIdAndUpdate(
+      tourist._id,
+      {
+        wallet: tourist.wallet + 100,
+        loyality_points: tourist.loyality_points - 10000,
+      },
+      { new: true }
+    );
+
+    if (updatedTourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (updatedTourist == null) throw new NotFoundError("Tourist not found");
+
+    return new response(true, updatedTourist, "Points redeemed", 200);
+  }
 }

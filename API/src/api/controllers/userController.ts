@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import UserService from "@/services/userService";
 import Container, { Inject, Service } from "typedi";
-import { IUser, IUserInputDTO } from "@/interfaces/IUser";
+import { IGovernorUpdateDTO, IUser, IUserInputDTO } from "@/interfaces/IUser";
 
 @Service()
 export class UserController {
@@ -20,6 +20,24 @@ export class UserController {
     const loginData = req.query as IUserInputDTO;
     const userService: UserService = Container.get(UserService);
     const user = await userService.loginUserService(loginData);
+    res.status(user.status).json(user);
+  }
+
+  public async forgetPassword(req: any, res: any) {
+    const userService: UserService = Container.get(UserService);
+    const { email } = req.params;
+    console.log("Email controller", email);
+    const user = await userService.forgetPasswordService(email);
+    res.status(user.status).json(user);
+  }
+  public async updateGovernor(req: any, res: any) {
+    const userService: UserService = Container.get(UserService);
+    const { email } = req.params;
+    const governorUpdateData: IGovernorUpdateDTO = req.body;
+    const user = await userService.updateGovernorService(
+      email,
+      governorUpdateData
+    );
     res.status(user.status).json(user);
   }
 }

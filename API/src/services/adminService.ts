@@ -4,6 +4,7 @@ import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
 import {
+  IAdminUpdateDTO,
   IUserAdminCreateAdminDTO,
   IUserAdminCreateGovernorDTO,
   IUserAdminViewDTO,
@@ -400,5 +401,32 @@ export default class AdminService {
     return new response(true, user, "User rejected", 200);
 
     // TODO
+  }
+
+  public async updateAdminService(
+    email: string,
+    AdminUpdateDTO: IAdminUpdateDTO
+  ) {
+    const { newEmail, name, phone_number, password } = AdminUpdateDTO;
+    let hashedPassword;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10); // Await bcrypt.hash here
+    }
+    const user = await this.userModel.findOneAndUpdate(
+      { email: email, role: UserRoles.Admin },
+      {
+        email: newEmail,
+        name: name,
+        phone_number: phone_number,
+        password: hashedPassword,
+      },
+      { new: true }
+    );
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (!user) throw new NotFoundError("User not found");
+
+    return new response(true, user, "Admin updated", 200);
   }
 }

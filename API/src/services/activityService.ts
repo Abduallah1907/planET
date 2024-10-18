@@ -13,13 +13,13 @@ export default class ActivityService {
   constructor(
     @Inject("activityModel") private activityModel: Models.ActivityModel,
     @Inject("categoryModel") private categoryModel: Models.CategoryModel,
-    @Inject("advertiserModel") private advertiserModel: Models.AdvertiserModel
-  ) { }
-
-
+    @Inject("advertiserModel") private advertiserModel: Models.AdvertiserModel,
+    @Inject("tagModel") private tagModel: Models.TagModel
+  ) {}
 
   public getAllActivitiesService = async () => {
-    const activitiesData = await this.activityModel.find({})
+    const activitiesData = await this.activityModel
+      .find({})
       .populate("category")
       .populate("tags")
       .populate({
@@ -27,8 +27,8 @@ export default class ActivityService {
         model: "Advertiser",
         populate: {
           path: "user_id",
-          model: "User" // Ensure this matches the name of your user model
-        }
+          model: "User", // Ensure this matches the name of your user model
+        },
       });
 
     if (activitiesData instanceof Error) {
@@ -97,7 +97,8 @@ export default class ActivityService {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID format");
     }
-    const activity = await this.activityModel.findById(new Types.ObjectId(id))
+    const activity = await this.activityModel
+      .findById(new Types.ObjectId(id))
       .populate("category")
       .populate("tags")
       .populate({
@@ -105,8 +106,8 @@ export default class ActivityService {
         model: "Advertiser",
         populate: {
           path: "user_id",
-          model: "User" // Ensure this matches the name of your user model
-        }
+          model: "User", // Ensure this matches the name of your user model
+        },
       });
 
     if (activity instanceof Error)
@@ -243,6 +244,7 @@ export default class ActivityService {
     date?: { start?: Date; end?: Date };
     category?: string[];
     rating?: { min?: number; max?: number };
+    preferences?: string[];
   }) {
     if (!filters) {
       const activities = await this.activityModel.find();
@@ -288,7 +290,7 @@ export default class ActivityService {
       }
     }
 
-    var aggregationPipeline: any[] = [
+    var aggregationPipeline = [
       {
         $lookup: {
           from: "categories", // The name of the category collection
@@ -301,6 +303,14 @@ export default class ActivityService {
         $unwind: "$category",
       },
       {
+        $lookup: {
+          from: "tags", // The name of the tag collection
+          localField: "tags", // The field in the activities collection
+          foreignField: "_id", // The field in the tags collection
+          as: "tags",
+        },
+      },
+      {
         $match: matchStage,
       },
       {
@@ -310,22 +320,25 @@ export default class ActivityService {
       },
     ];
 
-    if (filters.category) {
+    // Add conditional filters
+    if (filters.category || filters.preferences) {
       aggregationPipeline.push({
         $match: {
-          "category.type": { $in: filters.category },
+          $or: [
+            { "category.type": { $in: filters.category || [] } },
+            { "tags.type": { $in: filters.preferences || [] } },
+          ],
         },
       });
+    } else if (filters.category) {
+      aggregationPipeline.push({
+        $match: { "category.type": { $in: filters.category } },
+      });
+    } else if (filters.preferences) {
+      aggregationPipeline.push({
+        $match: { "tags.type": { $in: filters.preferences } },
+      });
     }
-    // Add $lookup stage to populate tags
-    aggregationPipeline.push({
-      $lookup: {
-        from: "tags", // Assuming the collection name is "tags"
-        localField: "tags", // Assuming the field in activities is "tagIds"
-        foreignField: "_id",
-        as: "tags",
-      },
-    });
 
     const activities = await this.activityModel.aggregate(aggregationPipeline);
     if (activities instanceof Error)
@@ -365,6 +378,8 @@ export default class ActivityService {
   public async getFilterComponentsService() {
     const categories = await this.categoryModel.find().select("type").lean();
 
+    const preferences = await this.tagModel.find().select("type").lean();
+
     const Dates = await this.activityModel
       .find()
       .sort({ date: 1 }) // Sort dates in ascending order
@@ -379,6 +394,10 @@ export default class ActivityService {
 
     const categoryTypes = categories.map((category) => category.type);
 
+    const preferencesList = preferences.map(
+      (preference: any) => preference.type
+    );
+
     const earliestDate = Dates[0].date;
     const latestDate = Dates[Dates.length - 1].date;
 
@@ -390,6 +409,7 @@ export default class ActivityService {
         type: "multi-select",
         values: categoryTypes,
       },
+      Tag: { type: "multi-select", values: preferencesList },
       Date: {
         type: "date-range",
         start: earliestDate,

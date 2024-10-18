@@ -68,4 +68,6 @@ export default (app: Router) => {
   router.put("/acceptUser/:email", authorize([]), adminController.acceptUser);
 
   router.put("/rejectUser/:email", authorize([]), adminController.rejectUser);
+
+  router.put("/updateAdmin/:email", authorize([]), adminController.updateAdmin);
 };

@@ -469,3 +469,24 @@ paths:
           description: Bad request
         500:
           description: Internal server error        
+
+  /api/tourist/redeemPoints/{email}:
+    put:
+      tags:
+        - Tourist
+      summary: Redeem points
+      description: Redeem points for a tourist
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        200:
+          description: Points redeemed successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
