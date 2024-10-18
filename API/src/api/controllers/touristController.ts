@@ -12,6 +12,7 @@ import {
 import TouristService from "../../services/touristService";
 import Container, { Inject, Service } from "typedi";
 import { Types } from "mongoose";
+import { IComplaintCreateDTO } from "@/interfaces/IComplaint";
 @Service()
 export class TouristController {
   public async getTourist(req: any, res: any) {
@@ -133,7 +134,7 @@ export class TouristController {
   // check if the tourist went with the tour guide
   public async checkTourGuide(req: any, res: any) {
     const { tourist_id } = req.params;
-    const { tour_guide_email } = req.body;
+    const { tour_guide_email } = req.query;
     const touristService: TouristService = Container.get(TouristService);
     const checkedTourGuide = await touristService.checkTourGuideService(
       tourist_id,
@@ -141,5 +142,40 @@ export class TouristController {
     );
     //return true or false
     res.status(checkedTourGuide.status).json(checkedTourGuide);
+  }
+  // check if the tourist went with the itinerary
+  public async checkItinerary(req: any, res: any) {
+    const { tourist_id } = req.params;
+    const { itinerary_id } = req.query;
+    const touristService: TouristService = Container.get(TouristService);
+    const checkedItinerary = await touristService.checkItineraryService(
+      tourist_id,
+      itinerary_id
+    );
+    //return true or false
+    res.status(checkedItinerary.status).json(checkedItinerary);
+  }
+  // check if the tourist went to the activity
+  public async checkActivity(req: any, res: any) {
+    const { tourist_id } = req.params;
+    const { activity_id } = req.query;
+    const touristService: TouristService = Container.get(TouristService);
+    const checkedActivity = await touristService.checkActivityService(
+      tourist_id,
+      activity_id
+    );
+    //return true or false
+    res.status(checkedActivity.status).json(checkedActivity);
+  }
+  //create complaint
+  public async fileComplaint(req: any, res: any) {
+    const { tourist_id } = req.params;
+    const data: IComplaintCreateDTO = req.query;
+    const touristService: TouristService = Container.get(TouristService);
+    const filedComplaint = await touristService.fileComplaintService(
+      tourist_id,
+      data
+    );
+    res.status(filedComplaint.status).json(filedComplaint);
   }
 }

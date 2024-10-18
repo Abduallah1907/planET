@@ -282,12 +282,9 @@ paths:
             schema:
               type: object
               properties:
-                tour_guide_email:
+                itinerary_id:
                   type: string
-                  description: Email of the tour guide
-                name_of_itinerary:
-                  type: string
-                  description: Name of the itinerary
+                  description: Itinerary id
                 comment:
                   type: string
                   description: Comment of the tourist
@@ -321,9 +318,9 @@ paths:
             schema:
               type: object
               properties:
-                name_of_activity:
+                activity_id:
                   type: string
-                  description: Name of the activity
+                  description: Activity id
                 comment:
                   type: string
                   description: Comment on the activity
@@ -468,7 +465,7 @@ paths:
         400:
           description: Bad request
         500:
-          description: Internal server error        
+          description: Internal server error
 
   /api/tourist/redeemPoints/{email}:
     put:
@@ -486,6 +483,87 @@ paths:
       responses:
         200:
           description: Points redeemed successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+
+  /api/tourist/checkItinerary/{tourist_id}:
+    get:
+      tags:
+        - Tourist
+      summary: Check itinerary
+      description: Check itinerary for a tourist
+      parameters:
+        - in: path
+          name: tourist_id
+          required: true
+          description: Tourist id
+          schema:
+            type: string
+        - in: query
+          name: itinerary_id
+          required: true
+          description: ID of the itinerary
+          schema:
+            type: string
+      responses:
+        200:
+          description: Itinerary checked successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+
+  /api/tourist/checkTourGuide/{tourist_id}:
+    get:
+      tags:
+        - Tourist
+      summary: Check tour guide
+      description: Check tour guide for a tourist
+      parameters:
+        - in: path
+          name: tourist_id
+          required: true
+          description: Tourist id
+          schema:
+            type: string
+        - in: query
+          name: tour_guide_email
+          required: true
+          description: Email of the tour guide
+          schema:
+            type: string
+      responses:
+        200:
+          description: Tour guide checked successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+
+  /api/tourist/checkActivity/{tourist_id}:
+    get:
+      tags:
+        - Tourist
+      summary: Check activity
+      description: Check activity for a tourist
+      parameters:
+        - in: path
+          name: tourist_id
+          required: true
+          description: Tourist id
+          schema:
+            type: string
+        - in: query
+          name: activity_id
+          required: true
+          description: Activity id
+          schema:
+            type: string
+      responses:
+        200:
+          description: Activity checked successfully
         400:
           description: Bad request
         500:
