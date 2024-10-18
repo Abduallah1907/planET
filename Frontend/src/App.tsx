@@ -134,6 +134,7 @@ const App: React.FC = () => {
         <Route path="/Tags" element={<TagsTable />} />
         <Route path="/HistoricalTags" element={<HistoricalTagsTable />} />
         <Route path="/ChangePasswordForm" element={<ChangePasswordForm />} />
+
       </Routes>
     </AppProvider>
   );
