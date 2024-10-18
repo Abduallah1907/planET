@@ -77,4 +77,19 @@ export default (app: Router) => {
     authorize([UserRoles.Tourist]),
     touristController.fileComplaint
   );
+  route.get(
+    "/viewComplaints/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.viewComplaints
+  );
+  route.get(
+    "/flagtoRateandcommentProduct/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.flagtoRateandcommentProduct
+  );
+  route.post(
+    "/rateandcommentProduct/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.RateandcommentProduct
+  );
 };

@@ -20,6 +20,7 @@ import {
   IComment_Rating,
   IComment_RatingCreateDTOforActivity,
   IComment_RatingCreateDTOforItinerary,
+  IComment_RatingCreateDTOforProduct,
   IComment_RatingCreateDTOfortourGuide,
 } from "@/interfaces/IComment_rating";
 import Historical_locationService from "./Historical_locationService";
@@ -40,7 +41,9 @@ export default class TouristService {
     private comment_ratingModel: Models.Comment_ratingModel,
     @Inject("tour_guideModel") private tour_guideModel: Models.Tour_guideModel,
     @Inject("ticketModel") private ticketModel: Models.TicketModel,
-    @Inject("complaintModel") private complaintModel: Models.ComplaintModel
+    @Inject("complaintModel") private complaintModel: Models.ComplaintModel,
+    @Inject("orderModel") private orderModel: Models.OrderModel,
+    @Inject("productModel") private productModel: Models.ProductModel
   ) {}
 
   public async getTouristService(email: string) {
@@ -852,5 +855,126 @@ export default class TouristService {
     await complaint.save();
 
     return new response(true, complaint, "Complaint filed", 201);
+  }
+  //View My list of complaints
+  public async viewMyComplaintsService(tourist_id: string) {
+    if (!Types.ObjectId.isValid(tourist_id)) {
+      throw new BadRequestError("Invalid id ");
+    }
+    const tourist = await this.touristModel.findById(tourist_id);
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+    const complaints = await this.complaintModel.find({
+      tourist_id: new Types.ObjectId(tourist_id),
+    });
+    if (complaints instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (complaints == null) throw new NotFoundError("Complaint not found");
+    return new response(true, complaints, "Complaints found", 200);
+  }
+  //Flag to rate and comment on a product
+  public async flagtoRateandcommentProductService(
+    tourist_id: string,
+    product_id: string
+  ) {
+    if (!Types.ObjectId.isValid(tourist_id)) {
+      throw new BadRequestError("Invalid id ");
+    }
+    if (!Types.ObjectId.isValid(product_id)) {
+      throw new BadRequestError("Invalid product id ");
+    }
+    const product = await this.productModel.findById(
+      new Types.ObjectId(product_id)
+    );
+    if (product instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (product == null) throw new NotFoundError("Product not found");
+    //go to order and check if the tourist has ordered the product
+    const order = await this.orderModel.findOne({
+      tourist_id: new Types.ObjectId(tourist_id),
+      products: { $elemMatch: { $eq: new Types.ObjectId(product_id) } },
+      status: "Delivered",
+    });
+    if (order instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (order == null) {
+      //return false if the tourist has not visited the location
+      return new response(false, null, "Product not found", 201);
+    }
+    //return true if the tourist has visited the location
+    return new response(true, null, "Product found", 201);
+  }
+  //Rate and comment on product
+  public async rateandcommentProductService(
+    tourist_id: string,
+    data: IComment_RatingCreateDTOforProduct
+  ) {
+    if (!Types.ObjectId.isValid(tourist_id)) {
+      throw new BadRequestError("Invalid id ");
+    }
+    const { product_id, comment, rating } = data;
+    if (!comment && !rating) {
+      throw new BadRequestError(
+        "Invalid input,please add either a comment or rating"
+      );
+    }
+    if (rating && (rating < 0 || rating > 5)) {
+      throw new BadRequestError("Invalid rating");
+    }
+    if (!Types.ObjectId.isValid(product_id)) {
+      throw new BadRequestError("Invalid product id ");
+    }
+    const product = await this.productModel.findById(
+      new Types.ObjectId(product_id)
+    );
+    if (product instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (product == null) throw new NotFoundError("Product not found");
+    //go to order and check if the tourist has ordered the product
+    const order = await this.orderModel.findOne({
+      tourist_id: new Types.ObjectId(tourist_id),
+      products: { $elemMatch: { $eq: new Types.ObjectId(product_id) } },
+      status: "Delivered",
+    });
+    if (order instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (order == null) {
+      throw new BadRequestError("Tourist has not ordered the product");
+    }
+    //create a new comment_rating
+    const comment_rating = new this.comment_ratingModel({
+      tourist_id: new Types.ObjectId(tourist_id),
+      comment: comment,
+      rating: rating,
+    });
+    if (comment_rating instanceof Error)
+      throw new InternalServerError("Internal server error");
+    await comment_rating.save();
+    if (comment_rating instanceof Error)
+      throw new InternalServerError("Internal server error");
+    //update the product comment_rating array
+    if (!product.comments) {
+      product.comments = [];
+    }
+    product.comments.push(comment_rating._id);
+    await product.save();
+    if (product instanceof Error)
+      throw new InternalServerError("Internal server error");
+    //update the average rating of the product
+    if (!product.average_rating) {
+      product.average_rating = 0;
+    }
+    if (rating) {
+      let count = product.comments.length - 1;
+      let sum = count * product.average_rating;
+      sum += rating;
+      count++;
+      product.average_rating = sum / count;
+      await product.save();
+      if (product instanceof Error)
+        throw new InternalServerError("Internal server error");
+    }
+    return new response(true, comment_rating, "Product rated", 201);
   }
 }

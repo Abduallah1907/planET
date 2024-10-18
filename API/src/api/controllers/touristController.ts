@@ -7,6 +7,7 @@ import {
   IComment_Rating,
   IComment_RatingCreateDTOforActivity,
   IComment_RatingCreateDTOforItinerary,
+  IComment_RatingCreateDTOforProduct,
   IComment_RatingCreateDTOfortourGuide,
 } from "@/interfaces/IComment_rating";
 import TouristService from "../../services/touristService";
@@ -177,5 +178,33 @@ export class TouristController {
       data
     );
     res.status(filedComplaint.status).json(filedComplaint);
+  }
+  //view all complaints
+  public async viewComplaints(req: any, res: any) {
+    const { tourist_id } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const complaints = await touristService.viewMyComplaintsService(tourist_id);
+    res.status(complaints.status).json(complaints);
+  }
+  //flag for commenting on complaint
+  public async flagtoRateandcommentProduct(req: any, res: any) {
+    const { tourist_id } = req.params;
+    const { product_id } = req.query;
+    const touristService: TouristService = Container.get(TouristService);
+    const flag = await touristService.flagtoRateandcommentProductService(
+      tourist_id,
+      product_id
+    );
+    res.status(flag.status).json(flag);
+  }
+  public async RateandcommentProduct(req: any, res: any) {
+    const { tourist_id } = req.params;
+    const data: IComment_RatingCreateDTOforProduct = req.body;
+    const touristService: TouristService = Container.get(TouristService);
+    const ratedTourist = await touristService.rateandcommentProductService(
+      tourist_id,
+      data
+    );
+    res.status(ratedTourist.status).json(ratedTourist);
   }
 }
