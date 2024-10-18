@@ -114,3 +114,21 @@ paths:
           description: Bad request.
         500:
           description: Internal server error.
+  /api/seller/deleteSellerAccountRequest/{email}:
+    delete:
+      tags:
+        - Seller
+      summary: Request deletion for seller
+      description: Deletes the account, but leaves any product created by the seller hidden (only viewable in order history and by admin)
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: The seller email that they registered with
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Account successfully deleted
+        "404":
+          description: The email was unable to find a seller with that email, or the person having that email is not a seller.

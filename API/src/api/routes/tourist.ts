@@ -20,21 +20,11 @@ export default (app: Router) => {
     touristController.updateTourist
   );
   route.post("/createTourist", touristController.createTourist);
-  route.post(
-    "/rateandcommentTourGuide/:tourist_id",
-    authorize([UserRoles.Tourist]),
-    touristController.rateandcommentTour_guide
-  );
-  route.post(
-    "/rateandcommentItinerary/:tourist_id",
-    authorize([UserRoles.Tourist]),
-    touristController.rateandcommentItinerary
-  );
-  route.post(
-    "/rateandcommentActivity/:tourist_id",
-    authorize([UserRoles.Tourist]),
-    touristController.rateandcommentActivity
-  );
+  route.post("/rateandcommentTourGuide/:tourist_id", authorize([UserRoles.Tourist]), touristController.rateandcommentTour_guide);
+  route.post("/rateandcommentItinerary/:tourist_id", authorize([UserRoles.Tourist]), touristController.rateandcommentItinerary);
+  route.post("/rateandcommentActivity/:tourist_id", authorize([UserRoles.Tourist]), touristController.rateandcommentActivity);
+
+  route.delete("/deleteTouristAccountRequest/:email", touristController.deleteTouristAccountRequest);
 
   route.post("/bookActivity", touristController.bookActivity);
 
