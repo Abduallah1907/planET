@@ -117,10 +117,6 @@ export default class ItineraryService {
 
   // view all itineraries
   public async getAllItinerariesByTourGuideIDService(tour_guide_id: Types.ObjectId) {
-    // why not use DTO for output one might ask
-    // it is because i do not want to write all the attributes thanks
-    // this also leaves activities' subdocuments as is, if the front end needs that info i will fix it
-    // otherwise everything is fine
     const { itineraries } = await this.tourGuideModel.findById(tour_guide_id).populate({
       path: "itineraries",
       populate: [{ path: "activities" }, { path: "comments" }, { path: "category" }],
@@ -133,7 +129,7 @@ export default class ItineraryService {
 
   public async getAllItinerariesService(page: number): Promise<any> {
     const itineraries = await this.itineraryModel
-      .find({})
+      .find({ active_flag: true, inappropriate_flag: false })
       .limit(10)
       .populate("comments")
       .populate("tags")
@@ -167,7 +163,7 @@ export default class ItineraryService {
     if (!name && !category && !tag) throw new BadRequestError("Invalid input");
 
     const itineraries = await this.itineraryModel
-      .find({ name: name, tags: tag })
+      .find({ name: name, tags: tag, active_flag: true, inappropriate_flag: false })
       .populate({ path: "category", match: { type: category } })
       .populate("timeline")
       .populate("activities")
@@ -184,7 +180,7 @@ export default class ItineraryService {
   public async getUpcomingItinerariesService() {
     const today = Date.now();
     const itineraries = await this.itineraryModel
-      .find({ available_dates: { $gte: today } })
+      .find({ available_dates: { $gte: today }, active_flag: true, inappropriate_flag: false })
       .populate("category")
       .populate("timeline")
       .populate("activities")
@@ -204,7 +200,7 @@ export default class ItineraryService {
     preferences?: string[];
   }) {
     if (!filters) {
-      const itineraries = await this.itineraryModel.find();
+      const itineraries = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false });
       return new response(true, itineraries, "All itineraries are fetched no filter applied", 200);
     }
     const matchStage: any = {};
@@ -253,7 +249,7 @@ export default class ItineraryService {
   public async getSortedItinerariesService(sort: string, direction: string) {
     let sortCriteria = {};
     if (!sort && !direction) {
-      const itineraries = await this.itineraryModel.find();
+      const itineraries = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false });
       return new response(true, itineraries, "Itineraries with no sort criteria provided", 200);
     }
 
@@ -265,7 +261,7 @@ export default class ItineraryService {
       throw new BadRequestError("Invalid sort criteria");
     }
 
-    const itineraries = await this.itineraryModel.find().sort(sortCriteria);
+    const itineraries = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false }).sort(sortCriteria);
     if (itineraries instanceof Error) throw new InternalServerError("Internal server error");
 
     return new response(true, itineraries, "Sorted activities are fetched", 200);
@@ -273,14 +269,14 @@ export default class ItineraryService {
   public async getFilterComponentsService() {
     const preferences = await this.tagModel.find().select("type").lean();
 
-    const prices = await this.itineraryModel.find().select("price").sort({ price: 1 }).lean();
+    const prices = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false }).select("price").sort({ price: 1 }).lean();
 
-    const dates = await this.itineraryModel.find().select("available_dates").lean();
+    const dates = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false }).select("available_dates").lean();
 
     const allDates = dates.flatMap((itinerary: any) => itinerary.available_dates);
     allDates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
 
-    const languages = await this.itineraryModel.find().select("languages").lean();
+    const languages = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false }).select("languages").lean();
 
     const preferencesList = preferences.map((preference: any) => preference.type);
 
