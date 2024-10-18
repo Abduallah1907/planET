@@ -369,8 +369,7 @@ export default class ActivityService {
         $match: { "tags.type": { $in: filters.preferences } },
       });
     }
-
-    console.log(aggregationPipeline)
+    
     const activities = await this.activityModel.aggregate(aggregationPipeline);
     if (activities instanceof Error)
       throw new InternalServerError("Internal server error");
