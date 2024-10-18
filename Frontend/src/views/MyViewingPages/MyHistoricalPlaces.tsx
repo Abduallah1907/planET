@@ -31,7 +31,7 @@ export default function HistoricalLocationsPage() {
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value);
   };
-  
+
   const Governer = useAppSelector((state) => state.user);
 
   const getHistorical = async () => {
@@ -74,8 +74,7 @@ export default function HistoricalLocationsPage() {
     if (response.status === 200) {
       getHistorical();
     }
-  }
-
+  };
 
   // Function to sort historical locations based on selected criteria
   const sortedLocations = [...historical].sort((a, b) => {
@@ -166,22 +165,24 @@ export default function HistoricalLocationsPage() {
                     id={location._id}
                     Name={location.name}
                     location={"cairo"}
-                    imageUrl={""}
+                    image={""}
                     RatingVal={location.average_rating}
                     Reviews={location.reviewsCount ?? 0}
                     Description={location.description}
                     isActive={location.active_flag}
                     tags={location.tags ? Object.values(location.tags) : []}
-                    onChange={() =>
-                      console.log(`${location.name} booking status changed`)
-                    }
                     nativePrice={location.native_price}
                     foreignPrice={location.foreign_price}
                     studentPrice={location.student_price}
                     isGoverner={true}
                     OpeningHourFrom={location.opening_hours_from}
                     OpeningHourTo={location.opening_hours_to}
-                    OpeningDays={location.opening_days.map(day => day.slice(0, 3)).join(", ")}
+                    OpeningDays={location.opening_days
+                      .map((day) => day.slice(0, 3))
+                      .join(", ")}
+                    onChange={() =>
+                      console.log(`${location.name} booking status changed`)
+                    }
                     onClick={() => onHistoricalClick(location._id)}
                     onDelete={() => deleteHistorical(location._id)}
                   />

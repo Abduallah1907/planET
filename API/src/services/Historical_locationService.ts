@@ -21,9 +21,9 @@ export default class Historical_locationService {
     @Inject("historical_tagModel")
     private historical_tagModel: Models.Historical_tagModel,
     @Inject("governorModel") private governorModel: Models.GovernorModel
-  ) { }
+  ) {}
   //this function is to choose the price based on the user data
-  private choosePrice = async (location: any, data: any) => {
+  public choosePrice = async (location: any, data: any) => {
     if (data.job.toLowerCase() == "student") {
       return location.student_price;
     } else {
@@ -92,7 +92,7 @@ export default class Historical_locationService {
         opening_days: locationi.opening_days,
         description: locationi.description,
         active_flag: locationi.active_flag,
-        picture: locationi.picture,
+        images: locationi.images,
         tags: locationi.tags,
         reviewsCount: locationi.comments.length,
       }))
@@ -111,7 +111,7 @@ export default class Historical_locationService {
       name: historical_locationInput.name,
       governor_id: historical_locationInput.governor_id,
       description: historical_locationInput.description,
-      picture: historical_locationInput.picture,
+      images: historical_locationInput.images,
       location: historical_locationInput.location,
       opening_days: historical_locationInput.opening_days,
       opening_hours_from: historical_locationInput.opening_hours_from,
@@ -120,7 +120,9 @@ export default class Historical_locationService {
       foreign_price: historical_locationInput.foreign_price,
       student_price: historical_locationInput.student_price,
       tags: historical_locationInput.tags,
-      active_flag: historical_locationInput.active_flag ? historical_locationInput.active_flag : true,
+      active_flag: historical_locationInput.active_flag
+        ? historical_locationInput.active_flag
+        : true,
     };
     //Code to check if the value corresponds to the key in the object
     const tags_keys = historical_locationData.tags
@@ -171,9 +173,7 @@ export default class Historical_locationService {
     );
   };
 
-  public getHistorical_locationByIDService = async (
-    data: any,
-  ) => {
+  public getHistorical_locationByIDService = async (data: any) => {
     if (!Types.ObjectId.isValid(data.historical_location_id)) {
       throw new BadRequestError("Invalid ID format");
     }
@@ -199,10 +199,10 @@ export default class Historical_locationService {
       opening_days: Historical_location.opening_days,
       description: Historical_location.description,
       active_flag: Historical_location.active_flag,
-      picture: Historical_location.picture,
+      images: Historical_location.images,
       tags: Historical_location.tags,
       reviewsCount: Historical_location.comments.length,
-    }
+    };
     return new response(
       true,
       historical_locationOutput,
@@ -211,9 +211,7 @@ export default class Historical_locationService {
     );
   };
 
-  public getHistorical_locationByIDForGovernerService = async (
-    data: any,
-  ) => {
+  public getHistorical_locationByIDForGovernerService = async (data: any) => {
     if (!Types.ObjectId.isValid(data.historical_location_id)) {
       throw new BadRequestError("Invalid ID format");
     }
@@ -432,8 +430,8 @@ export default class Historical_locationService {
     var aggregationPipeline: any[] = [
       {
         $addFields: {
-          tagsArray: { $objectToArray: "$tags" }
-        }
+          tagsArray: { $objectToArray: "$tags" },
+        },
       },
       {
         $match: matchStage,
@@ -453,10 +451,15 @@ export default class Historical_locationService {
       throw new InternalServerError("Internal server error");
 
     if (!filters.governer_id) {
-      const historical_locations_with_prices = await Promise.all(historical_locations.map(async location => {
-        location.price = await this.choosePrice(location, { nation: filters.nation, job: filters.job });
-        return location;
-      }));
+      const historical_locations_with_prices = await Promise.all(
+        historical_locations.map(async (location) => {
+          location.price = await this.choosePrice(location, {
+            nation: filters.nation,
+            job: filters.job,
+          });
+          return location;
+        })
+      );
       return new response(
         true,
         historical_locations_with_prices,

@@ -67,9 +67,8 @@ const activitySchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
-    image:{
-      type: String,
-      required: false
+    image: {
+      type: mongoose.Schema.Types.ObjectId,
     },
     advertiser_id: {
       type: mongoose.Schema.Types.ObjectId,

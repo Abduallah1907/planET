@@ -1,5 +1,15 @@
-import { Card, Badge, Row, Col, Image, DropdownButton, Dropdown, Modal, Button } from "react-bootstrap";
-import Rating from '../Rating/Rating';
+import {
+  Card,
+  Badge,
+  Row,
+  Col,
+  Image,
+  DropdownButton,
+  Dropdown,
+  Modal,
+  Button,
+} from "react-bootstrap";
+import Rating from "../Rating/Rating";
 import "./Cards.css";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -11,11 +21,11 @@ interface InputData {
   location: string;
   RatingVal: number; // Initial Rating
   Reviews: number;
+  image?: string;
   Price?: number;
   nativePrice?: number;
   foreignPrice?: number;
   studentPrice?: number;
-  imageUrl: string;
   OpeningHourFrom: string; // Using string for time representation
   OpeningHourTo: string; // Using string for time representation
   OpeningDays: string; // New property for opening days
@@ -43,7 +53,7 @@ export const HistoricalLocationCard = ({
   OpeningDays, // New property
   Description,
   isActive,
-  imageUrl,
+  image,
   isGoverner,
   tags,
   onChange,
@@ -89,7 +99,7 @@ export const HistoricalLocationCard = ({
   };
 
   // Manage the state for the rating
- 
+
   return (
     <Card
       className="p-3 shadow-sm"
@@ -97,7 +107,11 @@ export const HistoricalLocationCard = ({
     >
       <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
         {/* Image Section */}
-        <Col md={2} className="p-0 d-flex align-items-stretch" onClick={onClick}>
+        <Col
+          md={2}
+          className="p-0 d-flex align-items-stretch"
+          onClick={onClick}
+        >
           <Image
             src="https://via.placeholder.com/250x250"
             rounded
@@ -106,7 +120,11 @@ export const HistoricalLocationCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={isGoverner ? 6 : 7} className="d-flex align-items-stretch" onClick={onClick}>
+        <Col
+          md={isGoverner ? 6 : 7}
+          className="d-flex align-items-stretch"
+          onClick={onClick}
+        >
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
@@ -119,7 +137,12 @@ export const HistoricalLocationCard = ({
                 </Card.Title>
                 {/* Badges next to Activity Name */}
                 {tags?.map((tag, index) => (
-                  <Badge pill bg="tag" className="me-2 custom-badge" key={index}>
+                  <Badge
+                    pill
+                    bg="tag"
+                    className="me-2 custom-badge"
+                    key={index}
+                  >
                     {tag}
                   </Badge>
                 ))}
@@ -156,10 +179,7 @@ export const HistoricalLocationCard = ({
           {/* Rating and Reviews on the Far Right */}
           <div className="d-flex align-items-center justify-content-end mb-3">
             {/* Rating Stars */}
-            <Rating
-              rating={RatingVal}
-              readOnly={true}
-            />
+            <Rating rating={RatingVal} readOnly={true} />
             <Badge
               className="ms-2 review-badge text-center"
               style={{
@@ -172,9 +192,6 @@ export const HistoricalLocationCard = ({
           <p className="text-muted text-right" style={{ fontSize: "1.1rem" }}>
             {Reviews.toLocaleString()} Reviews
           </p>
-
-
-
 
           {/* Booking Badge */}
           <div className="text-end">
@@ -198,18 +215,21 @@ export const HistoricalLocationCard = ({
             ) : (Price !== undefined ? <h4 style={{ fontWeight: "bold" }}>{convertedPrice}</h4> : null)}
           </div>
         </Col>
-        {isGoverner ?
+        {isGoverner ? (
           <Col md={1} className="d-flex align-items-baseline">
             <DropdownButton
               align="end"
-              title="⋮"  // Three-dot symbol
+              title="⋮" // Three-dot symbol
               variant="light"
-              className="d-flex justify-content-end ms-3 btn-main-inverse">
-              <Dropdown.Item onClick={() => id && handleEdit(id)}>Edit</Dropdown.Item>
+              className="d-flex justify-content-end ms-3 btn-main-inverse"
+            >
+              <Dropdown.Item onClick={() => id && handleEdit(id)}>
+                Edit
+              </Dropdown.Item>
               <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item>
             </DropdownButton>
           </Col>
-          : null}
+        ) : null}
       </Row>
 
       {/* Delete Confirmation Modal */}
@@ -217,9 +237,7 @@ export const HistoricalLocationCard = ({
         <Modal.Header closeButton>
           <Modal.Title>Delete Product</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to delete this product?
-        </Modal.Body>
+        <Modal.Body>Are you sure you want to delete this product?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={cancelDelete}>
             Cancel
@@ -232,4 +250,3 @@ export const HistoricalLocationCard = ({
     </Card>
   );
 };
-

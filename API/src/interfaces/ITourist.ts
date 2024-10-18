@@ -1,5 +1,5 @@
 import TouristBadge from "@/types/enums/touristBadge";
-import { Document, ObjectId } from "mongoose";
+import mongoose, { Document, mongo, ObjectId } from "mongoose";
 import { Cart } from "@/types/Cart";
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
@@ -19,6 +19,7 @@ export interface ITouristOutputDTO {
   loyality_points: number;
   badge: TouristBadge;
   addresses: string[];
+  logo?: mongoose.Schema.Types.ObjectId;
   // cart: Cart;
   // wishlist: ObjectId[];
 }
@@ -34,6 +35,8 @@ export interface ITourist extends Document {
   cart: Cart;
   wishlist: ObjectId[];
   date_of_birth: Date;
+  logo?: mongoose.Schema.Types.ObjectId;
+
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -47,6 +50,7 @@ export interface ITouristCreateDTO {
   job: string;
   nation: string;
   date_of_birth: Date;
+  logo?: mongoose.Schema.Types.ObjectId;
 }
 
 export interface ITouristNewUserDTO {
@@ -54,6 +58,7 @@ export interface ITouristNewUserDTO {
   job: string;
   nation: string;
   date_of_birth: Date;
+  logo?: mongoose.Schema.Types.ObjectId;
 }
 
 export interface ITouristUpdateDTO {
@@ -64,4 +69,5 @@ export interface ITouristUpdateDTO {
   job?: string;
   nation?: string;
   addresses?: string[];
+  logo?: mongoose.Schema.Types.ObjectId;
 }

@@ -27,7 +27,7 @@ interface InputData {
   Date_Time: Date;
   isActive: boolean;
   isBooked: boolean; // Added isBooked prop
-  imageUrl: string;
+  image?: string;
   onChange?: () => void; // Change onChange to a function that does not take parameters
   onClick?: () => void;
   onDelete?: () => void;
@@ -85,7 +85,11 @@ const CustomActivityCard = ({
     >
       <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
         {/* Image Section */}
-        <Col md={2} className="p-0 d-flex align-items-stretch" onClick={onClick}>
+        <Col
+          md={2}
+          className="p-0 d-flex align-items-stretch"
+          onClick={onClick}
+        >
           <Image
             src="https://via.placeholder.com/250x250"
             rounded
@@ -95,7 +99,11 @@ const CustomActivityCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={isAdvertiser ? 6 : 7} className="d-flex align-items-stretch" onClick={onClick}>
+        <Col
+          md={isAdvertiser ? 6 : 7}
+          className="d-flex align-items-stretch"
+          onClick={onClick}
+        >
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
@@ -170,11 +178,15 @@ const CustomActivityCard = ({
             <h4 style={{ fontWeight: "bold" }}>{convertedPrice}</h4>
             {isAdvertiser ? (
               <Badge
-                bg={(isActive && isBooked) ? "active" : "inactive"} // Change color based on booking status
+                bg={isActive && isBooked ? "active" : "inactive"} // Change color based on booking status
                 className="mt-2 custom-status-badge rounded-4 text-center"
                 onClick={onChange} // Call onChange when clicked
               >
-                {!isActive ? "Inactive" : (isBooked ? "Booking On" : "Booking Off")}
+                {!isActive
+                  ? "Inactive"
+                  : isBooked
+                  ? "Booking On"
+                  : "Booking Off"}
               </Badge>
             ) : null}
           </div>
@@ -201,9 +213,7 @@ const CustomActivityCard = ({
         <Modal.Header closeButton>
           <Modal.Title>Delete Product</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to delete this product?
-        </Modal.Body>
+        <Modal.Body>Are you sure you want to delete this product?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={cancelDelete}>
             Cancel

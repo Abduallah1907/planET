@@ -11,4 +11,7 @@ export default (app: Router) => {
   route.get("/test", userController.test);
   route.post("/createUser", userController.createUser);
   route.get("/loginUser", userController.loginUser);
+  route.get("/forgetPassword/:email", userController.forgetPassword);
+
+  route.put("/updateGovernor/:email", userController.updateGovernor);
 };
