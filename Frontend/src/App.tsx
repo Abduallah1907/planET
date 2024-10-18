@@ -51,8 +51,7 @@ import CategoryTable from "./views/Tables/CategoryTable";
 import TagsTable from "./views/Tables/TagTable";
 import HistoricalTagsTable from "./views/Tables/HistoricalTagTable";
 import { use } from "i18next";
-import CategoryTable from "./views/CategoryTable";
-import TagsTable from "./views/TagTable";
+
 import Rating from "./components/Rating/Rating";
 
 
