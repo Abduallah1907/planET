@@ -122,7 +122,7 @@ export default function Login() {
               {
                 path: "/HistoricalTags",
                 label: "Historical Tags",
-              }
+              },
             ])
           );
 
@@ -141,6 +141,7 @@ export default function Login() {
               { path: "/Tags", label: "Tags" },
               { path: "/HistoricalTags", label: "Historical Tags" },
               { path: "/UsersTable", label: "User Managment" },
+              { path: "/ChangePasswordForm", label: "Change Password" },
             ])
           );
           navigate("/AdminDashboard");
@@ -151,7 +152,7 @@ export default function Login() {
       }
       dispatch(activateSidebar());
     } catch (err: any) {
-      setError(err.message);
+      setError(err.response.data.message);
       setShowAlert(true);
     }
     dispatch(login());
@@ -161,10 +162,10 @@ export default function Login() {
     <>
       <Container>
         <Row className="justify-content-center mt-5">
-          <Col sm={12}>
-          <h1>{t("login_title")}</h1>
+          <Col sm={12} md={6} lg={4}>
+          <h1 className="text-center" style={{fontWeight: "bold"}}>{t("login_title")}</h1>
           <h2 className="LOGIN">
-              {t("new_to_planet")}<span className="orange-text">{t("signup")}</span>
+              {t("new_to_planet")}<span className="orange-text"> {t("signup")}</span>
             </h2>
             {showAlert ? (
               <Alert variant="danger" className="text-center">
@@ -194,8 +195,8 @@ export default function Login() {
                 value={userData.passwordLogin}
                 onChange={handleChange}
               />
-              <span className="orange-text mb-2">{t("forgot_password")}</span>
-              <Button onClick={handleLogin} className="login-btn w-100">
+              <a className="mb-2 orange-text text-decoration-none" style={{fontWeight: "bold", cursor: "pointer"}} onClick={()=>navigate('/forgetPassword')}>{t("forgot_password")}</a>
+              <Button onClick={handleLogin} className="login-btn w-100 mt-1">
                 {t("login")}
               </Button>
             </Form>

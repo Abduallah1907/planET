@@ -14,13 +14,13 @@ export default class ActivityService {
   constructor(
     @Inject("activityModel") private activityModel: Models.ActivityModel,
     @Inject("categoryModel") private categoryModel: Models.CategoryModel,
-    @Inject("advertiserModel") private advertiserModel: Models.AdvertiserModel
+    @Inject("advertiserModel") private advertiserModel: Models.AdvertiserModel,
+    @Inject("tagModel") private tagModel: Models.TagModel
   ) { }
 
-
-
   public getAllActivitiesService = async () => {
-    const activitiesData = await this.activityModel.find({active_flag:true, booking_flag:true, inappropriate_flag: false})
+    const activitiesData = await this.activityModel
+      .find({ active_flag: true, booking_flag: true, inappropriate_flag: false })
       .populate("category")
       .populate("tags")
       .populate({
@@ -28,8 +28,8 @@ export default class ActivityService {
         model: "Advertiser",
         populate: {
           path: "user_id",
-          model: "User" // Ensure this matches the name of your user model
-        }
+          model: "User", // Ensure this matches the name of your user model
+        },
       });
 
     if (activitiesData instanceof Error) {
@@ -98,7 +98,8 @@ export default class ActivityService {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID format");
     }
-    const activity = await this.activityModel.findById(new Types.ObjectId(id))
+    const activity = await this.activityModel
+      .findById(new Types.ObjectId(id))
       .populate("category")
       .populate("tags")
       .populate({
@@ -106,8 +107,8 @@ export default class ActivityService {
         model: "Advertiser",
         populate: {
           path: "user_id",
-          model: "User" // Ensure this matches the name of your user model
-        }
+          model: "User", // Ensure this matches the name of your user model
+        },
       });
 
     if (activity instanceof Error)
@@ -115,7 +116,7 @@ export default class ActivityService {
     // throw new Error ("Internal server error");
 
     if (activity == null) throw new NotFoundError("Activity not found");
-    
+
     return new response(true, activity, "Activity is found", 200);
   }
 
@@ -126,8 +127,8 @@ export default class ActivityService {
     const activitiesData = await this.activityModel.find({
       advertiser_id: advertiserID,
     })
-    .populate("category")
-    .populate("tags");
+      .populate("category")
+      .populate("tags");
     if (activitiesData instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
@@ -249,13 +250,14 @@ export default class ActivityService {
     date?: { start?: Date; end?: Date };
     category?: string[];
     rating?: { min?: number; max?: number };
+    preferences?: string[];
     advertiser_id?: string;
   }) {
     if (!filters || Object.keys(filters).length === 0 || (filters.advertiser_id && Object.keys(filters).length === 1)) {
       const checks: any = {}
       if (filters.advertiser_id) {
         checks.advertiser_id = filters.advertiser_id;
-      }else{
+      } else {
         checks.booking_flag = true;
         checks.active_flag = true;
         checks.inappropriate_flag = false;
@@ -270,7 +272,7 @@ export default class ActivityService {
     }
     const matchStage: any = {};
     if (filters.advertiser_id) {
-      matchStage.advertiser_id =  new ObjectId(filters.advertiser_id);
+      matchStage.advertiser_id = new ObjectId(filters.advertiser_id);
     } else {
       matchStage.booking_flag = true;
       matchStage.active_flag = true;
@@ -310,7 +312,7 @@ export default class ActivityService {
       }
     }
 
-    var aggregationPipeline: any[] = [
+    var aggregationPipeline = [
       {
         $lookup: {
           from: "categories", // The name of the category collection
@@ -323,32 +325,51 @@ export default class ActivityService {
         $unwind: "$category",
       },
       {
-        $match: matchStage,
+        $lookup: {
+          from: "tags",
+          let: { tagIds: "$tags" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ["$_id", { $map: { input: "$$tagIds", as: "tagId", in: { $toObjectId: "$$tagId" } } }]
+                }
+              }
+            }
+          ],
+          as: "tags"
+        }
       },
       {
         $addFields: {
           reviews_count: { $size: "$comments" },
         },
       },
+      {
+        $match: matchStage,
+      },
     ];
 
-    if (filters.category) {
+    // Add conditional filters
+    if (filters.category || filters.preferences) {
       aggregationPipeline.push({
         $match: {
-          "category.type": { $in: filters.category },
+          $or: [
+            { "category.type": { $in: filters.category || [] } },
+            { "tags.type": { $in: filters.preferences || [] } },
+          ],
         },
       });
+    } else if (filters.category) {
+      aggregationPipeline.push({
+        $match: { "category.type": { $in: filters.category } },
+      });
+    } else if (filters.preferences) {
+      aggregationPipeline.push({
+        $match: { "tags.type": { $in: filters.preferences } },
+      });
     }
-    // Add $lookup stage to populate tags
-    aggregationPipeline.push({
-      $lookup: {
-        from: "tags", // Assuming the collection name is "tags"
-        localField: "tags", // Assuming the field in activities is "tagIds"
-        foreignField: "_id",
-        as: "tags",
-      },
-    });
-
+    
     const activities = await this.activityModel.aggregate(aggregationPipeline);
     if (activities instanceof Error)
       throw new InternalServerError("Internal server error");
@@ -387,6 +408,8 @@ export default class ActivityService {
   public async getFilterComponentsService() {
     const categories = await this.categoryModel.find().select("type").lean();
 
+    const preferences = await this.tagModel.find().select("type").lean();
+
     const Dates = await this.activityModel
       .find()
       .sort({ date: 1 }) // Sort dates in ascending order
@@ -401,6 +424,10 @@ export default class ActivityService {
 
     const categoryTypes = categories.map((category) => category.type);
 
+    const preferencesList = preferences.map(
+      (preference: any) => preference.type
+    );
+
     const earliestDate = Dates[0].date;
     const latestDate = Dates[Dates.length - 1].date;
 
@@ -412,6 +439,7 @@ export default class ActivityService {
         type: "multi-select",
         values: categoryTypes,
       },
+      Tag: { type: "multi-select", values: preferencesList },
       Date: {
         type: "date-range",
         start: earliestDate,

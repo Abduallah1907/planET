@@ -116,7 +116,7 @@ const TourGuideFirst: React.FC = () => {
 
     await TourGuideServices.updateTourGuide(TourGuideFirst.email, {
       years_of_experience: formData.yearsOfExperience,
-      logo: formData.logo,
+      photo: formData.logo,
       createdPreviousWork: createdWork.map((work) => ({
         id: work.id, // Send the ID to the backend
         title: work.title,

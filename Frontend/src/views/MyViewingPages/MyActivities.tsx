@@ -163,7 +163,7 @@ export default function ActivitiesPage() {
                   location={"cairo"}
                   category={activity.category.type}
                   tags={activity.tags.map((item: { type: any }) => item.type)}
-                  imageUrl={""}
+                  image={""}
                   RatingVal={activity.average_rating}
                   Reviews={activity.reviews_count ?? 0}
                   Price={activity.price || 0}

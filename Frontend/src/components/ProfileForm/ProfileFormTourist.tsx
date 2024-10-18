@@ -80,7 +80,7 @@ const ProfileForm: React.FC = () => {
     await TouristService.updateTourist(Tourist.email, {
       name: formData.firstName + " " + formData.lastName,
       newEmail: formData.email,
-      /*password: formData.password,*/
+      password: formData.password,
       job: formData.profession,
       nation: formData.nationality,
     });

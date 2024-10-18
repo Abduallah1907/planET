@@ -16,6 +16,17 @@ class FileService {
       throw error;
     }
   };
+  public static downloadFile = async (id: string) => {
+    try {
+      const response = await axiosInstance.get(`/file/download/${id}`, {
+        responseType: 'blob' // Ensure response is treated as a blob
+      });
+      return response.data; // Return the blob data
+    } catch (error) {
+      throw error;
+    }
+  };
+  
 }
 
 export { FileService };

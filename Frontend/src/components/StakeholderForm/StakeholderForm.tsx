@@ -4,6 +4,8 @@ import CustomFormGroup from "../FormGroup/FormGroup";
 import ButtonWide from "../ButtonWide/ButtonWide";
 import "./StakeholderForm.css";
 import AuthService from "../../services/authService";
+import { FileService } from "../../services/FileService";
+import { useNavigate } from "react-router-dom";
 
 interface StakeData {
   firstName: string;
@@ -12,9 +14,11 @@ interface StakeData {
   email: string;
   password: string;
   confirmPassword: string;
-  file: File | null;
+  fileL: File[];
+  fileObjectIds: string[];
+  documents_required?: string[];
   role: string;
-  mobile: string | undefined;
+  phone_number: string | undefined;
 }
 
 export default function StakeholderForm() {
@@ -25,9 +29,10 @@ export default function StakeholderForm() {
     email: "",
     password: "",
     confirmPassword: "",
-    file: null,
+    fileL: [],
+    fileObjectIds: [],
     role: "",
-    mobile: "",
+    phone_number: "",
   });
 
   const handleChange = (
@@ -41,31 +46,58 @@ export default function StakeholderForm() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setStakeData({ ...StakeData, file: e.target.files[0] });
+      // Add selected files to the array
+      const selectedFiles = Array.from(e.target.files);
+      setStakeData((prevData) => ({
+        ...prevData,
+        fileL: [...prevData.fileL, ...selectedFiles], // Append new files to the list
+      }));
     }
   };
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (StakeData.password !== StakeData.confirmPassword) {
       alert("Passwords don't match!");
       return;
     }
-    if (StakeData.role == "Seller") {
+
+    const fileObjectIds = await Promise.all(
+      StakeData.fileL.map(async (file) => {
+        // Simulate the file upload process and generate objectId for each file
+        const response = await FileService.uploadFile(file);
+        return response.data._id; // Replace with actual file upload handling
+      })
+    );
+    const updatedStakeData = {
+      ...StakeData, // Spread existing StakeData
+
+      name: `${StakeData.firstName} ${StakeData.lastName}`,
+      documents_required: fileObjectIds,
+    };
+
+    if (StakeData.role === "Seller") {
       try {
-        const seller = await AuthService.registerSeller(StakeData); // Call the API
+        const seller = await AuthService.registerSeller(updatedStakeData);
+        navigate("/login"); // Call the API
       } catch (error) {
         console.error("Seller registration failed: ", error);
       }
-    } else if (StakeData.role == "Advertiser") {
+    } else if (StakeData.role === "Advertiser") {
       try {
-        const advertiser = await AuthService.registerAdvertiser(StakeData); // Call the API
+        const advertiser = await AuthService.registerAdvertiser(
+          updatedStakeData
+        ); // Call the API
+        navigate("/login");
       } catch (error) {
         console.error("Advertiser registration failed: ", error);
       }
-    } else if (StakeData.role == "Tour Guide") {
+    } else if (StakeData.role === "Tour Guide") {
       try {
-        const tourGuide = await AuthService.registerTourGuide(StakeData); // Call the API
+        const tourGuide = await AuthService.registerTourGuide(updatedStakeData);
+        navigate("/login"); // Call the API
       } catch (error) {
         console.error("Tour Guide registration failed: ", error);
       }
@@ -175,18 +207,18 @@ export default function StakeholderForm() {
           />
         </Col>
         <Col>
-          <CustomFormGroup
-            label={"Upload Documents"}
-            type={"file"}
-            placeholder={""}
-            id={"fileUpload"}
-            disabled={false}
-            required={true}
-            onChange={handleFileChange}
-            name={"file"}
-            accept={".pdf,.doc,.docx"}
-            multiple={true}
-          />
+          <Form.Group controlId="formFile" className="mb-3">
+            <Form.Label>
+              <h3>Upload Files </h3> {/* Added 'Seller Logo' label */}
+            </Form.Label>
+            <Form.Control
+              type="file"
+              name="fileL"
+              onChange={handleFileChange}
+              accept="pdf/*"
+              multiple
+            />
+          </Form.Group>
         </Col>
       </Row>
       <Row>
@@ -195,22 +227,15 @@ export default function StakeholderForm() {
             label={"Mobile Number"}
             type={"string"}
             placeholder={"+20-123456789"}
-            id={"mobile"}
+            id={"phone_number"}
             disabled={false}
             required={true}
-            value={StakeData.mobile}
+            value={StakeData.phone_number}
             onChange={handleChange}
-            name={"mobile"}
+            name={"phone_number"}
           />
         </Col>
       </Row>
-      <div key="default-checkbox" className="mb-3">
-        <Form.Check
-          type="checkbox"
-          // id="default-checkbox"
-          label="Remember me"
-        />
-      </div>
       <div key="default-checkbox1" className="mb-4">
         <Form.Check
           type="checkbox"
@@ -227,6 +252,7 @@ export default function StakeholderForm() {
               </a>
             </span>
           }
+          required
         />
       </div>
       <div className="d-flex flex-column text-center">

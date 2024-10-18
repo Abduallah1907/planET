@@ -51,8 +51,10 @@ paths:
                   type: string
                 description:
                   type: string
-                picture:
-                  type: string
+                images:
+                  type: array
+                  items:
+                    type: string
                 location:
                   type: object
                   properties:
@@ -138,8 +140,10 @@ paths:
                   type: string
                 description:
                   type: string
-                picture:
-                  type: string
+                images:
+                  type: array
+                  items:
+                    type: string
                 location:
                   type: object
                   properties:

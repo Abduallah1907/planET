@@ -34,9 +34,9 @@ paths:
                 description:
                   type: string
                   description: Product description
-                picture:
+                image:
                   type: string
-                  description: Product picture
+                  description: Product image
                 price:
                   type: number
                   format: float
@@ -55,7 +55,6 @@ paths:
               required:
                 - name
                 - description
-                - picture
                 - price
                 - quantity
                 - sales
@@ -90,9 +89,9 @@ paths:
                 description:
                   type: string
                   description: Product description
-                picture:
+                image:
                   type: string
-                  description: Product picture
+                  description: Product image
                 price:
                   type: number
                   format: float
@@ -221,3 +220,23 @@ paths:
           description: Filter components are fetched
         "500":
           description: Internal Server Error
+  /api/product/getProductById/{product_id}:
+    get:
+      tags:
+        - Product
+      summary: Get product by id
+      description: Get product by id
+      parameters:
+        - in: path
+          name: product_id
+          required: true
+          schema:
+            type: string
+          description: Product ID
+      responses:
+        "200":
+          description: Product is fetched
+        "404":
+          description: Product not found
+        "500":
+          description: Internal Server Error        
