@@ -1,5 +1,14 @@
-import { BadRequestError, InternalServerError, NotFoundError } from "@/types/Errors";
-import { ITouristCreateDTO, ITouristNewUserDTO, ITouristOutputDTO, ITouristUpdateDTO } from "@/interfaces/ITourist";
+import {
+  BadRequestError,
+  InternalServerError,
+  NotFoundError,
+} from "@/types/Errors";
+import {
+  ITouristCreateDTO,
+  ITouristNewUserDTO,
+  ITouristOutputDTO,
+  ITouristUpdateDTO,
+} from "@/interfaces/ITourist";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 
@@ -36,7 +45,7 @@ export default class TouristService {
     @Inject("comment_ratingModel")
     private comment_ratingModel: Models.Comment_ratingModel,
     @Inject("tour_guideModel") private tour_guideModel: Models.Tour_guideModel,
-    @Inject("ticketModel") private ticketModel: Models.TicketModel,
+    @Inject("ticketModel") private ticketModel: Models.TicketModel
   ) {}
 
   public async getTouristService(email: string) {
@@ -44,12 +53,14 @@ export default class TouristService {
       email: email,
       role: UserRoles.Tourist,
     });
-    if (user instanceof Error) throw new InternalServerError("Internal server error");
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
 
     if (user == null) throw new NotFoundError("User not found");
 
     const tourist = await this.touristModel.findOne({ user_id: user._id });
-    if (tourist instanceof Error) throw new InternalServerError("Internal server error");
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
 
     if (tourist == null) throw new NotFoundError("Tourist not found");
 
@@ -88,7 +99,8 @@ export default class TouristService {
     const newUser = new this.userModel(newUserResponse.data);
     // newUser.role = UserRoles.Tourist;
     await newUser.save();
-    if (newUser instanceof Error) throw new InternalServerError("Internal server error");
+    if (newUser instanceof Error)
+      throw new InternalServerError("Internal server error");
 
     const newTouristData: ITouristNewUserDTO = {
       user_id: newUser._id as ObjectId,
@@ -98,7 +110,8 @@ export default class TouristService {
     };
     const newTourist = new this.touristModel(newTouristData);
     await newTourist.save();
-    if (newTourist instanceof Error) throw new InternalServerError("Internal server error");
+    if (newTourist instanceof Error)
+      throw new InternalServerError("Internal server error");
 
     if (newTourist == null) throw new NotFoundError("Tourist not found");
 
@@ -124,7 +137,10 @@ export default class TouristService {
     return new response(true, touristOutput, "Tourist created", 201);
   }
 
-  public async updateTouristService(searchEmail: string, touristUpdateData: ITouristUpdateDTO) {
+  public async updateTouristService(
+    searchEmail: string,
+    touristUpdateData: ITouristUpdateDTO
+  ) {
     // const phoneNumRegex =
     //   /^\+\d{1,3}[\s-]?(\d{1,4}[\s-]?\d{1,4}[\s-]?\d{1,9})$/;
     // if (
@@ -152,8 +168,13 @@ export default class TouristService {
       password: hashedPassword,
       phone_number: touristUpdateData.phone_number,
     };
-    const user = await this.userModel.findOneAndUpdate({ email: searchEmail, role: UserRoles.Tourist }, updatedUserData, { new: true });
-    if (user instanceof Error) throw new InternalServerError("Internal server error");
+    const user = await this.userModel.findOneAndUpdate(
+      { email: searchEmail, role: UserRoles.Tourist },
+      updatedUserData,
+      { new: true }
+    );
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
 
     if (user == null) throw new NotFoundError("User not found");
 
@@ -162,9 +183,14 @@ export default class TouristService {
       nation: touristUpdateData.nation,
       addresses: touristUpdateData.addresses,
     };
-    const tourist = await this.touristModel.findOneAndUpdate({ user_id: user._id }, updatedTouristData, { new: true });
+    const tourist = await this.touristModel.findOneAndUpdate(
+      { user_id: user._id },
+      updatedTouristData,
+      { new: true }
+    );
 
-    if (tourist instanceof Error) throw new InternalServerError("Internal server error");
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
 
     if (tourist == null) throw new NotFoundError("Tourist not found");
 
@@ -194,31 +220,49 @@ export default class TouristService {
 
   public async requestTouristAccountDeletionService(email: string) {
     const touristUserData = await this.userModel.findOne({ email });
-    if (!touristUserData || touristUserData.role !== UserRoles.Tourist) throw new NotFoundError("No tourist exists with that email");
-    const touristData = await this.touristModel.findOne({ user_id: touristUserData._id });
-    if (!touristData) throw new NotFoundError("No tourist exists with that email");
+    if (!touristUserData || touristUserData.role !== UserRoles.Tourist)
+      throw new NotFoundError("No tourist exists with that email");
+    const touristData = await this.touristModel.findOne({
+      user_id: touristUserData._id,
+    });
+    if (!touristData)
+      throw new NotFoundError("No tourist exists with that email");
 
     // the reason we delete ANYTHING that has this tourist's id, even when it doesn't make sense
     // (such as comments left on an activity), is because they would reference an id that does not exist
     // another solution (instead of outright deleting the tourist) is to edit the tourist's data such that
     // their information is deleted, but the id is maintained for other components to use
     // up to discussion really
-    const deletedTouristUser = await this.userModel.findByIdAndDelete(touristUserData._id);
-    const deletedTouristData = await this.touristModel.findOneAndDelete({ user_id: touristUserData._id });
+    const deletedTouristUser = await this.userModel.findByIdAndDelete(
+      touristUserData._id
+    );
+    const deletedTouristData = await this.touristModel.findOneAndDelete({
+      user_id: touristUserData._id,
+    });
 
     await this.comment_ratingModel.deleteMany({ tourist_id: touristData._id });
     await this.complaintModel.deleteMany({ tourist_id: touristData._id });
     await this.orderModel.deleteMany({ tourist_id: touristData._id });
     await this.ticketModel.deleteMany({ tourist_id: touristData._id });
-    return new response(true, { deletedUserID: touristUserData._id, deletedTouristID: touristData._id }, "Request accepted, deleted tourist", 200);
+    return new response(
+      true,
+      { deletedUserID: touristUserData._id, deletedTouristID: touristData._id },
+      "Request accepted, deleted tourist",
+      200
+    );
   }
-  public async rateandcommentTour_guideService(id: string, data: IComment_RatingCreateDTOfortourGuide) {
+  public async rateandcommentTour_guideService(
+    id: string,
+    data: IComment_RatingCreateDTOfortourGuide
+  ) {
     const { tour_guide_email, comment, rating } = data;
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid id");
     }
     if (!comment && !rating) {
-      throw new BadRequestError("Invalid input,please add either a comment or rating");
+      throw new BadRequestError(
+        "Invalid input,please add either a comment or rating"
+      );
     }
 
     if (rating && (rating < 0 || rating > 5)) {
@@ -228,12 +272,14 @@ export default class TouristService {
       email: tour_guide_email,
       role: UserRoles.TourGuide,
     });
-    if (user instanceof Error) throw new InternalServerError("Internal server error");
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
     if (user == null) throw new NotFoundError("User not found");
     const tour_guide = await this.tour_guideModel.findOne({
       user_id: user._id,
     });
-    if (tour_guide instanceof Error) throw new InternalServerError("Internal server error");
+    if (tour_guide instanceof Error)
+      throw new InternalServerError("Internal server error");
     if (tour_guide == null) throw new NotFoundError("Tour guide not found");
 
     // go I try to loop over the tour guide iternaries and check if the tourist has visited the location by booking_id
@@ -245,8 +291,12 @@ export default class TouristService {
         tourist_id: new Types.ObjectId(id),
       });
     }
-    if (ticket instanceof Error) throw new InternalServerError("Internal server error");
-    if (ticket == null) throw new NotFoundError("Tourist has not visited the location or meet the tour guide");
+    if (ticket instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (ticket == null)
+      throw new NotFoundError(
+        "Tourist has not visited the location or meet the tour guide"
+      );
 
     //create a new comment_rating
     const comment_rating = new this.comment_ratingModel({
@@ -254,9 +304,11 @@ export default class TouristService {
       comment: comment,
       rating: rating,
     });
-    if (comment_rating instanceof Error) throw new InternalServerError("Internal server error");
+    if (comment_rating instanceof Error)
+      throw new InternalServerError("Internal server error");
     await comment_rating.save();
-    if (comment_rating instanceof Error) throw new InternalServerError("Internal server error");
+    if (comment_rating instanceof Error)
+      throw new InternalServerError("Internal server error");
 
     //update the tour guide comment_rating array
     if (!tour_guide.comments) {
@@ -264,7 +316,8 @@ export default class TouristService {
     }
     tour_guide.comments.push(comment_rating._id);
     await tour_guide.save();
-    if (tour_guide instanceof Error) throw new InternalServerError("Internal server error");
+    if (tour_guide instanceof Error)
+      throw new InternalServerError("Internal server error");
 
     return new response(true, comment_rating, "Tour guide rated", 201);
   }
@@ -278,7 +331,9 @@ export default class TouristService {
       throw new BadRequestError("Invalid id");
     }
     if (!comment && !rating) {
-      throw new BadRequestError("Invalid input,please add either a comment or rating");
+      throw new BadRequestError(
+        "Invalid input,please add either a comment or rating"
+      );
     }
     if (rating && (rating < 0 || rating > 5)) {
       throw new BadRequestError("Invalid rating");
@@ -287,7 +342,8 @@ export default class TouristService {
     const itinerary = await this.itineraryModel.findOne({
       _id: new Types.ObjectId(itinerary_id),
     });
-    if (itinerary instanceof Error) throw new InternalServerError("Internal server error");
+    if (itinerary instanceof Error)
+      throw new InternalServerError("Internal server error");
     if (itinerary == null) throw new NotFoundError("Itinerary not found");
     //go to tickets and check if the tourist has visited the location
     const ticket = await this.ticketModel.findOne({
@@ -295,24 +351,31 @@ export default class TouristService {
       booking_id: itinerary._id,
       tourist_id: new Types.ObjectId(id),
     });
-    if (ticket instanceof Error) throw new InternalServerError("Internal server error");
-    if (ticket == null) throw new NotFoundError("Tourist has not visited the location or meet the tour guide");
+    if (ticket instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (ticket == null)
+      throw new NotFoundError(
+        "Tourist has not visited the location or meet the tour guide"
+      );
     //create a new comment_rating
     const comment_rating = new this.comment_ratingModel({
       tourist_id: new Types.ObjectId(id),
       comment: comment,
       rating: rating,
     });
-    if (comment_rating instanceof Error) throw new InternalServerError("Internal server error");
+    if (comment_rating instanceof Error)
+      throw new InternalServerError("Internal server error");
     await comment_rating.save();
-    if (comment_rating instanceof Error) throw new InternalServerError("Internal server error");
+    if (comment_rating instanceof Error)
+      throw new InternalServerError("Internal server error");
     //update the itinerary comment_rating array
     if (!itinerary.comments) {
       itinerary.comments = [];
     }
     itinerary.comments.push(comment_rating._id);
     await itinerary.save();
-    if (itinerary instanceof Error) throw new InternalServerError("Internal server error");
+    if (itinerary instanceof Error)
+      throw new InternalServerError("Internal server error");
     //update the average rating of the itinerary
     if (!itinerary.average_rating) {
       itinerary.average_rating = 0;
@@ -324,7 +387,8 @@ export default class TouristService {
       count++;
       itinerary.average_rating = sum / count;
       await itinerary.save();
-      if (itinerary instanceof Error) throw new InternalServerError("Internal server error");
+      if (itinerary instanceof Error)
+        throw new InternalServerError("Internal server error");
     }
     return new response(true, comment_rating, "Itinerary rated", 201);
   }
@@ -338,7 +402,9 @@ export default class TouristService {
       throw new BadRequestError("Invalid id");
     }
     if (!comment && !rating) {
-      throw new BadRequestError("Invalid input,please add either a comment or rating");
+      throw new BadRequestError(
+        "Invalid input,please add either a comment or rating"
+      );
     }
     if (rating && (rating < 0 || rating > 5)) {
       throw new BadRequestError("Invalid rating");
@@ -347,7 +413,8 @@ export default class TouristService {
     const activity = await this.activityModel.findOne({
       _id: new Types.ObjectId(activity_id),
     });
-    if (activity instanceof Error) throw new InternalServerError("Internal server error");
+    if (activity instanceof Error)
+      throw new InternalServerError("Internal server error");
     if (activity == null) throw new NotFoundError("Activity not found");
     //go to tickets and check if the tourist has visited the location
     const ticket = await this.ticketModel.findOne({
@@ -355,24 +422,31 @@ export default class TouristService {
       booking_id: activity._id,
       tourist_id: new Types.ObjectId(id),
     });
-    if (ticket instanceof Error) throw new InternalServerError("Internal server error");
-    if (ticket == null) throw new NotFoundError("Tourist has not visited the location or done this Activity");
+    if (ticket instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (ticket == null)
+      throw new NotFoundError(
+        "Tourist has not visited the location or done this Activity"
+      );
     //create a new comment_rating
     const comment_rating = new this.comment_ratingModel({
       tourist_id: new Types.ObjectId(id),
       comment: comment,
       rating: rating,
     });
-    if (comment_rating instanceof Error) throw new InternalServerError("Internal server error");
+    if (comment_rating instanceof Error)
+      throw new InternalServerError("Internal server error");
     await comment_rating.save();
-    if (comment_rating instanceof Error) throw new InternalServerError("Internal server error");
+    if (comment_rating instanceof Error)
+      throw new InternalServerError("Internal server error");
     //update the activity comment_rating array
     if (!activity.comments) {
       activity.comments = [];
     }
     activity.comments.push(comment_rating._id);
     await activity.save();
-    if (activity instanceof Error) throw new InternalServerError("Internal server error");
+    if (activity instanceof Error)
+      throw new InternalServerError("Internal server error");
     //update the average rating of the activity
     if (!activity.average_rating && rating) {
       activity.average_rating = 0;
@@ -384,7 +458,8 @@ export default class TouristService {
       count++;
       activity.average_rating = sum / count;
       await activity.save();
-      if (activity instanceof Error) throw new InternalServerError("Internal server error");
+      if (activity instanceof Error)
+        throw new InternalServerError("Internal server error");
     }
     return new response(true, comment_rating, "Activity rated", 201);
   }
@@ -444,7 +519,16 @@ export default class TouristService {
     }
     this.recieveBadgeService(
       tourist_id as Types.ObjectId,
-      tourist.loyality_points
+      tourist.total_loyality_points
+    );
+    if (tourist.wallet < activity.price) {
+      throw new BadRequestError("Insufficient balance");
+    }
+    const newWallet = tourist.wallet - activity.price;
+    const updatedTourist = await this.touristModel.findByIdAndUpdate(
+      tourist_id,
+      { wallet: newWallet },
+      { new: true }
     );
     const ticket = new this.ticketModel({
       tourist_id: tourist_id,
@@ -505,7 +589,16 @@ export default class TouristService {
 
     this.recieveBadgeService(
       tourist_id as Types.ObjectId,
-      tourist.loyality_points
+      tourist.total_loyality_points
+    );
+    if (tourist.wallet < itinerary.price) {
+      throw new BadRequestError("Insufficient balance");
+    }
+    const newWallet = tourist.wallet - itinerary.price;
+    const updatedTourist = await this.touristModel.findByIdAndUpdate(
+      tourist_id,
+      { wallet: newWallet },
+      { new: true }
     );
     const ticket = new this.ticketModel({
       tourist_id: tourist_id,
@@ -578,7 +671,16 @@ export default class TouristService {
 
     this.recieveBadgeService(
       tourist_id as Types.ObjectId,
-      tourist.loyality_points
+      tourist.total_loyality_points
+    );
+    if (tourist.wallet < price) {
+      throw new BadRequestError("Insufficient balance");
+    }
+    const newWallet = tourist.wallet - price;
+    const updatedTourist = await this.touristModel.findByIdAndUpdate(
+      tourist_id,
+      { wallet: newWallet },
+      { new: true }
     );
     const ticket = new this.ticketModel({
       tourist_id: tourist_id,
@@ -624,9 +726,11 @@ export default class TouristService {
     }
     const points_received = points - tourist.loyality_points;
 
+    const totalPointsUpdated = tourist.total_loyality_points + points_received;
+
     const updatedTourist = await this.touristModel.findByIdAndUpdate(
       tourist_id,
-      { loyality_points: points },
+      { loyality_points: points, total_loyality_points: totalPointsUpdated },
       { new: true }
     );
 
@@ -670,6 +774,11 @@ export default class TouristService {
   }
 
   public async redeemPointsService(email: string, points: number) {
+    if (points < 10000) {
+      throw new BadRequestError(
+        "Insufficient points must have atleast 10000 for 100EGP"
+      );
+    }
     const user = await this.userModel.findOne({
       email: email,
       role: UserRoles.Tourist,
@@ -687,24 +796,19 @@ export default class TouristService {
 
     if (tourist == null) throw new NotFoundError("Tourist not found");
 
-    if (points < 10000) {
+    if (points > tourist.loyality_points) {
       throw new BadRequestError(
-        "Insufficient points must have atleast 10000 for 100EGP"
-      );
-    }
-    if (points < tourist.loyality_points) {
-      throw new BadRequestError(
-        "Sorry you do not have enough points to redeem"
+        `Sorry you do not have enough points to redeem. You currently have ${tourist.loyality_points} points.`
       );
     }
 
     let i = Math.floor(points / 10000);
 
     for (let j = 0; j < i; j++) {
-      tourist.wallet + 100;
-      tourist.loyality_points - 10000;
+      tourist.wallet += 100;
+      tourist.loyality_points -= 10000;
     }
-
+    tourist.save();
     return new response(true, tourist, "Points redeemed", 200);
   }
   //flag to check if the tourist went with this tour guide

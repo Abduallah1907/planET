@@ -36,7 +36,7 @@ export interface ITourist extends Document {
   wishlist: ObjectId[];
   date_of_birth: Date;
   logo?: mongoose.Schema.Types.ObjectId;
-
+  total_loyality_points: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

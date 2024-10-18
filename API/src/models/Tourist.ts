@@ -33,6 +33,10 @@ const touristSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    total_loyality_points: {
+      type: Number,
+      default: 0,
+    },
     date_of_birth: {
       type: Date,
       required: true,
