@@ -55,19 +55,19 @@ export const HistoricalLocationCard = ({
 
   const convertedPrice = useMemo(() => {
     return getConvertedCurrencyWithSymbol(Price ?? 0, baseCurrency, currency);
-  }, [Price, baseCurrency, currency]);
+  }, [Price, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
 
   const convertedNativePrice = useMemo(() => {
     return getConvertedCurrencyWithSymbol(nativePrice ?? 0, baseCurrency, currency);
-  }, [nativePrice, baseCurrency, currency]);
+  }, [nativePrice, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
 
   const convertedForeignPrice = useMemo(() => {
     return getConvertedCurrencyWithSymbol(foreignPrice ?? 0, baseCurrency, currency);
-  }, [foreignPrice, baseCurrency, currency]);
+  }, [foreignPrice, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
 
   const convertedStudentPrice = useMemo(() => {
     return getConvertedCurrencyWithSymbol(studentPrice ?? 0, baseCurrency, currency);
-  }, [studentPrice, baseCurrency, currency]);
+  }, [studentPrice, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
 
   const navigate = useNavigate();
   function handleEdit(id: string): void {

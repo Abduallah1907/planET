@@ -108,7 +108,7 @@ const ProfileFormGuide: React.FC = () => {
 
     setFormData({ ...formData, previousWork: updatedWork });
 
-    if (updatedWork[index].id == "") {
+    if (updatedWork[index].id === "") {
       setCreatedWork(
         updatedWork.filter(
           (work) => work.title || work.place || work.from || work.to
@@ -125,7 +125,7 @@ const ProfileFormGuide: React.FC = () => {
   const handleRemoveWork = (index: number) => {
     const workToDelete = formData.previousWork[index];
 
-    if (workToDelete && workToDelete.id != "") {
+    if (workToDelete && workToDelete.id !== "") {
       setDeletedWork((prev) => [...prev, workToDelete.id as string]);
       setEditedWork((prev) => prev.filter((_, i) => i !== index));
     }

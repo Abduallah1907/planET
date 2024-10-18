@@ -1,7 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
-import { set } from 'react-datepicker/dist/date_utils';
-import { get } from 'http';
 
 interface SidebarState {
     isActive: boolean;

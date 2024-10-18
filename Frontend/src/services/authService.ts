@@ -19,7 +19,7 @@ class AuthService {
         password,
         email,
       });
-      const { token, user } = response.data;
+      const { user } = response.data;
       return user;
     } catch (error) {
       throw new Error("Registration failed");
@@ -100,16 +100,6 @@ class AuthService {
         throw new Error("Seller registration failed");
       }
     }
-  }
-
-  private setToken(token: string) {
-    localStorage.setItem("authToken", token);
-    axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  }
-
-  private clearToken() {
-    localStorage.removeItem("authToken");
-    delete axiosInstance.defaults.headers.common["Authorization"];
   }
 }
 

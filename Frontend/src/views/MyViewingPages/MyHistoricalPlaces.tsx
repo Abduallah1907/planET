@@ -4,12 +4,10 @@ import FilterBy from "../../components/FilterBy/FilterBy";
 import React, { useEffect } from "react";
 import { Col, Row, Container, Form, InputGroup, Button } from "react-bootstrap";
 import { BiSort } from "react-icons/bi";
-
 import { FaSearch } from "react-icons/fa";
 import { HistoricalService } from "../../services/HistoricalService";
 import {
   IHistorical_location,
-  IHistorical_location_tourist,
 } from "../../types/IHistoricalLocation";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";

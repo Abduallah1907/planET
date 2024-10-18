@@ -1,7 +1,6 @@
 import { Card, Badge, Row, Col, Image, Button, DropdownButton, Dropdown, Modal } from "react-bootstrap";
 import "./Cards.css";
 import Rating from "../Rating/Rating";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext";
@@ -21,6 +20,7 @@ interface InputData {
   createdAt: Date;
   updatedAt: Date;
   onChange?: () => void;
+  onClick?: () => void;
   isSeller: boolean;
   isAdmin: boolean; // Check if the user is the seller
 }
@@ -39,6 +39,7 @@ const ProductCard = ({
   createdAt,
   updatedAt,
   onChange,
+  onClick,
   isSeller,
   isAdmin,
 }: InputData) => {
@@ -76,7 +77,7 @@ const ProductCard = ({
     <Card className="p-3 shadow-sm" style={{ borderRadius: "10px", height: "100%" }}>
       <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
         {/* Image Section */}
-        <Col md={2} className="p-0 d-flex align-items-stretch">
+        <Col md={2} className="p-0 d-flex align-items-stretch" onClick={onClick}>
           <Image
             src={imageUrl || "https://via.placeholder.com/250x250"}
             rounded
@@ -86,7 +87,7 @@ const ProductCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={(isSeller || isAdmin) ? 6 : 7} className="d-flex align-items-stretch">
+        <Col md={(isSeller || isAdmin) ? 6 : 7} className="d-flex align-items-stretch" onClick={onClick}>
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
@@ -112,7 +113,7 @@ const ProductCard = ({
         </Col>
 
         {/* Rating, Reviews, Price Section */}
-        <Col md={3} className="d-flex flex-column justify-content-between align-items-end">
+        <Col md={3} className="d-flex flex-column justify-content-between align-items-end" onClick={onClick}>
           {/* Rating and Reviews */}
           <div className="d-flex align-items-center justify-content-end mb-1">
             {/* Rating Stars */}

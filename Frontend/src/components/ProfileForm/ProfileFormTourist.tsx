@@ -7,7 +7,6 @@ import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adj
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
 import { TouristService } from "../../services/TouristService";
 import { useAppSelector } from "../../store/hooks";
-import { json } from "stream/consumers";
 
 interface NationalityOption {
   value: string;

@@ -74,8 +74,9 @@ export default function ProductsPage() {
     getProducts();
     getFilterComponents();
   }, []);
-  const onProductClick = (name : string) => {
-    navigate(`/product/${name}`);
+
+  const onProductClick = (id : string) => {
+    navigate(`/product/${id}`);
   }
 
   const filteredProducts = sortedProducts.filter(product =>
@@ -158,6 +159,7 @@ export default function ProductsPage() {
                         imageUrl={product.picture}
                         isActiveArchive={product.archieve_flag}
                         onChange={() => console.log(`${product.name} booking status changed`)}
+                        onClick={()=>onProductClick(product._id)}
                         isSeller={true}
                         isAdmin={true}             />
               </Col>

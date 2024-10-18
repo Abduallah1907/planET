@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Badge, Modal, Button } from 'react-bootstrap';
-import { FaRegHeart, FaHeart, FaBookmark, FaRegBookmark } from 'react-icons/fa';
+import { FaBookmark, FaRegBookmark } from 'react-icons/fa';
 import Rating from '../../components/Rating/Rating';
 import './historicalcard.css'
 import { HistoricalService } from '../../services/HistoricalService';
-import { IHistorical_location_tourist } from '../../types/IHistoricalLocation';
 
 interface ILocalHistoricalLocationTourist {
   _id: string;
