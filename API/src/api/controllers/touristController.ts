@@ -110,7 +110,7 @@ export class TouristController {
       touristObjectID,
       amount
     );
-    res.status(recievedPoints.status).json(recievedPoints);
+    res.status(200).json(recievedPoints);
   }
 
   public async recieveBadge(req: any, res: any) {
@@ -125,9 +125,12 @@ export class TouristController {
     res.status(recievedBadge.status).json(recievedBadge);
   }
   public async redeemPoints(req: any, res: any) {
-    const { email } = req.params;
+    const { email, points } = req.body;
     const touristService: TouristService = Container.get(TouristService);
-    const redeemedPoints = await touristService.redeemPointsService(email);
+    const redeemedPoints = await touristService.redeemPointsService(
+      email,
+      points
+    );
     res.status(redeemedPoints.status).json(redeemedPoints);
   }
 }

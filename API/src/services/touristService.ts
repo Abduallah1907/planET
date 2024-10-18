@@ -480,21 +480,12 @@ export default class TouristService {
           activity.price - activity.price * (activity.special_discount / 100);
       }
     }
-    const ticket = new this.ticketModel({
-      tourist_id: tourist_id,
-      type: "ACTIVITY",
-      price: activity.price,
-      booking_id: activity_id,
-      cancelled: false,
-    });
-
-    await ticket.save();
-
-    if (ticket instanceof Error)
-      throw new InternalServerError("Internal server error in saving ticket");
-
+    let points_received;
     if (activity.price !== undefined) {
-      this.recievePointsService(tourist_id as Types.ObjectId, activity.price);
+      points_received = await this.recievePointsService(
+        tourist_id as Types.ObjectId,
+        activity.price
+      );
     } else {
       throw new BadRequestError("Activity price is undefined");
     }
@@ -502,7 +493,19 @@ export default class TouristService {
       tourist_id as Types.ObjectId,
       tourist.loyality_points
     );
+    const ticket = new this.ticketModel({
+      tourist_id: tourist_id,
+      type: "ACTIVITY",
+      price: activity.price,
+      booking_id: activity_id,
+      cancelled: false,
+      points_received: points_received,
+    });
 
+    await ticket.save();
+
+    if (ticket instanceof Error)
+      throw new InternalServerError("Internal server error in saving ticket");
     return new response(true, ticket, "Activity booked", 201);
   }
 
@@ -542,22 +545,26 @@ export default class TouristService {
     if (itinerary.inappropriate_flag == true)
       throw new BadRequestError("Itinerary is inappropriate");
 
+    let points_received = await this.recievePointsService(
+      tourist_id as Types.ObjectId,
+      itinerary.price
+    );
+
+    this.recieveBadgeService(
+      tourist_id as Types.ObjectId,
+      tourist.loyality_points
+    );
     const ticket = new this.ticketModel({
       tourist_id: tourist_id,
       type: "ITINERARY",
       price: itinerary.price,
       booking_id: itinerary_id,
       cancelled: false,
+      points_received: points_received,
     });
     ticket.save();
     if (ticket instanceof Error)
       throw new InternalServerError("Internal server error in saving ticket");
-    this.recievePointsService(tourist_id as Types.ObjectId, itinerary.price);
-
-    this.recieveBadgeService(
-      tourist_id as Types.ObjectId,
-      tourist.loyality_points
-    );
 
     return new response(true, ticket, "Itinerary booked", 201);
   }
@@ -590,9 +597,9 @@ export default class TouristService {
 
     const tourist_id = tourist._id;
 
-    const historical_location = await this.historical_locationsModel.findById({
-      _id: historical_location_id,
-    });
+    const historical_location = await this.historical_locationsModel.findById(
+      historical_location_id
+    );
 
     if (historical_location instanceof Error)
       throw new InternalServerError("Internal server error");
@@ -611,25 +618,27 @@ export default class TouristService {
       tourist
     );
 
+    let points_received = await this.recievePointsService(
+      tourist_id as Types.ObjectId,
+      price
+    );
+
+    this.recieveBadgeService(
+      tourist_id as Types.ObjectId,
+      tourist.loyality_points
+    );
     const ticket = new this.ticketModel({
       tourist_id: tourist_id,
       type: "HISTORICAL_LOCATION",
       price: price,
       booking_id: historical_location_id,
       cancelled: false,
+      points_received: points_received,
     });
     ticket.save();
 
     if (ticket instanceof Error)
       throw new InternalServerError("Internal server error in saving ticket");
-
-    this.recievePointsService(tourist_id as Types.ObjectId, price);
-
-    this.recieveBadgeService(
-      tourist_id as Types.ObjectId,
-      tourist.loyality_points
-    );
-
     return new response(true, ticket, "Historical location booked", 201);
   }
 
@@ -660,6 +669,7 @@ export default class TouristService {
       default:
         throw new BadRequestError("Invalid badge");
     }
+    const points_received = points - tourist.loyality_points;
 
     const updatedTourist = await this.touristModel.findByIdAndUpdate(
       tourist_id,
@@ -672,7 +682,7 @@ export default class TouristService {
 
     if (updatedTourist == null) throw new NotFoundError("Tourist not found");
 
-    return new response(true, updatedTourist, "Points recieved", 200);
+    return points_received;
   }
 
   public async recieveBadgeService(tourist_id: Types.ObjectId, points: number) {
@@ -706,7 +716,7 @@ export default class TouristService {
     return new response(true, updatedTourist, "Badge recieved", 200);
   }
 
-  public async redeemPointsService(email: string) {
+  public async redeemPointsService(email: string, points: number) {
     const user = await this.userModel.findOne({
       email: email,
       role: UserRoles.Tourist,
@@ -724,28 +734,24 @@ export default class TouristService {
 
     if (tourist == null) throw new NotFoundError("Tourist not found");
 
-    let points = tourist.loyality_points;
-
     if (points < 10000) {
       throw new BadRequestError(
         "Insufficient points must have atleast 10000 for 100EGP"
       );
     }
+    if (points < tourist.loyality_points) {
+      throw new BadRequestError(
+        "Sorry you do not have enough points to redeem"
+      );
+    }
 
-    const updatedTourist = await this.touristModel.findByIdAndUpdate(
-      tourist._id,
-      {
-        wallet: tourist.wallet + 100,
-        loyality_points: tourist.loyality_points - 10000,
-      },
-      { new: true }
-    );
+    let i = Math.floor(points / 10000);
 
-    if (updatedTourist instanceof Error)
-      throw new InternalServerError("Internal server error");
+    for (let j = 0; j < i; j++) {
+      tourist.wallet + 100;
+      tourist.loyality_points - 10000;
+    }
 
-    if (updatedTourist == null) throw new NotFoundError("Tourist not found");
-
-    return new response(true, updatedTourist, "Points redeemed", 200);
+    return new response(true, tourist, "Points redeemed", 200);
   }
 }

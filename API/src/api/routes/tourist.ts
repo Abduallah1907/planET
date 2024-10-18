@@ -56,5 +56,5 @@ export default (app: Router) => {
     authorize([UserRoles.Tourist]),
     touristController.recieveBadge
   );
-  route.put("/redeemPoints/:email", touristController.redeemPoints);
+  route.put("/redeemPoints", touristController.redeemPoints);
 };

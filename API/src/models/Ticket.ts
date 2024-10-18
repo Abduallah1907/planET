@@ -27,6 +27,10 @@ const ticketSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
+    points_received: {
+      type: Number,
+      required: true,
+    },
   },
   { timestamps: true }
 );
