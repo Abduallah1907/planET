@@ -119,7 +119,7 @@ export default function Login() {
               {
                 path: "/HistoricalTags",
                 label: "Historical Tags",
-              }
+              },
             ])
           );
 
@@ -138,6 +138,7 @@ export default function Login() {
               { path: "/Tags", label: "Tags" },
               { path: "/HistoricalTags", label: "Historical Tags" },
               { path: "/UsersTable", label: "User Managment" },
+              { path: "/ChangePasswordForm", label: "Change Password" },
             ])
           );
           navigate("/AdminDashboard");
@@ -158,9 +159,10 @@ export default function Login() {
       <Container>
         <Row className="justify-content-center mt-5">
           <Col sm={12}>
-          <h1>{t("login_title")}</h1>
-          <h2 className="LOGIN">
-              {t("new_to_planet")}<span className="orange-text">{t("signup")}</span>
+            <h1>{t("login_title")}</h1>
+            <h2 className="LOGIN">
+              {t("new_to_planet")}
+              <span className="orange-text">{t("signup")}</span>
             </h2>
             {showAlert ? (
               <Alert variant="danger" className="text-center">

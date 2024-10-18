@@ -23,7 +23,7 @@ interface FormData {
   changePassword: string;
   retypePassword: string;
   username: string;
-  logo: string;
+  logo: File | null;
   previousWork: WorkExperience[];
 }
 
@@ -37,7 +37,7 @@ const ProfileFormGuide: React.FC = () => {
     retypePassword: "",
     username: "",
     yearsOfExperience: "",
-    logo: "",
+    logo: null,
     previousWork: [],
   });
 
@@ -65,7 +65,7 @@ const ProfileFormGuide: React.FC = () => {
       retypePassword: "",
       username: TourGuide.username,
       yearsOfExperience: TourGuide.stakeholder_id?.years_of_experience || "",
-      logo: TourGuide.stakeholder_id?.logo || "",
+      logo: TourGuide.stakeholder_id?.photo || "",
       previousWork: workExperiences || [],
     });
   }, [TourGuide]);
@@ -73,6 +73,11 @@ const ProfileFormGuide: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFormData({ ...formData, logo: e.target.files[0] });
+    }
   };
 
   const handleAddWork = () => {
@@ -140,10 +145,9 @@ const ProfileFormGuide: React.FC = () => {
       name: `${formData.firstName} ${formData.lastName}`,
       newEmail: formData.email,
       phone_number: formData.mobile,
-      logo: formData.logo,
+      photo: formData.logo,
       years_of_experience: formData.yearsOfExperience,
       password: formData.changePassword,
-      //previous_work_description: formData.previousWork,
 
       createdPreviousWork: createdWork,
       updatedPreviousWork: editedWork,
@@ -161,7 +165,7 @@ const ProfileFormGuide: React.FC = () => {
       retypePassword: "",
       username: "",
       yearsOfExperience: "",
-      logo: "",
+      logo: null,
       previousWork: [],
     });
     setCreatedWork([]);
@@ -303,6 +307,14 @@ const ProfileFormGuide: React.FC = () => {
                 onChange={handleChange}
                 disabled={false}
               />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Form.Group>
+                <Form.Label>Upload Logo</Form.Label>
+                <Form.Control type="file" onChange={handleLogoChange} />
+              </Form.Group>
             </Col>
           </Row>
 

@@ -3,10 +3,10 @@ import CustomFormGroup from "../FormGroup/FormGroup";
 import "./ProfileFormTourist.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
-import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
 import { AdvertiserService } from "../../services/AdvertiserService";
 import { useAppSelector } from "../../store/hooks";
+import { FileService } from "../../services/FileService";
+import { isValidObjectId } from "../../utils/CheckObjectId";
 
 interface FormData {
   firstName: string;
@@ -16,8 +16,8 @@ interface FormData {
   changePassword: string;
   retypePassword: string;
   username: string;
-  logo: File | null; // Added logo field
-  about: string; // New 'About' field
+  logo: File | null;
+  about: string;
   companyProfile: string;
   hotline: string;
   linktoweb: string;
@@ -38,37 +38,83 @@ const Advertiser: React.FC = () => {
     hotline: "",
     linktoweb: "",
   });
+  const [fileUrl, setFileUrl] = useState("");
   const Advertiser = useAppSelector((state) => state.user);
+  const getAdvertiserData = async () => {
+    if (
+      Advertiser.stakeholder_id.logo &&
+      isValidObjectId(Advertiser.stakeholder_id.logo)
+    ) {
+      const file = await FileService.downloadFile(
+        Advertiser.stakeholder_id.logo
+      );
+
+      const url = URL.createObjectURL(file);
+      setFileUrl(url);
+      setFormData({
+        firstName: Advertiser.name?.split(" ")[0] || "",
+        lastName: Advertiser.name?.split(" ")[1] || "",
+        email: Advertiser.email || "",
+        mobile: Advertiser.phone_number || "",
+        changePassword: "",
+        retypePassword: "",
+        username: Advertiser.username || "",
+        logo: file.data || null,
+        about: Advertiser.stakeholder_id?.about || formData.about || "",
+        hotline: Advertiser.stakeholder_id?.hotline || "",
+        linktoweb: Advertiser.stakeholder_id?.link_to_website || "",
+        companyProfile: Advertiser.stakeholder_id?.company_profile || "",
+      });
+    } else {
+      setFormData({
+        firstName: Advertiser.name?.split(" ")[0] || "",
+        lastName: Advertiser.name?.split(" ")[1] || "",
+        email: Advertiser.email || "",
+        mobile: Advertiser.phone_number || "",
+        changePassword: "",
+        retypePassword: "",
+        username: Advertiser.username || "",
+        logo: null,
+        about: Advertiser.stakeholder_id?.about || formData.about || "",
+        hotline: Advertiser.stakeholder_id?.hotline || "",
+        linktoweb: Advertiser.stakeholder_id?.link_to_website || "",
+        companyProfile: Advertiser.stakeholder_id?.company_profile || "",
+      });
+    }
+  };
 
   useEffect(() => {
-    setFormData({
-      firstName: Advertiser.name?.split(" ")[0] || "",
-      lastName: Advertiser.name?.split(" ")[1] || "", // Adding fallback if there's no last name
-      email: Advertiser.email || "",
-      mobile: Advertiser.phone_number || "",
-      changePassword: "",
-      retypePassword: "",
-      username: Advertiser.username || "",
-      logo: formData.logo || null,
-      about: Advertiser.stakeholder_id?.about || formData.about || "",
-      hotline: Advertiser.stakeholder_id?.hotline || "",
-      linktoweb: Advertiser.stakeholder_id?.link_to_website || "",
-      companyProfile: Advertiser.stakeholder_id?.company_profile || "",
-    });
+    getAdvertiserData();
   }, [Advertiser]);
 
   const OnClick = async () => {
-    await AdvertiserService.updateAdvertiser(Advertiser.email, {
-      name: formData.firstName + " " + formData.lastName,
-      username: formData.username,
-      newEmail: formData.email,
-      password: formData.changePassword,
-      phone_number: formData.mobile,
-      about: formData.about,
-      hotline: formData.hotline,
-      company_profile: formData.companyProfile,
-      link_to_website: formData.linktoweb,
-    });
+    if (formData.logo) {
+      const file = await FileService.uploadFile(formData.logo);
+      await AdvertiserService.updateAdvertiser(Advertiser.email, {
+        name: formData.firstName + " " + formData.lastName,
+        username: formData.username,
+        newEmail: formData.email,
+        password: formData.changePassword,
+        phone_number: formData.mobile,
+        about: formData.about,
+        hotline: formData.hotline,
+        company_profile: formData.companyProfile,
+        link_to_website: formData.linktoweb,
+        logo: file.data._id,
+      });
+    } else {
+      await AdvertiserService.updateAdvertiser(Advertiser.email, {
+        name: formData.firstName + " " + formData.lastName,
+        username: formData.username,
+        newEmail: formData.email,
+        password: formData.changePassword,
+        phone_number: formData.mobile,
+        about: formData.about,
+        hotline: formData.hotline,
+        company_profile: formData.companyProfile,
+        link_to_website: formData.linktoweb,
+      });
+    }
   };
 
   const handleChange = (
@@ -120,7 +166,7 @@ const Advertiser: React.FC = () => {
         </Col>
         <Col xs={3} className="text-center">
           <img
-            src={Logo}
+            src={fileUrl != "" ? fileUrl : Logo}
             width="70"
             height="50"
             className="align-top logo"
