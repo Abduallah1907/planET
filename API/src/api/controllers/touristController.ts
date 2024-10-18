@@ -71,4 +71,16 @@ export class TouristController {
     );
     res.status(ratedTourist.status).json(ratedTourist);
   }
+  // check if the tourist went with the tour guide
+  public async checkTourGuide(req: any, res: any) {
+    const { tourist_id } = req.params;
+    const { tour_guide_email } = req.body;
+    const touristService: TouristService = Container.get(TouristService);
+    const checkedTourGuide = await touristService.checkTourGuideService(
+      tourist_id,
+      tour_guide_email
+    );
+    //return true or false
+    res.status(checkedTourGuide.status).json(checkedTourGuide);
+  }
 }

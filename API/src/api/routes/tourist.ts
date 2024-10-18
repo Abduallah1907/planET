@@ -373,4 +373,9 @@ export default (app: Router) => {
     authorize([UserRoles.Tourist]),
     touristController.rateandcommentActivity
   );
+  route.get(
+    "/checkTourGuide/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.checkTourGuide
+  );
 };

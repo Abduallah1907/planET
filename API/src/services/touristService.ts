@@ -437,4 +437,44 @@ export default class TouristService {
     }
     return new response(true, comment_rating, "Activity rated", 201);
   }
+  //flag to check if the tourist went with this tour guide
+  public async checkTourGuideService(
+    tourist_id: string,
+    tour_guide_email: string
+  ) {
+    if (!Types.ObjectId.isValid(tourist_id) || !tour_guide_email) {
+      throw new BadRequestError("Invalid id or email");
+    }
+    const user = await this.userModel.findOne({
+      email: tour_guide_email,
+      role: UserRoles.TourGuide,
+    });
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (user == null) throw new NotFoundError("User not found");
+    const tour_guide = await this.tour_guideModel.findOne({
+      user_id: user._id,
+    });
+    if (tour_guide instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tour_guide == null) throw new NotFoundError("Tour guide not found");
+
+    // go I try to loop over the tour guide iternaries and check if the tourist has visited the location by booking_id
+    let ticket;
+    for (let i = 0; i < tour_guide.itineraries.length; i++) {
+      ticket = await this.ticketModel.findOne({
+        type: "ITINERARY",
+        booking_id: tour_guide.itineraries[i],
+        tourist_id: new Types.ObjectId(tourist_id),
+      });
+    }
+    if (ticket instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (ticket == null) {
+      //return false if the tourist has not visited the location
+      return new response(false, ticket, "Tour guide not found", 201);
+    }
+    //return true if the tourist has visited the location
+    return new response(true, ticket, "Tour guide found", 201);
+  }
 }
