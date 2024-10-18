@@ -1,16 +1,14 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import AdminFormGroup from "../components/FormGroup/FormGroup"; // Reuse the form group component
-import "../components/FormGroup.css"; // Reuse existing CSS
-import "./CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
-import { useAppSelector } from "../store/hooks";
-import { ProductService } from "../services/ProductService";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Reuse the form group component
+import "../CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
+import { ProductService } from "../../services/ProductService";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface FormData {
   name: string;
   description: string;
-  picture: File | null;
+  image: File | null;
   price: number;
   quantity: number;
   archive_flag: boolean;
@@ -22,23 +20,23 @@ const EditProduct: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     description: "",
-    picture: null,
+    image: null,
     price: 0,
     quantity: 0,
     archive_flag: false,
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     });
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFormData({ ...formData, picture: e.target.files[0] });
+      setFormData({ ...formData, image: e.target.files[0] });
     }
   };
 
@@ -49,7 +47,7 @@ const EditProduct: React.FC = () => {
       setFormData({
         name: product.name,
         description: product.description,
-        picture: product.picture,
+        image: product.image,
         price: product.price,
         quantity: product.quantity,
         archive_flag: product.archive_flag,
@@ -57,7 +55,7 @@ const EditProduct: React.FC = () => {
     } else {
       console.error("Product ID is undefined");
     }
-  }
+  };
 
   useEffect(() => {
     getProduct();
@@ -68,7 +66,7 @@ const EditProduct: React.FC = () => {
     const productData = {
       name: formData.name,
       description: formData.description,
-      picture: formData.picture ? formData.picture.toString() : "",
+      image: formData.image ? formData.image.toString() : "",
       price: formData.price,
       quantity: formData.quantity,
       archive_flag: formData.archive_flag,
@@ -125,11 +123,12 @@ const EditProduct: React.FC = () => {
 
           <Row>
             <Col>
-              <Form.Group className="form-group" controlId="product-picture">
-                <Form.Label>Picture</Form.Label>
+              <Form.Group className="form-group" controlId="product-image">
+                <Form.Label>Image</Form.Label>
                 <Form.Control
                   type="file"
-                  name="productPicture"
+                  name="productImage"
+                  className="custom-form-control"
                   accept="image/*"
                   onChange={handleFileChange}
                 />
@@ -162,7 +161,7 @@ const EditProduct: React.FC = () => {
                 value={String(formData.quantity)}
                 onChange={handleChange}
                 name="quantity"
-              // Ensure only integer values
+                // Ensure only integer values
               />
             </Col>
           </Row>
@@ -181,7 +180,7 @@ const EditProduct: React.FC = () => {
             </Col>
           </Row>
 
-          <Button type="submit" className="update-btn mt-3">
+          <Button variant="main-inverse" type="submit" className="mt-3">
             Update Product
           </Button>
         </Form>

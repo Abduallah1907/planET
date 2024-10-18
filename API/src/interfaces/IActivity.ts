@@ -1,5 +1,7 @@
 import { Location } from "@/types/Location";
-import { Document, ObjectId } from "mongoose";
+import mongoose, { Document } from "mongoose";
+
+type ObjectId = mongoose.Schema.Types.ObjectId;
 
 export interface IActivity extends Document {
   category: ObjectId;
@@ -20,6 +22,7 @@ export interface IActivity extends Document {
   inappropriate_flag: boolean;
   active_flag: boolean;
   average_rating: number;
+  image?: mongoose.Schema.Types.ObjectId;
   advertiser_id: ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
@@ -39,7 +42,9 @@ export interface IActivityDTO {
   category: ObjectId;
   special_discount?: number;
   tags?: ObjectId[];
+  image?: mongoose.Schema.Types.ObjectId;
   booking_flag: boolean;
+  active_flag: boolean;
   advertiser_id: ObjectId;
 }
 export interface UpdateIActivityDTO {
@@ -54,7 +59,8 @@ export interface UpdateIActivityDTO {
     max?: number;
   };
   category?: ObjectId;
+  image?: mongoose.Schema.Types.ObjectId;
   special_discount?: number;
   tags?: ObjectId[];
-  booking_flag?: boolean;
+  active_flag?: boolean;
 }

@@ -2,7 +2,13 @@ import mongoose, { ObjectId, Types } from "mongoose";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import Container, { Inject, Service } from "typedi";
-import { HttpError, InternalServerError, NotFoundError } from "@/types/Errors";
+import {
+  UnauthorizedError,
+  HttpError,
+  InternalServerError,
+  NotFoundError,
+  ForbiddenError,
+} from "@/types/Errors";
 import { ITour_GuideUpdateDTO } from "@/interfaces/ITour_guide";
 import {
   IPreviousWorkInputDTO,
@@ -153,7 +159,7 @@ export default class TourGuideService {
 
     const newTourGuide = await this.tourGuideModel.create({
       user_id: newUserResponse.data._id,
-      photo: tourGuideData.photo,
+      logo: tourGuideData.logo,
       documents_required: tourGuideData.documents_required,
       approval: true,
     });
@@ -188,7 +194,7 @@ export default class TourGuideService {
       itineraries: tourGuideUser.itineraries,
       years_of_experience: tourGuideUser.years_of_experience,
       previous_work_description: tourGuideUser.previous_work_description,
-      photo: tourGuideUser.photo,
+      logo: tourGuideUser.logo,
       username: userProfile.username,
       name: tourGuideUser.name,
       phone_number: userProfile.phone_number,
@@ -207,7 +213,7 @@ export default class TourGuideService {
       password,
       phone_number,
       years_of_experience,
-      photo,
+      logo,
       createdPreviousWork,
       updatedPreviousWork,
       deletedPreviousWork,
@@ -295,7 +301,7 @@ export default class TourGuideService {
       .findOneAndUpdate(
         { user_id: tour_guide_user_id },
         {
-          photo: photo,
+          logo: logo,
           years_of_experience: years_of_experience,
           previous_work_description: finalUpdatedPreviousWork,
         },
@@ -314,7 +320,7 @@ export default class TourGuideService {
       itineraries: tourGuideProfile.itineraries,
       years_of_experience: tourGuideProfile.years_of_experience,
       previous_work_description: tourGuideProfile.previous_work_description,
-      photo: tourGuideProfile.photo,
+      logo: tourGuideProfile.logo,
       username: tourGuideUser.username,
       phone_number: tourGuideUser.phone_number,
       name: tourGuideUser.name,

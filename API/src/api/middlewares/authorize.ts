@@ -53,5 +53,4 @@ function authorize(roles: string[] = []) {
     }
   };
 }
-
 export default authorize;

@@ -23,7 +23,7 @@ export interface IActivity  {
   inappropriate_flag: boolean;
   active_flag: boolean;
   advertiser_id: IAdvertiser;
-  
+  reviews_count?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

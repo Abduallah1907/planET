@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 const historicalTagSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    Values: [{ type: String, required: true }],
+    values: [{ type: String, required: true }],
   },
   { timestamps: true }
 );

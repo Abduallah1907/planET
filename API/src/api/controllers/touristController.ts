@@ -11,8 +11,7 @@ import {
 } from "@/interfaces/IComment_rating";
 import TouristService from "../../services/touristService";
 import Container, { Inject, Service } from "typedi";
-import { start } from "repl";
-import Comment_Rating from "@/models/Comment_rating";
+import { Types } from "mongoose";
 @Service()
 export class TouristController {
   public async getTourist(req: any, res: any) {
@@ -70,6 +69,66 @@ export class TouristController {
       data
     );
     res.status(ratedTourist.status).json(ratedTourist);
+  }
+
+  public async bookActivity(req: any, res: any) {
+    const { email, activity_id } = req.body;
+    const touristService: TouristService = Container.get(TouristService);
+    const bookedActivity = await touristService.bookActivityService(
+      email,
+      activity_id
+    );
+    res.status(bookedActivity.status).json(bookedActivity);
+  }
+
+  public async bookItinerary(req: any, res: any) {
+    const { email, itinerary_id } = req.body;
+    const touristService: TouristService = Container.get(TouristService);
+    const bookedItinerary = await touristService.bookItineraryService(
+      email,
+      itinerary_id
+    );
+    res.status(bookedItinerary.status).json(bookedItinerary);
+  }
+
+  public async bookHistoricalLocation(req: any, res: any) {
+    const { email, historical_location_id } = req.body;
+    const touristService: TouristService = Container.get(TouristService);
+    const bookedHistoricalLocation =
+      await touristService.bookHistoricalLocationService(
+        email,
+        historical_location_id
+      );
+    res.status(bookedHistoricalLocation.status).json(bookedHistoricalLocation);
+  }
+
+  public async recievePoints(req: any, res: any) {
+    const { tourist_id, amount } = req.body;
+    const touristObjectID = new Types.ObjectId(tourist_id);
+    const touristService: TouristService = Container.get(TouristService);
+    const recievedPoints = await touristService.recievePointsService(
+      touristObjectID,
+      amount
+    );
+    res.status(recievedPoints.status).json(recievedPoints);
+  }
+
+  public async recieveBadge(req: any, res: any) {
+    const { tourist_id, points } = req.body;
+    const touristObjectID = new Types.ObjectId(tourist_id);
+
+    const touristService: TouristService = Container.get(TouristService);
+    const recievedBadge = await touristService.recieveBadgeService(
+      touristObjectID,
+      points
+    );
+    res.status(recievedBadge.status).json(recievedBadge);
+  }
+  public async redeemPoints(req: any, res: any) {
+    const { email } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const redeemedPoints = await touristService.redeemPointsService(email);
+    res.status(redeemedPoints.status).json(redeemedPoints);
   }
   // check if the tourist went with the tour guide
   public async checkTourGuide(req: any, res: any) {

@@ -1,12 +1,12 @@
 import { Location } from "@/types/Location";
-import { Document, ObjectId } from "mongoose";
+import mongoose, { Document, mongo, ObjectId } from "mongoose";
 import { IHistorical_tag } from "./IHistorical_tag";
 export interface IHistorical_location extends Document {
   governor_id: ObjectId;
   comments: ObjectId[];
   name: string;
   description: string;
-  picture: string[];
+  images?: mongoose.Schema.Types.ObjectId[];
   location: Location;
   opening_hours_from: string;
   opening_hours_to: string;
@@ -25,8 +25,9 @@ export interface IHistorical_locationDTO {
   name: string;
   governor_id: ObjectId;
   description: string;
-  picture: string[];
+  images?: mongoose.Schema.Types.ObjectId[];
   location: Location;
+  opening_days?: string[];
   opening_hours_from: string;
   opening_hours_to: string;
   native_price: number;
@@ -40,15 +41,16 @@ export interface IHistorical_locationDTO {
 export interface Update_IHistorical_locationDTO {
   name?: string;
   description?: string;
-  picture?: string[];
+  images?: mongoose.Schema.Types.ObjectId[];
   location?: Location;
+  opening_days?: string[];
   opening_hours_from?: string;
   opening_hours_to?: string;
   native_price?: number;
   foreign_price?: number;
   student_price?: number;
   tags?: Map<string, string>;
-  average_rating: Number;
+  active_flag: boolean;
 }
 export interface IHistorical_locationOutputDTO {
   name: string;
@@ -61,6 +63,6 @@ export interface IHistorical_locationOutputDTO {
   opening_days: string[];
   description: string;
   isActive: boolean;
-  imageUrl: string[];
+  images?: mongoose.Schema.Types.ObjectId[];
   tags?: Map<string, string>;
 }

@@ -21,9 +21,9 @@ export default class Historical_locationService {
     @Inject("historical_tagModel")
     private historical_tagModel: Models.Historical_tagModel,
     @Inject("governorModel") private governorModel: Models.GovernorModel
-  ) { }
+  ) {}
   //this function is to choose the price based on the user data
-  private choosePrice = async (location: any, data: any) => {
+  public choosePrice = async (location: any, data: any) => {
     if (data.job.toLowerCase() == "student") {
       return location.student_price;
     } else {
@@ -62,7 +62,7 @@ export default class Historical_locationService {
       }
       //We got the corresponding key to historical_tag
       //We want to see if the value is in the historical_tag value array
-      if (!historical_tag.Values.includes(value)) {
+      if (!historical_tag.values.includes(value)) {
         throw new BadRequestError(
           "Value is not in the tag,choose corresponding Value to the tag"
         );
@@ -71,7 +71,7 @@ export default class Historical_locationService {
     }
   };
   public getAllHistorical_locationsService = async (data: any) => {
-    const Historical_location = await this.historical_locationsModel.find({});
+    const Historical_location = await this.historical_locationsModel.find({ active_flag: true });
     if (Historical_location instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
@@ -92,7 +92,7 @@ export default class Historical_locationService {
         opening_days: locationi.opening_days,
         description: locationi.description,
         active_flag: locationi.active_flag,
-        picture: locationi.picture,
+        images: locationi.images,
         tags: locationi.tags,
         reviewsCount: locationi.comments.length,
       }))
@@ -111,15 +111,18 @@ export default class Historical_locationService {
       name: historical_locationInput.name,
       governor_id: historical_locationInput.governor_id,
       description: historical_locationInput.description,
-      picture: historical_locationInput.picture,
+      images: historical_locationInput.images,
       location: historical_locationInput.location,
+      opening_days: historical_locationInput.opening_days,
       opening_hours_from: historical_locationInput.opening_hours_from,
       opening_hours_to: historical_locationInput.opening_hours_to,
       native_price: historical_locationInput.native_price,
       foreign_price: historical_locationInput.foreign_price,
       student_price: historical_locationInput.student_price,
       tags: historical_locationInput.tags,
-      active_flag: true,
+      active_flag: historical_locationInput.active_flag
+        ? historical_locationInput.active_flag
+        : true,
     };
     //Code to check if the value corresponds to the key in the object
     const tags_keys = historical_locationData.tags
@@ -170,9 +173,7 @@ export default class Historical_locationService {
     );
   };
 
-  public getHistorical_locationByIDService = async (
-    data: any,
-  ) => {
+  public getHistorical_locationByIDService = async (data: any) => {
     if (!Types.ObjectId.isValid(data.historical_location_id)) {
       throw new BadRequestError("Invalid ID format");
     }
@@ -198,10 +199,10 @@ export default class Historical_locationService {
       opening_days: Historical_location.opening_days,
       description: Historical_location.description,
       active_flag: Historical_location.active_flag,
-      picture: Historical_location.picture,
+      images: Historical_location.images,
       tags: Historical_location.tags,
       reviewsCount: Historical_location.comments.length,
-    }
+    };
     return new response(
       true,
       historical_locationOutput,
@@ -210,9 +211,7 @@ export default class Historical_locationService {
     );
   };
 
-  public getHistorical_locationByIDForGovernerService = async (
-    data: any,
-  ) => {
+  public getHistorical_locationByIDForGovernerService = async (data: any) => {
     if (!Types.ObjectId.isValid(data.historical_location_id)) {
       throw new BadRequestError("Invalid ID format");
     }
@@ -222,9 +221,6 @@ export default class Historical_locationService {
     if (Historical_location instanceof Error)
       throw new InternalServerError("Internal server error");
     // throw new Error ("Internal server error");
-
-    if (Historical_location == null)
-      throw new NotFoundError("Historical Location not found");
 
     return new response(
       true,
@@ -408,9 +404,16 @@ export default class Historical_locationService {
     tags?: string[];
     nation: string;
     job: string;
+    governer_id?: string;
   }) {
-    if (!filters) {
-      const historical_locations = await this.historical_locationsModel.find();
+    if (!filters || Object.keys(filters).length === 0 || (filters.governer_id && Object.keys(filters).length === 1)) {
+      const checks: any = {}
+      if (filters.governer_id) {
+        checks.governer_id = filters.governer_id;
+      } else {
+        checks.active_flag = true;
+      }
+      const historical_locations = await this.historical_locationsModel.find(checks);
       return new response(
         true,
         historical_locations,
@@ -419,11 +422,16 @@ export default class Historical_locationService {
       );
     }
     const matchStage: any = {};
+    if (filters.governer_id) {
+      matchStage.governer_id = new Types.ObjectId(filters.governer_id);
+    } else {
+      matchStage.active_flag = true;
+    }
     var aggregationPipeline: any[] = [
       {
         $addFields: {
-          tagsArray: { $objectToArray: "$tags" }
-        }
+          tagsArray: { $objectToArray: "$tags" },
+        },
       },
       {
         $match: matchStage,
@@ -442,16 +450,30 @@ export default class Historical_locationService {
     if (historical_locations instanceof Error)
       throw new InternalServerError("Internal server error");
 
-    const historical_locations_with_prices = await Promise.all( historical_locations.map(async location => {
-      location.price = await this.choosePrice(location,{ nation: filters.nation, job: filters.job });
-      return location;
-    }));
-    return new response(
-      true,
-      historical_locations_with_prices,
-      "Filtered itineraries are fetched",
-      200
-    );
+    if (!filters.governer_id) {
+      const historical_locations_with_prices = await Promise.all(
+        historical_locations.map(async (location) => {
+          location.price = await this.choosePrice(location, {
+            nation: filters.nation,
+            job: filters.job,
+          });
+          return location;
+        })
+      );
+      return new response(
+        true,
+        historical_locations_with_prices,
+        "Filtered itineraries are fetched",
+        200
+      );
+    } else {
+      return new response(
+        true,
+        historical_locations,
+        "Filtered itineraries are fetched",
+        200
+      );
+    }
   }
 
   public async getFilterComponentsService() {

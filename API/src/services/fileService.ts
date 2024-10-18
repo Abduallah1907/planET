@@ -1,65 +1,175 @@
-import { GridFSBucket } from "mongodb";
+import { GridFSBucket, ObjectId } from "mongodb";
 import { Inject, Service } from "typedi";
-import mongoose from "mongoose";
-import { createReadStream, ReadStream } from "fs";
-import { Request, Response } from "express";
-import path from "path";
 import multer from "multer";
+import mongoose from "mongoose";
+import response from "@/types/responses/response";
+import { Container } from "typedi";
+import { create } from "domain";
+import { createWriteStream } from "fs";
 
 @Service()
 export class FileService {
-  constructor(
-    @Inject("gridfsInstance") private gfs: GridFSBucket,
-    @Inject("uploadInstance") private upload: multer.Multer // GridFSBucket instance injected
-  ) {}
 
   // Method to upload a single file
-  uploadFile(req: any, res: any) {
-    console.log("Headers:", req.headers);
-    console.log("Body:", req.body);
-    console.log("File:", req.file);
-    if (!req.file) {
+  public async uploadFile(req: any, res: any) {
+    if (!req.files) {
       res.status(400).json({ message: "File upload failed" });
       return;
     }
-    res
-      .status(200)
-      .json({ message: "File uploaded successfully", file: req.file });
-  }
 
-  // Method to upload multiple files
-  uploadMultipleFiles(req: Request, res: Response) {
-    this.upload.array("files", 10)(req, res, (err: any) => {
-      if (err) {
-        return res
-          .status(500)
-          .json({ message: "Multiple file upload failed", error: err });
+    const fileId = new ObjectId();
+    const file = req.files.file;
+    const filename = `${Date.now()}-${file.name}`;
+
+    const gfs = Container.get<GridFSBucket>("gridfsInstance");
+    const uploadStream = gfs.openUploadStream(filename, {
+      contentType: file.mimetype,
+      metadata: { _id: fileId.toString() },
+    });
+
+    uploadStream.end(file.data);
+
+    uploadStream.on("finish", async () => {
+      try {
+        const files = await gfs.find({ filename }).toArray();
+        if (!files || files.length === 0) {
+          return res
+            .status(404)
+            .json({ message: "File not found after upload" });
+        }
+
+        res.status(201).json(
+          new response(true, files[0], "File uploaded successfuly", 201) // Return the file metadata after upload
+        );
+      } catch (error) {
+        res.status(500).json({
+          message: "Error retrieving uploaded file",
+          error: (error as Error).message,
+        });
       }
-      res.json({ files: (req as any).files });
+    });
+
+    uploadStream.on("error", (error: Error) => {
+      res
+        .status(500)
+        .json({ message: "File upload error", error: error.message });
     });
   }
 
-  // Method to fetch all files
-  // fetchFiles(req: Request, res: Response) {
-  //   this.gfs.find().toArray((err:any, files:any) => {
-  //     if (err || !files || files.length === 0) {
-  //       return res.status(404).json({ message: "No files found" });
-  //     }
-  //     res.json(files);
-  //   });
-  // }
+  // Method to upload multiple files
+  uploadMultipleFiles(req: any, res: any) {
+    console.log("Headers in service:", req.headers);
+    console.log("Body in service:", req.body);
+    console.log("Files in service:", req.files); // Check req.files for multiple uploads
 
-  // Method to download a file by filename
-  // downloadFileByName(req: Request, res: Response) {
-  //   const filename = req.params.filename;
-  //   this.gfs.findOne({ filename }, (err:any, file:any) => {
-  //     if (err || !file) {
-  //       return res.status(404).json({ message: "File not found" });
-  //     }
+    if (!req.files || !(req.files as any[]).length) {
+      return res.status(400).json({ message: "No files uploaded" });
+    }
 
-  //     // Create read stream and pipe the file to the response
-  //     const readstream = this.gfs.openDownloadStreamByName(file.filename);
-  //     readstream.pipe(res);
-  //   });
-  // }
+    const files = req.files as Express.Multer.File[]; // Ensure correct typing for req.files
+    const uploadedFiles: any[] = []; // Array to store metadata of uploaded files
+
+    const gfs = Container.get<GridFSBucket>("gridfsInstance");
+
+    // Use Promise.all to ensure all files are uploaded before sending the response
+    Promise.all(
+      files.map((file) => {
+        return new Promise((resolve, reject) => {
+          const fileId = new ObjectId();
+          const filename = `${Date.now()}-${file.originalname}`;
+
+          const uploadStream = gfs.openUploadStream(filename, {
+            contentType: file.mimetype,
+            metadata: { _id: fileId.toString() },
+          });
+
+          uploadStream.end(file.buffer);
+
+          uploadStream.on("finish", async () => {
+            try {
+              const uploadedFile = await gfs.find({ filename }).toArray();
+              if (!uploadedFile || uploadedFile.length === 0) {
+                return reject(new Error("File not found after upload"));
+              }
+              uploadedFiles.push(uploadedFile[0]); // Store file metadata
+              resolve(uploadedFile[0]);
+            } catch (error) {
+              reject(error);
+            }
+          });
+
+          uploadStream.on("error", (error: Error) => {
+            reject(error);
+          });
+        });
+      })
+    )
+      .then(() => {
+        res
+          .status(200)
+          .json(
+            new response(
+              true,
+              uploadedFiles,
+              "Files uploaded successfully",
+              200
+            )
+          );
+      })
+      .catch((error) => {
+        res
+          .status(500)
+          .json({ message: "File upload error", error: error.message });
+      });
+  }
+
+  async downloadFileById(req: any, res: any) {
+    const { id } = req.params;
+  
+    // Validate the ObjectId
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid file ID" });
+    }
+  
+    try {
+      const gfs = Container.get<GridFSBucket>("gridfsInstance");
+  
+      const files = await gfs.find({ _id: new ObjectId(id) }).toArray();
+      if (!files || files.length === 0) {
+        return res.status(404).json({ message: "File not found" });
+      }
+      const file = files[0];
+  
+      // Create a download stream for the file
+      const downloadStream = gfs.openDownloadStream(new ObjectId(id));
+  
+      // Handle errors during streaming
+      downloadStream.on("error", (error) => {
+        return res
+          .status(404)
+          .json({ message: "File not found", error: error.message });
+      });
+  
+      // Set the response headers
+      res.setHeader("Content-Type", file.contentType);
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${file.filename}"`
+      );
+  
+      // Pipe the download stream to the response
+      downloadStream.pipe(res);
+  
+      // Handle the end of the stream
+      downloadStream.on("end", () => {
+        res.end();
+      });
+  
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: "Internal Server Error", error: (error as Error).message });
+    }
+  }
+  
 }

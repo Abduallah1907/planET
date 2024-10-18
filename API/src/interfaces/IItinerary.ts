@@ -1,5 +1,8 @@
 import { Location } from "@/types/Location";
-import { Document, ObjectId } from "mongoose";
+import mongoose, { Document } from "mongoose";
+import { ISlot } from "./ISlot";
+
+type ObjectId = mongoose.Schema.Types.ObjectId;
 
 export interface IItinerary extends Document {
   activities: ObjectId[];
@@ -29,7 +32,7 @@ export interface IItineraryCreateDTO {
   name: string;
   category: ObjectId;
   activities: ObjectId[];
-  timeline: ObjectId[];
+  slots: ISlot[];
   locations: Location[];
   duration: string;
   languages: string[];
@@ -39,13 +42,14 @@ export interface IItineraryCreateDTO {
   pickup_loc: Location;
   drop_off_loc: Location;
   tags?: ObjectId[];
+  active_flag: boolean;
 }
 
 export interface IItineraryUpdateDTO {
   name?: string;
   category?: ObjectId;
   activities?: ObjectId[];
-  timeline?: ObjectId[];
+  slots?: ISlot[];
   locations?: Location[];
   duration?: string;
   languages?: string[];
@@ -90,6 +94,6 @@ export interface IItineraryOutputAllDTO {
   available_dates: Date[];
   inappropriate_flag: Boolean;
   active_flag: Boolean;
-
+  reviews_count: Number;
   tags?: ObjectId[];
 }

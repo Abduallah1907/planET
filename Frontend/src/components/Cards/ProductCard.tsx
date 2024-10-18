@@ -1,13 +1,24 @@
-import { Card, Badge, Row, Col, Image, Button, DropdownButton, Dropdown, Modal } from "react-bootstrap";
+import {
+  Card,
+  Badge,
+  Row,
+  Col,
+  Image,
+  Button,
+  DropdownButton,
+  Dropdown,
+  Modal,
+} from "react-bootstrap";
 import "./Cards.css";
 import Rating from "../Rating/Rating";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../AppContext";
 
 
 interface InputData {
-  Name: string;
+  name: string;
   id?: string;
   average_rating: number;
   Reviews: number;
@@ -16,17 +27,17 @@ interface InputData {
   price: number;
   description: string;
   isActiveArchive: boolean;
-  imageUrl: string;
+  image?: string;
   createdAt: Date;
   updatedAt: Date;
   onChange?: () => void;
   isSeller: boolean;
-  isAdmin:boolean; // Check if the user is the seller
+  isAdmin: boolean; // Check if the user is the seller
 }
 
 const ProductCard = ({
   id,
-  Name,
+  name,
   average_rating,
   Reviews,
   price,
@@ -34,7 +45,7 @@ const ProductCard = ({
   quantity,
   sales,
   isActiveArchive,
-  imageUrl,
+  image,
   createdAt,
   updatedAt,
   onChange,
@@ -42,8 +53,12 @@ const ProductCard = ({
   isAdmin,
 }: InputData) => {
   // Determine if the product is active or archived
-  const isBooked = isActiveArchive;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
+
+  const convertedPrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(price, baseCurrency, currency);
+  }, [price, baseCurrency, currency]);
 
 
   // Function to handle edit action
@@ -68,12 +83,15 @@ const ProductCard = ({
     setShowDeleteModal(false); // Close modal without action
   };
   return (
-    <Card className="p-3 shadow-sm" style={{ borderRadius: "10px", height: "100%" }}>
-      <Row className="h-100 d-flex align-items-stretch justify-content-between">
+    <Card
+      className="p-3 shadow-sm"
+      style={{ borderRadius: "10px", height: "100%" }}
+    >
+      <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
         {/* Image Section */}
         <Col md={2} className="p-0 d-flex align-items-stretch">
           <Image
-            src={imageUrl || "https://via.placeholder.com/250x250"}
+            src={image || "https://via.placeholder.com/250x250"}
             rounded
             alt="Product Image"
             style={{ objectFit: "cover", height: "100%", width: "100%" }}
@@ -81,71 +99,87 @@ const ProductCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={(isSeller ||isAdmin) ? 6 : 7} className="d-flex align-items-stretch">
+        <Col md={(isSeller || isAdmin) ? 6 : 7} className="d-flex align-items-stretch">
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
                 {/* Product Name */}
                 <Card.Title className="mb-0" style={{ fontWeight: "bold", marginRight: "10px" }}>
-                  {Name}
+                  {name}
                 </Card.Title>
               </div>
 
               {/* Product Description */}
               <Card.Text className="mt-2">Description: {description}</Card.Text>
               <Card.Text className="text-muted">
-                {(isSeller ||isAdmin)? `Sales: ${sales} | Quantity: ${quantity}` : `Quantity: ${quantity}`}
+                {isSeller || isAdmin
+                  ? `Sales: ${sales} | Quantity: ${quantity}`
+                  : `Quantity: ${quantity}`}
               </Card.Text>
             </div>
-            <Card.Text className="text-muted">
-              Created: {createdAt.toLocaleDateString()} | Updated: {updatedAt.toLocaleDateString()}
-            </Card.Text>
+            {/* Created and Updated Date */}
+            {(isSeller || isAdmin) &&
+              <Card.Text className="text-muted">
+                Created: {createdAt.toLocaleDateString()} | Updated: {updatedAt.toLocaleDateString()}
+              </Card.Text>
+            }
           </Card.Body>
         </Col>
 
         {/* Rating, Reviews, Price Section */}
-        <Col md={3} className="d-flex flex-column justify-content-between align-items-end">
+        <Col
+          md={3}
+          className="d-flex flex-column justify-content-between align-items-end"
+        >
           {/* Rating and Reviews */}
           <div className="d-flex align-items-center justify-content-end mb-1">
             {/* Rating Stars */}
             <Rating rating={average_rating} readOnly={true} />
-            <Badge className="ms-2 review-badge text-center" style={{ fontSize: "1rem" }}>
+            <Badge
+              className="ms-2 review-badge text-center"
+              style={{ fontSize: "1rem" }}
+            >
               {average_rating.toFixed(1)}
             </Badge>
           </div>
-          <p className="text-muted text-right" style={{ fontSize: "1.1rem", fontWeight: "500" }}>
+          <p
+            className="text-muted text-right"
+            style={{ fontSize: "1.1rem", fontWeight: "500" }}
+          >
             {Reviews} Reviews
           </p>
-
 
           <div className="text-end">
             <h4 style={{ fontWeight: "bold" }}>${price.toFixed(2)}</h4>
 
             {/* Show Active/Archive button if the user is the seller */}
-            {(isSeller ||isAdmin) ? (
+            {(isSeller || isAdmin) ? (
               <Badge
-                bg={isBooked ? "active" : "inactive"}
+                bg={!isActiveArchive ? "active" : "inactive"}
                 className="mt-2 custom-status-badge rounded-4 text-center"
                 onClick={onChange}
                 style={{ cursor: "pointer" }}
               >
-                {isBooked ? "Active" : "Archive"}
+                {!isActiveArchive ? "Active" : "Archived"}
               </Badge>
             ) : null}
           </div>
         </Col>
-        {(isSeller ||isAdmin) ?
+        {(isSeller || isAdmin) ? (
           <Col md={1} className="d-flex align-items-baseline">
             <DropdownButton
               align="end"
-              title="⋮"  // Three-dot symbol
+              title="⋮" // Three-dot symbol
               variant="light"
-              className="d-flex justify-content-end ms-3 btn-main-inverse">
-              <Dropdown.Item onClick={() => id && handleEdit(id)}>Edit</Dropdown.Item>
+              className="d-flex justify-content-end ms-3 btn-main-inverse"
+            >
+              <Dropdown.Item onClick={() => id && handleEdit(id)}>
+                Edit
+              </Dropdown.Item>
               <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item>
             </DropdownButton>
           </Col>
-          : null}
+        ) : null}
       </Row>
 
       {/* Delete Confirmation Modal */}
@@ -153,9 +187,7 @@ const ProductCard = ({
         <Modal.Header closeButton>
           <Modal.Title>Delete Product</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to delete this product?
-        </Modal.Body>
+        <Modal.Body>Are you sure you want to delete this product?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={cancelDelete}>
             Cancel

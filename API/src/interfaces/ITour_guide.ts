@@ -1,4 +1,4 @@
-import { Document, ObjectId } from "mongoose";
+import mongoose, { Document } from "mongoose";
 import {
   IPrevious_work,
   IPreviousWorkDeleteDTO,
@@ -6,14 +6,16 @@ import {
   IPreviousWorkUpdateDTO,
 } from "./IPrevious_work";
 
+type ObjectId = mongoose.Schema.Types.ObjectId;
+
 export interface ITour_Guide extends Document {
   user_id: ObjectId;
   itineraries: ObjectId[];
   comments: ObjectId[];
   years_of_experience?: number;
   previous_work_description: ObjectId[];
-  documents_required: string[];
-  photo: string;
+  documents_required: mongoose.Schema.Types.ObjectId[];
+  logo?: mongoose.Schema.Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -24,7 +26,7 @@ export interface ITour_GuideUpdateDTO {
   username?: string;
   password?: string;
   years_of_experience?: number;
-  photo?: string;
+  logo?: mongoose.Schema.Types.ObjectId;
   createdPreviousWork?: IPreviousWorkInputDTO[];
   updatedPreviousWork?: IPreviousWorkUpdateDTO[];
   deletedPreviousWork?: IPreviousWorkDeleteDTO[];
@@ -35,15 +37,15 @@ export interface ITourGuideInput {
   phone_number: string;
   name: string;
   password: string;
-  photo: string;
-  documents_required: string[];
+  logo?: mongoose.Schema.Types.ObjectId;
+  documents_required: mongoose.Schema.Types.ObjectId[];
 }
 export interface ITourGuideOutput {
   itineraries: ObjectId[];
   comments: ObjectId[];
   years_of_experience?: number;
   previous_work_description: IPrevious_work[];
-  photo: string;
+  logo?: mongoose.Schema.Types.ObjectId;
   // the attributes below must be taken from user table
   username: string;
   name: string;

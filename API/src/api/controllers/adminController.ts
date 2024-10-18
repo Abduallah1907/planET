@@ -1,4 +1,5 @@
 import {
+  IAdminUpdateDTO,
   IUserAdminCreateAdminDTO,
   IUserAdminCreateGovernorDTO,
 } from "@/interfaces/IUser";
@@ -108,5 +109,28 @@ export class AdminController {
     const adminService: AdminService = Container.get(AdminService);
     const deletedTag = await adminService.deleteTagService(type);
     res.status(deletedTag.status).json(deletedTag);
+  }
+  public async acceptUser(req: Request, res: Response): Promise<any> {
+    const { email } = req.params;
+    const adminService: AdminService = Container.get(AdminService);
+    const acceptedUser = await adminService.acceptUserService(email);
+    res.status(acceptedUser.status).json(acceptedUser);
+  }
+
+  public async rejectUser(req: Request, res: Response): Promise<any> {
+    const { email } = req.params;
+    const adminService: AdminService = Container.get(AdminService);
+    const rejectedUser = await adminService.rejectUserService(email);
+    res.status(rejectedUser.status).json(rejectedUser);
+  }
+  public async updateAdmin(req: any, res: any) {
+    const { email } = req.params;
+    const adminUpdateData: IAdminUpdateDTO = req.body;
+    const adminService: AdminService = Container.get(AdminService);
+    const updatedAdmin = await adminService.updateAdminService(
+      email,
+      adminUpdateData
+    );
+    res.status(updatedAdmin.status).json(updatedAdmin);
   }
 }

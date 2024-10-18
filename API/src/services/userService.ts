@@ -5,8 +5,9 @@ import {
   NotFoundError,
 } from "../types/Errors";
 import response from "../types/responses/response";
-import { Inject, Service } from "typedi";
+import Container, { Inject, Service } from "typedi";
 import {
+  IGovernorUpdateDTO,
   IUserInputDTO,
   IUserLoginDTO,
   IUserLoginOutputDTO,
@@ -18,6 +19,8 @@ import jwt, { Algorithm } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import config from "@/config";
 import { ObjectId } from "mongoose";
+import MailerService from "./mailer";
+import user from "@/api/routes/user";
 
 @Service()
 export default class UserService {
@@ -158,5 +161,68 @@ export default class UserService {
     await user.save();
 
     return new response(true, userOutput, "User found", 200);
+  }
+
+  public async forgetPasswordService(email: string) {
+    const mailerServiceInstance = Container.get(MailerService);
+    const user = await this.userModel.findOne({ email: email });
+    console.log("Email Service", email);
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (user == null) throw new NotFoundError("User not found");
+
+    // Send email with reset password link
+
+    const mailSent = mailerServiceInstance.SendPasswordReminderEmail(user);
+
+    if ((await mailSent).status == "error") {
+      throw new InternalServerError(
+        "Internal server error while sending email or email not valid"
+      );
+    }
+    return new response(true, user, "Email sent", 200);
+  }
+  public async updateGovernorService(
+    email: string,
+    updateData: IGovernorUpdateDTO
+  ) {
+    const { newEmail, name, phone_number, password, nation } = updateData;
+    let hashedPassword;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10); // Await bcrypt.hash here
+    }
+
+    const updatedUser = await this.userModel.findOneAndUpdate(
+      { email: email, role: UserRoles.Governor },
+      {
+        email: newEmail,
+        name: name,
+        phone_number: phone_number,
+        password: hashedPassword,
+      },
+      { new: true }
+    );
+    if (updatedUser instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (updatedUser == null) throw new NotFoundError("User not found");
+
+    const updatedGovernor = await this.governorModel.findOneAndUpdate(
+      { user_id: updatedUser._id },
+      { nation: nation },
+      { new: true }
+    );
+    if (updatedGovernor instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (updatedGovernor == null) throw new NotFoundError("Governor not found");
+
+    const updatedGovernorOutput: IGovernorUpdateDTO = {
+      newEmail: updatedUser.email,
+      name: updatedUser.name,
+      phone_number: updatedUser.phone_number,
+      password: updatedUser.password,
+      nation: updatedGovernor.nation,
+    };
+    return new response(true, updatedGovernorOutput, "Governor updated", 200);
   }
 }

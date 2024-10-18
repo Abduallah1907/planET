@@ -1,12 +1,13 @@
-import { Service, Inject } from 'typedi';
-import { IUser } from '@/interfaces/IUser';
-import config from '@/config';
+import { Service, Inject } from "typedi";
+import { IUser } from "@/interfaces/IUser";
+import config from "@/config";
+import bcrypt from "bcrypt";
 
 @Service()
 export default class MailerService {
-  @Inject('emailTransporter') private emailTransporter: any;
+  @Inject("emailTransporter") private emailTransporter: any;
 
-  public async SendWelcomeEmail(email : string) {
+  public async SendWelcomeEmail(email: string) {
     /**
      * @TODO Call Mailchimp/Sendgrid or whatever
      */
@@ -14,19 +15,19 @@ export default class MailerService {
     const data = {
       from: config.emails.user,
       to: [email],
-      subject: 'Hello',
-      text: 'Testing some Mailgun awesomness!'
+      subject: "Hello",
+      text: "Testing some Mailgun awesomness!",
     };
     try {
       this.emailTransporter.sendMail(data);
-      return { delivered: 1, status: 'ok' };
-    } catch(e) {
-      return  { delivered: 0, status: 'error' };
+      return { delivered: 1, status: "ok" };
+    } catch (e) {
+      return { delivered: 0, status: "error" };
     }
   }
   public StartEmailSequence(sequence: string, user: Partial<IUser>) {
     if (!user.email) {
-      throw new Error('No email provided');
+      throw new Error("No email provided");
     }
     // @TODO Add example of an email sequence implementation
     // Something like
@@ -35,6 +36,29 @@ export default class MailerService {
     // 3 - Schedule job for second email in 1-3 days or whatever
     // Every sequence can have its own behavior so maybe
     // the pattern Chain of Responsibility can help here.
-    return { delivered: 1, status: 'ok' };
+    return { delivered: 1, status: "ok" };
+  }
+  public async SendPasswordReminderEmail(user: Partial<IUser>) {
+    if (!user.email || !user.password) {
+      throw new Error("Email or password not provided");
+    }
+
+    // Dehash the password
+    const saltRounds = 10;
+    const decryptedPassword = await bcrypt.hash(user.password, saltRounds);
+
+    const data = {
+      from: config.emails.user,
+      to: [user.email],
+      subject: "Password Reminder",
+      text: `Your old password is: ${decryptedPassword}`,
+    };
+
+    try {
+      this.emailTransporter.sendMail(data);
+      return { delivered: 1, status: "ok" };
+    } catch (e) {
+      return { delivered: 0, status: "error" };
+    }
   }
 }
