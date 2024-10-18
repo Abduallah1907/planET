@@ -5,8 +5,9 @@ import {
   NotFoundError,
 } from "../types/Errors";
 import response from "../types/responses/response";
-import { Inject, Service } from "typedi";
+import Container, { Inject, Service } from "typedi";
 import {
+  IGovernorUpdateDTO,
   IUserInputDTO,
   IUserLoginDTO,
   IUserLoginOutputDTO,
@@ -18,6 +19,8 @@ import jwt, { Algorithm } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import config from "@/config";
 import { ObjectId } from "mongoose";
+import MailerService from "./mailer";
+import user from "@/api/routes/user";
 
 @Service()
 export default class UserService {
@@ -27,8 +30,9 @@ export default class UserService {
     @Inject("touristModel") private touristModel: Models.TouristModel,
     @Inject("advertiserModel") private advertiserModel: Models.AdvertiserModel,
     @Inject("tour_guideModel") private tourGuideModel: Models.Tour_guideModel,
-    @Inject("governorModel") private governorModel: Models.GovernorModel
-  ) {}
+    @Inject("governorModel") private governorModel: Models.GovernorModel,
+    @Inject("otpModel") private otpModel: Models.OTPModel
+  ) { }
 
   public async createUserService(userData: IUserInputDTO) {
     // const phoneNumRegex =
@@ -158,5 +162,135 @@ export default class UserService {
     await user.save();
 
     return new response(true, userOutput, "User found", 200);
+  }
+
+  public async forgetPasswordService(email: string) {
+    const mailerServiceInstance = Container.get(MailerService);
+    const user = await this.userModel.findOne({ email: email });
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (user == null) throw new NotFoundError("User not found");
+
+    // Send email with reset password link
+
+    const mailSent = mailerServiceInstance.SendPasswordReminderEmail(user);
+
+    if ((await mailSent).status == "error") {
+      throw new InternalServerError(
+        "Internal server error while sending email or email not valid"
+      );
+    }
+    return new response(true, user, "Email sent", 200);
+  }
+
+  public async updateGovernorService(
+    email: string,
+    updateData: IGovernorUpdateDTO
+  ) {
+    const { newEmail, name, phone_number, password, nation } = updateData;
+    let hashedPassword;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10); // Await bcrypt.hash here
+    }
+
+    const updatedUser = await this.userModel.findOneAndUpdate(
+      { email: email, role: UserRoles.Governor },
+      {
+        email: newEmail,
+        name: name,
+        phone_number: phone_number,
+        password: hashedPassword,
+      },
+      { new: true }
+    );
+    if (updatedUser instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (updatedUser == null) throw new NotFoundError("User not found");
+
+    const updatedGovernor = await this.governorModel.findOneAndUpdate(
+      { user_id: updatedUser._id },
+      { nation: nation },
+      { new: true }
+    );
+    if (updatedGovernor instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (updatedGovernor == null) throw new NotFoundError("Governor not found");
+
+    const updatedGovernorOutput: IGovernorUpdateDTO = {
+      newEmail: updatedUser.email,
+      name: updatedUser.name,
+      phone_number: updatedUser.phone_number,
+      password: updatedUser.password,
+      nation: updatedGovernor.nation,
+    };
+    return new response(true, updatedGovernorOutput, "Governor updated", 200);
+  }
+
+  public async requestOTPService(email: string) {
+    const mailerServiceInstance = Container.get(MailerService);
+    const user = await this.userModel.findOne({ email: email });
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (user == null) throw new NotFoundError("User not found");
+
+    const sentOTPs = await this.otpModel.find({user_id:user._id})
+    if(sentOTPs.length>3){
+      throw new BadRequestError("Too many OTPs sent. Please try again later")
+    }
+
+    // Send email with OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const createdOTP = await this.otpModel.create({ user_id: user._id, code: otp });
+    if (createdOTP instanceof Error)
+      throw new InternalServerError("Internal server error");
+    const mailSent = mailerServiceInstance.sendOTPMail(email, otp);
+
+    if ((await mailSent).status == "error") {
+      throw new InternalServerError(
+        "Internal server error while sending email or email not valid"
+      );
+    }
+    return new response(true, user, "Email sent", 200);
+  }
+
+  public async verifyOTPService(email: string, otp: string) {
+    const user = await this.userModel.findOne({ email: email });
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (user == null) throw new NotFoundError("User not found");
+
+    const sentOTPs = await this.otpModel.find({user_id:user._id}).sort({createdAt:1})
+    if(sentOTPs.length==0){
+      throw new BadRequestError("No OTPs sent. Please request an OTP first")
+    }
+    const lastOTP = sentOTPs[sentOTPs.length-1]
+    if(lastOTP.code != otp){
+      throw new BadRequestError("Incorrect OTP")
+    }
+    const currentTime = new Date().getTime()
+    const otpTime = lastOTP.createdAt.getTime()
+    if(currentTime-otpTime>600000){
+      throw new BadRequestError("OTP expired. Please request a new OTP")
+    }
+    return new response(true, user, "OTP verified", 200);
+  }
+
+  public async resetPasswordService(email: string, password: string, otp: string) {
+    const user = await this.userModel.findOne({ email: email });
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (user == null) throw new NotFoundError("User not found");
+
+    const sentOTPs = await this.otpModel.find({user_id:user._id}).sort({createdAt:1})
+    const lastOTP = sentOTPs[sentOTPs.length-1]
+    if(lastOTP.code != otp){
+      throw new BadRequestError("Incorrect OTP")
+    }
+
+    user.password = await bcrypt.hash(password, 10);
+    await user.save();
+
+    return new response(true, user, "Password reset", 200);
   }
 }

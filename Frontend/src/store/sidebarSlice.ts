@@ -8,7 +8,7 @@ interface SidebarState {
 }
 
 const initialState: SidebarState = {
-    isActive: true,
+    isActive: false,
     isOpen: false,
     navItems: [],
 };

@@ -52,12 +52,14 @@ export default function ProductsPage() {
         Array.isArray(value) ? [key, value.join(",")] : [key, value]
       )
     );
-    const productsData = await ProductService.getFilteredProducts(modifiedFilter);
+    const productsData = await ProductService.getFilteredProducts(
+      modifiedFilter
+    );
     setProducts(productsData.data);
-  }
+  };
   const handleApplyFilters = () => {
     getFilteredProducts();
-  }
+  };
   const getFilterComponents = async () => {
     const filterData = await ProductService.getFilterComponents();
     setfilterComponents(filterData.data);
@@ -74,9 +76,9 @@ export default function ProductsPage() {
 
   const onFilterChange = (newFilter: { [key: string]: any; }) => {
     setFilter(newFilter);
-  }
+  };
 
-  const filteredProducts = sortedProducts.filter(product =>
+  const filteredProducts = sortedProducts.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -84,7 +86,9 @@ export default function ProductsPage() {
     <Container fluid>
       <Row className="justify-content-center my-4">
         <Col md={6} className="text-center">
-          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>Explore Our Products</h1>
+          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
+            Explore Our Products
+          </h1>
         </Col>
       </Row>
 
@@ -149,7 +153,7 @@ export default function ProductsPage() {
                   Reviews={product.reviews_count}
                   createdAt={product.createdAt ? new Date(product.createdAt) : new Date()}
                   updatedAt={product.updatedAt ? new Date(product.updatedAt) : new Date()}
-                  imageUrl={product.picture}
+                  image={product.image}
                   isActiveArchive={product.archieve_flag}
                   onChange={() => console.log(`${product.name} booking status changed`)}
                   onClick={()=>onProductClick(product._id)}

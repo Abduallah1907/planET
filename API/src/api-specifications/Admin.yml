@@ -277,3 +277,75 @@ paths:
           description: Tag deleted successfully.
         "404":
           description: Tag not found.
+  /api/admin/acceptUser/{email}:
+    put:
+      tags:
+        - Admin
+      summary: Accept a user by email.
+      parameters:
+        - name: email
+          in: path
+          description: Email of the user to be accepted.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User accepted successfully.
+        "404":
+          description: User not found.
+        "500":
+          description: Internal Server Error.  
+  /api/admin/rejectUser/{email}:
+    put:
+      tags:
+        - Admin
+      summary: Reject a user by email.
+      parameters:
+        - name: email
+          in: path
+          description: Email of the user to be rejected.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User rejected successfully.
+        "404":
+          description: User not found.  
+        "500":
+          description: Internal Server Error.
+  /api/admin/updateAdmin/{email}:
+    put:
+      tags:
+        - Admin
+      summary: Update an admin account by email.
+      parameters:
+        - name: email
+          in: path
+          description: Email of the admin to be updated.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newEmail:
+                  type: string
+                name:
+                  type: string
+                phone_number:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Admin updated successfully.
+        "404":
+          description: Admin not found.
+        "400":
+          description: Invalid input.                        

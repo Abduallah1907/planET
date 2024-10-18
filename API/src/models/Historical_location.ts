@@ -39,10 +39,9 @@ const historicalLocationSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
-    picture: [
+    images: [
       {
-        type: String,
-        required: true,
+        type: mongoose.Schema.Types.ObjectId,
       },
     ],
     location: {
@@ -82,6 +81,8 @@ const historicalLocationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Historical_location = mongoose.model<IHistorical_location & mongoose.Document>("Historical_Location", historicalLocationSchema);
+const Historical_location = mongoose.model<
+  IHistorical_location & mongoose.Document
+>("Historical_Location", historicalLocationSchema);
 
 export default Historical_location;

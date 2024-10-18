@@ -51,6 +51,8 @@ import CategoryTable from "./views/Tables/CategoryTable";
 import TagsTable from "./views/Tables/TagTable";
 import HistoricalTagsTable from "./views/Tables/HistoricalTagTable";
 import ChangePasswordForm from "./views/auth/ChangePasswordForm";
+import ForgetPassword from "./views/auth/ForgetPassword";
+import CheckOTP from "./views/auth/CheckOTP";
 
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen);
@@ -72,6 +74,8 @@ const App: React.FC = () => {
         <Route path="/Login" element={<Login />} />
         <Route path="/Registeration" element={<TouristReg />} />
         <Route path="/stakeholder" element={<StakeholderReg />} />
+        <Route path="/forgetPassword" element={<ForgetPassword />} />
+        <Route path="/checkOTP/:email" element={<CheckOTP />} />
 
         <Route path="/AdvertiserFirst" element={<AdvertiserFirst />} />
         <Route path="/TourGuideFirst" element={<TourGuideFirst />} />

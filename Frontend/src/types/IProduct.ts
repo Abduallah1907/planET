@@ -1,12 +1,11 @@
-
-export interface IProduct  {
+export interface IProduct {
   _id: string;
-  user_id: string
+  user_id: string;
   comments: string[];
   name: string;
   average_rating: number;
   description: string;
-  picture: string;
+  image?: string;
   price: number;
   quantity: number;
   sales: number;
@@ -19,7 +18,7 @@ export interface IProduct  {
 export interface IProductInputDTO {
   name?: string;
   description?: string;
-  picture?: string;
+  image?: string;
   price?: number;
   quantity?: number;
   sales?: number;

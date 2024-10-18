@@ -33,11 +33,13 @@ const redirectToLogin = () => {
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    showToast(error.message, ToastTypes.ERROR);
+    console.log(error)
+    showToast(error.response.data.message, ToastTypes.ERROR);
     if(error.response && error.response?.status === 401) {
       redirectToLogin();
     }
-    return Promise.reject(error);
+    // Return a resolved promise to prevent error propagation
+    return Promise.resolve({ data: null, error: true });
   }
 );
 
