@@ -47,4 +47,24 @@ export default (app: Router) => {
     touristController.recieveBadge
   );
   route.put("/redeemPoints/:email", touristController.redeemPoints);
+  route.get(
+    "/checkTourGuide/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.checkTourGuide
+  );
+  route.get(
+    "/checkItinerary/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.checkItinerary
+  );
+  route.get(
+    "/checkActivity/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.checkActivity
+  );
+  route.post(
+    "/fileComplaint/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.fileComplaint
+  );
 };

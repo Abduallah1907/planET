@@ -16,6 +16,7 @@ import {
 import Historical_locationService from "./Historical_locationService";
 import TouristBadge from "@/types/enums/touristBadge";
 import { ObjectId, Types } from "mongoose";
+import { IComplaintCreateDTO } from "@/interfaces/IComplaint";
 
 // comment and ratings
 // complaint
@@ -35,7 +36,7 @@ export default class TouristService {
     @Inject("comment_ratingModel")
     private comment_ratingModel: Models.Comment_ratingModel,
     @Inject("tour_guideModel") private tour_guideModel: Models.Tour_guideModel,
-    @Inject("ticketModel") private ticketModel: Models.TicketModel
+    @Inject("ticketModel") private ticketModel: Models.TicketModel,
   ) {}
 
   public async getTouristService(email: string) {
@@ -267,8 +268,12 @@ export default class TouristService {
 
     return new response(true, comment_rating, "Tour guide rated", 201);
   }
-  public async rateandcommentItineraryService(id: string, data: IComment_RatingCreateDTOforItinerary) {
-    const { tour_guide_email, comment, rating, name_of_itinerary } = data;
+
+  public async rateandcommentItineraryService(
+    id: string,
+    data: IComment_RatingCreateDTOforItinerary
+  ) {
+    const { comment, rating, itinerary_id } = data;
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid id");
     }
@@ -278,22 +283,9 @@ export default class TouristService {
     if (rating && (rating < 0 || rating > 5)) {
       throw new BadRequestError("Invalid rating");
     }
-    //find the tour guide by email
-    const user = await this.userModel.findOne({
-      email: tour_guide_email,
-      role: UserRoles.TourGuide,
-    });
-    if (user instanceof Error) throw new InternalServerError("Internal server error");
-    if (user == null) throw new NotFoundError("User not found");
-    const tour_guide = await this.tour_guideModel.findOne({
-      user_id: user._id,
-    });
-    if (tour_guide instanceof Error) throw new InternalServerError("Internal server error");
-    if (tour_guide == null) throw new NotFoundError("Tour guide not found");
-    //find the itinerary by name and tour guide id
+
     const itinerary = await this.itineraryModel.findOne({
-      name: name_of_itinerary,
-      tour_guide_id: tour_guide._id,
+      _id: new Types.ObjectId(itinerary_id),
     });
     if (itinerary instanceof Error) throw new InternalServerError("Internal server error");
     if (itinerary == null) throw new NotFoundError("Itinerary not found");
@@ -336,8 +328,12 @@ export default class TouristService {
     }
     return new response(true, comment_rating, "Itinerary rated", 201);
   }
-  public async rateandcommentActivityService(id: string, data: IComment_RatingCreateDTOforActivity) {
-    const { name_of_activity, comment, rating } = data;
+
+  public async rateandcommentActivityService(
+    id: string,
+    data: IComment_RatingCreateDTOforActivity
+  ) {
+    const { activity_id, comment, rating } = data;
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid id");
     }
@@ -347,9 +343,9 @@ export default class TouristService {
     if (rating && (rating < 0 || rating > 5)) {
       throw new BadRequestError("Invalid rating");
     }
-    //find the activity by name
+    //find the activity ID
     const activity = await this.activityModel.findOne({
-      name: name_of_activity,
+      _id: new Types.ObjectId(activity_id),
     });
     if (activity instanceof Error) throw new InternalServerError("Internal server error");
     if (activity == null) throw new NotFoundError("Activity not found");
@@ -704,5 +700,125 @@ export default class TouristService {
     if (updatedTourist == null) throw new NotFoundError("Tourist not found");
 
     return new response(true, updatedTourist, "Points redeemed", 200);
+  }
+  //flag to check if the tourist went with this tour guide
+  public async checkTourGuideService(
+    tourist_id: string,
+    tour_guide_email: string
+  ) {
+    if (!Types.ObjectId.isValid(tourist_id) || !tour_guide_email) {
+      throw new BadRequestError("Invalid id or email");
+    }
+    const user = await this.userModel.findOne({
+      email: tour_guide_email,
+      role: UserRoles.TourGuide,
+    });
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (user == null) throw new NotFoundError("User not found");
+    const tour_guide = await this.tour_guideModel.findOne({
+      user_id: user._id,
+    });
+    if (tour_guide instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tour_guide == null) throw new NotFoundError("Tour guide not found");
+
+    // go I try to loop over the tour guide iternaries and check if the tourist has visited the location by booking_id
+    let ticket;
+    for (let i = 0; i < tour_guide.itineraries.length; i++) {
+      ticket = await this.ticketModel.findOne({
+        type: "ITINERARY",
+        booking_id: tour_guide.itineraries[i],
+        tourist_id: new Types.ObjectId(tourist_id),
+      });
+    }
+    if (ticket instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (ticket == null) {
+      //return false if the tourist has not visited the location
+      return new response(false, ticket, "Tour guide not found", 201);
+    }
+    //return true if the tourist has visited the location
+    return new response(true, null, "Tour guide found", 201);
+  }
+  //flag to check if the tourist went with this itinerary
+  public async checkItineraryService(tourist_id: string, itinerary_id: string) {
+    if (!Types.ObjectId.isValid(tourist_id)) {
+      throw new BadRequestError("Invalid id ");
+    }
+    if (!Types.ObjectId.isValid(itinerary_id)) {
+      throw new BadRequestError("Invalid itinerary id");
+    }
+    const itinerary = await this.itineraryModel.findById(
+      new Types.ObjectId(itinerary_id)
+    );
+    if (itinerary instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (itinerary == null) throw new NotFoundError("Itinerary not found");
+    const ticket = await this.ticketModel.findOne({
+      type: "ITINERARY",
+      booking_id: itinerary._id,
+      tourist_id: new Types.ObjectId(tourist_id),
+    });
+    if (ticket instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (ticket == null) {
+      //return false if the tourist has not visited the location
+      return new response(false, null, "Itinerary not found", 201);
+    }
+    //return true if the tourist has visited the location
+    return new response(true, null, "Itinerary found", 201);
+  }
+  //flag for activity
+  public async checkActivityService(tourist_id: string, activity_id: string) {
+    if (!Types.ObjectId.isValid(tourist_id)) {
+      throw new BadRequestError("Invalid id ");
+    }
+    if (!Types.ObjectId.isValid(activity_id)) {
+      throw new BadRequestError("Invalid activity id");
+    }
+    const activity = await this.activityModel.findById(
+      new Types.ObjectId(activity_id)
+    );
+    if (activity instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (activity == null) throw new NotFoundError("Activity not found");
+    const ticket = await this.ticketModel.findOne({
+      type: "ACTIVITY",
+      booking_id: activity._id,
+      tourist_id: new Types.ObjectId(tourist_id),
+    });
+    if (ticket instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (ticket == null) {
+      //return false if the tourist has not visited the location
+      return new response(false, null, "Activity not found", 201);
+    }
+    //return true if the tourist has visited the location
+    return new response(true, null, "Activity found", 201);
+  }
+  public async fileComplaintService(
+    tourist_id: string,
+    data: IComplaintCreateDTO
+  ) {
+    if (!Types.ObjectId.isValid(tourist_id)) {
+      throw new BadRequestError("Invalid id ");
+    }
+    const tourist = await this.touristModel.findById(tourist_id);
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+    const complaint = new this.complaintModel({
+      tourist_id: new Types.ObjectId(tourist_id),
+      title: data.title,
+      date:
+        data.date === undefined ? new Date() : new Date(Date.parse(data.date)),
+      body: data.body,
+    });
+    if (complaint instanceof Error)
+      throw new InternalServerError("Internal server error");
+    await complaint.save();
+
+    return new response(true, complaint, "Complaint filed", 201);
   }
 }
