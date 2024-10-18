@@ -1,5 +1,5 @@
 import { IItineraryCreateDTO, IItineraryOutputAllDTO, IItineraryOutputDTO, IItineraryUpdateDTO } from "@/interfaces/IItinerary";
-import { BadRequestError, ForbiddenError, HttpError, InternalServerError, NotFoundError, UnauthorizedError } from "@/types/Errors";
+import { BadRequestError, ConflictError, ForbiddenError, HttpError, InternalServerError, NotFoundError, UnauthorizedError } from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
 import mongoose, { ObjectId, Types } from "mongoose";
@@ -119,7 +119,7 @@ export default class ItineraryService {
   public async deactivateItineraryService(itinerary_id: Types.ObjectId): Promise<any> {
     const itinerary = await this.itineraryModel.findById(itinerary_id);
     if (!itinerary) throw new NotFoundError("Itinerary not found! Did you enter the correct itinerary id?");
-    if (itinerary.active_flag === false) throw new ForbiddenError("The itinerary is already deactived");
+    if (itinerary.active_flag === false) throw new ConflictError("The itinerary is already deactived");
 
     itinerary.active_flag = false;
     await itinerary.save();
@@ -131,12 +131,12 @@ export default class ItineraryService {
     const itinerary = await this.itineraryModel.findById(itinerary_id);
     if (!itinerary) throw new NotFoundError("Itinerary not found! Did you enter the correct itinerary id?");
 
-    if (itinerary.active_flag === true) throw new ForbiddenError("The itinerary is already active");
+    if (itinerary.active_flag === true) throw new ConflictError("The itinerary is already active");
     // we check if there's bookings, since, the excel mentions that "itineraries with bookings can only be deactivated"
     // need to double check with the ta on this info, but if it is true then the user must be warned with this information too
 
     const itineraryBooked = await this.ticketModel.find({ booking_id: itinerary_id });
-    if (itineraryBooked) throw new ForbiddenError("If the itinerary is booked, we cannot activate the itinerary");
+    if (itineraryBooked) throw new BadRequestError("If the itinerary is booked, we cannot activate the itinerary");
 
     itinerary.active_flag = true;
     await itinerary.save();
