@@ -844,8 +844,7 @@ export default class TouristService {
     const complaint = new this.complaintModel({
       tourist_id: new Types.ObjectId(tourist_id),
       title: data.title,
-      date:
-        data.date === undefined ? new Date() : new Date(Date.parse(data.date)),
+      date: data.date === undefined ? new Date() : data.date,
       body: data.body,
     });
     if (complaint instanceof Error)

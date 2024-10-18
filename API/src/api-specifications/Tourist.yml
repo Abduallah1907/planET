@@ -568,3 +568,40 @@ paths:
           description: Bad request
         500:
           description: Internal server error
+  /api/tourist/fileComplaint/{tourist_id}:
+    post:
+      tags:
+        - Tourist
+      summary: File complaint
+      description: File complaint for a tourist
+      parameters:
+        - in: path
+          name: tourist_id
+          required: true
+          description: Tourist id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: Complaint of the tourist
+                body:
+                  type: string
+                  description: Body of the complaint
+                date:
+                  type: string
+                  format: date
+                  description: Date of the complaint
+      responses:
+        201:
+          description: Complaint filed successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error

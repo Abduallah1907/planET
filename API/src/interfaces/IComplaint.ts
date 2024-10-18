@@ -13,6 +13,6 @@ export interface IComplaint extends Document {
 }
 export interface IComplaintCreateDTO {
   title: string;
-  date?: string;
+  date?: Date;
   body: string;
 }

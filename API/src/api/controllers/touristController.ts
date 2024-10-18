@@ -170,7 +170,7 @@ export class TouristController {
   //create complaint
   public async fileComplaint(req: any, res: any) {
     const { tourist_id } = req.params;
-    const data: IComplaintCreateDTO = req.query;
+    const data: IComplaintCreateDTO = req.body;
     const touristService: TouristService = Container.get(TouristService);
     const filedComplaint = await touristService.fileComplaintService(
       tourist_id,
