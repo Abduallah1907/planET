@@ -1,5 +1,5 @@
 import React from "react";
-import { Navbar, Button, Dropdown, Container, Nav } from "react-bootstrap";
+import { Navbar, Button, Dropdown, Container, Nav, Row } from "react-bootstrap";
 import "./topbar.css";
 import Logo from "../../assets/LogoNoBackground.svg";
 import { useNavigate } from "react-router-dom";
@@ -61,7 +61,8 @@ const TopBar: React.FC = () => {
 
   const sidebarState = useAppSelector((state) => state.sidebar.isActive)
   const dispatch = useAppDispatch();
-  const IsLoggedIn = useAppSelector((state) => state.user.isLoggedIn); // Assuming you have an auth slice in your Redux store
+  const User = useAppSelector((state) => state.user);
+  const IsLoggedIn = User.isLoggedIn // Assuming you have an auth slice in your Redux store
 
   return (
     <Navbar expand="lg" className="top-bar" variant="dark">
@@ -181,7 +182,11 @@ const TopBar: React.FC = () => {
 
             {IsLoggedIn ? (
               <>
-                <Avatar/>
+                <Row>
+                  <h4 className="btn-text">{User.username}</h4>
+                </Row>
+                <Avatar />
+
               </>
             ) : (
               <>

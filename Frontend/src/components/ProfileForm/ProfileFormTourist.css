@@ -10,7 +10,7 @@ h2.my-profile-heading {
 
 .wallet-card {
     background-color: #fff;
-    border: 1.5px solid #e67e22;
+    border: 1.5px solid var(--main-color);
     border-radius: 20px;
     padding: 1rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -51,19 +51,19 @@ h2.my-profile-heading {
 }
 
 .update-btn {
-    background-color: #e67e22;
+    background-color: var(--main-color);
     color: white;
     border: none;
 }
 
 .update-btn:hover {
-    background-color: #d35400; 
+    scale: 0.9 !important;
 }
 
 .cancel-btn {
     background-color: white;
-    color: #e67e22;
-    border: 1px solid #e67e22;
+    color: var(--main-color);
+    border: 1px solid var(--main-color);
 }
 
 .cancel-btn:hover {

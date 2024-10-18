@@ -19,7 +19,7 @@ const Avatar: React.FC = () => {
         }
     }
     return (
-        <Dropdown >
+        <Dropdown drop='down' align='end' className='px-2'>
             <Dropdown.Toggle
                
                 variant="secondary"
