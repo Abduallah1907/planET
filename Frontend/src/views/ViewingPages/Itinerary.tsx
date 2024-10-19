@@ -159,6 +159,7 @@ export default function ItinerariesPage() {
                   isTourGuide={false}
                   onChange={() => console.log(`${itinerary.locations} booking status changed`)}
                   onClick={() => onItineraryClick(itinerary._id)}
+                  onFlag={() => getItinerary()}
                   />
                  
               </Col>

@@ -91,6 +91,15 @@ class ActivityService {
       throw error;
     }
   };
+
+  public static flagInappropriate = async (id: string) => {
+    try {
+      const response = await axiosInstance.put(`/#addActivityLink/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { ActivityService };
