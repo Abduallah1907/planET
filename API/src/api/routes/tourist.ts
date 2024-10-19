@@ -92,4 +92,9 @@ export default (app: Router) => {
     authorize([UserRoles.Tourist]),
     touristController.RateandcommentProduct
   );
+  route.put(
+    "/cancelTicket/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.cancelTicket
+  );
 };

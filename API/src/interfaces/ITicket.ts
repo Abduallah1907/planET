@@ -9,4 +9,5 @@ export interface ITicket extends Document {
   cancelled: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  time_to_attend: Date;
 }

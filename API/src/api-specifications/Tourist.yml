@@ -690,3 +690,30 @@ paths:
           description: Bad request
         500:
           description: Internal server error
+
+  /api/tourist/cancelTicket/{tourist_id}:
+    put:
+      tags:
+        - Tourist
+      summary: Cancel ticket
+      description: Cancel ticket for a tourist
+      parameters:
+        - in: path
+          name: tourist_id
+          required: true
+          description: Tourist id
+          schema:
+            type: string
+        - in: query
+          name: ticket_id
+          required: true
+          description: Ticket id
+          schema:
+            type: string
+      responses:
+        201:
+          description: Ticket cancelled successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error

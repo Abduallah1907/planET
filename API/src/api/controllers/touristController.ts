@@ -207,4 +207,14 @@ export class TouristController {
     );
     res.status(ratedTourist.status).json(ratedTourist);
   }
+  public async cancelTicket(req: any, res: any) {
+    const { tourist_id } = req.params;
+    const { ticket_id } = req.query;
+    const touristService: TouristService = Container.get(TouristService);
+    const cancelledTicket = await touristService.cancelTicketService(
+      tourist_id,
+      ticket_id
+    );
+    res.status(cancelledTicket.status).json(cancelledTicket);
+  }
 }
