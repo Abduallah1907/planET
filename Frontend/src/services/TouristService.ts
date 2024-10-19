@@ -23,8 +23,39 @@ class TouristService {
       throw error;
     }
   };
-
   
+  public static rateAndCommentActivity = async (id: string, data:any) => {
+    try {
+      const response = await axiosInstance.post(
+        `/tourist/rateandcommentActivity/${id}`,data
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public static rateAndCommentItinerary = async (id: string, data:any) => {
+    try {
+      const response = await axiosInstance.post(
+        `/tourist/rateandcommentItinerary/${id}`,data
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  public static rateAndCommentTourGuide = async (id: string, data:any) => {
+    try {
+      const response = await axiosInstance.post(
+        `/tourist/rateandcommentTourGuide/${id}`,data
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { TouristService };

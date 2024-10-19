@@ -34,7 +34,7 @@ import HistoricalPlaces from "./views/ViewingPages/HistoricalPlaces";
 import Products from "./views/ViewingPages/Products";
 import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
 import StakeholderReg from "./views/auth/StakeholderReg/StakeholderReg";
-import ItineraryCardd from "./views/ItineraryCardd";
+import ItineraryCardd from "./views/ItineraryCard";
 import EditHistoricalLocation from "./views/EditPages/EditHistoricalLocation";
 import EditProduct from "./views/EditPages/EditProduct";
 import EditItinerary from "./views/EditPages/EditItinerary";
@@ -53,6 +53,8 @@ import HistoricalTagsTable from "./views/Tables/HistoricalTagTable";
 import { use } from "i18next";
 
 import Rating from "./components/Rating/Rating";
+import ItineraryDetails from "./views/ProductDetails/ItineraryDetails";
+
 
 
 const App: React.FC = () => {
@@ -105,7 +107,7 @@ const App: React.FC = () => {
         <Route path="/AddActivity" element={<AdvertiserCreate />} />
         <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
         <Route path="/AddItinerary" element={<AddItinerary />} />
-        <Route path="/ItineraryCardd" element={<ItineraryCardd />} />
+        <Route path="/ItineraryDetails/:id" element={<ItineraryDetails />} />
 
         <Route path="/EditActivity/:activity_id" element={<EditActivity />} />
         <Route path="/EditHistoricalLocation/:historical_location_id" element={<EditHistoricalLocation />} />
@@ -127,6 +129,7 @@ const App: React.FC = () => {
         <Route path="/Categories" element={<CategoryTable />} />
         <Route path="/Tags" element={<TagsTable />} />
         <Route path="/HistoricalTags" element={<HistoricalTagsTable />} />
+        
 
       </Routes>
     </AppProvider>
