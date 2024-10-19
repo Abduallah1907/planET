@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button, Dropdown, Image } from 'react-bootstrap';
 import "./avatar.css";
 import { setLoginState } from '../../store/userSlice';
+import { closeSidebar, disableSidebar, setNavItems } from '../../store/sidebarSlice';
 
 const Avatar: React.FC = () => {
     const user = useAppSelector((state) => state.user);
@@ -15,6 +16,9 @@ const Avatar: React.FC = () => {
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to logout?")) {
             dispatch(setLoginState(false));
+            dispatch(disableSidebar());
+            dispatch(closeSidebar());
+            dispatch(setNavItems([]));
             navigate('/');
         }
     }
