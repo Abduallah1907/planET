@@ -91,6 +91,7 @@ class ActivityService {
       throw error;
     }
   };
+
 }
 
 export { ActivityService };
