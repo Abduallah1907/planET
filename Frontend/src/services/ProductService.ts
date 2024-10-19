@@ -62,7 +62,7 @@ class ProductService {
   }
   public static EditProduct = async (product_id: string,productData:any) => {
     try {
-      const response = await axiosInstance.put(`/product/EditProduct/${product_id}`,productData);
+      const response = await axiosInstance.put(`/product/UpdateProduct/${product_id}`,productData);
       return response.data;
     } catch (error) { 
       throw error;
