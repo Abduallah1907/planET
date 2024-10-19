@@ -2,29 +2,29 @@ import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../../components/FormGroup/FormGroup";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { useAppSelector } from "../../store/hooks";
-import { AdminService } from "../../services/AdminService";
+import { GovernorService } from "../../services/GovernorService";
 
 interface FormData {
   changePassword: string;
   retypePassword: string;
 }
 
-const ChangePasswordForm: React.FC = () => {
+const ChangePasswordG: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     changePassword: "",
     retypePassword: "",
   });
 
-  const Admin = useAppSelector((state) => state.user);
+  const Governor = useAppSelector((state) => state.user);
 
   useEffect(() => {
     setFormData({
       changePassword: "",
       retypePassword: "",
     });
-  }, [Admin]);
+  }, [Governor]);
   const OnClick = async () => {
-    await AdminService.changePass(Admin.email, {
+    await GovernorService.changePass(Governor.email, {
       password: formData.changePassword,
     });
   };
@@ -106,4 +106,4 @@ const ChangePasswordForm: React.FC = () => {
   );
 };
 
-export default ChangePasswordForm;
+export default ChangePasswordG;
