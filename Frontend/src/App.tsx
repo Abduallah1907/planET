@@ -59,6 +59,7 @@ import ItineraryDetails from "./views/ProductDetails/ItineraryDetails";
 import ChangePasswordForm from "./views/auth/ChangePasswordForm";
 import ForgetPassword from "./views/auth/ForgetPassword";
 import CheckOTP from "./views/auth/CheckOTP";
+import ChangePasswordG from "./views/auth/ChangePasswordG";
 
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen);
@@ -146,7 +147,7 @@ const App: React.FC = () => {
         <Route path="/HistoricalTags" element={<HistoricalTagsTable />} />
         
         <Route path="/ChangePasswordForm" element={<ChangePasswordForm />} />
-
+        <Route path="/ChangePasswordG" element={<ChangePasswordG />} />
       </Routes>
     </AppProvider>
   );

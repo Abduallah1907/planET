@@ -3,6 +3,7 @@ import { Container, Row, Col, Button, Form, Table } from "react-bootstrap";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import { useAppSelector } from "../../store/hooks";
 import { TourGuideServices } from "../../services/TourGuideServices";
+import { FileService } from "../../services/FileService";
 
 interface WorkExperience {
   id?: string; // ID from the backend
@@ -15,40 +16,41 @@ interface WorkExperience {
 interface FormData {
   yearsOfExperience: string;
   previousWork: WorkExperience[];
-  logo: File | null;
+  photo: File | null;
 }
 
 const TourGuideFirst: React.FC = () => {
+  const TourGuideFirst = useAppSelector((state) => state.user);
+
   const [formData, setFormData] = useState<FormData>({
     yearsOfExperience: "",
     previousWork: [],
-    logo: null,
+    photo: null,
   });
 
   const [createdWork, setCreatedWork] = useState<WorkExperience[]>([]);
-
-  const TourGuideFirst = useAppSelector((state) => state.user);
 
   useEffect(() => {
     setFormData({
       yearsOfExperience: "",
       previousWork: [],
-      logo: null,
+      photo: TourGuideFirst.stakeholder_id?.photo || null,
     });
   }, [TourGuideFirst]);
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFormData({ ...formData, photo: e.target.files[0] });
+    }
+  };
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
-    if (name === "logo") {
-      const fileInput = e.target as HTMLInputElement;
-      if (fileInput.files && fileInput.files.length > 0) {
-        setFormData({ ...formData, logo: fileInput.files[0] });
-      }
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleAddWork = () => {
@@ -113,27 +115,45 @@ const TourGuideFirst: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+  };
+  const OnClick = async () => {
+    if (formData.photo) {
+      const file = await FileService.uploadFile(formData.photo);
+      await TourGuideServices.updateTourGuide(TourGuideFirst.email, {
+        years_of_experience: formData.yearsOfExperience,
+        createdPreviousWork: createdWork.map((work) => ({
+          id: work.id, // Send the ID to the backend
+          title: work.title,
+          place: work.place,
+          from: work.from,
+          to: work.to,
+        })),
 
-    await TourGuideServices.updateTourGuide(TourGuideFirst.email, {
-      years_of_experience: formData.yearsOfExperience,
-      photo: formData.logo,
-      createdPreviousWork: createdWork.map((work) => ({
-        id: work.id, // Send the ID to the backend
-        title: work.title,
-        place: work.place,
-        from: work.from,
-        to: work.to,
-      })),
+        updatedPreviousWork: [],
+        photo: file.data._id,
+      });
+    } else {
+      await TourGuideServices.updateTourGuide(TourGuideFirst.email, {
+        years_of_experience: formData.yearsOfExperience,
+        photo: formData.photo,
+        createdPreviousWork: createdWork.map((work) => ({
+          id: work.id, // Send the ID to the backend
+          title: work.title,
+          place: work.place,
+          from: work.from,
+          to: work.to,
+        })),
 
-      updatedPreviousWork: [], // Ensure updatedPreviousWork is empty
-    });
+        updatedPreviousWork: [],
+      });
+    }
   };
 
   const handleCancel = () => {
     setFormData({
       yearsOfExperience: "",
       previousWork: [],
-      logo: null,
+      photo: null,
     });
     setCreatedWork([]);
   };
@@ -154,6 +174,21 @@ const TourGuideFirst: React.FC = () => {
               onChange={handleChange}
               disabled={false}
             />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Form.Group controlId="formFile" className="mb-3">
+              <Form.Label>
+                <h3>Upload Logo</h3>
+              </Form.Label>
+              <Form.Control
+                type="file"
+                name="photo"
+                onChange={handleFileChange}
+                accept="image/*"
+              />
+            </Form.Group>
           </Col>
         </Row>
 
@@ -231,7 +266,7 @@ const TourGuideFirst: React.FC = () => {
         </Row>
 
         <div className="form-actions">
-          <Button type="submit" className="update-btn">
+          <Button type="submit" className="update-btn" onClick={OnClick}>
             Update
           </Button>
           <Button type="button" className="cancel-btn" onClick={handleCancel}>

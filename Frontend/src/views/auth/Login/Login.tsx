@@ -123,6 +123,10 @@ export default function Login() {
                 path: "/HistoricalTags",
                 label: "Historical Tags",
               },
+              {
+                path: "/ChangePasswordG",
+                label: "Change Password",
+              },
             ])
           );
 
@@ -164,9 +168,12 @@ export default function Login() {
       <Container>
         <Row className="justify-content-center mt-5">
           <Col sm={12} md={6} lg={4}>
-          <h1 className="text-center" style={{fontWeight: "bold"}}>{t("login_title")}</h1>
-          <h2 className="LOGIN">
-              {t("new_to_planet")}<span className="orange-text"> {t("signup")}</span>
+            <h1 className="text-center" style={{ fontWeight: "bold" }}>
+              {t("login_title")}
+            </h1>
+            <h2 className="LOGIN">
+              {t("new_to_planet")}
+              <span className="orange-text"> {t("signup")}</span>
             </h2>
             {showAlert ? (
               <Alert variant="danger" className="text-center">
@@ -196,7 +203,13 @@ export default function Login() {
                 value={userData.passwordLogin}
                 onChange={handleChange}
               />
-              <a className="mb-2 orange-text text-decoration-none" style={{fontWeight: "bold", cursor: "pointer"}} onClick={()=>navigate('/forgetPassword')}>{t("forgot_password")}</a>
+              <a
+                className="mb-2 orange-text text-decoration-none"
+                style={{ fontWeight: "bold", cursor: "pointer" }}
+                onClick={() => navigate("/forgetPassword")}
+              >
+                {t("forgot_password")}
+              </a>
               <Button onClick={handleLogin} className="login-btn w-100 mt-1">
                 {t("login")}
               </Button>
