@@ -68,34 +68,11 @@ export class UserController {
   public async getDocumentsRequired(req: any, res: any) {
     const userService: UserService = Container.get(UserService);
     const { user_id, role } = req.query;
-    let newRole;
 
-    switch (role) {
-      case "Advertiser":
-        newRole = UserRoles.Advertiser;
-        break;
-      case "Tourist":
-        newRole = UserRoles.Tourist;
-        break;
-      case "Seller":
-        newRole = UserRoles.Seller;
-        break;
-      case "Governor":
-        newRole = UserRoles.Governor;
-        break;
-      case "Admin":
-        newRole = UserRoles.Admin;
-        break;
-      case "Tour_Guide":
-        newRole = UserRoles.TourGuide;
-        break;
-      default:
-        throw new Error("Role not found");
-    }
     const userIdObject = new Types.ObjectId(user_id);
     const user = await userService.getDocumentsRequiredService(
       userIdObject,
-      newRole
+      role
     );
     res.status(user.status).json(user);
   }

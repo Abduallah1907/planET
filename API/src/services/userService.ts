@@ -338,7 +338,6 @@ export default class UserService {
       throw new InternalServerError("Internal server error");
     if (user == null) throw new NotFoundError("User not found");
 
-    console.log(`User found: ${user}`); // Debugging line to check the value of user
     const documents_required = user.documents_required;
     return new response(
       true,
