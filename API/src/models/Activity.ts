@@ -69,6 +69,7 @@ const activitySchema = new mongoose.Schema(
     },
     image: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "upload.files", // Reference the correct collection
     },
     advertiser_id: {
       type: mongoose.Schema.Types.ObjectId,

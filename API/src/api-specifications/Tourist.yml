@@ -486,19 +486,25 @@ paths:
         500:
           description: Internal server error
 
-  /api/tourist/redeemPoints/{email}:
+  /api/tourist/redeemPoints:
     put:
       tags:
         - Tourist
       summary: Redeem points
       description: Redeem points for a tourist
-      parameters:
-        - in: path
-          name: email
-          required: true
-          description: Email of the tourist
-          schema:
-            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: email of the tourist
+                points:
+                  type: number
+                  description: points tourist wants to redeem
       responses:
         200:
           description: Points redeemed successfully
@@ -620,6 +626,118 @@ paths:
       responses:
         201:
           description: Complaint filed successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+
+  /api/tourist/viewComplaints/{tourist_id}:
+    get:
+      tags:
+        - Tourist
+      summary: Get complaint
+      description: Get complaint for a tourist
+      parameters:
+        - in: path
+          name: tourist_id
+          required: true
+          description: Tourist id
+          schema:
+            type: string
+      responses:
+        201:
+          description: Complaint retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+
+  /api/tourist/flagtoRateandcommentProduct/{tourist_id}:
+    get:
+      tags:
+        - Tourist
+      summary: Flag to rate and comment product
+      description: Flag to rate and comment product for a tourist
+      parameters:
+        - in: path
+          name: tourist_id
+          required: true
+          description: Tourist id
+          schema:
+            type: string
+        - in: query
+          name: product_id
+          required: true
+          description: Product id
+          schema:
+            type: string
+      responses:
+        201:
+          description: Product flagged to rate and comment successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+
+  /api/tourist/rateandcommentProduct/{tourist_id}:
+    post:
+      tags:
+        - Tourist
+      summary: Rate and comment product
+      description: Rate and comment product for a tourist
+      parameters:
+        - in: path
+          name: tourist_id
+          required: true
+          description: Tourist id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: string
+                  description: Product id
+                comment:
+                  type: string
+                  description: Comment of the tourist
+                rating:
+                  type: number
+                  description: Rating of the tourist
+      responses:
+        201:
+          description: Product rated and commented successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+
+  /api/tourist/cancelTicket/{tourist_id}:
+    put:
+      tags:
+        - Tourist
+      summary: Cancel ticket
+      description: Cancel ticket for a tourist
+      parameters:
+        - in: path
+          name: tourist_id
+          required: true
+          description: Tourist id
+          schema:
+            type: string
+        - in: query
+          name: ticket_id
+          required: true
+          description: Ticket id
+          schema:
+            type: string
+      responses:
+        201:
+          description: Ticket cancelled successfully
         400:
           description: Bad request
         500:

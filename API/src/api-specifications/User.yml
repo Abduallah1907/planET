@@ -161,6 +161,7 @@ paths:
           description: Bad request.
         500:
           description: Internal server error.
+
   /api/users/resetPassword:
     put:
       tags:
@@ -187,6 +188,31 @@ paths:
           description: Bad request.
         500:
           description: Internal server error.
+  /api/users/getDocumentsRequired:
+    get:
+      tags:
+        - Users
+      summary: Get documents required
+      description: Get documents required
+      parameters:
+        - in: query
+          name: user_id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: role
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Documents required.
+        400:
+          description: Bad request.
+        500:
+          description: Internal server error.         
+
 components:
   schemas:
     IUserInputDTO:
