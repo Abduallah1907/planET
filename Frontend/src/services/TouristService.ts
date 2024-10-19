@@ -24,6 +24,16 @@ class TouristService {
     }
   };
 
+  public static redeemPoints = async (email: string, points: number) => {
+    try {
+      const response = await axiosInstance.put(`/tourist/redeemPoints/${email}`, {points});
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+
   
 }
 

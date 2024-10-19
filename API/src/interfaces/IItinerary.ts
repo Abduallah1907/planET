@@ -3,8 +3,7 @@ import mongoose, { Document } from "mongoose";
 import { ISlot } from "./ISlot";
 
 type ObjectId = mongoose.Schema.Types.ObjectId;
-import { Document, ObjectId } from "mongoose";
-import { ISlot } from "./ISlot";
+
 
 export interface IItinerary extends Document {
   activities: ObjectId[];

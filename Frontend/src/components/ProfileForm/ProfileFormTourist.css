@@ -87,4 +87,8 @@ h2.my-profile-heading {
     transform: translateY(-50%);
     pointer-events: none; 
   }
-  
+  .exchange-icon{
+    color: var(--main-color);
+    font-size: 1.5rem;
+    margin-top: 0; /* Remove top margin */
+    margin-right: 5px; /* Add a small right margin */  }

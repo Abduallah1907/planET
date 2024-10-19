@@ -35,6 +35,9 @@ export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
+        setStakeholder(state, action: PayloadAction<Object>){
+            state.stakeholder_id = action.payload;
+        },
         setUser: (state, action: PayloadAction<UserState>) => {
             const {name, _id, username, role, email, phone_number, status, token, stakeholder_id } = action.payload;
             state.name=name;
@@ -71,7 +74,7 @@ export const userSlice = createSlice({
     }
 });
 
-export const { setUser, getUser, logout , login,setLoginState  } = userSlice.actions;
+export const { setUser, getUser, logout , login,setLoginState, setStakeholder  } = userSlice.actions;
 
 export const userState = (state: RootState) => state.sidebar;
 
