@@ -1,5 +1,5 @@
 import { IAdvertiser } from "@/interfaces/IAdvertiser";
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
 const advertiserSchema = new mongoose.Schema(
   {
@@ -16,7 +16,7 @@ const advertiserSchema = new mongoose.Schema(
     ],
     documents_required: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
       },
     ],
@@ -33,8 +33,7 @@ const advertiserSchema = new mongoose.Schema(
       // required: true,
     },
     logo: {
-      type: String,
-      // required: true,
+      type: mongoose.Schema.Types.ObjectId,
     },
     company_profile: {
       type: String,

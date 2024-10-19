@@ -78,14 +78,14 @@ export default function StakeholderForm() {
       documents_required: fileObjectIds,
     };
 
-    if (StakeData.role == "Seller") {
+    if (StakeData.role === "Seller") {
       try {
         const seller = await AuthService.registerSeller(updatedStakeData);
         navigate("/login"); // Call the API
       } catch (error) {
         console.error("Seller registration failed: ", error);
       }
-    } else if (StakeData.role == "Advertiser") {
+    } else if (StakeData.role === "Advertiser") {
       try {
         const advertiser = await AuthService.registerAdvertiser(
           updatedStakeData
@@ -94,7 +94,7 @@ export default function StakeholderForm() {
       } catch (error) {
         console.error("Advertiser registration failed: ", error);
       }
-    } else if (StakeData.role == "Tour Guide") {
+    } else if (StakeData.role === "Tour Guide") {
       try {
         const tourGuide = await AuthService.registerTourGuide(updatedStakeData);
         navigate("/login"); // Call the API
@@ -236,13 +236,6 @@ export default function StakeholderForm() {
           />
         </Col>
       </Row>
-      <div key="default-checkbox" className="mb-3">
-        <Form.Check
-          type="checkbox"
-          // id="default-checkbox"
-          label="Remember me"
-        />
-      </div>
       <div key="default-checkbox1" className="mb-4">
         <Form.Check
           type="checkbox"
@@ -259,6 +252,7 @@ export default function StakeholderForm() {
               </a>
             </span>
           }
+          required
         />
       </div>
       <div className="d-flex flex-column text-center">

@@ -65,16 +65,14 @@ export default async ({ app }: { app: Application }) => {
     // Error-handling middleware for 401 Unauthorized errors
     if (err.name === "UnauthorizedError") {
       res.status(err.status || 401).json({
-        code: err.status || 401,
+        status: err.status || 401,
         message: err.message,
         stack: err.stack,
       });
     } else {
       res.status(err.status || 500).json({
-        code: err.status || 500,
-        errors: {
-          message: err.message,
-        },
+        status: err.status || 500,
+        message: err.message,
         stack: err.stack,
       });
     }

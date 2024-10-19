@@ -257,13 +257,6 @@ export default function TouristForm() {
           </Form.Group>
         </Col>
       </Row>
-      <div key="default-checkbox" className="mb-3">
-        <Form.Check
-          type="checkbox"
-          // id="default-checkbox"
-          label="Remember me"
-        />
-      </div>
       <div key="default-checkbox1" className="mb-4">
         <Form.Check
           type="checkbox"
@@ -280,6 +273,7 @@ export default function TouristForm() {
               </a>
             </span>
           }
+          required
         />
       </div>
       <div className="d-flex flex-column text-center">

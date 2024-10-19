@@ -145,3 +145,25 @@ paths:
           description: Bad request
         500:
           description: Internal server error
+
+  /api/advertiser/deleteAdvertiserAccountRequest/{email}:
+    delete:
+      tags:
+        - Advertiser
+      summary: Request deletion for advertiser
+      description: Deletes the account and hides all their activities ONLY if no current upcoming activity has been booked by tourists.
+        Activities are shown only to the admin and in history of tourists.
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: The advertiser email that they registered with
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Account successfully deleted
+        "404":
+          description: The email was unable to find a advertiser with that email, or the person having that email is not a advertiser.
+        "400":
+          description: The advertiser still has upcoming activity(ies) that are booked by tourists.

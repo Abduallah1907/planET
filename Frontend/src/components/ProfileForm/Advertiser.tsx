@@ -166,7 +166,7 @@ const Advertiser: React.FC = () => {
         </Col>
         <Col xs={3} className="text-center">
           <img
-            src={fileUrl != "" ? fileUrl : Logo}
+            src={fileUrl !== "" ? fileUrl : Logo}
             width="70"
             height="50"
             className="align-top logo"

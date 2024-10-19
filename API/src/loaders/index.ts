@@ -5,6 +5,7 @@ import jobsLoader from "./jobs";
 import expressLoader from "./express";
 import { Application } from "express";
 import { gridfsLoader } from "./gridfs";
+import { name } from "agenda/dist/agenda/name";
 
 export default async ({ expressApp }: { expressApp: Application }) => {
   const mongoConnection = await mongooseLoader();
@@ -131,6 +132,12 @@ export default async ({ expressApp }: { expressApp: Application }) => {
     name: "tagModel",
     model: require("../models/Tag").default,
   };
+
+  const otpModel = {
+    name: "otpModel",
+    model: require("../models/Otp").default,
+  };
+
   const { gfs, upload } = await gridfsLoader({ mongoConnection });
   Logger.info("✌️ GridFS loaded");
   // It returns the agenda instance because it's needed in the subsequent loaders
@@ -159,6 +166,7 @@ export default async ({ expressApp }: { expressApp: Application }) => {
       wishlistModel,
       tagModel,
       historical_tagModel,
+      otpModel,
     ],
     gfs,
     upload,

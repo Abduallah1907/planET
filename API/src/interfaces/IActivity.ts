@@ -22,6 +22,7 @@ export interface IActivity extends Document {
   inappropriate_flag: boolean;
   active_flag: boolean;
   average_rating: number;
+  image?: mongoose.Schema.Types.ObjectId;
   advertiser_id: ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
@@ -41,6 +42,7 @@ export interface IActivityDTO {
   category: ObjectId;
   special_discount?: number;
   tags?: ObjectId[];
+  image?: mongoose.Schema.Types.ObjectId;
   booking_flag: boolean;
   active_flag: boolean;
   advertiser_id: ObjectId;
@@ -57,6 +59,7 @@ export interface UpdateIActivityDTO {
     max?: number;
   };
   category?: ObjectId;
+  image?: mongoose.Schema.Types.ObjectId;
   special_discount?: number;
   tags?: ObjectId[];
   active_flag?: boolean;

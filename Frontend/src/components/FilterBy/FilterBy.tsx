@@ -2,7 +2,6 @@ import React from "react";
 import "./FilterBy.css";
 import { Col, Form, Row } from "react-bootstrap";
 import MultiRangeSlider from "../MultiSelectRange/MultiSliderRange";
-import { set } from "react-datepicker/dist/date_utils";
 
 interface filterData {
   [key: string]: any;
