@@ -10,4 +10,5 @@ export interface ITicket extends Document {
   points_received: Number;
   createdAt?: Date;
   updatedAt?: Date;
+  time_to_attend: Date;
 }

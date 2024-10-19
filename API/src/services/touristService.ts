@@ -20,6 +20,7 @@ import {
   IComment_Rating,
   IComment_RatingCreateDTOforActivity,
   IComment_RatingCreateDTOforItinerary,
+  IComment_RatingCreateDTOforProduct,
   IComment_RatingCreateDTOfortourGuide,
 } from "@/interfaces/IComment_rating";
 import Historical_locationService from "./Historical_locationService";
@@ -45,6 +46,7 @@ export default class TouristService {
     @Inject("comment_ratingModel")
     private comment_ratingModel: Models.Comment_ratingModel,
     @Inject("tour_guideModel") private tour_guideModel: Models.Tour_guideModel,
+    @Inject("productModel") private productModel: Models.ProductModel,
     @Inject("ticketModel") private ticketModel: Models.TicketModel
   ) {}
 
@@ -929,5 +931,248 @@ export default class TouristService {
     await complaint.save();
 
     return new response(true, complaint, "Complaint filed", 201);
+  }
+  //View My list of complaints
+  public async viewMyComplaintsService(tourist_id: string) {
+    if (!Types.ObjectId.isValid(tourist_id)) {
+      throw new BadRequestError("Invalid id ");
+    }
+    const tourist = await this.touristModel.findById(tourist_id);
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+    const complaints = await this.complaintModel.find({
+      tourist_id: new Types.ObjectId(tourist_id),
+    });
+    if (complaints instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (complaints == null) throw new NotFoundError("Complaint not found");
+    return new response(true, complaints, "Complaints found", 200);
+  }
+  //Flag to rate and comment on a product
+  public async flagtoRateandcommentProductService(
+    tourist_id: string,
+    product_id: string
+  ) {
+    if (!Types.ObjectId.isValid(tourist_id)) {
+      throw new BadRequestError("Invalid id ");
+    }
+    if (!Types.ObjectId.isValid(product_id)) {
+      throw new BadRequestError("Invalid product id ");
+    }
+    const product = await this.productModel.findById(
+      new Types.ObjectId(product_id)
+    );
+    if (product instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (product == null) throw new NotFoundError("Product not found");
+    //go to order and check if the tourist has ordered the product
+    const order = await this.orderModel.findOne({
+      tourist_id: new Types.ObjectId(tourist_id),
+      products: { $elemMatch: { $eq: new Types.ObjectId(product_id) } },
+      status: "Delivered",
+    });
+    if (order instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (order == null) {
+      //return false if the tourist has not visited the location
+      return new response(false, null, "Product not found", 201);
+    }
+    //return true if the tourist has visited the location
+    return new response(true, null, "Product found", 201);
+  }
+  //Rate and comment on product
+  public async rateandcommentProductService(
+    tourist_id: string,
+    data: IComment_RatingCreateDTOforProduct
+  ) {
+    if (!Types.ObjectId.isValid(tourist_id)) {
+      throw new BadRequestError("Invalid id ");
+    }
+    const { product_id, comment, rating } = data;
+    if (!comment && !rating) {
+      throw new BadRequestError(
+        "Invalid input,please add either a comment or rating"
+      );
+    }
+    if (rating && (rating < 0 || rating > 5)) {
+      throw new BadRequestError("Invalid rating");
+    }
+    if (!Types.ObjectId.isValid(product_id)) {
+      throw new BadRequestError("Invalid product id ");
+    }
+    const product = await this.productModel.findById(
+      new Types.ObjectId(product_id)
+    );
+    if (product instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (product == null) throw new NotFoundError("Product not found");
+    //go to order and check if the tourist has ordered the product
+    const order = await this.orderModel.findOne({
+      tourist_id: new Types.ObjectId(tourist_id),
+      products: { $elemMatch: { $eq: new Types.ObjectId(product_id) } },
+      status: "Delivered",
+    });
+    if (order instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (order == null) {
+      throw new BadRequestError("Tourist has not ordered the product");
+    }
+    //create a new comment_rating
+    const comment_rating = new this.comment_ratingModel({
+      tourist_id: new Types.ObjectId(tourist_id),
+      comment: comment,
+      rating: rating,
+    });
+    if (comment_rating instanceof Error)
+      throw new InternalServerError("Internal server error");
+    await comment_rating.save();
+    if (comment_rating instanceof Error)
+      throw new InternalServerError("Internal server error");
+    //update the product comment_rating array
+    if (!product.comments) {
+      product.comments = [];
+    }
+    product.comments.push(comment_rating._id);
+    await product.save();
+    if (product instanceof Error)
+      throw new InternalServerError("Internal server error");
+    //update the average rating of the product
+    if (!product.average_rating) {
+      product.average_rating = 0;
+    }
+    if (rating) {
+      let count = product.comments.length - 1;
+      let sum = count * product.average_rating;
+      sum += rating;
+      count++;
+      product.average_rating = sum / count;
+      await product.save();
+      if (product instanceof Error)
+        throw new InternalServerError("Internal server error");
+    }
+    return new response(true, comment_rating, "Product rated", 201);
+  }
+  //cancel a ticket
+  public async cancelTicketService(tourist_id: string, ticket_id: string) {
+    if (!Types.ObjectId.isValid(tourist_id)) {
+      throw new BadRequestError("Invalid id ");
+    }
+    if (!Types.ObjectId.isValid(ticket_id)) {
+      throw new BadRequestError("Invalid ticket id ");
+    }
+    const ticket = await this.ticketModel.findById({
+      _id: new Types.ObjectId(ticket_id),
+    });
+    if (ticket instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (ticket == null) throw new NotFoundError("Ticket not found");
+    if (ticket.cancelled == true) {
+      throw new BadRequestError("Ticket already cancelled");
+    }
+    switch (ticket.type) {
+      case "ACTIVITY": {
+        const activity = await this.activityModel.findById(ticket.booking_id);
+        if (activity instanceof Error)
+          throw new InternalServerError("Internal server error");
+        if (activity == null) throw new NotFoundError("Activity not found");
+        if (activity.active_flag == false)
+          throw new BadRequestError("Activity is not active for booking");
+        if (activity.inappropriate_flag == true)
+          throw new BadRequestError("Activity is inappropriate");
+        if (activity.booking_flag == false)
+          throw new BadRequestError("Activity is not available for booking");
+        //check if the activity have 48 left to start
+        if (ticket.time_to_attend) {
+          console.log(ticket.time_to_attend);
+          const diff = ticket.time_to_attend.getTime() - new Date().getTime();
+          if (diff < 48 * 60 * 1000) {
+            throw new BadRequestError(
+              "Activity cannot be cancelled 48 hours before start"
+            );
+          }
+        } else {
+          throw new BadRequestError("Activity date is undefined");
+        }
+        ticket.cancelled = true;
+        break;
+      }
+      case "ITINERARY": {
+        const itinerary = await this.itineraryModel.findById(ticket.booking_id);
+        if (itinerary instanceof Error)
+          throw new InternalServerError("Internal server error");
+        if (itinerary == null) throw new NotFoundError("Itinerary not found");
+        if (itinerary.active_flag == false)
+          throw new BadRequestError("Itinerary is not active for booking");
+        if (itinerary.inappropriate_flag == true)
+          throw new BadRequestError("Itinerary is inappropriate");
+        //check if the itinerary have 48 left to start
+        if (ticket.time_to_attend) {
+          const diff = ticket.time_to_attend.getTime() - new Date().getTime();
+          if (diff < 48 * 60 * 60 * 1000) {
+            throw new BadRequestError(
+              "Itinerary cannot be cancelled 48 hours before start"
+            );
+          }
+        } else {
+          throw new BadRequestError("Itinerary date is undefined");
+        }
+        ticket.cancelled = true;
+        break;
+      }
+      default: {
+        throw new BadRequestError("Invalid ticket type to be cancelled");
+      }
+    }
+    //decrease the points of the tourist
+    const tourist = await this.touristModel.findById(tourist_id);
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+    let loyality_points = 0;
+    switch (tourist.badge) {
+      case TouristBadge.LEVEL1:
+        loyality_points = Number(ticket.price) * 0.5;
+        break;
+      case TouristBadge.LEVEL2:
+        loyality_points = Number(ticket.price) * 1;
+        break;
+      case TouristBadge.LEVEL3:
+        loyality_points = Number(ticket.price) * 1.5;
+        break;
+      default:
+        throw new BadRequestError("Invalid badge");
+    }
+    //check if the tourist have enough points to cancel the ticket,if not remove the equivalent from the wallet
+    //also refund the tourist
+    if (tourist.loyality_points < loyality_points) {
+      loyality_points -= tourist.loyality_points;
+      const removefromwallet = loyality_points / 100;
+      const updatedTourist = await this.touristModel.findByIdAndUpdate(
+        tourist_id,
+        {
+          wallet: tourist.wallet + Number(ticket.price) - removefromwallet,
+          loyality_points: 0,
+        },
+        { new: true }
+      );
+      if (updatedTourist instanceof Error)
+        throw new InternalServerError("Internal server error");
+      if (updatedTourist == null) throw new NotFoundError("Tourist not found");
+    } else {
+      const updatedTourist = await this.touristModel.findByIdAndUpdate(
+        tourist_id,
+        {
+          wallet: tourist.wallet + Number(ticket.price),
+          loyality_points: tourist.loyality_points - loyality_points,
+        },
+        { new: true }
+      );
+      if (updatedTourist instanceof Error)
+        throw new InternalServerError("Internal server error");
+      if (updatedTourist == null) throw new NotFoundError("Tourist not found");
+    }
+    await ticket.save();
+    return new response(true, ticket, "Ticket cancelled", 200);
   }
 }

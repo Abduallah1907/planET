@@ -22,3 +22,8 @@ export interface IComment_RatingCreateDTOforActivity {
   comment?: string;
   rating?: number;
 }
+export interface IComment_RatingCreateDTOforProduct {
+  product_id: string;
+  comment?: string;
+  rating?: number;
+}
