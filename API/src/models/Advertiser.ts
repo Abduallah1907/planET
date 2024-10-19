@@ -17,6 +17,7 @@ const advertiserSchema = new mongoose.Schema(
     documents_required: [
       {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "upload.files", // Reference the correct collection
         required: true,
       },
     ],
@@ -34,6 +35,7 @@ const advertiserSchema = new mongoose.Schema(
     },
     logo: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "upload.files", // Reference the correct collection
     },
     company_profile: {
       type: String,

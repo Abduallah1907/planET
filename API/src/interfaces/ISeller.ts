@@ -33,7 +33,7 @@ export interface ISellerUpdateDTO {
 
 export interface ISeller extends Document {
   user_id: ObjectId;
-  documents_required: string[];
+  documents_required: mongoose.Schema.Types.ObjectId[];
   logo?: mongoose.Schema.Types.ObjectId;
   description: string;
   products: ObjectId[];
