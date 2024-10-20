@@ -1,17 +1,40 @@
-import React, { useState } from 'react';
-import './ItineraryCardd.css';
+import React, { useEffect, useState } from 'react';
+import './ItineraryCard.css';
 import { Container, Badge, Modal, Button } from 'react-bootstrap';
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa';
 import { MdTimeline } from 'react-icons/md';
 import Rating from '../components/Rating/Rating'; // Optional
+import { ItineraryService } from '../services/ItineraryService';
 
-const ItineraryCardd: React.FC = () => {
+interface ItineraryCardProps{
+ id : string;
+}
+
+const ItineraryCard: React.FC<ItineraryCardProps> = ({id}) => {
   // State to handle modals and bookmarking
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showTourGuideModal, setShowTourGuideModal] = useState(false);
   const [showTimelineModal, setShowTimelineModal] = useState(false);
   const [showDatesModal, setShowDatesModal] = useState(false);
+  const [itineraryData, setItineraryData] = useState({
+    name: "",
+    tags: [],
+    average_rating: 0,
+    category: {type:""},
+    price: 0,
+    tourGuide : "",
+    timeline: [],
+    available_dates:[],
+    activities: [],
+    comments: [],
+    locations: [],
+    accesibility: true,
+    pickup_loc: [],
+    drop_off_loc: [],
+
+
+  });
 
   // State for selected date and time
   const [selectedDateTime, setSelectedDateTime] = useState({
@@ -19,22 +42,15 @@ const ItineraryCardd: React.FC = () => {
     time: '10:00 AM'
   });
 
-  // Sample itinerary data
-  const itineraryData = {
-    name: 'Historical Cairo Tour',
-    tags: ['History', 'Cultural', 'Walking'],
-    average_rating: 4.5,
-    tourGuide: {
-      name: 'John Doe',
-    },
-    category: 'Cultural Tour',
-    availableDates: [
-      { date: '2024-10-10', time: '10:00 AM' },
-      { date: '2024-10-11', time: '02:00 PM' },
-    ],
-    price: 100,
-    timeline: ['Visit the Pyramids', 'Lunch at a local restaurant', 'Visit the Egyptian Museum'],
-  };
+   const getItinerary=async()=>{
+    const itinerary=await ItineraryService.getItineraryById(id);
+    setItineraryData(itinerary.data)
+
+   }
+   useEffect(() => {
+    getItinerary();
+  }, [id]);
+  
 
   // Function to toggle bookmark state
   const toggleBookmark = () => {
@@ -77,10 +93,10 @@ const ItineraryCardd: React.FC = () => {
                 </Badge>
               </div>
             </div>
-            <p className='Category'>{itineraryData.category}</p>
+            <p className='Category'>{itineraryData.category.type}</p>
             
             <p className='date' onClick={handleTourGuideModal} style={{ cursor: 'pointer', color: '#d76f30' }}>
-              {itineraryData.tourGuide.name}
+              {/* {itineraryData.tourGuide.name} */}
             </p>
             
             <p className="date" onClick={handleDatesModal} style={{ cursor: 'pointer', color: '#d76f30' }}>
@@ -106,7 +122,7 @@ const ItineraryCardd: React.FC = () => {
         </Modal.Header>
         <Modal.Body>
           <p><strong>Name:</strong> {itineraryData.name}</p>
-          <p><strong>Category:</strong> {itineraryData.category}</p>
+          <p><strong>Category:</strong> {itineraryData.category.type}</p>
           <p><strong>Date & Time:</strong> {new Date(selectedDateTime.date).toLocaleDateString()} at {selectedDateTime.time}</p>
           <p><strong>Price:</strong> ${itineraryData.price}</p>
         </Modal.Body>
@@ -123,7 +139,7 @@ const ItineraryCardd: React.FC = () => {
           <Modal.Title>Tour Guide Information</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p><strong>Name:</strong> {itineraryData.tourGuide.name}</p>
+          {/* <p><strong>Name:</strong> {itineraryData.tourGuide.name}</p> */}
           <p><strong>Email:</strong> johndoe@example.com</p>
           <p><strong>Phone:</strong> +1 234-567-8901</p>
         </Modal.Body>
@@ -160,9 +176,9 @@ const ItineraryCardd: React.FC = () => {
         </Modal.Header>
         <Modal.Body>
           <ul>
-            {itineraryData.availableDates.map((dateObj, index) => (
+            {itineraryData.available_dates.map((dateObj, index) => (
               <li key={index} onClick={() => handleDateSelection(dateObj)} style={{ cursor: 'pointer', color: '#d76f30' }}>
-                {new Date(dateObj.date).toLocaleDateString()} - {dateObj.time}
+               {dateObj}
               </li>
             ))}
           </ul>
@@ -177,4 +193,5 @@ const ItineraryCardd: React.FC = () => {
   );
 };
 
-export default ItineraryCardd;
+export default ItineraryCard;
+

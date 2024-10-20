@@ -9,6 +9,7 @@ export interface IOrder extends Document {
   cost: number;
   status: OrderStatus;
   payment_type: PaymentType;
+  points_received: Number;
   createdAt?: Date;
   updatedAt?: Date;
 }

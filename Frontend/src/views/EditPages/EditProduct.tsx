@@ -11,7 +11,7 @@ interface FormData {
   image: File | null;
   price: number;
   quantity: number;
-  archive_flag: boolean;
+  archieve_flag: boolean;
 }
 
 const EditProduct: React.FC = () => {
@@ -23,7 +23,7 @@ const EditProduct: React.FC = () => {
     image: null,
     price: 0,
     quantity: 0,
-    archive_flag: false,
+    archieve_flag: false,
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -50,7 +50,7 @@ const EditProduct: React.FC = () => {
         image: product.image,
         price: product.price,
         quantity: product.quantity,
-        archive_flag: product.archive_flag,
+        archieve_flag: product.archieve_flag,
       });
     } else {
       console.error("Product ID is undefined");
@@ -66,10 +66,10 @@ const EditProduct: React.FC = () => {
     const productData = {
       name: formData.name,
       description: formData.description,
-      image: formData.image ? formData.image.toString() : "",
+      // image: formData.image ? formData.image.toString() : "",
       price: formData.price,
       quantity: formData.quantity,
-      archive_flag: formData.archive_flag,
+      archieve_flag: formData.archieve_flag,
     };
     if (product_id) {
       await ProductService.EditProduct(product_id, productData);
@@ -172,8 +172,8 @@ const EditProduct: React.FC = () => {
                 <Form.Check
                   type="checkbox"
                   label="Archived"
-                  name="archive_flag"
-                  checked={formData.archive_flag}
+                  name="archieve_flag"
+                  checked={formData.archieve_flag}
                   onChange={handleChange}
                 />
               </Form.Group>

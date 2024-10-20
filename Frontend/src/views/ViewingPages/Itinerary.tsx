@@ -76,7 +76,7 @@ export default function ItinerariesPage() {
     itinerary.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   const onItineraryClick = (id : string) => {
-    navigate(`/itinerary/${id}`);
+    navigate(`/itineraryDetails/${id}`);
   }
 
   return (
@@ -159,7 +159,9 @@ export default function ItinerariesPage() {
                   isTourGuide={false}
                   onChange={() => console.log(`${itinerary.locations} booking status changed`)}
                   onClick={() => onItineraryClick(itinerary._id)}
+                  onFlag={() => getItinerary()}
                   />
+                 
               </Col>
             ))}
           </Row>

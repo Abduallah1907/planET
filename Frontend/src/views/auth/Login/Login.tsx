@@ -4,9 +4,9 @@ import CustomFormGroup from "../../../components/FormGroup/FormGroup";
 import { ChangeEvent, useEffect, useState } from "react";
 import AuthService from "../../../services/authService";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { activateSidebar, setNavItems } from "../../../store/sidebarSlice";
-import { setUser } from "../../../store/userSlice";
+import { login, setLoginState, setUser } from "../../../store/userSlice";
 import { useTranslation } from "react-i18next";
 
 export default function Login() {
@@ -19,6 +19,8 @@ export default function Login() {
 
   const [error, setError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const state = useAppSelector((state) => state);
+  const { username } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -50,7 +52,7 @@ export default function Login() {
         case "WAITING_FOR_APPROVAL":
         case "REJECTED":
           navigate("/login");
-          return;
+          break;
         case "APPROVED":
       }
 
@@ -59,8 +61,9 @@ export default function Login() {
           dispatch(
             setNavItems([{ path: "/Touristedit", label: "Edit Profile" }])
           );
+          // state.user.isLoggedIn = true;
           navigate("/Touristedit");
-          return;
+          break;
         case "TOUR_GUIDE":
           dispatch(
             setNavItems([
@@ -151,11 +154,13 @@ export default function Login() {
           navigate("/");
           break;
       }
+      dispatch(setLoginState(true))
       dispatch(activateSidebar());
     } catch (err: any) {
       setError(err.response.data.message);
       setShowAlert(true);
     }
+    dispatch(login());
   };
 
   return (

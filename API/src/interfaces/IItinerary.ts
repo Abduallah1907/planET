@@ -4,6 +4,7 @@ import { ISlot } from "./ISlot";
 
 type ObjectId = mongoose.Schema.Types.ObjectId;
 
+
 export interface IItinerary extends Document {
   activities: ObjectId[];
   timeline: ObjectId[];
@@ -62,7 +63,7 @@ export interface IItineraryUpdateDTO {
 }
 
 export interface IItineraryOutputDTO {
-  itinerary_id: ObjectId;
+  _id: ObjectId;
   name: string;
   locations?: Location[];
   pickup_loc: Location;
@@ -77,10 +78,11 @@ export interface IItineraryOutputDTO {
   inappropriate_flag: Boolean;
   active_flag: Boolean;
   tags?: ObjectId[];
+  timeline: any;
 }
 
 export interface IItineraryOutputAllDTO {
-  itinerary_id: ObjectId;
+  _id: ObjectId;
   name: string;
   locations?: Location[];
   pickup_loc: Location;

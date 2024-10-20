@@ -24,6 +24,7 @@ const productSchema = new mongoose.Schema(
     },
     image: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "upload.files", // Reference the correct collection
     },
     price: {
       type: Number,

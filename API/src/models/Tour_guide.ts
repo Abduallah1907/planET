@@ -33,10 +33,12 @@ const tourGuideSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
+        ref: "upload.files", // Reference the correct collection
       },
     ],
     logo: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "upload.files", // Reference the correct collection
     },
   },
   { timestamps: true }

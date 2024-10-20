@@ -110,6 +110,15 @@ class ItineraryService {
       throw error;
     }
   }
+
+  public static flagInappropriate = async (id: string) => {
+    try {
+      const response = await axiosInstance.put(`/itinerary/flagItinerary/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 };
 
 export { ItineraryService };

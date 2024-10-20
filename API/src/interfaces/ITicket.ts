@@ -7,6 +7,8 @@ export interface ITicket extends Document {
   booking_id: ObjectId;
   price: Number;
   cancelled: boolean;
+  points_received: Number;
   createdAt?: Date;
   updatedAt?: Date;
+  time_to_attend: Date;
 }

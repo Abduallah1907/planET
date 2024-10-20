@@ -34,7 +34,7 @@ import HistoricalPlaces from "./views/ViewingPages/HistoricalPlaces";
 import Products from "./views/ViewingPages/Products";
 import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
 import StakeholderReg from "./views/auth/StakeholderReg/StakeholderReg";
-import ItineraryCardd from "./views/ItineraryCardd";
+import ItineraryCardd from "./views/ItineraryCard";
 import EditHistoricalLocation from "./views/EditPages/EditHistoricalLocation";
 import EditProduct from "./views/EditPages/EditProduct";
 import EditItinerary from "./views/EditPages/EditItinerary";
@@ -50,6 +50,12 @@ import Sidebar from "./components/SideBar/Sidebar";
 import CategoryTable from "./views/Tables/CategoryTable";
 import TagsTable from "./views/Tables/TagTable";
 import HistoricalTagsTable from "./views/Tables/HistoricalTagTable";
+import { use } from "i18next";
+
+import Rating from "./components/Rating/Rating";
+import ItineraryDetails from "./views/ProductDetails/ItineraryDetails";
+
+
 import ChangePasswordForm from "./views/auth/ChangePasswordForm";
 import ForgetPassword from "./views/auth/ForgetPassword";
 import CheckOTP from "./views/auth/CheckOTP";
@@ -110,7 +116,7 @@ const App: React.FC = () => {
           element={<AddHistoricalLocation />}
         />
         <Route path="/AddItinerary" element={<AddItinerary />} />
-        <Route path="/ItineraryCardd" element={<ItineraryCardd />} />
+        <Route path="/ItineraryDetails/:id" element={<ItineraryDetails />} />
 
         <Route path="/EditActivity/:activity_id" element={<EditActivity />} />
         <Route
@@ -126,6 +132,7 @@ const App: React.FC = () => {
         <Route path="/UsersTable" element={<UsersTable />} />
 
         <Route path="/MyActivities" element={<MyActivities />} />
+    
         <Route path="/MyHistoricalLocations" element={<MyHistoricalPlaces />} />
         <Route path="/MyItineraries" element={<MyItinerary />} />
         <Route path="/MyProducts" element={<MyProducts />} />
@@ -138,6 +145,7 @@ const App: React.FC = () => {
         <Route path="/Categories" element={<CategoryTable />} />
         <Route path="/Tags" element={<TagsTable />} />
         <Route path="/HistoricalTags" element={<HistoricalTagsTable />} />
+        
         <Route path="/ChangePasswordForm" element={<ChangePasswordForm />} />
         <Route path="/ChangePasswordG" element={<ChangePasswordG />} />
       </Routes>

@@ -27,6 +27,14 @@ const ticketSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
+    time_to_attend: {
+      type: Date,
+      required: true,
+    },
+    points_received: {
+      type: Number,
+      required: true,
+    },
   },
   { timestamps: true }
 );
