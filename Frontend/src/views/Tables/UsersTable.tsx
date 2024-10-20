@@ -1,17 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { Badge, Button, Col, Container, Modal, Pagination, Row, Table } from "react-bootstrap";
+import {
+  Badge,
+  Button,
+  Col,
+  Container,
+  Modal,
+  Pagination,
+  Row,
+  Table,
+} from "react-bootstrap";
 import { AdminService } from "../../services/AdminService";
 import { IUserManagmentDTO } from "../../types/IUser";
 import "./UsersTable.css";
+import { FileService } from "../../services/FileService";
+import Advertiser from "../../components/ProfileForm/Advertiser";
 
 const UsersTable = () => {
-  const [users, setUsers] = useState<Map<number, IUserManagmentDTO[]>>(new Map());
+  const [users, setUsers] = useState<Map<number, IUserManagmentDTO[]>>(
+    new Map()
+  );
   const [viewableUsers, setViewableUsers] = useState<IUserManagmentDTO[]>([]);
   const [page, setPage] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
   const [usersPerPage] = useState(10);
   const [showModal, setShowModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [selectedUserDocs, setSelectedUserDocs] = useState<string[]>([]);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
 
   const handleDelete = (email: string) => {
     setUserToDelete(email);
@@ -22,7 +37,12 @@ const UsersTable = () => {
     const response = await AdminService.getUsers(page);
     setUsers((prevUsers) => {
       const newUsers = new Map(prevUsers).set(page, response.data); // Append new users
-      setTotalUsers(Array.from(newUsers.values()).reduce((acc, users) => acc + users.length, 0)); // Update total users count
+      setTotalUsers(
+        Array.from(newUsers.values()).reduce(
+          (acc, users) => acc + users.length,
+          0
+        )
+      ); // Update total users count
       return newUsers;
     });
   };
@@ -44,10 +64,12 @@ const UsersTable = () => {
     setUsers((prevUsers) => {
       const newUsers = new Map(prevUsers);
       let pageNum = 1;
-  
+
       // Remove the user from the map and shift users to maintain page length
       while (newUsers.has(pageNum)) {
-        const userList = newUsers.get(pageNum)!.filter((user) => user.email !== email);
+        const userList = newUsers
+          .get(pageNum)!
+          .filter((user) => user.email !== email);
         if (userList.length < usersPerPage && newUsers.has(pageNum + 1)) {
           const nextPageUsers = newUsers.get(pageNum + 1)!;
           if (nextPageUsers.length > 0) {
@@ -58,21 +80,26 @@ const UsersTable = () => {
         newUsers.set(pageNum, userList);
         pageNum++;
       }
-  
+
       // Remove empty pages
       for (let [key, value] of newUsers) {
         if (value.length === 0) {
           newUsers.delete(key);
         }
       }
-  
+
       // Update total users count
-      setTotalUsers(Array.from(newUsers.values()).reduce((acc, users) => acc + users.length, 0));
-  
+      setTotalUsers(
+        Array.from(newUsers.values()).reduce(
+          (acc, users) => acc + users.length,
+          0
+        )
+      );
+
       return newUsers;
     });
   };
-   
+
   useEffect(() => {
     getUsers(page);
   }, [page]);
@@ -81,7 +108,9 @@ const UsersTable = () => {
     updateViewableUsers(); // Update viewable users whenever users or page changes
   }, [users, page]);
 
-  const totalPages = Math.ceil((totalUsers+1) / usersPerPage);
+  const totalPages = Math.ceil((totalUsers + 1) / usersPerPage);
+
+  const handleView = async (role: string) => {};
 
   return (
     <Container className="profile-form-container">
@@ -105,7 +134,9 @@ const UsersTable = () => {
             {viewableUsers.map((user) => (
               <tr
                 key={user._id}
-                className={user.status === "Active" ? "active-row" : "closed-row"}
+                className={
+                  user.status === "Active" ? "active-row" : "closed-row"
+                }
               >
                 <td>{user.email}</td>
                 <td>{user.username}</td>
@@ -124,6 +155,12 @@ const UsersTable = () => {
                     onClick={() => handleDelete(user.email)}
                   >
                     Delete
+                  </Button>
+                  <Button
+                    className="mt-2 "
+                    onClick={() => handleView(user.email)}
+                  >
+                    View Doc
                   </Button>
                 </td>
               </tr>
@@ -160,6 +197,38 @@ const UsersTable = () => {
           </Button>
           <Button variant="primary" onClick={confirmDelete}>
             Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {/* Modal for Viewing Documents */}
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        size="lg"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Documents for {selectedUser}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedUserDocs.length > 0 ? (
+            selectedUserDocs.map((doc, index) => (
+              <iframe
+                key={index}
+                src={doc}
+                width="100%"
+                height="500px"
+                title={`Document ${index + 1}`}
+                style={{ marginBottom: "10px" }}
+              />
+            ))
+          ) : (
+            <p>No documents available for this user.</p>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Close
           </Button>
         </Modal.Footer>
       </Modal>
