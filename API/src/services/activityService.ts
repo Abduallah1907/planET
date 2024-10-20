@@ -165,6 +165,9 @@ export default class ActivityService {
     const searchCriteria: any = {};
     if (name) searchCriteria.name = name;
     if (tag) searchCriteria.tags = tag;
+    searchCriteria.inappropriate_flag = false;
+    searchCriteria.active_flag = true;
+    searchCriteria.booking_flag = true;
 
     const activities = await this.activityModel
       .find(searchCriteria)
@@ -184,7 +187,7 @@ export default class ActivityService {
   public async getUpcomingActivitiesService() {
     const today = Date.now();
     const activities = await this.activityModel
-      .find({ date: { $gte: today }, active_flag: true, inappropriate_flag: false })
+      .find({ date: { $gte: today }, active_flag: true, inappropriate_flag: false, booking_flag: true })
       .populate("category")
       .populate("comments")
       .populate({ path: "advertiser_id", select: "name" });
@@ -323,7 +326,7 @@ export default class ActivityService {
     let sortCriteria = {};
 
     if (!sort && !direction) {
-      const activities = await this.activityModel.find();
+      const activities = await this.activityModel.find({ active_flag: true, booking_flag: true, inappropriate_flag: false });
       return new response(true, activities, "Activities with no sort criteria provided", 200);
     }
     if (sort === "price") {
@@ -333,7 +336,7 @@ export default class ActivityService {
     } else {
       throw new BadRequestError("Invalid sort criteria");
     }
-    const activities = await this.activityModel.find().sort(sortCriteria);
+    const activities = await this.activityModel.find({ active_flag: true, booking_flag: true, inappropriate_flag: false }).sort(sortCriteria);
     if (activities instanceof Error) throw new InternalServerError("Internal server error");
 
     return new response(true, activities, "Sorted activities are fetched", 200);
@@ -344,7 +347,7 @@ export default class ActivityService {
     const preferences = await this.tagModel.find().select("type").lean();
 
     const Dates = await this.activityModel
-      .find()
+      .find({ active_flag: true, booking_flag: true, inappropriate_flag: false })
       .sort({ date: 1 }) // Sort dates in ascending order
       .select("date") // Select only the date field
       .lean(); // Convert to plain JavaScript object
