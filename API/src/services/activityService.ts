@@ -184,7 +184,7 @@ export default class ActivityService {
   public async getUpcomingActivitiesService() {
     const today = Date.now();
     const activities = await this.activityModel
-      .find({ date_time: { $gte: today } })
+      .find({ date: { $gte: today }, active_flag: true, inappropriate_flag: false })
       .populate("category")
       .populate("comments")
       .populate({ path: "advertiser_id", select: "name" });
@@ -386,7 +386,7 @@ export default class ActivityService {
     return new response(true, filterComponents, "Filter components fetched", 200);
   }
 
-  public async flagActivityInappropriateService(activity_id: Types.ObjectId): Promise<any> {
+  public async flagActivityInappropriateService(activity_id: Types.ObjectId): Promise<response> {
     const activity = await this.activityModel.findById(activity_id);
     if (!activity) throw new NotFoundError("Activity not found");
     if (activity.inappropriate_flag === true) throw new ForbiddenError("Itinerary is already flagged");
