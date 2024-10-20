@@ -3,8 +3,8 @@ import ActivityCard from "./ActivityCard";
 import LatestReviews from "./LatestReview";
 import { useParams } from "react-router-dom";
 import Comment from "../../components/Comment";
-import { TouristService } from "@/services/TouristService";
-import { useAppSelector } from "@/store/hooks";
+import { TouristService } from "../../services/TouristService";
+import { useAppSelector } from "../../store/hooks";
 
 const ActivityDetails: React.FC = () => {
   const { id = "" } = useParams<{ id: string }>();

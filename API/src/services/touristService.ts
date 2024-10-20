@@ -433,4 +433,5 @@ export default class TouristService {
     }
     return new response(true, comment_rating, "Activity rated", 201);
   }
+  
 }

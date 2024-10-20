@@ -192,7 +192,7 @@ export default class ItineraryService {
 
     const itinerartiesOutput: IItineraryOutputAllDTO[] = itineraries.map(
       (itinerary) => ({
-        itinerary_id: itinerary._id as ObjectId,
+        _id: itinerary._id as ObjectId,
         name: itinerary.name,
         accessibility: itinerary.accessibility,
         active_flag: itinerary.active_flag,

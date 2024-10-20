@@ -80,7 +80,7 @@ export interface IItineraryOutputDTO {
 }
 
 export interface IItineraryOutputAllDTO {
-  itinerary_id: ObjectId;
+  _id: ObjectId;
   name: string;
   locations?: Location[];
   pickup_loc: Location;

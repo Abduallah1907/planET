@@ -54,6 +54,7 @@ import { use } from "i18next";
 
 import Rating from "./components/Rating/Rating";
 import ItineraryDetails from "./views/ProductDetails/ItineraryDetails";
+import ComplaintForm from "./views/ViewingPages/ComplaintForm";
 
 
 
@@ -129,6 +130,8 @@ const App: React.FC = () => {
         <Route path="/Categories" element={<CategoryTable />} />
         <Route path="/Tags" element={<TagsTable />} />
         <Route path="/HistoricalTags" element={<HistoricalTagsTable />} />
+
+        <Route path="/Complaint" element={<ComplaintForm/>} />
         
 
       </Routes>

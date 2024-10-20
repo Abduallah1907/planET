@@ -3,8 +3,8 @@ import LatestReviews from "./LatestReview";
 import { useParams } from "react-router-dom";
 import Comment from "../../components/Comment";
 import ItineraryCard from "../ItineraryCard";
-import { useAppSelector } from "@/store/hooks";
-import { TouristService } from "@/services/TouristService";
+import { useAppSelector } from "../../store/hooks";
+import { TouristService } from "../../services/TouristService";
 
 
 const ItineraryDetails: React.FC = () => {
