@@ -4,9 +4,9 @@ import CustomFormGroup from "../../../components/FormGroup/FormGroup";
 import { ChangeEvent, useEffect, useState } from "react";
 import AuthService from "../../../services/authService";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { activateSidebar, setNavItems } from "../../../store/sidebarSlice";
-import { setUser } from "../../../store/userSlice";
+import { login, setLoginState, setUser } from "../../../store/userSlice";
 import { useTranslation } from "react-i18next";
 
 export default function Login() {
@@ -19,6 +19,8 @@ export default function Login() {
 
   const [error, setError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const state = useAppSelector((state) => state);
+  const { username } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -50,7 +52,7 @@ export default function Login() {
         case "WAITING_FOR_APPROVAL":
         case "REJECTED":
           navigate("/login");
-          return;
+          break;
         case "APPROVED":
       }
 
@@ -59,8 +61,9 @@ export default function Login() {
           dispatch(
             setNavItems([{ path: "/Touristedit", label: "Edit Profile" }])
           );
+          // state.user.isLoggedIn = true;
           navigate("/Touristedit");
-          return;
+          break;
         case "TOUR_GUIDE":
           dispatch(
             setNavItems([
@@ -119,7 +122,11 @@ export default function Login() {
               {
                 path: "/HistoricalTags",
                 label: "Historical Tags",
-              }
+              },
+              {
+                path: "/ChangePasswordG",
+                label: "Change Password",
+              },
             ])
           );
 
@@ -138,6 +145,7 @@ export default function Login() {
               { path: "/Tags", label: "Tags" },
               { path: "/HistoricalTags", label: "Historical Tags" },
               { path: "/UsersTable", label: "User Managment" },
+              { path: "/ChangePasswordForm", label: "Change Password" },
             ])
           );
           navigate("/AdminDashboard");
@@ -146,21 +154,26 @@ export default function Login() {
           navigate("/");
           break;
       }
+      dispatch(setLoginState(true))
       dispatch(activateSidebar());
     } catch (err: any) {
-      setError(err.message);
+      setError(err.response.data.message);
       setShowAlert(true);
     }
+    dispatch(login());
   };
 
   return (
     <>
       <Container>
         <Row className="justify-content-center mt-5">
-          <Col sm={12}>
-          <h1>{t("login_title")}</h1>
-          <h2 className="LOGIN">
-              {t("new_to_planet")}<span className="orange-text">{t("signup")}</span>
+          <Col sm={12} md={6} lg={4}>
+            <h1 className="text-center" style={{ fontWeight: "bold" }}>
+              {t("login_title")}
+            </h1>
+            <h2 className="LOGIN">
+              {t("new_to_planet")}
+              <span className="orange-text"> {t("signup")}</span>
             </h2>
             {showAlert ? (
               <Alert variant="danger" className="text-center">
@@ -190,8 +203,14 @@ export default function Login() {
                 value={userData.passwordLogin}
                 onChange={handleChange}
               />
-              <span className="orange-text mb-2">{t("forgot_password")}</span>
-              <Button onClick={handleLogin} className="login-btn w-100">
+              <a
+                className="mb-2 orange-text text-decoration-none"
+                style={{ fontWeight: "bold", cursor: "pointer" }}
+                onClick={() => navigate("/forgetPassword")}
+              >
+                {t("forgot_password")}
+              </a>
+              <Button onClick={handleLogin} className="login-btn w-100 mt-1">
                 {t("login")}
               </Button>
             </Form>

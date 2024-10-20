@@ -22,5 +22,6 @@ export default (app: Router) => {
   router.get("/getProfile/:email", authorize([UserRoles.TourGuide]), tourGuideController.getProfile);
   router.put("/updateProfile/:email", authorize([UserRoles.TourGuide]), tourGuideController.updateProfile);
 
+  router.delete("/deleteTourGuideAccountRequest/:email", tourGuideController.deleteTourGuideAccountRequest);
   // router.put(/)
 };

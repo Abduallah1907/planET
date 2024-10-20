@@ -13,13 +13,17 @@ export interface IComment_RatingCreateDTOfortourGuide {
   rating?: number;
 }
 export interface IComment_RatingCreateDTOforItinerary {
-  tour_guide_email: string;
+  itinerary_id: string;
   comment?: string;
   rating?: number;
-  name_of_itinerary: string;
 }
 export interface IComment_RatingCreateDTOforActivity {
-  name_of_activity: string;
+  activity_id: string;
+  comment?: string;
+  rating?: number;
+}
+export interface IComment_RatingCreateDTOforProduct {
+  product_id: string;
   comment?: string;
   rating?: number;
 }

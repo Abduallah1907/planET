@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import "./ProfileFormTourist.css";
 import Logo from "../../assets/person-circle.svg";
-import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import { Container, Row, Col, Button, Form, Modal } from "react-bootstrap";
 import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
 import { TouristService } from "../../services/TouristService";
-import { useAppSelector } from "../../store/hooks";
-import { json } from "stream/consumers";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { FaExchangeAlt, FaInfoCircle } from "react-icons/fa";
+import { setStakeholder } from "../../store/userSlice";
 
 interface NationalityOption {
   value: string;
@@ -79,7 +80,7 @@ const ProfileForm: React.FC = () => {
     await TouristService.updateTourist(Tourist.email, {
       name: formData.firstName + " " + formData.lastName,
       newEmail: formData.email,
-      /*password: formData.password,*/
+      password: formData.password,
       job: formData.profession,
       nation: formData.nationality,
     });
@@ -99,6 +100,46 @@ const ProfileForm: React.FC = () => {
     });
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [pointsToTransfer, setPointsToTransfer] = useState('');
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [loyaltyPoints, setLoyaltyPoints] = useState(Tourist.stakeholder_id.loyality_points);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+  const openTransferModal = () => {
+    setIsTransferModalOpen(true);
+  };
+
+  const closeTransferModal = () => {
+    setIsTransferModalOpen(false);
+  };
+
+  const handlePointsChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+    setPointsToTransfer(e.target.value);
+  };
+
+  const dispatch = useAppDispatch();
+
+  const transferPointsToWallet = async () => {
+    try {
+      const user = await TouristService.redeemPoints(Tourist.email, Number(pointsToTransfer));
+      setLoyaltyPoints((prevPoints: number) => prevPoints - Number(pointsToTransfer));
+      setPointsToTransfer('');
+      closeTransferModal();
+      dispatch(setStakeholder(user.data));
+    } catch (error) {
+      console.error('Error transferring points:', error);
+    }
+  };
+
+
+
   return (
     <div className="profile-form-container">
       <Row className="align-items-center mb-4">
@@ -115,18 +156,101 @@ const ProfileForm: React.FC = () => {
           />
         </Col>
       </Row>
+      <Row className="align-items-center">
 
-      <div className="wallet-card">
-        <h3>Wallet</h3>
-        <p>$400</p>
-      </div>
+
+
+
+        <div className="wallet-card">
+          <h3>Points
+            <FaInfoCircle style={{ cursor: 'pointer', marginLeft: '10px' }} onClick={openModal} />
+
+
+
+          </h3> {/* Add the info icon */}
+          <p>{Tourist.stakeholder_id.loyality_points}</p>
+        </div>
+        <Col xs={3} className="text-center ">
+          <FaExchangeAlt
+            className="exchange-icon"
+            style={{ cursor: 'pointer' }}
+            onClick={openTransferModal}
+          />
+        </Col>
+        <Modal show={isModalOpen} onHide={closeModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Points Details</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <h5>Earn Points</h5>
+            <p>It's divided into 3 levels</p>
+            <p>Level 1: For every 1 EGP spent, you'll earn 0.5 points</p>
+            <p>Level 2: For every 1 EGP spent, you'll earn 1 point</p>
+            <p>Level 3: For every 1 EGP spent, you'll earn 1.5 points</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={closeModal}>
+              Close
+            </Button>
+
+          </Modal.Footer>
+        </Modal>
+
+
+
+        <div className="wallet-card">
+          <h3>Wallet</h3>
+          <p>{Tourist.stakeholder_id.wallet}</p>
+          <Modal show={isTransferModalOpen} onHide={closeTransferModal} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Transfer Points</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group controlId="formPoints">
+                  <Form.Label>Enter the number of points to transfer</Form.Label>
+                  <div>
+                    <Form.Text>Every 10,000 points is equal to 100 EGP</Form.Text>
+                  </div>
+                  <div className="d-flex align-items-center">
+                    <Form.Control
+                      type="number"
+                      value={pointsToTransfer}
+                      onChange={handlePointsChange}
+                      placeholder="Enter points"
+                      className="mx-2 custom-form-control"
+                      step="10000"
+                      min="0"
+                    />
+
+                  </div>
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={closeTransferModal}>
+                Close
+              </Button>
+              <Button variant="main-inverse" onClick={transferPointsToWallet}>
+                Transfer
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+        </div>
+
+      </Row>
+
+
+
+
 
       <Container>
         <Form onSubmit={handleSubmit}>
           <Row>
             <Col>
               <CustomFormGroup
-                label="First Name"
+                label="First Name:"
                 type="text"
                 placeholder="Enter your First Name"
                 id="firstName"

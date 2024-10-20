@@ -10,12 +10,14 @@ const sellerSchema = new mongoose.Schema(
     },
     documents_required: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "upload.files", // Reference the correct collection
         required: true,
       },
     ],
     logo: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "upload.files", // Reference the correct collection
     },
     description: {
       type: String,

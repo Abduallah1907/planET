@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 interface FormData {
   name: string;
   description: string;
-  picture: string;
+  images: string[];
   location: string;
   openingDays: string[];
   openingFrom: string;
@@ -31,7 +31,7 @@ interface Tag {
 
 interface SelectedTag {
   id: string;
-  value: string
+  value: string;
 }
 
 const HistoricalPlaceForm: React.FC = () => {
@@ -44,7 +44,7 @@ const HistoricalPlaceForm: React.FC = () => {
     name: "",
     openingDays: [],
     description: "",
-    picture: "",
+    images: [],
     location: "",
     openingFrom: "",
     openingTo: "",
@@ -60,12 +60,12 @@ const HistoricalPlaceForm: React.FC = () => {
       reader.onload = () => {
         setFormData((prev) => ({
           ...prev,
-          picture: reader.result as string,
+          images: [...prev.images, reader.result as string],
         }));
       };
       reader.readAsDataURL(e.target.files[0]);
     }
-  }
+  };
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
@@ -84,8 +84,8 @@ const HistoricalPlaceForm: React.FC = () => {
     }, {} as { [key: string]: string });
     const reqData = {
       name: formData.name,
-      location: {latitude: 0, longitude: 0},
-      picture: "Testing",
+      location: { latitude: 0, longitude: 0 },
+      images: ["Testing"],
       description: formData.description,
       opening_days: formData.openingDays,
       opening_hours_from: formData.openingFrom,
@@ -114,19 +114,19 @@ const HistoricalPlaceForm: React.FC = () => {
       };
     });
     setTags(mappedTags);
-  }
+  };
 
   useEffect(() => {
     getAllHistoricalTags();
   }, []);
 
   const handleAddTag = () => {
-    if(selectedTags.length === tags.length) {
+    if (selectedTags.length === tags.length) {
       showToast("All tags have been added", ToastTypes.ERROR);
       return;
-    };
+    }
     setSelectedTags([...selectedTags, { id: "", value: "" }]);
-  }
+  };
 
   const handleRemoveTag = (index: number) => {
     const newSelectedTags = selectedTags.filter((_, i) => i !== index);
@@ -184,8 +184,8 @@ const HistoricalPlaceForm: React.FC = () => {
               />
             </Col>
             <Col>
-              <Form.Group className="form-group" controlId="picture">
-                <Form.Label>Picture</Form.Label>
+              <Form.Group className="form-group" controlId="images">
+                <Form.Label>Images</Form.Label>
                 <Form.Control
                   type="file"
                   className="custom-form-control"
@@ -322,19 +322,27 @@ const HistoricalPlaceForm: React.FC = () => {
                               const selectedKey = e.target.value;
                               const selectedValue = tag.value || "";
                               const newSelectedTags = [...selectedTags];
-                              newSelectedTags[index] = { id: selectedKey, value: selectedValue };
+                              newSelectedTags[index] = {
+                                id: selectedKey,
+                                value: selectedValue,
+                              };
                               setSelectedTags(newSelectedTags);
                             }}
                             required
                           >
                             <option value="">Select Tag</option>
                             {tags
-                            .filter((value) => !selectedTags.some(tag => tag.id === value.id) || value.id === selectedTags[index]?.id)
-                            .map((value, index) => (
-                              <option key={index} value={value.id}>
-                                {value.name}
-                              </option>
-                            ))}
+                              .filter(
+                                (value) =>
+                                  !selectedTags.some(
+                                    (tag) => tag.id === value.id
+                                  ) || value.id === selectedTags[index]?.id
+                              )
+                              .map((value, index) => (
+                                <option key={index} value={value.id}>
+                                  {value.name}
+                                </option>
+                              ))}
                           </Form.Control>
                           <BiChevronDown className="dropdown-icon" />
                         </div>
@@ -404,7 +412,7 @@ const HistoricalPlaceForm: React.FC = () => {
             </Col>
           </Row>
 
-          <Button type="submit" variant="main-inverse"  className="mt-4 mb-5 ">
+          <Button type="submit" variant="main-inverse" className="mt-4 mb-5 ">
             Create
           </Button>
         </Form>

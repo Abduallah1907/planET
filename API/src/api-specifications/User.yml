@@ -62,6 +62,157 @@ paths:
           description: Bad request.
         500:
           description: Internal server error.
+
+  /api/users/updateGovernor/{email}:
+    put:
+      tags:
+        - Users
+      summary: Update Governor
+      description: Update Governor
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newEmail:
+                  type: string
+                name:
+                  type: string
+                phone_number:
+                  type: string
+                password:
+                  type: string
+                nation:
+                  type: string  
+      responses:
+        200:
+          description: Governor updated.
+        400:
+          description: Bad request.
+        500:
+          description: Internal server error.        
+  /api/users/forgetPassword/{email}:
+    get:
+      tags:
+        - Users
+      summary: Forget password
+      description: Forget password
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Password reset link sent to email.
+        400:
+          description: Bad request.
+        500:
+          description: Internal server error.     
+  /api/users/requsetOTP/{email}:
+    get:
+      tags:
+        - Users
+      summary: Request OTP
+      description: Request OTP
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OTP sent to email.
+        400:
+          description: Bad request.
+        500:
+          description: Internal server error. 
+  /api/users/verifyOTP/{email}/{otp}:
+    get:
+      tags:
+        - Users
+      summary: Verify OTP
+      description: Verify OTP
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: otp
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OTP verified.
+        400:
+          description: Bad request.
+        500:
+          description: Internal server error.
+
+  /api/users/resetPassword:
+    put:
+      tags:
+        - Users
+      summary: Reset password
+      description: Reset password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                otp:
+                  type: string
+      responses:
+        200:
+          description: Password reset.
+        400:
+          description: Bad request.
+        500:
+          description: Internal server error.
+  /api/users/getDocumentsRequired:
+    get:
+      tags:
+        - Users
+      summary: Get documents required
+      description: Get documents required
+      parameters:
+        - in: query
+          name: user_id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: role
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Documents required.
+        400:
+          description: Bad request.
+        500:
+          description: Internal server error.         
+
 components:
   schemas:
     IUserInputDTO:
@@ -86,3 +237,4 @@ components:
         date_of_birth:
           type: string
           format: date
+          

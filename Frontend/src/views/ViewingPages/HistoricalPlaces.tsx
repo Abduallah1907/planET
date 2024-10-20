@@ -160,7 +160,7 @@ export default function HistoricalLocationsPage() {
                     id={location._id}
                     Name={location.name}
                     location={"cairo"}
-                    imageUrl={""}
+                    image={""}
                     RatingVal={location.average_rating}
                     Reviews={location.reviewsCount ?? 0}
                     Description={location.description}
@@ -173,7 +173,9 @@ export default function HistoricalLocationsPage() {
                     isGoverner={false}
                     OpeningHourFrom={location.opening_hours_from}
                     OpeningHourTo={location.opening_hours_to}
-                    OpeningDays={location.opening_days.map(day => day.slice(0, 3)).join(", ")}
+                    OpeningDays={location.opening_days
+                      .map((day) => day.slice(0, 3))
+                      .join(", ")}
                     onClick={() => onHistoricalClick(location._id)}
                   />
                 </Col>

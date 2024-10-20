@@ -7,30 +7,25 @@ import { IUserInputDTO } from "@/interfaces/IUser";
 import UserService from "./userService";
 import { ISellerUpdateDTO } from "@/interfaces/ISeller";
 import bcrypt from "bcryptjs";
-
+import { IProduct } from "@/interfaces/IProduct";
 
 @Service()
 export default class SellerService {
-  constructor(
-    @Inject("sellerModel") private sellerModel: Models.SellerModel,
-    @Inject("userModel") private userModel: Models.UserModel
-  ) {}
+  constructor(@Inject("sellerModel") private sellerModel: Models.SellerModel, @Inject("userModel") private userModel: Models.UserModel) {}
   //input email of seller retrun seller data
   public async getSellerService(email: string) {
     const user = await this.userModel.findOne({
       email: email,
       role: UserRoles.Seller,
     });
-    if (user instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (user instanceof Error) throw new InternalServerError("Internal server error");
     // throw new Error ("Internal server error");
 
     if (user == null) throw new NotFoundError("User not found");
     // throw new Error("User not found");
 
     const seller = await this.sellerModel.findOne({ user_id: user._id });
-    if (seller instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (seller instanceof Error) throw new InternalServerError("Internal server error");
 
     if (seller == null) throw new NotFoundError("Seller not found");
 
@@ -61,8 +56,7 @@ export default class SellerService {
     const newUser = new this.userModel(newUserResponse.data);
     // newUser.role = UserRoles.Seller;
     newUser.save();
-    if (newUser instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (newUser instanceof Error) throw new InternalServerError("Internal server error");
 
     if (newUser == null) throw new NotFoundError("User not found");
     const newSeller = new this.sellerModel({
@@ -86,15 +80,11 @@ export default class SellerService {
 
   //Takes old and new name and description of seller
   //update seller data with new attributes in dto
-  public async updateSellerService(
-    searchEmail: string,
-    updatedSellerData: ISellerUpdateDTO
-  ) {
-    const { name, username, email, phone_number, description, password,logo } =
-      updatedSellerData;
-      let hashedPassword;
+  public async updateSellerService(searchEmail: string, updatedSellerData: ISellerUpdateDTO) {
+    const { name, username, email, phone_number, description, password, logo } = updatedSellerData;
+    let hashedPassword;
     if (password) {
-    hashedPassword = await bcrypt.hash(password, 10);  // Await bcrypt.hash here
+      hashedPassword = await bcrypt.hash(password, 10); // Await bcrypt.hash here
     }
     const user = await this.userModel.findOneAndUpdate(
       { email: searchEmail, role: UserRoles.Seller },
@@ -103,22 +93,16 @@ export default class SellerService {
         email: email,
         username: username,
         phone_number: phone_number,
-        password:hashedPassword,
+        password: hashedPassword,
       },
       { new: true }
     );
-    if (user instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (user instanceof Error) throw new InternalServerError("Internal server error");
     if (user == null) throw new NotFoundError("User not found");
 
-    const updatedSeller = await this.sellerModel.findOneAndUpdate(
-      { user_id: user._id },
-      { description: description, logo: logo },
-      { new: true }
-    );
+    const updatedSeller = await this.sellerModel.findOneAndUpdate({ user_id: user._id }, { description: description, logo: logo }, { new: true });
 
-    if (updatedSeller instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (updatedSeller instanceof Error) throw new InternalServerError("Internal server error");
     if (updatedSeller == null) throw new NotFoundError("Seller not found");
 
     const sellerOutput: ISellerOutputDTO = {
@@ -131,5 +115,24 @@ export default class SellerService {
       products: updatedSeller.products,
     };
     return new response(true, sellerOutput, "Seller updated", 200);
+  }
+
+  public async deleteSellerAccountRequest(email: string): Promise<any> {
+    const sellerUser = await this.userModel.findOne({ email });
+    if (!sellerUser || sellerUser.role !== UserRoles.Seller) throw new NotFoundError("Seller user account was not found");
+    const sellerData = await this.sellerModel.findOne({ user_id: sellerUser._id }).populate("products");
+
+    if (!sellerData) throw new NotFoundError("Seller account was not found");
+
+    const products = sellerData.products as unknown as IProduct[];
+    products.forEach(async (product) => {
+      product.archieve_flag = true;
+      await product.save();
+    });
+
+    const deletedSeller = await this.sellerModel.findByIdAndDelete(sellerData._id);
+    const deletedSellerUser = await this.userModel.findByIdAndDelete(sellerUser._id);
+
+    return new response(true, {}, "Seller successfully deleted", 200);
   }
 }

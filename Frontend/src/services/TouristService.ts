@@ -56,6 +56,18 @@ class TouristService {
       throw error;
     }
   }
+
+  public static redeemPoints = async (email: string, points: number) => {
+    try {
+      const response = await axiosInstance.put(`/tourist/redeemPoints/${email}`, {points});
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+
+  
   public static fileComplaint = async (id: string, data:any) => {
     try {
       const response = await axiosInstance.post(

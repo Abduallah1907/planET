@@ -44,6 +44,14 @@ class AdminService {
       throw error;
     }
   }
+  public static changePass = async (email: string, AdminData: object) => {
+    try {
+      const response = await axiosInstance.put(`/admin/updateAdmin/${email}`, AdminData);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
   
 }
 

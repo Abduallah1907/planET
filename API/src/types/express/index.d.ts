@@ -54,6 +54,8 @@ declare global {
     export type WishlistModel = Model<IWishlist & Document>;
     export type TagModel = Model<ITag & Document>;
     export type Historical_tagModel = Model<IHistorical_tag & Document>;
+    export type CartModel = Model<ICart & Document>;
+    export type OTPModel = Model<any & Document>;
   }
 }
 

@@ -1,7 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
-import { set } from 'react-datepicker/dist/date_utils';
-import { get } from 'http';
 
 interface SidebarState {
     isActive: boolean;
@@ -10,7 +8,7 @@ interface SidebarState {
 }
 
 const initialState: SidebarState = {
-    isActive: true,
+    isActive: false,
     isOpen: false,
     navItems: [],
 };
@@ -28,6 +26,9 @@ export const sidebarSlice = createSlice({
         activateSidebar(state){
             state.isActive = true
         },
+        disableSidebar(state){
+            state.isActive = false
+        },
         toggleSidebar(state) {
             state.isOpen = !state.isOpen;
         },
@@ -40,7 +41,7 @@ export const sidebarSlice = createSlice({
     },
 });
 
-export const { activateSidebar, toggleSidebar, openSidebar, closeSidebar,setNavItems,getNavItems } = sidebarSlice.actions;
+export const { activateSidebar, disableSidebar, toggleSidebar, openSidebar, closeSidebar,setNavItems,getNavItems } = sidebarSlice.actions;
 
 export const sidebarState = (state: RootState) => state.sidebar.isOpen
 

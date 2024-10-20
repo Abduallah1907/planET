@@ -1,5 +1,5 @@
 import { ITour_Guide } from "@/interfaces/ITour_guide";
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
 const tourGuideSchema = new mongoose.Schema(
   {
@@ -31,13 +31,14 @@ const tourGuideSchema = new mongoose.Schema(
     ],
     documents_required: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
+        ref: "upload.files", // Reference the correct collection
       },
     ],
-    photo: {
-      type: String,
-      // required: true,
+    logo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "upload.files", // Reference the correct collection
     },
   },
   { timestamps: true }

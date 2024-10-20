@@ -5,27 +5,26 @@ import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import LogoPlaceholder from "../../assets/person-circle.svg"; // Placeholder logo
 import { useAppSelector } from "../../store/hooks";
 import { AdvertiserService } from "../../services/AdvertiserService";
-import axios from "axios";
+
 import { FileService } from "../../services/FileService";
-import { set } from "react-datepicker/dist/date_utils";
 
 interface FormData {
   about: string;
   website: string;
   hotline: string;
   companyProfile: string;
-  logo: File | undefined; // Update logo to handle file
+  logo: File | null; // Update logo to handle file
 }
 
 const AdvertiserFirst: React.FC = () => {
   const AdvertiserFirst = useAppSelector((state) => state.user);
-  const [file, setFile] = useState<File | undefined>(undefined);
+
   const [formData, setFormData] = useState<FormData>({
     about: "",
     website: "",
     hotline: "",
     companyProfile: "",
-    logo: undefined, // Initialize logo
+    logo: null, // Initialize logo
   });
 
   useEffect(() => {
@@ -34,34 +33,34 @@ const AdvertiserFirst: React.FC = () => {
       website: AdvertiserFirst.stakeholder_id?.link_to_website || "",
       hotline: AdvertiserFirst.stakeholder_id?.hotline || "",
       companyProfile: AdvertiserFirst.stakeholder_id?.company_profile || "",
-      logo: AdvertiserFirst.stakeholder_id?.logo || "",
+      logo: AdvertiserFirst.stakeholder_id?.logo || null,
     });
   }, [AdvertiserFirst]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+    if (e.target.files) {
       setFormData({ ...formData, logo: e.target.files[0] });
     }
   };
 
   const OnClick = async () => {
-    let fileUpload;
-    if (file) {
-      fileUpload = await FileService.uploadFile(file);
+    if (formData.logo) {
+      const file = await FileService.uploadFile(formData.logo);
+      await AdvertiserService.updateAdvertiser(AdvertiserFirst.email, {
+        about: formData.about,
+        link_to_website: formData.website,
+        hotline: formData.hotline,
+        company_profile: formData.companyProfile,
+        logo: file.data._id,
+      });
+    } else {
+      await AdvertiserService.updateAdvertiser(AdvertiserFirst.email, {
+        about: formData.about,
+        link_to_website: formData.website,
+        hotline: formData.hotline,
+        company_profile: formData.companyProfile,
+      });
     }
-    const updatedData = {
-      about: formData.about,
-      link_to_website: formData.website,
-      hotline: formData.hotline,
-      company_profile: formData.companyProfile,
-      logo: fileUpload,
-    };
-
-    await AdvertiserService.updateAdvertiser(
-      AdvertiserFirst.email,
-      updatedData
-    );
   };
 
   const handleChange = (
@@ -79,7 +78,7 @@ const AdvertiserFirst: React.FC = () => {
       website: "",
       hotline: "",
       companyProfile: "",
-      logo: undefined, // Reset logo
+      logo: null, // Reset logo
     });
   };
 

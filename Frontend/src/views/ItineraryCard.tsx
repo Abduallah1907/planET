@@ -194,3 +194,4 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({id}) => {
 };
 
 export default ItineraryCard;
+

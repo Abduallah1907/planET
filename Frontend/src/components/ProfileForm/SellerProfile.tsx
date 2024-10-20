@@ -3,10 +3,10 @@ import CustomFormGroup from "../FormGroup/FormGroup";
 import "./ProfileFormTourist.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
-import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
 import { useAppSelector } from "../../store/hooks";
 import { SellerServices } from "../../services/SellerServices";
+import { FileService } from "../../services/FileService";
+import { isValidObjectId } from "../..//utils/CheckObjectId";
 
 interface FormData {
   firstName: string;
@@ -17,7 +17,7 @@ interface FormData {
   retypePassword: string;
   username: string;
   description: string;
-  logo: File | null; // Added logo field
+  logo: File | null;
 }
 
 const SellerProfile: React.FC = () => {
@@ -32,31 +32,70 @@ const SellerProfile: React.FC = () => {
     description: "",
     logo: null, // Initialize logo as null
   });
+  const [fileUrl, setFileUrl] = useState("");
   const Seller = useAppSelector((state) => state.user);
 
+  const getSellerData = async () => {
+    if (
+      Seller.stakeholder_id.logo &&
+      isValidObjectId(Seller.stakeholder_id.logo)
+    ) {
+      const file = await FileService.downloadFile(Seller.stakeholder_id.logo);
+
+      const url = URL.createObjectURL(file);
+      setFileUrl(url);
+      setFormData({
+        firstName: Seller.name?.split(" ")[0] || "",
+        lastName: Seller.name?.split(" ")[1] || "",
+        email: Seller.email || "",
+        mobile: Seller.phone_number || "",
+        password: "",
+        retypePassword: "",
+        username: Seller.username || "",
+        logo: file.data || null,
+        description: Seller.stakeholder_id?.description || "",
+      });
+    } else {
+      setFormData({
+        firstName: Seller.name?.split(" ")[0] || "",
+        lastName: Seller.name?.split(" ")[1] || "",
+        email: Seller.email || "",
+        mobile: Seller.phone_number || "",
+        password: "",
+        retypePassword: "",
+        username: Seller.username || "",
+        logo: null,
+        description: Seller.stakeholder_id?.description || "",
+      });
+    }
+  };
+
   useEffect(() => {
-    setFormData({
-      firstName: Seller.name.split(" ")[0],
-      lastName: Seller.name.split(" ")[1] || "",
-      email: Seller.email,
-      mobile: Seller.phone_number,
-      password: "",
-      retypePassword: "",
-      username: Seller.username,
-      description: Seller.stakeholder_id?.description || "",
-      logo: null,
-    });
+    getSellerData();
   }, [Seller]);
 
   const OnClick = async () => {
-    await SellerServices.updateSellerServices(Seller.email, {
-      name: formData.firstName + " " + formData.lastName,
-      email: formData.email,
-      username: formData.username,
-      description: formData.description,
-      phone_number: formData.mobile,
-      password: formData.password,
-    });
+    if (formData.logo) {
+      const file = await FileService.uploadFile(formData.logo);
+      await SellerServices.updateSellerServices(Seller.email, {
+        name: formData.firstName + " " + formData.lastName,
+        email: formData.email,
+        username: formData.username,
+        description: formData.description,
+        phone_number: formData.mobile,
+        password: formData.password,
+        logo: file.data._id,
+      });
+    } else {
+      await SellerServices.updateSellerServices(Seller.email, {
+        name: formData.firstName + " " + formData.lastName,
+        email: formData.email,
+        username: formData.username,
+        description: formData.description,
+        phone_number: formData.mobile,
+        password: formData.password,
+      });
+    }
   };
 
   const handleChange = (
@@ -105,7 +144,7 @@ const SellerProfile: React.FC = () => {
         </Col>
         <Col xs={3} className="text-center">
           <img
-            src={Logo}
+            src={fileUrl != "" ? fileUrl : Logo}
             width="70"
             height="50"
             className="align-top logo"

@@ -1,14 +1,15 @@
-import { Document, ObjectId } from "mongoose";
+import mongoose, { Document, ObjectId } from "mongoose";
 
 export interface IProduct extends Document {
   comments: ObjectId[];
   name: string;
   description: string;
-  picture: string;
+  image?: mongoose.Schema.Types.ObjectId;
   price: number;
   quantity: number;
   sales: number;
   archieve_flag: boolean;
+  average_rating: number;
   tourist_id?: ObjectId[];
   seller_id?: ObjectId;
   createdAt?: Date;
@@ -18,7 +19,7 @@ export interface IProduct extends Document {
 export interface IProductInputDTO {
   name?: string;
   description?: string;
-  picture?: string;
+  image?: mongoose.Schema.Types.ObjectId;
   price?: number;
   quantity?: number;
   sales?: number;

@@ -8,10 +8,10 @@ import { useNavigate, useParams } from "react-router-dom";
 interface FormData {
   name: string;
   description: string;
-  picture: File | null;
+  image: File | null;
   price: number;
   quantity: number;
-  archive_flag: boolean;
+  archieve_flag: boolean;
 }
 
 const EditProduct: React.FC = () => {
@@ -20,10 +20,10 @@ const EditProduct: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     description: "",
-    picture: null,
+    image: null,
     price: 0,
     quantity: 0,
-    archive_flag: false,
+    archieve_flag: false,
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +36,7 @@ const EditProduct: React.FC = () => {
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFormData({ ...formData, picture: e.target.files[0] });
+      setFormData({ ...formData, image: e.target.files[0] });
     }
   };
 
@@ -47,15 +47,15 @@ const EditProduct: React.FC = () => {
       setFormData({
         name: product.name,
         description: product.description,
-        picture: product.picture,
+        image: product.image,
         price: product.price,
         quantity: product.quantity,
-        archive_flag: product.archive_flag,
+        archieve_flag: product.archieve_flag,
       });
     } else {
       console.error("Product ID is undefined");
     }
-  }
+  };
 
   useEffect(() => {
     getProduct();
@@ -66,10 +66,10 @@ const EditProduct: React.FC = () => {
     const productData = {
       name: formData.name,
       description: formData.description,
-      picture: formData.picture ? formData.picture.toString() : "",
+      // image: formData.image ? formData.image.toString() : "",
       price: formData.price,
       quantity: formData.quantity,
-      archive_flag: formData.archive_flag,
+      archieve_flag: formData.archieve_flag,
     };
     if (product_id) {
       await ProductService.EditProduct(product_id, productData);
@@ -123,11 +123,11 @@ const EditProduct: React.FC = () => {
 
           <Row>
             <Col>
-              <Form.Group className="form-group" controlId="product-picture">
-                <Form.Label>Picture</Form.Label>
+              <Form.Group className="form-group" controlId="product-image">
+                <Form.Label>Image</Form.Label>
                 <Form.Control
                   type="file"
-                  name="productPicture"
+                  name="productImage"
                   className="custom-form-control"
                   accept="image/*"
                   onChange={handleFileChange}
@@ -161,7 +161,7 @@ const EditProduct: React.FC = () => {
                 value={String(formData.quantity)}
                 onChange={handleChange}
                 name="quantity"
-              // Ensure only integer values
+                // Ensure only integer values
               />
             </Col>
           </Row>
@@ -172,8 +172,8 @@ const EditProduct: React.FC = () => {
                 <Form.Check
                   type="checkbox"
                   label="Archived"
-                  name="archive_flag"
-                  checked={formData.archive_flag}
+                  name="archieve_flag"
+                  checked={formData.archieve_flag}
                   onChange={handleChange}
                 />
               </Form.Group>

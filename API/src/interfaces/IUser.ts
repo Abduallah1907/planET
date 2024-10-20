@@ -88,3 +88,17 @@ export interface IUserLoginOutputDTO {
   stakeholder_id: any;
   token: string;
 }
+
+export interface IAdminUpdateDTO {
+  newEmail?: string;
+  name?: string;
+  phone_number?: string;
+  password?: string;
+}
+export interface IGovernorUpdateDTO {
+  newEmail?: string;
+  name?: string;
+  phone_number?: string;
+  password?: string;
+  nation?: string;
+}

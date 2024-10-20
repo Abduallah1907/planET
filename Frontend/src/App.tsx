@@ -57,19 +57,23 @@ import ItineraryDetails from "./views/ProductDetails/ItineraryDetails";
 import ComplaintForm from "./views/ViewingPages/ComplaintForm";
 
 
+import ChangePasswordForm from "./views/auth/ChangePasswordForm";
+import ForgetPassword from "./views/auth/ForgetPassword";
+import CheckOTP from "./views/auth/CheckOTP";
+import ChangePasswordG from "./views/auth/ChangePasswordG";
 
 const App: React.FC = () => {
-  const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen)
-  const dispatch = useAppDispatch()
-  const navItems = useAppSelector((state) => state.sidebar.navItems)
+  const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen);
+  const dispatch = useAppDispatch();
+  const navItems = useAppSelector((state) => state.sidebar.navItems);
   return (
     <AppProvider>
       <TopBar />
-      <TopBarLinks/>
+      <TopBarLinks />
       <div className={`sidebar-wrapper ${isSidebarOpen ? "open" : ""}`}>
         <Sidebar
           isOpen={isSidebarOpen}
-          onClose={()=>dispatch(toggleSidebar())}
+          onClose={() => dispatch(toggleSidebar())}
           navItems={navItems} // Pass the settings nav items
         />
       </div>
@@ -78,6 +82,8 @@ const App: React.FC = () => {
         <Route path="/Login" element={<Login />} />
         <Route path="/Registeration" element={<TouristReg />} />
         <Route path="/stakeholder" element={<StakeholderReg />} />
+        <Route path="/forgetPassword" element={<ForgetPassword />} />
+        <Route path="/checkOTP/:email" element={<CheckOTP />} />
 
         <Route path="/AdvertiserFirst" element={<AdvertiserFirst />} />
         <Route path="/TourGuideFirst" element={<TourGuideFirst />} />
@@ -86,7 +92,7 @@ const App: React.FC = () => {
         <Route path="/admin" element={<CreateAdmin />} />
         <Route path="/governer" element={<CreateGoverner />} />
         <Route path="/test" element={<BookingLayout />} />
-        
+
         <Route path="/Activity" element={<Activities />} />
         <Route path="/Activity/:id" element={<ActivityDetails />} />
 
@@ -103,21 +109,31 @@ const App: React.FC = () => {
         <Route path="/SettingSide" element={<SettingSide />} />
         <Route path="/TourGuide" element={<ProfileFormTourGuide />} />
         <Route path="/Advertiser" element={<Advertiser />} />
-        
+
         <Route path="/AddNewProduct" element={<AddNewProduct />} />
         <Route path="/AddActivity" element={<AdvertiserCreate />} />
-        <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
+        <Route
+          path="/AddHistoricalLocation"
+          element={<AddHistoricalLocation />}
+        />
         <Route path="/AddItinerary" element={<AddItinerary />} />
         <Route path="/ItineraryDetails/:id" element={<ItineraryDetails />} />
 
         <Route path="/EditActivity/:activity_id" element={<EditActivity />} />
-        <Route path="/EditHistoricalLocation/:historical_location_id" element={<EditHistoricalLocation />} />
-        <Route path="/EditItinerary/:itinerary_id" element={<EditItinerary />} />
+        <Route
+          path="/EditHistoricalLocation/:historical_location_id"
+          element={<EditHistoricalLocation />}
+        />
+        <Route
+          path="/EditItinerary/:itinerary_id"
+          element={<EditItinerary />}
+        />
         <Route path="/EditProduct/:product_id" element={<EditProduct />} />
 
         <Route path="/UsersTable" element={<UsersTable />} />
 
         <Route path="/MyActivities" element={<MyActivities />} />
+    
         <Route path="/MyHistoricalLocations" element={<MyHistoricalPlaces />} />
         <Route path="/MyItineraries" element={<MyItinerary />} />
         <Route path="/MyProducts" element={<MyProducts />} />
@@ -133,7 +149,8 @@ const App: React.FC = () => {
 
         <Route path="/Complaint" element={<ComplaintForm/>} />
         
-
+        <Route path="/ChangePasswordForm" element={<ChangePasswordForm />} />
+        <Route path="/ChangePasswordG" element={<ChangePasswordG />} />
       </Routes>
     </AppProvider>
   );

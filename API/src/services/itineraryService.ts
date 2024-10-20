@@ -1,5 +1,5 @@
 import { IItineraryCreateDTO, IItineraryOutputAllDTO, IItineraryOutputDTO, IItineraryUpdateDTO } from "@/interfaces/IItinerary";
-import { BadRequestError, ForbiddenError, HttpError, InternalServerError, NotFoundError, UnauthorizedError } from "@/types/Errors";
+import { BadRequestError, ConflictError, ForbiddenError, HttpError, InternalServerError, NotFoundError, UnauthorizedError } from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
 import mongoose, { ObjectId, Types } from "mongoose";
@@ -15,7 +15,7 @@ export default class ItineraryService {
     @Inject("tagModel") private tagModel: Models.TagModel,
     @Inject("ticketModel") private ticketModel: Models.TicketModel,
     @Inject("slotModel") private slotModel: Models.SlotModel
-  ) { }
+  ) {}
   // we also need timeline object???
   public async createItineraryService(itineraryData: IItineraryCreateDTO) {
     const tour_guide = await this.tourGuideModel.findById(itineraryData.tour_guide_id);
@@ -23,9 +23,8 @@ export default class ItineraryService {
     const { slots, ...restData } = itineraryData;
     // Create new slots and get their ObjectIds
     const createdSlots = await this.slotModel.insertMany(slots);
-    const slotIds = createdSlots.map(slot => slot._id);
+    const slotIds = createdSlots.map((slot) => slot._id);
 
-    
     const itineraryDataCreation = {
       ...restData,
       timeline: slotIds,
@@ -43,20 +42,23 @@ export default class ItineraryService {
     return new response(true, { itinerary_id: newItinerary._id }, "Itinerary created successfully!", 201);
   }
   public async getItineraryByIDService(itinerary_id: Types.ObjectId) {
-    const itineraryData = await this.itineraryModel.findById(itinerary_id)
+    const itineraryData = await this.itineraryModel
+      .findById(itinerary_id)
       .populate("comments")
       .populate("tags")
       .populate("category")
       .populate("activities")
       .populate("timeline");
     if (itineraryData instanceof Error) throw new InternalServerError("Internal server error");
+    
+
     if (!itineraryData) throw new HttpError("Itinerary not found", 404);
 
     const itineraryOutput: IItineraryOutputDTO = {
       // tour_guide_id: itineraryData.tour_guide_id,
       // activities: itineraryData.activities,
       // category: itineraryData.category,
-      itinerary_id: itineraryData._id as ObjectId,
+      _id: itineraryData._id as ObjectId,
       name: itineraryData.name,
       accessibility: itineraryData.accessibility,
       active_flag: itineraryData.active_flag,
@@ -71,6 +73,7 @@ export default class ItineraryService {
       rating_value: itineraryData.average_rating,
       locations: itineraryData.locations,
       tags: itineraryData.tags,
+      timeline: itineraryData.timeline,
     };
     return new response(true, itineraryData, "Itinerary found!", 201);
   }
@@ -87,7 +90,7 @@ export default class ItineraryService {
 
     // Create new slots and get their ObjectIds
     const createdSlots = await this.slotModel.insertMany(slots);
-    const slotIds = createdSlots.map(slot => slot._id);
+    const slotIds = createdSlots.map((slot) => slot._id);
 
     // Update itineraryUpdatedData with the new timeline
     const updatedData = {
@@ -119,6 +122,7 @@ export default class ItineraryService {
   public async deactivateItineraryService(itinerary_id: Types.ObjectId): Promise<any> {
     const itinerary = await this.itineraryModel.findById(itinerary_id);
     if (!itinerary) throw new NotFoundError("Itinerary not found! Did you enter the correct itinerary id?");
+    if (itinerary.active_flag === false) throw new ConflictError("The itinerary is already deactived");
 
     itinerary.active_flag = false;
     await itinerary.save();
@@ -130,11 +134,12 @@ export default class ItineraryService {
     const itinerary = await this.itineraryModel.findById(itinerary_id);
     if (!itinerary) throw new NotFoundError("Itinerary not found! Did you enter the correct itinerary id?");
 
+    if (itinerary.active_flag === true) throw new ConflictError("The itinerary is already active");
     // we check if there's bookings, since, the excel mentions that "itineraries with bookings can only be deactivated"
     // need to double check with the ta on this info, but if it is true then the user must be warned with this information too
 
     const itineraryBooked = await this.ticketModel.find({ booking_id: itinerary_id });
-    if (itineraryBooked) throw new ForbiddenError("If the itinerary is booked, we cannot activate the itinerary");
+    if (itineraryBooked) throw new BadRequestError("If the itinerary is booked, we cannot activate the itinerary");
 
     itinerary.active_flag = true;
     await itinerary.save();
@@ -145,6 +150,7 @@ export default class ItineraryService {
   public async flagItineraryInappropriateService(itinerary_id: Types.ObjectId): Promise<any> {
     const itinerary = await this.itineraryModel.findById(itinerary_id);
     if (!itinerary) throw new NotFoundError("Itinerary not found");
+    if (itinerary.inappropriate_flag === true) throw new ForbiddenError("Itinerary is already flagged");
 
     itinerary.inappropriate_flag = true;
     await itinerary.save();
@@ -156,10 +162,6 @@ export default class ItineraryService {
     if (!Types.ObjectId.isValid(tour_guide_id)) {
       throw new BadRequestError("Invalid Tour Guide ID format");
     }
-    // why not use DTO for output one might ask
-    // it is because i do not want to write all the attributes thanks
-    // this also leaves activities' subdocuments as is, if the front end needs that info i will fix it
-    // otherwise everything is fine
     const { itineraries } = await this.tourGuideModel.findById(tour_guide_id).populate({
       path: "itineraries",
       populate: [{ path: "tags" }, { path: "category" }],
@@ -169,14 +171,8 @@ export default class ItineraryService {
     const itinerariesOutput: IItineraryOutputDTO[] = itineraries.map((itinearary: any) => ({
       ...itinearary.toObject(),
       reviews_count: itinearary.comments ? itinearary.comments.length : 0,
-    })
-    );
-    return new response(
-      true,
-      itinerariesOutput,
-      "Returning all found itineraries!",
-      200
-    );
+    }));
+    return new response(true, itinerariesOutput, "Returning all found itineraries!", 200);
   }
 
   public async getAllItinerariesService(page: number): Promise<any> {
@@ -190,6 +186,25 @@ export default class ItineraryService {
       throw new InternalServerError("Internal server error");
     }
 
+    const itinerartiesOutput: IItineraryOutputAllDTO[] = itineraries.map((itinerary) => ({
+      _id: itinerary._id as ObjectId,
+      name: itinerary.name,
+      accessibility: itinerary.accessibility,
+      active_flag: itinerary.active_flag,
+      inappropriate_flag: itinerary.inappropriate_flag,
+      available_dates: itinerary.available_dates,
+      reviews: itinerary.comments,
+      drop_off_loc: itinerary.drop_off_loc,
+      duration: itinerary.duration,
+      languages: itinerary.languages,
+      pickup_loc: itinerary.pickup_loc,
+      price: itinerary.price,
+      average_rating: itinerary.average_rating,
+      locations: itinerary.locations,
+      tags: itinerary.tags,
+      reviews_count: itinerary.comments.length,
+    }));
+   
     const itinerartiesOutput: IItineraryOutputAllDTO[] = itineraries.map(
       (itinerary) => ({
         _id: itinerary._id as ObjectId,
@@ -218,7 +233,7 @@ export default class ItineraryService {
     if (!name && !category && !tag) throw new BadRequestError("Invalid input");
 
     const itineraries = await this.itineraryModel
-      .find({ name: name, tags: tag })
+      .find({ name: name, tags: tag, active_flag: true, inappropriate_flag: false })
       .populate({ path: "category", match: { type: category } })
       .populate("timeline")
       .populate("activities")
@@ -235,7 +250,7 @@ export default class ItineraryService {
   public async getUpcomingItinerariesService() {
     const today = Date.now();
     const itineraries = await this.itineraryModel
-      .find({ available_dates: { $gte: today } })
+      .find({ available_dates: { $gte: today }, active_flag: true, inappropriate_flag: false })
       .populate("category")
       .populate("timeline")
       .populate("activities")
@@ -257,7 +272,7 @@ export default class ItineraryService {
     tour_guide_id?: string;
   }) {
     if (!filters || Object.keys(filters).length === 0 || (filters.tour_guide_id && Object.keys(filters).length === 1)) {
-      const checks: any = {}
+      const checks: any = {};
       if (filters.tour_guide_id) {
         checks.tour_guide_id = filters.tour_guide_id;
       } else {
@@ -343,7 +358,7 @@ export default class ItineraryService {
   public async getSortedItinerariesService(sort: string, direction: string) {
     let sortCriteria = {};
     if (!sort && !direction) {
-      const itineraries = await this.itineraryModel.find();
+      const itineraries = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false });
       return new response(true, itineraries, "Itineraries with no sort criteria provided", 200);
     }
 
@@ -355,7 +370,7 @@ export default class ItineraryService {
       throw new BadRequestError("Invalid sort criteria");
     }
 
-    const itineraries = await this.itineraryModel.find().sort(sortCriteria);
+    const itineraries = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false }).sort(sortCriteria);
     if (itineraries instanceof Error) throw new InternalServerError("Internal server error");
 
     return new response(true, itineraries, "Sorted activities are fetched", 200);
@@ -363,14 +378,14 @@ export default class ItineraryService {
   public async getFilterComponentsService() {
     const preferences = await this.tagModel.find().select("type").lean();
 
-    const prices = await this.itineraryModel.find().select("price").sort({ price: 1 }).lean();
+    const prices = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false }).select("price").sort({ price: 1 }).lean();
 
-    const dates = await this.itineraryModel.find().select("available_dates").lean();
+    const dates = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false }).select("available_dates").lean();
 
     const allDates = dates.flatMap((itinerary: any) => itinerary.available_dates);
     allDates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
 
-    const languages = await this.itineraryModel.find().select("languages").lean();
+    const languages = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false }).select("languages").lean();
 
     const preferencesList = preferences.map((preference: any) => preference.type);
 

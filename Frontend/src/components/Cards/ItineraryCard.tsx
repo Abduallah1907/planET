@@ -6,6 +6,8 @@ import "./Cards.css";
 import Rating from "../Rating/Rating";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext";
+import { useAppSelector } from "../../store/hooks";
+import { ItineraryService } from "../../services/ItineraryService";
 
 interface InputData {
   id: string;
@@ -28,6 +30,7 @@ interface InputData {
   onChange?: (newStatus: boolean) => void; // Pass new booking status as parameter
   onClick?: () => void; // Add onClick function
   onDelete?: () => void; // Add onDelete function
+  onFlag?: () => void; // Add onFlag function
 }
 
 const ItineraryCard = ({
@@ -51,15 +54,21 @@ const ItineraryCard = ({
   onChange,
   onClick,
   onDelete,
+  onFlag,
+  
 }: InputData) => {
   // Manage the state for the booking status
   const [bookingStatus, setBookingStatus] = useState(isActive); // Initialize booking status from props
+  const [showFlagModal, setShowFlagModal] = useState(false); // State for flag confirmation modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
 
   const convertedPrice = useMemo(() => {
     return getConvertedCurrencyWithSymbol(Price, baseCurrency, currency);
   }, [Price, baseCurrency, currency]);
+
+  const user = useAppSelector((state)=>state.user);
+  const isAdmin = user?.role === "ADMIN";
 
   // Function to handle edit action
   const navigate = useNavigate();
@@ -81,6 +90,20 @@ const ItineraryCard = ({
 
   const cancelDelete = () => {
     setShowDeleteModal(false); // Close modal without action
+  };
+  
+  const handleFlag = () => {
+    setShowFlagModal(true); // Show flag confirmation modal
+  };
+
+  const confirmFlag = async() => {
+    await ItineraryService.flagInappropriate(id); // Call the flagInappropriate function from the service
+    setShowFlagModal(false); // Close modal after confirming
+    onFlag && onFlag(); // Call the onFlag function passed as a prop
+  };
+
+  const cancelFlag = () => {
+    setShowFlagModal(false); // Close modal without action
   };
 
   // Toggle booking status
@@ -108,7 +131,7 @@ const ItineraryCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={isTourGuide ? 5 : 6} className="d-flex align-items-stretch" onClick={onClick}>
+        <Col md={isTourGuide|| isAdmin ? 5 : 6} className="d-flex align-items-stretch" onClick={onClick}>
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
@@ -208,15 +231,19 @@ const ItineraryCard = ({
             ) : null}
           </div>
         </Col>
-        {isTourGuide ?
+        {isTourGuide || isAdmin ?
           <Col md={1} className="d-flex align-items-baseline">
             <DropdownButton
               align="end"
               title="⋮"  // Three-dot symbol
               variant="light"
               className="d-flex justify-content-end ms-3 btn-main-inverse">
+              {isTourGuide ? (<>
               <Dropdown.Item onClick={() => id && handleEdit(id)}>Edit</Dropdown.Item>
-              <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item>
+              <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item></>): 
+              (
+              <Dropdown.Item onClick={() => id && handleFlag()}>Flag Innaproprite</Dropdown.Item>
+              )}
             </DropdownButton>
           </Col>
           : null}
@@ -235,6 +262,23 @@ const ItineraryCard = ({
             Cancel
           </Button>
           <Button variant="danger" onClick={confirmDelete}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {/* Flag Confirmation Modal */}
+      <Modal show={showFlagModal} onHide={cancelFlag} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Flag Inappropriate</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to flag this Itinerary as inappropriate?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={cancelFlag}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmFlag}>
             Confirm
           </Button>
         </Modal.Footer>

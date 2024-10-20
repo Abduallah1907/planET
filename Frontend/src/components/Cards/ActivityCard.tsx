@@ -14,24 +14,28 @@ import Rating from "../Rating/Rating";
 import { useNavigate } from "react-router-dom";
 import { useMemo, useState } from "react";
 import { useAppContext } from "../../AppContext";
+import { useAppSelector } from "../../store/hooks";
+import { ActivityService } from "../../services/ActivityService";
+
 
 interface InputData {
   Name: string;
   location: string;
   category: string;
   tags?: string[];
-  id?: string;
+  id: string;
   RatingVal: number; // Initial Rating
   Reviews: number;
   Price: number;
   Date_Time: Date;
   isActive: boolean;
   isBooked: boolean; // Added isBooked prop
-  imageUrl: string;
+  image?: string;
   onChange?: () => void; // Change onChange to a function that does not take parameters
   onClick?: () => void;
   onDelete?: () => void;
   isAdvertiser: boolean;
+  onFlag?: () => void; // Add onFlag function
 }
 
 const CustomActivityCard = ({
@@ -50,13 +54,19 @@ const CustomActivityCard = ({
   onClick,
   onDelete,
   isAdvertiser,
+  onFlag,
 }: InputData) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showFlagModal, setShowFlagModal] = useState(false); // State for flag confirmation modal
   const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
 
   const convertedPrice = useMemo(() => {
     return getConvertedCurrencyWithSymbol(Price, baseCurrency, currency);
-  }, [Price, baseCurrency, currency]);
+  }, [Price, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
+
+  const user = useAppSelector((state)=>state.user);
+  const isAdmin = user?.role === "ADMIN";
+
 
   // Manage the state for the rating
   const navigate = useNavigate();
@@ -66,6 +76,20 @@ const CustomActivityCard = ({
 
   const handleDelete = () => {
     setShowDeleteModal(true);
+  };
+  
+  const handleFlag = () => {
+    setShowFlagModal(true); // Show flag confirmation modal
+  };
+
+  const confirmFlag = async() => {
+    await ActivityService.flagInappropriate(id); // Call the flagInappropriate function from the service
+    setShowFlagModal(false); // Close modal after confirming
+    onFlag && onFlag(); // Call the onFlag function passed as a prop
+  };
+
+  const cancelFlag = () => {
+    setShowFlagModal(false); // Close modal without action
   };
 
   const confirmDelete = async () => {
@@ -85,7 +109,11 @@ const CustomActivityCard = ({
     >
       <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
         {/* Image Section */}
-        <Col md={2} className="p-0 d-flex align-items-stretch" onClick={onClick}>
+        <Col
+          md={2}
+          className="p-0 d-flex align-items-stretch"
+          onClick={onClick}
+        >
           <Image
             src="https://via.placeholder.com/250x250"
             rounded
@@ -95,7 +123,11 @@ const CustomActivityCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={isAdvertiser ? 6 : 7} className="d-flex align-items-stretch" onClick={onClick}>
+        <Col
+          md={isAdvertiser || isAdmin ? 6 : 7}
+          className="d-flex align-items-stretch"
+          onClick={onClick}
+        >
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
@@ -170,16 +202,20 @@ const CustomActivityCard = ({
             <h4 style={{ fontWeight: "bold" }}>{convertedPrice}</h4>
             {isAdvertiser ? (
               <Badge
-                bg={(isActive && isBooked) ? "active" : "inactive"} // Change color based on booking status
+                bg={isActive && isBooked ? "active" : "inactive"} // Change color based on booking status
                 className="mt-2 custom-status-badge rounded-4 text-center"
                 onClick={onChange} // Call onChange when clicked
               >
-                {!isActive ? "Inactive" : (isBooked ? "Booking On" : "Booking Off")}
+                {!isActive
+                  ? "Inactive"
+                  : isBooked
+                  ? "Booking On"
+                  : "Booking Off"}
               </Badge>
             ) : null}
           </div>
         </Col>
-        {isAdvertiser ? (
+        {isAdvertiser || isAdmin ? (
           <Col md={1} className="d-flex align-items-baseline">
             <DropdownButton
               align="end"
@@ -187,10 +223,14 @@ const CustomActivityCard = ({
               variant="light"
               className="d-flex justify-content-end ms-3 btn-main-inverse"
             >
+              {isAdvertiser ? (<>
               <Dropdown.Item onClick={() => id && handleEdit(id)}>
                 Edit
               </Dropdown.Item>
-              <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item>
+              <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item></>
+            ) : <Dropdown.Item onClick={() => id && handleFlag()}>
+                Flag Inappropriate
+              </Dropdown.Item>}
             </DropdownButton>
           </Col>
         ) : null}
@@ -201,14 +241,29 @@ const CustomActivityCard = ({
         <Modal.Header closeButton>
           <Modal.Title>Delete Product</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to delete this product?
-        </Modal.Body>
+        <Modal.Body>Are you sure you want to delete this product?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={cancelDelete}>
             Cancel
           </Button>
           <Button variant="danger" onClick={confirmDelete}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {/* Flag Confirmation Modal */}
+      <Modal show={showFlagModal} onHide={cancelFlag} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Flag Inappropriate</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to flag this Activity as inappropriate?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={cancelFlag}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmFlag}>
             Confirm
           </Button>
         </Modal.Footer>

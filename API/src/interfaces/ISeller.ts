@@ -1,18 +1,18 @@
 import e from "express";
-import { Document, ObjectId } from "mongoose";
+import mongoose, { Document, ObjectId } from "mongoose";
 
 export interface ISellerOutputDTO {
   email: string;
   name: string;
   username: string;
   phone_number: string;
-  logo: string;
+  logo?: mongoose.Schema.Types.ObjectId;
   description: string;
   products: ObjectId[];
 }
 
 export interface ISellerInputDTO {
-  documents_required: string[];
+  documents_required: mongoose.Schema.Types.ObjectId[];
   name: string;
   username: string;
   email: string;
@@ -28,13 +28,13 @@ export interface ISellerUpdateDTO {
   email?: string;
   phone_number?: string;
   description?: string;
-  logo?: string;
+  logo?: mongoose.Schema.Types.ObjectId;
 }
 
 export interface ISeller extends Document {
   user_id: ObjectId;
-  documents_required: string[];
-  logo: string;
+  documents_required: mongoose.Schema.Types.ObjectId[];
+  logo?: mongoose.Schema.Types.ObjectId;
   description: string;
   products: ObjectId[];
   createdAt?: Date;
