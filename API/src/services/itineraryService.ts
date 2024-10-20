@@ -205,26 +205,7 @@ export default class ItineraryService {
       reviews_count: itinerary.comments.length,
     }));
    
-    const itinerartiesOutput: IItineraryOutputAllDTO[] = itineraries.map(
-      (itinerary) => ({
-        _id: itinerary._id as ObjectId,
-        name: itinerary.name,
-        accessibility: itinerary.accessibility,
-        active_flag: itinerary.active_flag,
-        inappropriate_flag: itinerary.inappropriate_flag,
-        available_dates: itinerary.available_dates,
-        reviews: itinerary.comments,
-        drop_off_loc: itinerary.drop_off_loc,
-        duration: itinerary.duration,
-        languages: itinerary.languages,
-        pickup_loc: itinerary.pickup_loc,
-        price: itinerary.price,
-        average_rating: itinerary.average_rating,
-        locations: itinerary.locations,
-        tags: itinerary.tags,
-        reviews_count: itinerary.comments.length,
-      })
-    );
+   
 
     return new response(true, itinerartiesOutput, "Page " + page + " of itineraries", 200);
   }
