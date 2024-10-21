@@ -3,7 +3,7 @@ import { Container, Row, Col, Button, Form, Alert } from "react-bootstrap";
 import CustomFormGroup from "../../../components/FormGroup/FormGroup";
 import { ChangeEvent, useEffect, useState } from "react";
 import AuthService from "../../../services/authService";
-import { useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { activateSidebar, setNavItems } from "../../../store/sidebarSlice";
 import { login, setLoginState, setUser } from "../../../store/userSlice";
@@ -173,7 +173,9 @@ export default function Login() {
             </h1>
             <h2 className="LOGIN">
               {t("new_to_planet")}
-              <span className="orange-text"> {t("signup")}</span>
+           
+                <NavLink  className="orange-text signup-text" to={"/Registeration"} > {t("signup")}</NavLink>
+             
             </h2>
             {showAlert ? (
               <Alert variant="danger" className="text-center">

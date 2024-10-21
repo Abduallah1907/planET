@@ -25,3 +25,8 @@
   color: var(--main-color) !important;
   border: 2px solid var(--main-color) !important;
 }
+
+.signup-text{
+  color : var(--main-color) !important;
+  text-decoration: none !important;
+}

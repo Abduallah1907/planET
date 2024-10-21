@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./ActivityCard.css";
 import { Container, Badge, Modal, Button } from "react-bootstrap";
-import { FaRegHeart, FaHeart, FaBookmark, FaRegBookmark } from "react-icons/fa";
+import { FaShareAlt, FaBookmark, FaRegBookmark } from "react-icons/fa";
 import Rating from "../../components/Rating/Rating";
 import { ActivityService } from "../../services/ActivityService";
 import { IActivity } from "../../types/IActivity";
 import { use } from "i18next";
+
 
 interface ActivityCardProps {
   id: string;
@@ -34,6 +35,36 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
   const [showModal, setShowModal] = useState(false);
   const [activityData, setActivityData] = useState<IActivity | null>(null);
   const [showAdvertiserModal, setShowAdvertiserModal] = useState(false);
+  const shareLink = activityData ? `${window.location.origin}/activity/${activityData._id}` : '';
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(shareLink);
+    alert('Link copied to clipboard!');
+  };
+
+  const shareViaEmail = () => {
+    const subject = encodeURIComponent('Check out this activity!');
+    const body = encodeURIComponent(`I found this interesting activity: ${shareLink}`);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Check out this activity!',
+          text: 'I found this interesting activity:',
+          url: shareLink,
+        });
+      } catch (err) {
+        console.error('Error sharing: ', err);
+      }
+    } else {
+      // Fallback for browsers that do not support the Web Share API
+      copyToClipboard();
+    }
+  };
+
 
   const toggleBookmark = () => {
     setIsBookmarked(!isBookmarked);
@@ -97,6 +128,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
                     {tag.type}
                   </Badge>
                 ))}
+              
 
               <div className="d-flex align-items-center ms-5 rating-stars">
                 {/* Rating Stars */}
@@ -116,6 +148,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
                 </Badge>
               </div>
             </div>
+           
+
             <p
               className="Advertiser"
               onClick={handleAdvertiserClick}
@@ -140,7 +174,11 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
               <button className="reserve-button" onClick={handleReserve}>
                 Reserve
               </button>
+              <Button className="share-button" onClick={handleShare}>
+                <FaShareAlt />
+              </Button>
             </div>
+           
           </div>
         </div>
       </div>
