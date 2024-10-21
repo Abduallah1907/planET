@@ -1,0 +1,120 @@
+openapi: "3.0.0"
+info:
+  title: Slot API
+  version: 1.0.0
+  description: Slot management and retrieval
+tags:
+  - name: Slot
+    description: Slot management and retrieval
+paths:
+  /api/slot/createSlot:
+    post:
+      tags:
+        - Slot
+      summary: Create a new slot
+      description: Create a new slot
+      operationId: createSlot
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: Title of the slot
+                description:
+                  type: string
+                  description: Description of the slot
+                from:
+                  type: string
+                  description: Start time of the slot
+                to:
+                  type: string
+                  description: End time of the slot      
+      responses:
+        '200':
+          description: Slot created successfully
+  
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+  /api/slot/updateSlot:
+    put:
+      tags:
+        - Slot
+      summary: Update a slot
+      description: Update a slot
+      operationId: updateSlot
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                slot_id:
+                  type: string
+                  description: Slot ID
+                title:
+                  type: string
+                  description: Title of the slot
+                description:
+                  type: string
+                  description: Description of the slot
+                from:
+                  type: string
+                  description: Start time of the slot
+                to:
+                  type: string
+                  description: End time of the slot
+      responses:
+        '200':
+          description: Slot updated successfully
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error     
+  /api/slot/deleteSlot/{slot_id}:
+    delete:
+      tags:
+        - Slot
+      summary: Delete a slot
+      description: Delete a slot
+      operationId: deleteSlot
+      parameters:
+        - name: slot_id
+          in: path
+          description: Slot ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Slot deleted successfully
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error      
+  /api/slot/getSlot/{slot_id}:
+    get:
+      tags:
+        - Slot
+      summary: Get a slot
+      description: Get a slot
+      operationId: getSlot
+      parameters:
+        - name: slot_id
+          in: path
+          description: Slot ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Slot retrieved successfully
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error             
+      

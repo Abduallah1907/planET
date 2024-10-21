@@ -27,7 +27,8 @@ export default class TourGuideService {
   constructor(
     @Inject("userModel") private userModel: Models.UserModel,
     @Inject("tour_guideModel") private tourGuideModel: Models.Tour_guideModel,
-    @Inject("previous_workModel") private previousWorkModel: Models.Previous_workModel,
+    @Inject("previous_workModel")
+    private previousWorkModel: Models.Previous_workModel,
     @Inject("ticketModel") private ticketModel: Models.TicketModel,
     @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel
   ) {}
@@ -36,9 +37,9 @@ export default class TourGuideService {
   public async createPreviousWorkService(
     previousWork: IPreviousWorkInputDTO
   ): Promise<any> {
-    const tourGuide = await this.tourGuideModel.findOne({
-      tour_guide_id: previousWork.tour_guide_id,
-    });
+    const tourGuide = await this.tourGuideModel.findById(
+      previousWork.tour_guide_id
+    );
     if (!tourGuide)
       throw new HttpError("Tour guide not found. Is the ID correct?", 404);
 
@@ -339,25 +340,35 @@ export default class TourGuideService {
   public async deleteTourGuideAccountRequest(email: string): Promise<any> {
     const today = new Date();
     const tourGuideUser = await this.userModel.findOne({ email });
-    if (!tourGuideUser || tourGuideUser.role !== UserRoles.TourGuide) throw new NotFoundError("Tour guide user account was not found");
+    if (!tourGuideUser || tourGuideUser.role !== UserRoles.TourGuide)
+      throw new NotFoundError("Tour guide user account was not found");
     // the reason for the explicit type is because for some reason the interfaces are set up in a wron way, and idk how to fix
     // also whether available dates acutally works is up to luck, pray
-    const { itineraries: tourGuideUpcomingItineraries } = await this.tourGuideModel
-      .findOne({ user_id: tourGuideUser._id })
-      .populate({
-        path: "itineraries",
-        match: { available_dates: { $elemMath: { $gt: today } } },
-      })
-      .select("itineraries");
+    const { itineraries: tourGuideUpcomingItineraries } =
+      await this.tourGuideModel
+        .findOne({ user_id: tourGuideUser._id })
+        .populate({
+          path: "itineraries",
+          match: { available_dates: { $elemMath: { $gt: today } } },
+        })
+        .select("itineraries");
 
-    if (!tourGuideUpcomingItineraries) throw new NotFoundError("Tour guide user account was not found");
-    const bookedItineraries = await this.ticketModel.find({ booking_id: { $in: tourGuideUpcomingItineraries } });
+    if (!tourGuideUpcomingItineraries)
+      throw new NotFoundError("Tour guide user account was not found");
+    const bookedItineraries = await this.ticketModel.find({
+      booking_id: { $in: tourGuideUpcomingItineraries },
+    });
     console.log(bookedItineraries);
     if (bookedItineraries.length !== 0)
-      throw new BadRequestError("There are still upcoming itineraries that are booked. Cannot delete until these itineraries are fufilled");
+      throw new BadRequestError(
+        "There are still upcoming itineraries that are booked. Cannot delete until these itineraries are fufilled"
+      );
 
-    const tourGuideData: ITour_Guide = await this.tourGuideModel.findOne({ user_id: tourGuideUser._id }).populate("itineraries");
-    const tourGuideItineraries = tourGuideData.itineraries as unknown as IItinerary[];
+    const tourGuideData: ITour_Guide = await this.tourGuideModel
+      .findOne({ user_id: tourGuideUser._id })
+      .populate("itineraries");
+    const tourGuideItineraries =
+      tourGuideData.itineraries as unknown as IItinerary[];
     if (tourGuideItineraries) {
       tourGuideItineraries.forEach(async (itinerary) => {
         itinerary.active_flag = false;
@@ -366,8 +377,12 @@ export default class TourGuideService {
     }
     console.log(tourGuideItineraries);
 
-    const deletedTourGuide = await this.tourGuideModel.findByIdAndDelete(tourGuideData._id);
-    const deletedTourGuideUser = await this.userModel.findByIdAndDelete(tourGuideUser._id);
+    const deletedTourGuide = await this.tourGuideModel.findByIdAndDelete(
+      tourGuideData._id
+    );
+    const deletedTourGuideUser = await this.userModel.findByIdAndDelete(
+      tourGuideUser._id
+    );
 
     return new response(true, {}, "Tour guide successfully deleted", 200);
   }

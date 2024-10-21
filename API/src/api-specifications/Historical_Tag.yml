@@ -25,12 +25,12 @@ paths:
                   type: object
                   required:
                     - name
-                    - Values
+                    - values
                   properties:
                     name:
                       type: string
                       description: The name of the historical tag
-                    Values:
+                    values:
                       type: array
                       items:
                         type: string

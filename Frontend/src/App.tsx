@@ -54,6 +54,7 @@ import { use } from "i18next";
 
 import Rating from "./components/Rating/Rating";
 import ItineraryDetails from "./views/ProductDetails/ItineraryDetails";
+import ComplaintForm from "./views/ViewingPages/ComplaintForm";
 
 
 import ChangePasswordForm from "./views/auth/ChangePasswordForm";
@@ -145,6 +146,8 @@ const App: React.FC = () => {
         <Route path="/Categories" element={<CategoryTable />} />
         <Route path="/Tags" element={<TagsTable />} />
         <Route path="/HistoricalTags" element={<HistoricalTagsTable />} />
+
+        <Route path="/Complaint" element={<ComplaintForm/>} />
         
         <Route path="/ChangePasswordForm" element={<ChangePasswordForm />} />
         <Route path="/ChangePasswordG" element={<ChangePasswordG />} />

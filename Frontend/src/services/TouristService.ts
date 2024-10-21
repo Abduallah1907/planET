@@ -68,6 +68,16 @@ class TouristService {
 
 
   
+  public static fileComplaint = async (id: string, data:any) => {
+    try {
+      const response = await axiosInstance.post(
+        `/tourist/fileComplaint/${id}`,data
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { TouristService };
