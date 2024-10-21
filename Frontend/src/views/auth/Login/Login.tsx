@@ -59,7 +59,10 @@ export default function Login() {
       switch (user.role) {
         case "TOURIST":
           dispatch(
-            setNavItems([{ path: "/Touristedit", label: "Edit Profile" }])
+            setNavItems([
+              { path: "/Touristedit", label: "Edit Profile" },
+              { path: "/Complaint", label: "File Complaint" },
+            ])
           );
           // state.user.isLoggedIn = true;
           navigate("/Touristedit");
