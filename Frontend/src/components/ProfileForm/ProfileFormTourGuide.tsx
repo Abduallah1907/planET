@@ -25,7 +25,7 @@ interface FormData {
   changePassword: string;
   retypePassword: string;
   username: string;
-  photo: File | null;
+  logo: File | null;
   previousWork: WorkExperience[];
 }
 
@@ -39,7 +39,7 @@ const ProfileFormGuide: React.FC = () => {
     retypePassword: "",
     username: "",
     yearsOfExperience: "",
-    photo: null,
+    logo: null,
     previousWork: [],
   });
   const [fileUrl, setFileUrl] = useState("");
@@ -50,11 +50,11 @@ const ProfileFormGuide: React.FC = () => {
   const TourGuide = useAppSelector((state) => state.user);
   const getTourGuideData = async () => {
     if (
-      TourGuide.stakeholder_id.photo &&
-      isValidObjectId(TourGuide.stakeholder_id.photo)
+      TourGuide.stakeholder_id.logo &&
+      isValidObjectId(TourGuide.stakeholder_id.logo)
     ) {
       const file = await FileService.downloadFile(
-        TourGuide.stakeholder_id.photo
+        TourGuide.stakeholder_id.logo
       );
 
       const url = URL.createObjectURL(file);
@@ -80,7 +80,7 @@ const ProfileFormGuide: React.FC = () => {
         retypePassword: "",
         username: TourGuide.username,
         yearsOfExperience: TourGuide.stakeholder_id?.years_of_experience || "",
-        photo: file.data || null,
+        logo: file.data || null,
         previousWork: workExperiences || [],
       });
     } else {
@@ -105,7 +105,7 @@ const ProfileFormGuide: React.FC = () => {
         retypePassword: "",
         username: TourGuide.username,
         yearsOfExperience: TourGuide.stakeholder_id?.years_of_experience || "",
-        photo: null,
+        logo: null,
         previousWork: workExperiences || [],
       });
     }
@@ -126,7 +126,7 @@ const ProfileFormGuide: React.FC = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFormData({ ...formData, photo: e.target.files[0] });
+      setFormData({ ...formData, logo: e.target.files[0] });
     }
   };
 
@@ -184,13 +184,13 @@ const ProfileFormGuide: React.FC = () => {
     setCreatedWork((prev) => prev.filter((_, i) => i !== index));
   };
   const OnClick = async () => {
-    if (formData.photo) {
-      const file = await FileService.uploadFile(formData.photo);
+    if (formData.logo) {
+      const file = await FileService.uploadFile(formData.logo);
       await TourGuideServices.updateTourGuide(TourGuide.email, {
         name: `${formData.firstName} ${formData.lastName}`,
         newEmail: formData.email,
         phone_number: formData.mobile,
-        photo: file.data._id,
+        logo: file.data._id,
         years_of_experience: formData.yearsOfExperience,
         password: formData.changePassword,
 
@@ -232,7 +232,7 @@ const ProfileFormGuide: React.FC = () => {
       retypePassword: "",
       username: "",
       yearsOfExperience: "",
-      photo: null,
+      logo: null,
       previousWork: [],
     });
     setCreatedWork([]);
@@ -384,7 +384,7 @@ const ProfileFormGuide: React.FC = () => {
                 </Form.Label>
                 <Form.Control
                   type="file"
-                  name="photo"
+                  name="logo"
                   onChange={handleFileChange}
                   accept="image/*"
                 />
