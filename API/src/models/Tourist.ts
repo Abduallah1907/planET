@@ -66,6 +66,12 @@ const touristSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "upload.files", // Reference the correct collection
     },
+    tickets: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Ticket",
+      },
+    ],
   },
   { timestamps: true }
 );

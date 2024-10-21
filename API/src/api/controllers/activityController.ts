@@ -1,6 +1,8 @@
 import { IActivityDTO } from "../../interfaces/IActivity";
 import Container, { Service } from "typedi";
+import { Request, Response } from "express";
 import ActivityService from "@/services/activityService";
+import { Types } from "mongoose";
 
 @Service()
 export class ActivityController {
@@ -28,19 +30,14 @@ export class ActivityController {
   public async getActivitiesByAdvertiserID(req: any, res: any) {
     const { advertiserID } = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activity = await activityService.getActivitiesByAdvertiserIDService(
-      advertiserID
-    );
+    const activity = await activityService.getActivitiesByAdvertiserIDService(advertiserID);
     res.status(activity.status).json(activity);
   }
   public async updateActivity(req: any, res: any) {
     const { id } = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
     const activityData = req.body as IActivityDTO;
-    const activity = await activityService.updateActivityService(
-      id,
-      activityData
-    );
+    const activity = await activityService.updateActivityService(id, activityData);
     res.status(activity.status).json(activity);
   }
 
@@ -54,18 +51,13 @@ export class ActivityController {
   public async getSearchActivity(req: any, res: any) {
     const { name, category, tag } = req.query;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activities = await activityService.getSearchActivityService(
-      name,
-      category,
-      tag
-    );
+    const activities = await activityService.getSearchActivityService(name, category, tag);
     res.status(activities.status).json(activities);
   }
 
   public async getUpcomingActivities(req: any, res: any) {
     const activityService: ActivityService = Container.get(ActivityService);
-    const upcomingActivities =
-      await activityService.getUpcomingActivitiesService();
+    const upcomingActivities = await activityService.getUpcomingActivitiesService();
 
     res.status(upcomingActivities.status).json(upcomingActivities);
   }
@@ -100,9 +92,7 @@ export class ActivityController {
       filters = { ...filters, category: categoryList };
     }
     if (tag) {
-      const preferencesList = tag
-        .split(",")
-        .map((preference: string) => preference.trim());
+      const preferencesList = tag.split(",").map((preference: string) => preference.trim());
       filters = { ...filters, preferences: preferencesList };
     }
 
@@ -125,23 +115,27 @@ export class ActivityController {
       }
     }
     if (advertiser_id) filters = { ...filters, advertiser_id: advertiser_id };
-    const activities = await activityService.getFilteredActivitiesService(
-      filters
-    );
+    const activities = await activityService.getFilteredActivitiesService(filters);
     res.status(activities.status).json(activities);
   }
   public async getSortedActivities(req: any, res: any) {
     const { sort, direction } = req.query;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activities = await activityService.getSortedActivitiesService(
-      sort,
-      direction
-    );
+    const activities = await activityService.getSortedActivitiesService(sort, direction);
     res.status(activities.status).json(activities);
   }
   public async getFilterComponents(req: any, res: any) {
     const activityService: ActivityService = Container.get(ActivityService);
     const filterComponents = await activityService.getFilterComponentsService();
     res.status(filterComponents.status).json(filterComponents);
+  }
+
+  public async flagActivity(req: Request, res: Response): Promise<any> {
+    const { activity_id } = req.params;
+    const activity_idObjectId = new Types.ObjectId(activity_id);
+
+    const activityService: ActivityService = Container.get(ActivityService);
+    const updatedActivity = await activityService.flagActivityInappropriateService(activity_idObjectId);
+    res.status(updatedActivity.status).json(updatedActivity);
   }
 }

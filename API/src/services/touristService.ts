@@ -526,12 +526,7 @@ export default class TouristService {
     if (tourist.wallet < activity.price) {
       throw new BadRequestError("Insufficient balance");
     }
-    const newWallet = tourist.wallet - activity.price;
-    const updatedTourist = await this.touristModel.findByIdAndUpdate(
-      tourist_id,
-      { wallet: newWallet },
-      { new: true }
-    );
+
     const ticket = new this.ticketModel({
       tourist_id: tourist_id,
       type: "ACTIVITY",
@@ -542,9 +537,16 @@ export default class TouristService {
     });
 
     await ticket.save();
-
     if (ticket instanceof Error)
       throw new InternalServerError("Internal server error in saving ticket");
+
+    const newWallet = tourist.wallet - activity.price;
+    const updatedTourist = await this.touristModel.findByIdAndUpdate(
+      tourist_id,
+      { wallet: newWallet, $push: { tickets: ticket._id } },
+      { new: true }
+    );
+
     return new response(true, ticket, "Activity booked", 201);
   }
 
@@ -596,12 +598,6 @@ export default class TouristService {
     if (tourist.wallet < itinerary.price) {
       throw new BadRequestError("Insufficient balance");
     }
-    const newWallet = tourist.wallet - itinerary.price;
-    const updatedTourist = await this.touristModel.findByIdAndUpdate(
-      tourist_id,
-      { wallet: newWallet },
-      { new: true }
-    );
     const ticket = new this.ticketModel({
       tourist_id: tourist_id,
       type: "ITINERARY",
@@ -613,6 +609,13 @@ export default class TouristService {
     ticket.save();
     if (ticket instanceof Error)
       throw new InternalServerError("Internal server error in saving ticket");
+
+    const newWallet = tourist.wallet - itinerary.price;
+    const updatedTourist = await this.touristModel.findByIdAndUpdate(
+      tourist_id,
+      { wallet: newWallet, $push: { tickets: ticket._id } },
+      { new: true }
+    );
 
     return new response(true, ticket, "Itinerary booked", 201);
   }
@@ -678,12 +681,7 @@ export default class TouristService {
     if (tourist.wallet < price) {
       throw new BadRequestError("Insufficient balance");
     }
-    const newWallet = tourist.wallet - price;
-    const updatedTourist = await this.touristModel.findByIdAndUpdate(
-      tourist_id,
-      { wallet: newWallet },
-      { new: true }
-    );
+
     const ticket = new this.ticketModel({
       tourist_id: tourist_id,
       type: "HISTORICAL_LOCATION",
@@ -696,6 +694,13 @@ export default class TouristService {
 
     if (ticket instanceof Error)
       throw new InternalServerError("Internal server error in saving ticket");
+
+    const newWallet = tourist.wallet - price;
+    const updatedTourist = await this.touristModel.findByIdAndUpdate(
+      tourist_id,
+      { wallet: newWallet, $push: { tickets: ticket._id } },
+      { new: true }
+    );
     return new response(true, ticket, "Historical location booked", 201);
   }
 
