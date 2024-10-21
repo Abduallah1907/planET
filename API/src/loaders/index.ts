@@ -135,7 +135,7 @@ export default async ({ expressApp }: { expressApp: Application }) => {
 
   const otpModel = {
     name: "otpModel",
-    model: require("../models/Otp").default,
+    model: require("../models/OTP").default,
   };
 
   const { gfs, upload } = await gridfsLoader({ mongoConnection });

@@ -27,4 +27,7 @@ export default (app: Router) => {
   router.get("/getFilteredActivities", activityController.getFilteredActivities);
   router.get("/getSortedActivities", activityController.getSortedActivities);
   router.get("/getFilterComponents", activityController.getFilterComponents);
+
+  // should be done by admin only
+  router.put("/flagActivity/:activity_id", activityController.flagActivity);
 };

@@ -311,7 +311,7 @@ paths:
           name: tag
           description: Tag of the activity
           schema:
-            type: string    
+            type: string
       responses:
         "200":
           description: List of filtered activities.
@@ -350,4 +350,31 @@ paths:
         "400":
           description: Bad request.
         "500":
+          description: Internal server error.
+  /api/activity/flagActivity/{activity_id}:
+    put:
+      tags:
+        - Activity
+        - Admin
+      summary: Flag an activity and prevent it to be shown to tourists.
+      description: Flagging an activity is a permanent action. Make sure to warn the admin of such thing. This does not prevent the advertiser who
+        created it to see it in his own profile, but the admin cannot see it after flagging it (ironically enough). This logic will be changed. This does not affect any tourist
+        who booked the activity, but maybe it should.
+      parameters:
+        - name: activity_id
+          in: path
+          description: The activity we want to flag.
+          required: true
+          schema:
+            type: string
+            format: objectId
+            example: "6700067cce53c3263e1f8e5c"
+      responses:
+        200:
+          description: Activity flagged successfully
+        404:
+          description: Activity not found.
+        409:
+          description: The itinerary is already flagged
+        500:
           description: Internal server error.
