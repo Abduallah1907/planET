@@ -237,6 +237,16 @@ export default class AdminService {
       updatedAt: newUserResponse.data.updatedAt,
     };
 
+    //also create a seller from admin to give him access for products like seller
+    const newSeller = new this.sellerModel({
+      user_id: newUserResponse.data._id,
+      documents_required: [],
+      logo: null,
+      description: "",
+      products: [],
+    });
+    newSeller.save();
+
     return new response(true, adminOutput, "Admin created", 201);
   }
 
