@@ -1,3 +1,5 @@
 apis:
   API/src/api-specifications/Admin.yml:
     alias: admin-api
+  API/src/api-specifications/Amadeus.yml:
+    alias: amadeus-api
