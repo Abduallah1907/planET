@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import Container, { Inject, Service } from "typedi";
 import mongoose, { ReplaceOneModel, Types } from "mongoose";
 import admin from "../routes/admin";
+import ComplaintStatus from "@/types/enums/complaintStatus";
 
 // CRUD for users
 @Service()
@@ -138,6 +139,22 @@ export class AdminController {
     const complaintIDObjectId = new Types.ObjectId(complaint_id);
     const adminService: AdminService = Container.get(AdminService);
     const complaint = await adminService.getComplaintByIDService(complaintIDObjectId);
+    res.status(complaint.status).json(complaint);
+  }
+
+  public async markComplaintResolved(req: Request, res: Response): Promise<void> {
+    const { complaint_id } = req.params;
+    const complaintIDObjectId = new Types.ObjectId(complaint_id);
+    const adminService: AdminService = Container.get(AdminService);
+    const complaint = await adminService.markComplaintResolvedService(complaintIDObjectId);
+    res.status(complaint.status).json(complaint);
+  }
+
+  public async markComplaintPending(req: Request, res: Response): Promise<void> {
+    const { complaint_id } = req.params;
+    const complaintIDObjectId = new Types.ObjectId(complaint_id);
+    const adminService: AdminService = Container.get(AdminService);
+    const complaint = await adminService.markComplaintPendingService(complaintIDObjectId);
     res.status(complaint.status).json(complaint);
   }
 }

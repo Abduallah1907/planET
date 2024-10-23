@@ -8,6 +8,7 @@ import { InternalServerError, HttpError, BadRequestError, NotFoundError } from "
 import UserService from "./userService";
 import bcrypt from "bcryptjs";
 import { IComplaint, IComplaintAdminViewDTO } from "@/interfaces/IComplaint";
+import ComplaintStatus from "@/types/enums/complaintStatus";
 
 // User related services (delete, view, and create users)
 
@@ -374,5 +375,17 @@ export default class AdminService {
     };
 
     return new response(true, complaintOutput, "Complaint", 200);
+  }
+
+  public async markComplaintResolvedService(complaintID: Types.ObjectId): Promise<response> {
+    const complaint: IComplaint | null = await this.complaintModel.findByIdAndUpdate(complaintID, { status: ComplaintStatus.Resolved });
+    if (!complaint) throw new NotFoundError("No such complaint found");
+    return new response(true, {}, "Complaint status updated to resolved!", 200);
+  }
+
+  public async markComplaintPendingService(complaintID: Types.ObjectId): Promise<response> {
+    const complaint: IComplaint | null = await this.complaintModel.findByIdAndUpdate(complaintID, { status: ComplaintStatus.Pending });
+    if (!complaint) throw new NotFoundError("No such complaint found");
+    return new response(true, {}, "Complaint status updated to pending!", 200);
   }
 }
