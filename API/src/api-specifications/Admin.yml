@@ -428,8 +428,109 @@ paths:
       responses:
         "200":
           description: Reterived a list of 10 complaints sorted by date successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    complaint_id:
+                      type: string
+                      format: objectId
+                      description: The ID of the complaint
+                    tourist_id:
+                      type: string
+                      format: objectId
+                      description: The ID of the tourist
+                    title:
+                      type: string
+                      description: The title of the complaint
+                    body:
+                      type: string
+                      description: The body of the complaint
+                    reply:
+                      type: string
+                      description: The reply from the admin (optional)
+                    date:
+                      type: string
+                      format: date-time
+                      description: The date the complaint was created
+                    status:
+                      type: string
+                      enum:
+                        - Pending
+                        - Resolved
+                      description: The current status of the complaint
         "400":
           description: The direction inputted was an invalid one, or there was no direction in the body
+        "500":
+          description: Internal Server Error.
+
+  /api/admin/getFilterComplaintsByStatus/{page}:
+    get:
+      tags:
+        - Admin
+        - Complaint
+      summary: Given a page number and a valid status, shows 10 complaints filtered by that status
+      parameters:
+        - name: page
+          in: path
+          description: Page number to retrieve.
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter_status:
+                  type: string
+                  enum:
+                    - Pending
+                    - Resolved
+      responses:
+        "200":
+          description: Reterived a list of 10 complaints filtered by status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    complaint_id:
+                      type: string
+                      format: objectId
+                      description: The ID of the complaint
+                    tourist_id:
+                      type: string
+                      format: objectId
+                      description: The ID of the tourist
+                    title:
+                      type: string
+                      description: The title of the complaint
+                    body:
+                      type: string
+                      description: The body of the complaint
+                    reply:
+                      type: string
+                      description: The reply from the admin (optional)
+                    date:
+                      type: string
+                      format: date-time
+                      description: The date the complaint was created
+                    status:
+                      type: string
+                      enum:
+                        - Pending
+                        - Resolved
+                      description: The current status of the complaint
+        "400":
+          description: The filter_status inputted was an invalid one, or there was no filtered_status in the body
         "500":
           description: Internal Server Error.
 

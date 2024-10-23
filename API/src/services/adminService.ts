@@ -416,4 +416,24 @@ export default class AdminService {
     }));
     return new response(true, sortedComplaintsDTO, "Compliants sorted!", 200);
   }
+
+  public async filerComplaintByStatusService(status: ComplaintStatus, page: number): Promise<response> {
+    if (!status || !Object.values(ComplaintStatus).includes(status)) throw new BadRequestError("pls add a correct status to filter by");
+    const filteredComplaints = await this.complaintModel
+      .find({ status })
+      .limit(10)
+      .skip((page - 1) * 10);
+
+    const filteredComplaintsDTO: IComplaintAdminViewDTO[] = filteredComplaints.map((complaint) => ({
+      body: complaint.body,
+      date: complaint.date,
+      status: complaint.status,
+      title: complaint.title,
+      reply: complaint.reply,
+      complaint_id: complaint._id as ObjectId,
+      tourist_id: complaint.tourist_id,
+    }));
+
+    return new response(true, filteredComplaintsDTO, "Filtered complaints", 200);
+  }
 }

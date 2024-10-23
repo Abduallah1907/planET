@@ -175,4 +175,13 @@ export class AdminController {
     const complaint = await adminService.getSortedComplaintsByDateService(direction, pageNum);
     res.status(complaint.status).json(complaint);
   }
+
+  public async getFilteredComplaintsByStatus(req: Request, res: Response): Promise<void> {
+    const { page } = req.params;
+    const pageNum: number = parseInt(page);
+    const { filter_status } = req.body;
+    const adminService: AdminService = Container.get(AdminService);
+    const complaint = await adminService.filerComplaintByStatusService(filter_status, pageNum);
+    res.status(complaint.status).json(complaint);
+  }
 }
