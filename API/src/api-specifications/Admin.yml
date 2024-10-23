@@ -354,7 +354,7 @@ paths:
       tags:
         - Admin
         - Complaint
-      summary: Given a page number, shows all the complaints along with their information
+      summary: Given a page number, shows 10 complaints along with their information
       parameters:
         - name: page
           in: path
@@ -402,6 +402,37 @@ paths:
                       description: The current status of the complaint
         "500":
           description: Internal Server Error.
+  /api/admin/getSortComplaintByDate/{page}:
+    get:
+      tags:
+        - Admin
+        - Complaint
+      summary: Given a page number and a direction to sort, shows 10 complaints sorted by the date
+      description: The direction can be 1 for ascending, or -1 for descending
+      parameters:
+        - name: page
+          in: path
+          description: Page number to retrieve.
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                direction:
+                  type: integer
+      responses:
+        "200":
+          description: Reterived a list of 10 complaints sorted by date successfully
+        "400":
+          description: The direction inputted was an invalid one, or there was no direction in the body
+        "500":
+          description: Internal Server Error.
+
   /api/admin/getComplaintById/{complaint_id}:
     get:
       tags:

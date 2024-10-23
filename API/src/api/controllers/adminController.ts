@@ -166,4 +166,13 @@ export class AdminController {
     const complaint = await adminService.replyComplaintService(complaintIDObjectId, reply);
     res.status(complaint.status).json(complaint);
   }
+
+  public async getSortComplaintByDate(req: Request, res: Response): Promise<void> {
+    const { page } = req.params;
+    const pageNum: number = parseInt(page);
+    const { direction } = req.body;
+    const adminService: AdminService = Container.get(AdminService);
+    const complaint = await adminService.getSortedComplaintsByDateService(direction, pageNum);
+    res.status(complaint.status).json(complaint);
+  }
 }

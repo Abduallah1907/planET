@@ -1,4 +1,4 @@
-import mongoose, { ObjectId, Types } from "mongoose";
+import mongoose, { ObjectId, SortOrder, Types } from "mongoose";
 import Container, { Inject, Service } from "typedi";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
@@ -9,6 +9,7 @@ import UserService from "./userService";
 import bcrypt from "bcryptjs";
 import { IComplaint, IComplaintAdminViewDTO } from "@/interfaces/IComplaint";
 import ComplaintStatus from "@/types/enums/complaintStatus";
+import { dir } from "console";
 
 // User related services (delete, view, and create users)
 
@@ -394,5 +395,25 @@ export default class AdminService {
     const complaint: IComplaint | null = await this.complaintModel.findByIdAndUpdate(complaintID, { reply: complaintReply });
     if (!complaint) throw new NotFoundError("No such complaint found");
     return new response(true, {}, "Added complaint reply!", 200);
+  }
+
+  public async getSortedComplaintsByDateService(direction: SortOrder, page: number): Promise<response> {
+    if (!direction) throw new BadRequestError("Choose either -1 or 1 as your direction for sorting");
+    const sortedComplaints = await this.complaintModel
+      .find({})
+      .sort({ date: direction })
+      .limit(10)
+      .skip((page - 1) * 10);
+
+    const sortedComplaintsDTO: IComplaintAdminViewDTO[] = sortedComplaints.map((complaint) => ({
+      body: complaint.body,
+      date: complaint.date,
+      status: complaint.status,
+      title: complaint.title,
+      reply: complaint.reply,
+      complaint_id: complaint._id as ObjectId,
+      tourist_id: complaint.tourist_id,
+    }));
+    return new response(true, sortedComplaintsDTO, "Compliants sorted!", 200);
   }
 }
