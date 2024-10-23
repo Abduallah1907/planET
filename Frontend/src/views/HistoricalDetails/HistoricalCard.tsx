@@ -93,9 +93,9 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
                     {tag}
                   </Badge>
                 ))}
-              <div className="d-flex align-items-center ms-5 rating-stars">
+              <div className="d-flex align-items-center ms-auto rating-stars">
                 {/* Rating Stars */}
-                <div style={{ marginLeft: "12rem" }}>
+                <div>
                   <Rating
                     rating={
                       localHistoricalData

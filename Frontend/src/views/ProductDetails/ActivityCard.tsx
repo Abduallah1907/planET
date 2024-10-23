@@ -130,9 +130,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
                 ))}
               
 
-              <div className="d-flex align-items-center ms-5 rating-stars">
+              <div className="d-flex align-items-center ms-auto rating-stars">
                 {/* Rating Stars */}
-                <div style={{ marginLeft: "12rem" }}>
+                <div>
                   <Rating
                     rating={activityData ? activityData.average_rating : 0}
                     readOnly={true}

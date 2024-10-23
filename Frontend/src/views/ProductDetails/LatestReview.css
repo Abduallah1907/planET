@@ -1,5 +1,8 @@
 .reviews-section {
   margin-top: 20px;
+  border: 2px solid #e0a16e;
+  border-radius: 10px;
+  padding: 20px;
 }
 
 .reviews-list {
@@ -42,20 +45,13 @@
   font-size: 0.85rem;
   color: #777;
 }
-.allcont{
-  border: 2px solid #e0a16e;
-  border-radius: 10px;
-  padding-bottom: 20px;
-  max-width: 1120px;
-}
-.reviews-section h2{
+
+.reviews-section h2 {
   margin-left: 20px;
   margin-bottom: 20px;
 }
 
 .reviews-section h2,
-.reviews-section h3
-{
-  font-family: volkhov , serif;
+.reviews-section h3 {
+  font-family: volkhov, serif;
 }
-

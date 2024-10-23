@@ -1,127 +1,68 @@
 .activity-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 2px solid #e0a16e;
-    border-radius: 10px;
-    padding: 20px;
-  }
-  
-  .activity-details {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
-  
-  .image-placeholder {
-    width: 300px;
-    height: 300px;
-    background-color: #f4f4f4;
-    border-radius: 10px;
-    position: relative;
-  
-  }
-  
-  
-  .details {
-    flex: 1;
-    margin-left: 20px;
-  }
-  
-  .price {
-    font-size: 2rem;
-    color: #333;
-  }
-  
-  
-  .reserve-button {
-    background-color: var(--main-color);
-    color: white;
-    border: none;
-    padding: 10px 200px;
-    font-size: 1rem;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: 10px;
-    margin-left: 60px;
-  }
-  
-  
-  .image-placeholder i {
-    /* Adjust the color and width as needed /
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 2px solid #e0a16e;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.activity-details {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.image-placeholder {
+  width: 300px;
+  height: 300px;
+  background-color: #f4f4f4;
+  border-radius: 10px;
+  position: relative;
+
+}
+
+
+.details {
+  flex: 1;
+  margin-left: 20px;
+}
+
+.price {
+  font-size: 2rem;
+  color: #333;
+}
+
+
+.reserve-button {
+  background-color: var(--main-color);
+  color: white;
+  border: none;
+  padding: 10px 200px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 10px;
+  margin-left: 60px;
+}
+
+
+.image-placeholder i {
+  /* Adjust the color and width as needed /
     background-color: #e0a16e;
     border-radius: 50%;
     / Makes the border rounded */
-    padding: 0.6rem;
-    color: #f4f4f4;
-    margin-left: 1.2rem;
-  }
-  
-  .details h2{
-    font-family: volkhov , serif;
-  }
-  .reserve-button:hover {
-    background-color: var(--secondary-color);
-    color: var(--main-color);
-    border: 2px solid var(--main-color);
-  }
-  .reviews-section {
-    margin-top: 20px;
-  }
-  
-  .reviews-list {
-    display: flex;
-    margin-top: 10px;
-    justify-content: space-evenly;
-  
-  }
-  
-  .review-card {
-    width: 25%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .review-stars {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-  }
-  
-  .reviewer-info {
-    display: flex;
-    align-items: center;
-    margin-top: 10px;
-  }
-  
-  .reviewer-avatar {
-    border-radius: 50%;
-    margin-right: 10px;
-  }
-  
-  .reviewer-name {
-    font-weight: bold;
-  }
-  
-  .review-date {
-    font-size: 0.85rem;
-    color: #777;
-  }
-  .allcont{
-    border: 2px solid #e0a16e;
-    border-radius: 10px;
-    padding-bottom: 20px;
-    max-width: 1120px;
-  }
-  .reviews-section h2{
-    margin-left: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .reviews-section h2,
-  .reviews-section h3
-  {
-    font-family: volkhov , serif;
-  }
+  padding: 0.6rem;
+  color: #f4f4f4;
+  margin-left: 1.2rem;
+}
+
+.details h2 {
+  font-family: volkhov, serif;
+}
+
+.reserve-button:hover {
+  background-color: var(--secondary-color);
+  color: var(--main-color);
+  border: 2px solid var(--main-color);
+}

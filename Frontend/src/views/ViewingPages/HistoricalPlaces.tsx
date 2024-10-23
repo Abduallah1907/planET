@@ -60,7 +60,7 @@ export default function HistoricalLocationsPage() {
     getFilterComponents();
   }, []);
   const onHistoricalClick = (id: string) => {
-    navigate(`/Historical/${id}`);
+    navigate(`/HistoricalDetails/${id}`);
   };
   const onFilterChange = (newFilter: { [key: string]: any }) => {
     setFilter(newFilter);

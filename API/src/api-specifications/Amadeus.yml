@@ -30,7 +30,7 @@ components:
           nullable: true
         travelClass:
           type: string
-          enum: [Economy, PremiumEconomy, Business, First]
+          enum: [ECONOMY, PREMIUM_ECONOMY, BUSINESS, FIRST]
           nullable: true
         includedAirlineCodes:
           type: string
@@ -364,7 +364,7 @@ paths:
           required: false
           schema:
             type: string
-            enum: [Economy, PremiumEconomy, Business, First]
+            enum: [ECONOMY, PREMIUM_ECONOMY, BUSINESS, FIRST]
           description: Travel class
         - in: query
           name: includedAirlineCodes

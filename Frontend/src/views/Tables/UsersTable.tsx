@@ -14,6 +14,7 @@ import { IUserManagmentDTO } from "../../types/IUser";
 import "./UsersTable.css";
 import { FileService } from "../../services/FileService";
 import { userServiceF } from "../../services/userServiceF";
+import UserStatus from "../../types/userStatus";
 
 const UsersTable = () => {
   const [users, setUsers] = useState<Map<number, IUserManagmentDTO[]>>(
@@ -188,7 +189,7 @@ const UsersTable = () => {
               <tr
                 key={user._id}
                 className={
-                  user.status === "Active" ? "active-row" : "closed-row"
+                  user.status === UserStatus.APPROVED ? "active-row" : "closed-row"
                 }
               >
                 <td>{user.email}</td>
@@ -196,7 +197,7 @@ const UsersTable = () => {
                 <td>{user.role}</td>
                 <td>
                   <Badge
-                    bg={user.status === "Approved" ? "success" : "warning"}
+                    bg={user.status === UserStatus.APPROVED ? "success" : (user.status === UserStatus.REJECTED ? "danger" : "warning")}
                     className="mt-2 custom-status-badge rounded-4 text-center"
                   >
                     {user.status}
@@ -204,14 +205,17 @@ const UsersTable = () => {
                 </td>
                 <td>
                   <Button
-                    className="mt-2 bg-danger"
+                    variant="danger"
+                    className="mt-2 me-2"
                     onClick={() => handleDelete(user.email)}
                   >
                     Delete
                   </Button>
-                  <Button className="mt-2" onClick={() => handleView(user)}>
+                  {user.status === UserStatus.WAITING_FOR_APPROVAL && (
+                  <Button variant="main-inverse" className="mt-2" onClick={() => handleView(user)}>
                     View Doc
                   </Button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -227,6 +231,7 @@ const UsersTable = () => {
                 key={index}
                 active={index + 1 === page}
                 onClick={() => setPage(index + 1)}
+                className="custom-pagination-item"
               >
                 {index + 1}
               </Pagination.Item>
