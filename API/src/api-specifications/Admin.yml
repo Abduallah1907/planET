@@ -453,3 +453,46 @@ paths:
                     description: The current status of the complaint
         "500":
           description: Internal Server Error.
+  /api/admin/markComplaintResolved/{complaint_id}:
+    put:
+      tags:
+        - Admin
+        - Complaint
+      summary: Given a complaint, marks it as resolved
+      parameters:
+        - name: complaint_id
+          in: path
+          description: The complaint's id
+          required: true
+          schema:
+            type: string
+            format: objectId
+      responses:
+        "200":
+          description: Complaint is successfully updated to resolved
+        "404":
+          description: Could not find the complaint using the complaint_id
+        "500":
+          description: Internal Server Error.
+
+  /api/admin/markComplaintPending/{complaint_id}:
+    put:
+      tags:
+        - Admin
+        - Complaint
+      summary: Given a complaint, marks it as pending
+      parameters:
+        - name: complaint_id
+          in: path
+          description: The complaint's id
+          required: true
+          schema:
+            type: string
+            format: objectId
+      responses:
+        "200":
+          description: Complaint is successfully updated to pending
+        "404":
+          description: Could not find the complaint using the complaint_id
+        "500":
+          description: Internal Server Error.
