@@ -59,4 +59,7 @@ export default (app: Router) => {
   router.put("/rejectUser/:email", authorize([]), adminController.rejectUser);
 
   router.put("/updateAdmin/:email", authorize([]), adminController.updateAdmin);
+
+  // COMPLAINTS
+  router.get("/getComplaints/:page", adminController.getComplaints);
 };

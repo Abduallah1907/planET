@@ -295,7 +295,7 @@ paths:
         "404":
           description: User not found.
         "500":
-          description: Internal Server Error.  
+          description: Internal Server Error.
   /api/admin/rejectUser/{email}:
     put:
       tags:
@@ -312,7 +312,7 @@ paths:
         "200":
           description: User rejected successfully.
         "404":
-          description: User not found.  
+          description: User not found.
         "500":
           description: Internal Server Error.
   /api/admin/updateAdmin/{email}:
@@ -348,4 +348,57 @@ paths:
         "404":
           description: Admin not found.
         "400":
-          description: Invalid input.                        
+          description: Invalid input.
+  /api/admin/getComplaints/{page}:
+    get:
+      tags:
+        - Admin
+        - Complaint
+      summary: Given a page number, shows all the complaints along with their information
+      parameters:
+        - name: page
+          in: path
+          description: Page number to retrieve.
+          required: true
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: A array of complaints.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    complaint_id:
+                      type: string
+                      format: objectId
+                      description: The ID of the complaint
+                    tourist_id:
+                      type: string
+                      format: objectId
+                      description: The ID of the tourist
+                    title:
+                      type: string
+                      description: The title of the complaint
+                    body:
+                      type: string
+                      description: The body of the complaint
+                    reply:
+                      type: string
+                      description: The reply from the admin (optional)
+                    date:
+                      type: string
+                      format: date-time
+                      description: The date the complaint was created
+                    status:
+                      type: string
+                      enum:
+                        - Pending
+                        - Resolved
+                      description: The current status of the complaint
+        "500":
+          description: Internal Server Error.

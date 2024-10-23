@@ -1,12 +1,9 @@
-import {
-  IAdminUpdateDTO,
-  IUserAdminCreateAdminDTO,
-  IUserAdminCreateGovernorDTO,
-} from "@/interfaces/IUser";
+import { IAdminUpdateDTO, IUserAdminCreateAdminDTO, IUserAdminCreateGovernorDTO } from "@/interfaces/IUser";
 import AdminService from "@/services/adminService";
 import { Request, Response } from "express";
 import Container, { Inject, Service } from "typedi";
-import mongoose from "mongoose";
+import mongoose, { ReplaceOneModel } from "mongoose";
+import admin from "../routes/admin";
 
 // CRUD for users
 @Service()
@@ -68,10 +65,7 @@ export class AdminController {
   public async updateCategory(req: Request, res: Response): Promise<any> {
     const { oldType, newType } = req.body;
     const adminService: AdminService = Container.get(AdminService);
-    const updatedCategory = await adminService.updateCategoryService(
-      oldType,
-      newType
-    );
+    const updatedCategory = await adminService.updateCategoryService(oldType, newType);
     res.status(updatedCategory.status).json(updatedCategory);
   }
 
@@ -127,10 +121,15 @@ export class AdminController {
     const { email } = req.params;
     const adminUpdateData: IAdminUpdateDTO = req.body;
     const adminService: AdminService = Container.get(AdminService);
-    const updatedAdmin = await adminService.updateAdminService(
-      email,
-      adminUpdateData
-    );
+    const updatedAdmin = await adminService.updateAdminService(email, adminUpdateData);
     res.status(updatedAdmin.status).json(updatedAdmin);
+  }
+
+  public async getComplaints(req: Request, res: Response): Promise<void> {
+    const { page } = req.params;
+    const pageNum: number = parseInt(page);
+    const adminService: AdminService = Container.get(AdminService);
+    const complaints = await adminService.getComplaintsService(pageNum);
+    res.status(complaints.status).json(complaints);
   }
 }
