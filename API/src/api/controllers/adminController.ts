@@ -2,7 +2,7 @@ import { IAdminUpdateDTO, IUserAdminCreateAdminDTO, IUserAdminCreateGovernorDTO 
 import AdminService from "@/services/adminService";
 import { Request, Response } from "express";
 import Container, { Inject, Service } from "typedi";
-import mongoose, { ReplaceOneModel } from "mongoose";
+import mongoose, { ReplaceOneModel, Types } from "mongoose";
 import admin from "../routes/admin";
 
 // CRUD for users
@@ -131,5 +131,13 @@ export class AdminController {
     const adminService: AdminService = Container.get(AdminService);
     const complaints = await adminService.getComplaintsService(pageNum);
     res.status(complaints.status).json(complaints);
+  }
+
+  public async getComplaintByID(req: Request, res: Response): Promise<void> {
+    const { complaint_id } = req.params;
+    const complaintIDObjectId = new Types.ObjectId(complaint_id);
+    const adminService: AdminService = Container.get(AdminService);
+    const complaint = await adminService.getComplaintByIDService(complaintIDObjectId);
+    res.status(complaint.status).json(complaint);
   }
 }

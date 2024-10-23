@@ -402,3 +402,54 @@ paths:
                       description: The current status of the complaint
         "500":
           description: Internal Server Error.
+  /api/admin/getComplaintById/{complaint_id}:
+    get:
+      tags:
+        - Admin
+        - Complaint
+      summary: Given a complaint id, returns all its information. This is the same data you get when calling getComplaints, so idk why you would call this
+      parameters:
+        - name: complaint_id
+          in: path
+          description: The complaint's id
+          required: true
+          schema:
+            type: string
+            format: objectId
+      responses:
+        "200":
+          description: All the information about the complaint
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  complaint_id:
+                    type: string
+                    format: objectId
+                    description: The ID of the complaint
+                  tourist_id:
+                    type: string
+                    format: objectId
+                    description: The ID of the tourist
+                  title:
+                    type: string
+                    description: The title of the complaint
+                  body:
+                    type: string
+                    description: The body of the complaint
+                  reply:
+                    type: string
+                    description: The reply from the admin (optional)
+                  date:
+                    type: string
+                    format: date-time
+                    description: The date the complaint was created
+                  status:
+                    type: string
+                    enum:
+                      - Pending
+                      - Resolved
+                    description: The current status of the complaint
+        "500":
+          description: Internal Server Error.

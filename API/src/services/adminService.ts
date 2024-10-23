@@ -1,4 +1,4 @@
-import mongoose, { ObjectId } from "mongoose";
+import mongoose, { ObjectId, Types } from "mongoose";
 import Container, { Inject, Service } from "typedi";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
@@ -356,7 +356,23 @@ export default class AdminService {
       complaint_id: complaint._id as ObjectId,
       tourist_id: complaint.tourist_id,
     }));
-
     return new response(true, complaintsOutput, "Complaints", 200);
+  }
+
+  public async getComplaintByIDService(complaintID: Types.ObjectId): Promise<response> {
+    const complaint: IComplaint | null = await this.complaintModel.findById(complaintID);
+    if (!complaint) throw new NotFoundError("No such complaint found");
+
+    const complaintOutput: IComplaintAdminViewDTO = {
+      body: complaint.body,
+      date: complaint.date,
+      status: complaint.status,
+      title: complaint.title,
+      reply: complaint.reply,
+      complaint_id: complaint._id as ObjectId,
+      tourist_id: complaint.tourist_id,
+    };
+
+    return new response(true, complaintOutput, "Complaint", 200);
   }
 }

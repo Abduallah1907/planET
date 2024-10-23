@@ -62,4 +62,5 @@ export default (app: Router) => {
 
   // COMPLAINTS
   router.get("/getComplaints/:page", adminController.getComplaints);
+  router.get("/getComplaintByID/:complaint_id", adminController.getComplaintByID);
 };
