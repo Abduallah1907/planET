@@ -41,11 +41,11 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      let user = await AuthService.login(
+      const userOutput = await AuthService.login(
         userData.usernameOrEmail,
         userData.passwordLogin
       );
-      user = user.data;
+      const user = userOutput.data;
 
       dispatch(setUser(user));
       switch (user.status) {
@@ -160,8 +160,8 @@ export default function Login() {
       dispatch(setLoginState(true))
       dispatch(activateSidebar());
     } catch (err: any) {
-      setError(err.response.data.message);
-      setShowAlert(true);
+      // setError(err.message);
+      // setShowAlert(true);
     }
     dispatch(login());
   };

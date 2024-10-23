@@ -68,9 +68,6 @@ const TopBar: React.FC = () => {
 
   return (
     <Navbar expand="lg" className="top-bar" variant="dark">
-
-
-
       <Container fluid>
         {sidebarState ?
           <div className="sidebar-toggle-icon" onClick={() => dispatch(toggleSidebar())}>
@@ -149,7 +146,7 @@ const TopBar: React.FC = () => {
 
             {/* Currency Dropdown */}
             <Dropdown className="currency-dropdown">
-              <Dropdown.Toggle className="btn-text btn-main dropdown-toggle">
+              <Dropdown.Toggle className="btn-text btn-main dropdown-toggle p-1">
                 {t(currency.toLowerCase())}
               </Dropdown.Toggle>
               <Dropdown.Menu>

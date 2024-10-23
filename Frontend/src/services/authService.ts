@@ -1,11 +1,21 @@
 import axiosInstance from "../utils/axiosInstance";
 
 class AuthService {
-  public static async login(username: string, password: string) {
-    const response = await axiosInstance.get("/users/loginUser", {
-      params: { username, password },
-    });
-    return response.data;
+  public static async login(usernameOrEmail: string, password: string) {
+    try {
+      const data: any = { password };
+      if (usernameOrEmail.includes("@")) {
+        data.email = usernameOrEmail;
+      } else {
+        data.username = usernameOrEmail;
+      }
+      const response = await axiosInstance.get("/users/loginUser", {
+        params: data,
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response.data.message || "Login failed");
+    }
   }
 
   public static async register(

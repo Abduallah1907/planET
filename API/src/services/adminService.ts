@@ -437,6 +437,6 @@ export default class AdminService {
 
     if (!user) throw new NotFoundError("User not found");
 
-    return new response(true, user, "Admin updated", 200);
+    return new response(true, user, "Admin password updated", 200);
   }
 }

@@ -71,7 +71,7 @@ export default function ActivitiesPage() {
   });
 
   const onActivityClick = (id: string) => {
-    navigate(`/activity/${id}`);
+    navigate(`/ActivityDetails/${id}`);
   };
 
   const filteredActivities = sortedActivities.filter((activity) =>

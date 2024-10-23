@@ -6,34 +6,49 @@ import { MdTimeline } from 'react-icons/md';
 import Rating from '../components/Rating/Rating'; // Optional
 import { ItineraryService } from '../services/ItineraryService';
 
-interface ItineraryCardProps{
- id : string;
+interface ItineraryCardProps {
+  id: string;
 }
 
-const ItineraryCard: React.FC<ItineraryCardProps> = ({id}) => {
+interface ItineraryData {
+  name: string;
+  tags: { type: string }[];
+  average_rating: number;
+  category: { type: string };
+  price: number;
+  tourGuide: string;
+  timeline: { title: string; description: string; from: string; to: string }[];
+  available_dates: string[];
+  activities: string[];
+  comments: string[];
+  locations: string[];
+  accesibility: boolean;
+  pickup_loc: string[];
+  drop_off_loc: string[];
+}
+
+const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
   // State to handle modals and bookmarking
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showTourGuideModal, setShowTourGuideModal] = useState(false);
   const [showTimelineModal, setShowTimelineModal] = useState(false);
   const [showDatesModal, setShowDatesModal] = useState(false);
-  const [itineraryData, setItineraryData] = useState({
+  const [itineraryData, setItineraryData] = useState<ItineraryData>({
     name: "",
     tags: [],
     average_rating: 0,
-    category: {type:""},
+    category: { type: "" },
     price: 0,
-    tourGuide : "",
+    tourGuide: "",
     timeline: [],
-    available_dates:[],
+    available_dates: [],
     activities: [],
     comments: [],
     locations: [],
     accesibility: true,
     pickup_loc: [],
     drop_off_loc: [],
-
-
   });
 
   // State for selected date and time
@@ -42,15 +57,15 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({id}) => {
     time: '10:00 AM'
   });
 
-   const getItinerary=async()=>{
-    const itinerary=await ItineraryService.getItineraryById(id);
+  const getItinerary = async () => {
+    const itinerary = await ItineraryService.getItineraryById(id);
     setItineraryData(itinerary.data)
 
-   }
-   useEffect(() => {
+  }
+  useEffect(() => {
     getItinerary();
   }, [id]);
-  
+
 
   // Function to toggle bookmark state
   const toggleBookmark = () => {
@@ -64,7 +79,11 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({id}) => {
   const handleDatesModal = () => setShowDatesModal(!showDatesModal);
 
   // Function to handle date selection
-  const handleDateSelection = (dateObj: { date: string, time: string }) => {
+  const handleDateSelection = (date: string) => {
+    const dateObj = {
+      date: date.split('T')[0],
+      time: date.split('T')[1].split('.')[0]
+    }
     setSelectedDateTime(dateObj); // Set the selected date and time
     setShowDatesModal(false); // Close the dates modal
   };
@@ -81,11 +100,11 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({id}) => {
               <h2 className="me-3">{itineraryData.name}</h2>
               {itineraryData.tags.map((tag, index) => (
                 <Badge key={index} pill bg="tag" className="me-2 custom-badge">
-                  {tag}
+                  {tag.type}
                 </Badge>
               ))}
-              <div className="d-flex align-items-center ms-5 rating-stars">
-                <div style={{ marginLeft: '12rem' }}>
+              <div className="d-flex align-items-center ms-auto rating-stars">
+                <div>
                   <Rating rating={itineraryData.average_rating} readOnly={true} />
                 </div>
                 <Badge className="ms-2 review-badge text-center" style={{ fontSize: "1rem" }}>
@@ -94,11 +113,11 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({id}) => {
               </div>
             </div>
             <p className='Category'>{itineraryData.category.type}</p>
-            
+
             <p className='date' onClick={handleTourGuideModal} style={{ cursor: 'pointer', color: '#d76f30' }}>
               {/* {itineraryData.tourGuide.name} */}
             </p>
-            
+
             <p className="date" onClick={handleDatesModal} style={{ cursor: 'pointer', color: '#d76f30' }}>
               View Available Dates
             </p>
@@ -158,7 +177,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({id}) => {
         <Modal.Body>
           <ul>
             {itineraryData.timeline.map((event, index) => (
-              <li key={index}><strong>{index + 1}:</strong> {event}</li>
+              <li key={index}><strong>{index + 1}:</strong> {event.title + ' ' + event.from + ' ' + event.to}</li>
             ))}
           </ul>
         </Modal.Body>
@@ -176,9 +195,9 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({id}) => {
         </Modal.Header>
         <Modal.Body>
           <ul>
-            {itineraryData.available_dates.map((dateObj, index) => (
-              <li key={index} onClick={() => handleDateSelection(dateObj)} style={{ cursor: 'pointer', color: '#d76f30' }}>
-               {dateObj}
+            {itineraryData.available_dates.map((date, index) => (
+              <li key={index} onClick={() => handleDateSelection(date)} style={{ cursor: 'pointer', color: '#d76f30' }}>
+                {date.split('T')[0] + ' at ' + date.split('T')[1].split('.')[0]}
               </li>
             ))}
           </ul>
