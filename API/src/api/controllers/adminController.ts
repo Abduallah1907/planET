@@ -157,4 +157,13 @@ export class AdminController {
     const complaint = await adminService.markComplaintPendingService(complaintIDObjectId);
     res.status(complaint.status).json(complaint);
   }
+
+  public async replyComplaint(req: Request, res: Response): Promise<void> {
+    const { complaint_id } = req.params;
+    const { reply }: { reply: string } = req.body;
+    const complaintIDObjectId = new Types.ObjectId(complaint_id);
+    const adminService: AdminService = Container.get(AdminService);
+    const complaint = await adminService.replyComplaintService(complaintIDObjectId, reply);
+    res.status(complaint.status).json(complaint);
+  }
 }

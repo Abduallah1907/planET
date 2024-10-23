@@ -388,4 +388,11 @@ export default class AdminService {
     if (!complaint) throw new NotFoundError("No such complaint found");
     return new response(true, {}, "Complaint status updated to pending!", 200);
   }
+
+  public async replyComplaintService(complaintID: Types.ObjectId, complaintReply: string): Promise<response> {
+    if (!complaintReply) throw new BadRequestError("pls reply with complaint reply");
+    const complaint: IComplaint | null = await this.complaintModel.findByIdAndUpdate(complaintID, { reply: complaintReply });
+    if (!complaint) throw new NotFoundError("No such complaint found");
+    return new response(true, {}, "Added complaint reply!", 200);
+  }
 }

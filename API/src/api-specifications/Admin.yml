@@ -496,3 +496,35 @@ paths:
           description: Could not find the complaint using the complaint_id
         "500":
           description: Internal Server Error.
+  /api/admin/replyComplaint/{complaint_id}:
+    put:
+      tags:
+        - Admin
+        - Complaint
+      summary: Given a complaint id, add a reply to it
+      parameters:
+        - name: complaint_id
+          in: path
+          description: The complaint's id
+          required: true
+          schema:
+            type: string
+            format: objectId
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reply:
+                  type: string
+      responses:
+        "200":
+          description: Complaint reply has been added
+        "400":
+          description: "The reply was not included in the request body"
+        "404":
+          description: Could not find the complaint using the complaint_id
+        "500":
+          description: Internal Server Error.
