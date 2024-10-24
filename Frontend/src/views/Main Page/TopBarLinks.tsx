@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './topbarlinks.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../../store/hooks';
 
 const TopBarLinks: React.FC = () => {
     const { t } = useTranslation();
     const [activeButton, setActiveButton] = useState<string | null>(null);
     const navigate = useNavigate();
+
+    const user = useAppSelector(state => state.user);
 
     const handleButtonClick = (buttonName: string) => {
         setActiveButton(buttonName);

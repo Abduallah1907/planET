@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CreateAdmin from "./views/CreateAdmin/CreateAdmin";
 import TopBar from "./components/TopBar/TopBar";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import CreateGoverner from "./views/CreateGoverner/CreateGovernor";
@@ -61,11 +61,19 @@ import ChangePasswordForm from "./views/auth/ChangePasswordForm";
 import ForgetPassword from "./views/auth/ForgetPassword";
 import CheckOTP from "./views/auth/CheckOTP";
 import ChangePasswordG from "./views/auth/ChangePasswordG";
+import { Utils } from "./utils/utils";
 
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const navItems = useAppSelector((state) => state.sidebar.navItems);
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (user && user.usernameOrEmail && user.password) {
+      Utils.handleLogin(user, dispatch, navigate);
+    }
+  }, []);
   return (
     <AppProvider>
       <TopBar />

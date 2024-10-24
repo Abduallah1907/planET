@@ -19,6 +19,7 @@
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.4",
     "classnames": "^2.5.1",
+    "crypto-js": "^4.2.0",
     "i18next": "^23.15.1",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.5",
@@ -59,6 +60,7 @@
     ]
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "@types/react-fontawesome": "^1.6.8",
     "tsconfig-paths": "^4.2.0"
   }

@@ -3,24 +3,23 @@ import { Container, Row, Col, Button, Form, Alert } from "react-bootstrap";
 import CustomFormGroup from "../../../components/FormGroup/FormGroup";
 import { ChangeEvent, useEffect, useState } from "react";
 import AuthService from "../../../services/authService";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../../store/hooks";
 import { activateSidebar, setNavItems } from "../../../store/sidebarSlice";
 import { login, setLoginState, setUser } from "../../../store/userSlice";
 import { useTranslation } from "react-i18next";
+import { Utils } from "../../../utils/utils";
 
 export default function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
     usernameOrEmail: "",
-    passwordLogin: "",
+    password: "",
   });
 
   const [error, setError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-  const state = useAppSelector((state) => state);
-  const { username } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -43,15 +42,20 @@ export default function Login() {
     try {
       const userOutput = await AuthService.login(
         userData.usernameOrEmail,
-        userData.passwordLogin
+        userData.password
       );
       const user = userOutput.data;
 
+      const storedUser = {
+        usernameOrEmail: userData.usernameOrEmail,
+        password: Utils.encryptPassword(userData.password),
+      }
+      localStorage.setItem("user", JSON.stringify(storedUser));
       dispatch(setUser(user));
       switch (user.status) {
         case "WAITING_FOR_APPROVAL":
         case "REJECTED":
-          navigate("/login");
+          navigate("/Login");
           break;
         case "APPROVED":
       }
@@ -157,13 +161,12 @@ export default function Login() {
           navigate("/");
           break;
       }
-      dispatch(setLoginState(true))
       dispatch(activateSidebar());
+      dispatch(login());
     } catch (err: any) {
       // setError(err.message);
       // setShowAlert(true);
     }
-    dispatch(login());
   };
 
   return (
@@ -201,11 +204,11 @@ export default function Login() {
                 label={t("password")}
                 type="password"
                 placeholder={t("enter_password")}
-                id={"passwordLogin"}
-                name={"passwordLogin"}
+                id={"password"}
+                name={"password"}
                 disabled={false}
                 required={true}
-                value={userData.passwordLogin}
+                value={userData.password}
                 onChange={handleChange}
               />
               <a
