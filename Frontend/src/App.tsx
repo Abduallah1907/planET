@@ -34,7 +34,6 @@ import HistoricalPlaces from "./views/ViewingPages/HistoricalPlaces";
 import Products from "./views/ViewingPages/Products";
 import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
 import StakeholderReg from "./views/auth/StakeholderReg/StakeholderReg";
-import ItineraryCardd from "./views/ItineraryCard";
 import EditHistoricalLocation from "./views/EditPages/EditHistoricalLocation";
 import EditProduct from "./views/EditPages/EditProduct";
 import EditItinerary from "./views/EditPages/EditItinerary";
@@ -50,19 +49,14 @@ import Sidebar from "./components/SideBar/Sidebar";
 import CategoryTable from "./views/Tables/CategoryTable";
 import TagsTable from "./views/Tables/TagTable";
 import HistoricalTagsTable from "./views/Tables/HistoricalTagTable";
-import { use } from "i18next";
-
-import Rating from "./components/Rating/Rating";
 import ItineraryDetails from "./views/ProductDetails/ItineraryDetails";
-import ComplaintForm from "./views/ViewingPages/ComplaintForm";
-
-
 import ChangePasswordForm from "./views/auth/ChangePasswordForm";
 import ForgetPassword from "./views/auth/ForgetPassword";
 import CheckOTP from "./views/auth/CheckOTP";
 import ChangePasswordG from "./views/auth/ChangePasswordG";
 import { Utils } from "./utils/utils";
 import FlightsPage from "./views/ViewingPages/Flights";
+import ComplaintForm from "./views/ViewingPages/ComplaintForm";
 
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen);
@@ -74,7 +68,7 @@ const App: React.FC = () => {
     if (user && user.usernameOrEmail && user.password) {
       Utils.handleLogin(user, dispatch, navigate);
     }
-  }, []);
+  }, [dispatch, navigate]);
   return (
     <AppProvider>
       <TopBar />
