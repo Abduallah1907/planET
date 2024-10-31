@@ -24,7 +24,10 @@ const TopBarLinks: React.FC = () => {
                 navigate('/Historical');
                 break;
             case 'Products':
-                navigate('/products');
+                navigate('/Products');
+                break;
+            case 'Flights':
+                navigate('/Flights');
                 break;
             default:
                 break;
@@ -57,6 +60,12 @@ const TopBarLinks: React.FC = () => {
                     onClick={() => handleButtonClick('Products')}
                 >
                     {t('products')}
+                </button>
+                <button
+                    className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Flights' ? 'active' : ''}`}
+                    onClick={() => handleButtonClick('Flights')}
+                >
+                    {t('flights')}
                 </button>
             </div>
         </div>

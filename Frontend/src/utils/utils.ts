@@ -11,10 +11,16 @@ export class Utils {
         return value === null || value === undefined;
     }
 
+    // Function to truncate value to certain length
+    static truncateString(value: string, length: number): string {
+        if (!value) return value;
+        return value.length > length ? value.substring(0, length) + '...' : value;
+    }
+
     // Function to capitalize the first letter of a string
     static capitalizeFirstLetter(str: string): string {
         if (!str) return str;
-        return str.charAt(0).toUpperCase() + str.slice(1);
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
     }
 
     // Function to generate a random integer between min and max (inclusive)
@@ -73,8 +79,6 @@ export class Utils {
                             { path: "/Complaint", label: "File Complaint" },
                         ])
                     );
-                    // state.user.isLoggedIn = true;
-                    navigate("/Touristedit");
                     break;
                 case "TOUR_GUIDE":
                     dispatch(
@@ -85,11 +89,6 @@ export class Utils {
                             { path: "/MyItineraries", label: "My Itineraries" },
                         ])
                     );
-                    if (user.first_time_login) {
-                        navigate("/TourGuideFirst");
-                    } else {
-                        navigate("/TourGuide");
-                    }
                     break;
                 case "ADVERTISER":
                     dispatch(
@@ -99,11 +98,6 @@ export class Utils {
                             { path: "/MyActivities", label: "My Activites" },
                         ])
                     );
-                    if (user.first_time_login) {
-                        navigate("/AdvertiserFirst");
-                    } else {
-                        navigate("/Advertiser");
-                    }
                     break;
                 case "SELLER":
                     dispatch(
@@ -114,11 +108,6 @@ export class Utils {
                             { path: "/MyProducts", label: "My Products" },
                         ])
                     );
-                    if (user.first_time_login) {
-                        navigate("/SellerFirstProfile");
-                    } else {
-                        navigate("/SellerProfile");
-                    }
                     break;
                 case "GOVERNOR":
                     dispatch(
@@ -141,9 +130,6 @@ export class Utils {
                             },
                         ])
                     );
-
-                    navigate("/MyHistoricalLocations");
-
                     break;
                 case "ADMIN":
                     dispatch(
@@ -160,7 +146,6 @@ export class Utils {
                             { path: "/ChangePasswordForm", label: "Change Password" },
                         ])
                     );
-                    navigate("/AdminDashboard");
                     break;
                 default:
                     navigate("/");

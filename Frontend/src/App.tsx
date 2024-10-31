@@ -62,6 +62,7 @@ import ForgetPassword from "./views/auth/ForgetPassword";
 import CheckOTP from "./views/auth/CheckOTP";
 import ChangePasswordG from "./views/auth/ChangePasswordG";
 import { Utils } from "./utils/utils";
+import FlightsPage from "./views/ViewingPages/Flights";
 
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen);
@@ -105,6 +106,7 @@ const App: React.FC = () => {
         <Route path="/Itinerary" element={<Itinerary />} />
         <Route path="/Historical" element={<HistoricalPlaces />} />
         <Route path="/Products" element={<Products />} />
+        <Route path="/Flights" element={<FlightsPage />} />
 
         <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
@@ -127,10 +129,7 @@ const App: React.FC = () => {
         <Route path="/EditItinerary/:itinerary_id" element={<EditItinerary />} />
         <Route path="/EditProduct/:product_id" element={<EditProduct />} />
 
-        <Route path="/UsersTable" element={<UsersTable />} />
-
         <Route path="/MyActivities" element={<MyActivities />} />
-    
         <Route path="/MyHistoricalLocations" element={<MyHistoricalPlaces />} />
         <Route path="/MyItineraries" element={<MyItinerary />} />
         <Route path="/MyProducts" element={<MyProducts />} />
@@ -143,6 +142,7 @@ const App: React.FC = () => {
         <Route path="/Categories" element={<CategoryTable />} />
         <Route path="/Tags" element={<TagsTable />} />
         <Route path="/HistoricalTags" element={<HistoricalTagsTable />} />
+        <Route path="/UsersTable" element={<UsersTable />} />
 
         <Route path="/Complaint" element={<ComplaintForm/>} />
         

@@ -17,6 +17,7 @@ import itinerary from "./routes/itinerary";
 import file from "./routes/file";
 import slot from "./routes/slot";
 import amadeus from "./routes/amadeus";
+import skyscanner from "./routes/skyscanner";
 export default () => {
   const app = Router();
 
@@ -36,6 +37,7 @@ export default () => {
   file(app);
   slot(app);
   amadeus(app);
+  skyscanner(app);
 
   return app;
 };
