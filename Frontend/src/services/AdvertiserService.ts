@@ -13,6 +13,8 @@ class AdvertiserService {
     }
   };
 
+  
+
   public static updateAdvertiser = async (
     email: string,
     touristData: object
@@ -27,6 +29,16 @@ class AdvertiserService {
       throw error;
     }
   };
+
+  public static deleteAdvertiser = async (email: string) => {
+    try {
+      const response = await axiosInstance.delete(
+        `/advertiser/deleteAdvertiserAccountRequest/${email}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { AdvertiserService };

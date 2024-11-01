@@ -8,6 +8,7 @@ import nationalityOptionsData from "../../utils/nationalityOptions.json";
 import jobOptionsData from "../../utils/jobOptions.json";
 import ButtonWide from "../ButtonWide/ButtonWide";
 import AuthService from "../../services/authService";
+import { useNavigate } from "react-router-dom";
 
 interface NationalityOption {
   value: string;
@@ -49,6 +50,8 @@ export default function TouristForm() {
     date_of_birth: "",
   });
 
+  const navigate = useNavigate();
+
   function validateMobileNumber(mobileNumber: string): boolean {
     const mobileNumberRegex =
       /^\+?\d{1,3}[-\s.]?\(?\d{1,3}\)?[-\s.]?\d{1,4}[-\s.]?\d{1,9}$/;
@@ -75,9 +78,20 @@ export default function TouristForm() {
       console.error("Invalid mobile number");
       return;
     }
+    const formData={
+      name: regData.firstName + " " + regData.lastName,
+      username: regData.username,
+      email: regData.email,
+      phone_number: regData.mobile,
+      password: regData.password,
+      nation: regData.nation,
+      date_of_birth: regData.date_of_birth,
+      job: regData.job,
+    } 
 
     try {
-      const user = await AuthService.registerTourist(regData); // Call the API
+      const user = await AuthService.registerTourist(formData); // Call the API
+      navigate("/login");
     } catch (error) {
       console.error("Tourist registration failed: ", error);
     }
