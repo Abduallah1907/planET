@@ -10,6 +10,7 @@ import bcrypt from "bcryptjs";
 import { IComplaint, IComplaintAdminViewDTO } from "@/interfaces/IComplaint";
 import ComplaintStatus from "@/types/enums/complaintStatus";
 import { dir } from "console";
+import { ITourist } from "@/interfaces/ITourist";
 
 // User related services (delete, view, and create users)
 
@@ -363,32 +364,32 @@ export default class AdminService {
   public async getComplaintsService(page: number): Promise<response> {
     const complaints: IComplaint[] = await this.complaintModel
       .find({})
+      .populate({ path: "tourist_id", populate: { path: "user_id", select: "name" }, select: "tourist_id" })
       .limit(10)
       .skip((page - 1) * 10);
+    console.log(complaints[0].tourist_id);
     const complaintsOutput: IComplaintAdminViewDTO[] = complaints.map((complaint) => ({
-      body: complaint.body,
       date: complaint.date,
       status: complaint.status,
       title: complaint.title,
-      reply: complaint.reply,
       complaint_id: complaint._id as ObjectId,
-      tourist_id: complaint.tourist_id,
+      tourist_name: complaint.tourist_id,
     }));
     return new response(true, complaintsOutput, "Complaints", 200);
   }
 
   public async getComplaintByIDService(complaintID: Types.ObjectId): Promise<response> {
-    const complaint: IComplaint | null = await this.complaintModel.findById(complaintID);
+    const complaint: IComplaint | null = await this.complaintModel
+      .findById(complaintID)
+      .populate({ path: "tourist_id", populate: { path: "user_id", select: "name" }, select: "tourist_id" });
     if (!complaint) throw new NotFoundError("No such complaint found");
 
     const complaintOutput: IComplaintAdminViewDTO = {
-      body: complaint.body,
       date: complaint.date,
       status: complaint.status,
       title: complaint.title,
-      reply: complaint.reply,
       complaint_id: complaint._id as ObjectId,
-      tourist_id: complaint.tourist_id,
+      tourist_name: complaint.tourist_id,
     };
 
     return new response(true, complaintOutput, "Complaint", 200);
@@ -417,18 +418,17 @@ export default class AdminService {
     if (!direction) throw new BadRequestError("Choose either -1 or 1 as your direction for sorting");
     const sortedComplaints = await this.complaintModel
       .find({})
+      .populate({ path: "tourist_id", populate: { path: "user_id", select: "name" }, select: "tourist_id" })
       .sort({ date: direction })
       .limit(10)
       .skip((page - 1) * 10);
 
     const sortedComplaintsDTO: IComplaintAdminViewDTO[] = sortedComplaints.map((complaint) => ({
-      body: complaint.body,
       date: complaint.date,
       status: complaint.status,
       title: complaint.title,
-      reply: complaint.reply,
       complaint_id: complaint._id as ObjectId,
-      tourist_id: complaint.tourist_id,
+      tourist_name: complaint.tourist_id,
     }));
     return new response(true, sortedComplaintsDTO, "Compliants sorted!", 200);
   }
@@ -437,17 +437,16 @@ export default class AdminService {
     if (!status || !Object.values(ComplaintStatus).includes(status)) throw new BadRequestError("pls add a correct status to filter by");
     const filteredComplaints = await this.complaintModel
       .find({ status })
+      .populate({ path: "tourist_id", populate: { path: "user_id", select: "name" }, select: "tourist_id" })
       .limit(10)
       .skip((page - 1) * 10);
 
     const filteredComplaintsDTO: IComplaintAdminViewDTO[] = filteredComplaints.map((complaint) => ({
-      body: complaint.body,
       date: complaint.date,
       status: complaint.status,
       title: complaint.title,
-      reply: complaint.reply,
       complaint_id: complaint._id as ObjectId,
-      tourist_id: complaint.tourist_id,
+      tourist_name: complaint.tourist_id,
     }));
 
     return new response(true, filteredComplaintsDTO, "Filtered complaints", 200);
