@@ -25,7 +25,7 @@ class TourGuideServices {
   };
   public static deleteTourGuide = async (email: string) => {
     try {
-      const response = await axiosInstance.delete(`/tourGuide/LinkOfDeletingProfileFromApi/${email}`);
+      const response = await axiosInstance.delete(`/tourGuide/deleteTourGuideAccountRequest/${email}`);
       return response.data;
     } catch (error) {
       throw error;
