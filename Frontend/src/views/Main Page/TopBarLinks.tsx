@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './topbarlinks.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../../store/hooks';
 
 const TopBarLinks: React.FC = () => {
     const { t } = useTranslation();
     const [activeButton, setActiveButton] = useState<string | null>(null);
     const navigate = useNavigate();
+
+    const user = useAppSelector(state => state.user);
 
     const handleButtonClick = (buttonName: string) => {
         setActiveButton(buttonName);
@@ -22,7 +24,10 @@ const TopBarLinks: React.FC = () => {
                 navigate('/Historical');
                 break;
             case 'Products':
-                navigate('/products');
+                navigate('/Products');
+                break;
+            case 'Flights':
+                navigate('/Flights');
                 break;
             default:
                 break;
@@ -55,6 +60,12 @@ const TopBarLinks: React.FC = () => {
                     onClick={() => handleButtonClick('Products')}
                 >
                     {t('products')}
+                </button>
+                <button
+                    className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Flights' ? 'active' : ''}`}
+                    onClick={() => handleButtonClick('Flights')}
+                >
+                    {t('flights')}
                 </button>
             </div>
         </div>

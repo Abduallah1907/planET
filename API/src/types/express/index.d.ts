@@ -58,4 +58,3 @@ declare global {
     export type OTPModel = Model<any & Document>;
   }
 }
-

@@ -295,7 +295,7 @@ paths:
         "404":
           description: User not found.
         "500":
-          description: Internal Server Error.  
+          description: Internal Server Error.
   /api/admin/rejectUser/{email}:
     put:
       tags:
@@ -312,7 +312,7 @@ paths:
         "200":
           description: User rejected successfully.
         "404":
-          description: User not found.  
+          description: User not found.
         "500":
           description: Internal Server Error.
   /api/admin/updateAdmin/{email}:
@@ -348,4 +348,315 @@ paths:
         "404":
           description: Admin not found.
         "400":
-          description: Invalid input.                        
+          description: Invalid input.
+  /api/admin/getComplaints/{page}:
+    get:
+      tags:
+        - Admin
+        - Complaint
+      summary: Given a page number, shows 10 complaints along with their information
+      parameters:
+        - name: page
+          in: path
+          description: Page number to retrieve.
+          required: true
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: A array of complaints.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    complaint_id:
+                      type: string
+                      format: objectId
+                      description: The ID of the complaint
+                    tourist_id:
+                      type: string
+                      format: objectId
+                      description: The ID of the tourist
+                    title:
+                      type: string
+                      description: The title of the complaint
+                    body:
+                      type: string
+                      description: The body of the complaint
+                    reply:
+                      type: string
+                      description: The reply from the admin (optional)
+                    date:
+                      type: string
+                      format: date-time
+                      description: The date the complaint was created
+                    status:
+                      type: string
+                      enum:
+                        - Pending
+                        - Resolved
+                      description: The current status of the complaint
+        "500":
+          description: Internal Server Error.
+  /api/admin/getSortComplaintByDate/{page}:
+    get:
+      tags:
+        - Admin
+        - Complaint
+      summary: Given a page number and a direction to sort, shows 10 complaints sorted by the date
+      description: The direction can be 1 for ascending, or -1 for descending
+      parameters:
+        - name: page
+          in: path
+          description: Page number to retrieve.
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                direction:
+                  type: integer
+      responses:
+        "200":
+          description: Reterived a list of 10 complaints sorted by date successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    complaint_id:
+                      type: string
+                      format: objectId
+                      description: The ID of the complaint
+                    tourist_id:
+                      type: string
+                      format: objectId
+                      description: The ID of the tourist
+                    title:
+                      type: string
+                      description: The title of the complaint
+                    body:
+                      type: string
+                      description: The body of the complaint
+                    reply:
+                      type: string
+                      description: The reply from the admin (optional)
+                    date:
+                      type: string
+                      format: date-time
+                      description: The date the complaint was created
+                    status:
+                      type: string
+                      enum:
+                        - Pending
+                        - Resolved
+                      description: The current status of the complaint
+        "400":
+          description: The direction inputted was an invalid one, or there was no direction in the body
+        "500":
+          description: Internal Server Error.
+
+  /api/admin/getFilterComplaintsByStatus/{page}:
+    get:
+      tags:
+        - Admin
+        - Complaint
+      summary: Given a page number and a valid status, shows 10 complaints filtered by that status
+      parameters:
+        - name: page
+          in: path
+          description: Page number to retrieve.
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter_status:
+                  type: string
+                  enum:
+                    - Pending
+                    - Resolved
+      responses:
+        "200":
+          description: Reterived a list of 10 complaints filtered by status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    complaint_id:
+                      type: string
+                      format: objectId
+                      description: The ID of the complaint
+                    tourist_id:
+                      type: string
+                      format: objectId
+                      description: The ID of the tourist
+                    title:
+                      type: string
+                      description: The title of the complaint
+                    body:
+                      type: string
+                      description: The body of the complaint
+                    reply:
+                      type: string
+                      description: The reply from the admin (optional)
+                    date:
+                      type: string
+                      format: date-time
+                      description: The date the complaint was created
+                    status:
+                      type: string
+                      enum:
+                        - Pending
+                        - Resolved
+                      description: The current status of the complaint
+        "400":
+          description: The filter_status inputted was an invalid one, or there was no filtered_status in the body
+        "500":
+          description: Internal Server Error.
+
+  /api/admin/getComplaintById/{complaint_id}:
+    get:
+      tags:
+        - Admin
+        - Complaint
+      summary: Given a complaint id, returns all its information. This is the same data you get when calling getComplaints, so idk why you would call this
+      parameters:
+        - name: complaint_id
+          in: path
+          description: The complaint's id
+          required: true
+          schema:
+            type: string
+            format: objectId
+      responses:
+        "200":
+          description: All the information about the complaint
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  complaint_id:
+                    type: string
+                    format: objectId
+                    description: The ID of the complaint
+                  tourist_id:
+                    type: string
+                    format: objectId
+                    description: The ID of the tourist
+                  title:
+                    type: string
+                    description: The title of the complaint
+                  body:
+                    type: string
+                    description: The body of the complaint
+                  reply:
+                    type: string
+                    description: The reply from the admin (optional)
+                  date:
+                    type: string
+                    format: date-time
+                    description: The date the complaint was created
+                  status:
+                    type: string
+                    enum:
+                      - Pending
+                      - Resolved
+                    description: The current status of the complaint
+        "500":
+          description: Internal Server Error.
+  /api/admin/markComplaintResolved/{complaint_id}:
+    put:
+      tags:
+        - Admin
+        - Complaint
+      summary: Given a complaint, marks it as resolved
+      parameters:
+        - name: complaint_id
+          in: path
+          description: The complaint's id
+          required: true
+          schema:
+            type: string
+            format: objectId
+      responses:
+        "200":
+          description: Complaint is successfully updated to resolved
+        "404":
+          description: Could not find the complaint using the complaint_id
+        "500":
+          description: Internal Server Error.
+
+  /api/admin/markComplaintPending/{complaint_id}:
+    put:
+      tags:
+        - Admin
+        - Complaint
+      summary: Given a complaint, marks it as pending
+      parameters:
+        - name: complaint_id
+          in: path
+          description: The complaint's id
+          required: true
+          schema:
+            type: string
+            format: objectId
+      responses:
+        "200":
+          description: Complaint is successfully updated to pending
+        "404":
+          description: Could not find the complaint using the complaint_id
+        "500":
+          description: Internal Server Error.
+  /api/admin/replyComplaint/{complaint_id}:
+    put:
+      tags:
+        - Admin
+        - Complaint
+      summary: Given a complaint id, add a reply to it
+      parameters:
+        - name: complaint_id
+          in: path
+          description: The complaint's id
+          required: true
+          schema:
+            type: string
+            format: objectId
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reply:
+                  type: string
+      responses:
+        "200":
+          description: Complaint reply has been added
+        "400":
+          description: "The reply was not included in the request body"
+        "404":
+          description: Could not find the complaint using the complaint_id
+        "500":
+          description: Internal Server Error.

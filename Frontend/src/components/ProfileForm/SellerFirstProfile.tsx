@@ -5,6 +5,7 @@ import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import LogoPlaceholder from "../../assets/person-circle.svg";
 import { SellerServices } from "../../services/SellerServices";
 import { useAppSelector } from "../../store/hooks";
+import { FileService } from "../../services/FileService";
 
 interface FormData {
   description: string;
@@ -12,18 +13,17 @@ interface FormData {
 }
 
 const SellerFirstProfile: React.FC = () => {
+  const SellerFirst = useAppSelector((state) => state.user);
+
   const [formData, setFormData] = useState<FormData>({
     description: "",
     logo: null,
   });
 
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const SellerFirst = useAppSelector((state) => state.user);
-
   useEffect(() => {
     setFormData({
       description: SellerFirst.stakeholder_id?.description || "",
-      logo: null,
+      logo: SellerFirst.stakeholder_id?.logo || null,
     });
   }, [SellerFirst]);
 
@@ -37,20 +37,26 @@ const SellerFirstProfile: React.FC = () => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setFormData({ ...formData, logo: file });
-      setLogoPreview(URL.createObjectURL(file));
+    if (e.target.files) {
+      setFormData({ ...formData, logo: e.target.files[0] });
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    await SellerServices.updateSellerServices(SellerFirst.email, {
-      description: formData.description,
-      logo: formData.logo,
-    });
+  };
+  const OnClick = async () => {
+    if (formData.logo) {
+      const file = await FileService.uploadFile(formData.logo);
+      await SellerServices.updateSellerServices(SellerFirst.email, {
+        description: formData.description,
+        logo: file.data._id,
+      });
+    } else {
+      await SellerServices.updateSellerServices(SellerFirst.email, {
+        description: formData.description,
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -68,7 +74,7 @@ const SellerFirstProfile: React.FC = () => {
         </Col>
         <Col xs={3} className="text-center">
           <img
-            src={logoPreview || LogoPlaceholder}
+            src={LogoPlaceholder}
             width="70"
             height="50"
             className="align-top logo"
@@ -112,7 +118,7 @@ const SellerFirstProfile: React.FC = () => {
           </Row>
 
           <div className="form-actions">
-            <Button type="submit" className="update-btn">
+            <Button type="submit" className="update-btn" onClick={OnClick}>
               Update
             </Button>
             <Button type="button" className="cancel-btn" onClick={handleCancel}>

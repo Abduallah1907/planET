@@ -63,7 +63,7 @@ comments:[comment_rating_id] (ref to comment_rating),
 years_of_experience:int,//not required
 previous_work_description:[previous_work_id] (ref to previous_work),
 documents_required:[String],
-photo:String,
+logo:String,
 approval:boolean
 }
 

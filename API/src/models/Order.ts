@@ -36,6 +36,10 @@ const orderSchema = new mongoose.Schema(
       enum: Object.values(PaymentType),
       required: true,
     },
+    points_received: {
+      type: Number,
+      required: true,
+    },
   },
   { timestamps: true }
 );

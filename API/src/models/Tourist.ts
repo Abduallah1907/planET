@@ -33,6 +33,10 @@ const touristSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    total_loyality_points: {
+      type: Number,
+      default: 0,
+    },
     date_of_birth: {
       type: Date,
       required: true,
@@ -60,7 +64,14 @@ const touristSchema = new mongoose.Schema(
     ],
     logo: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "upload.files", // Reference the correct collection
     },
+    tickets: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Ticket",
+      },
+    ],
   },
   { timestamps: true }
 );

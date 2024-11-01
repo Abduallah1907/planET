@@ -230,7 +230,7 @@ paths:
                   type: array
                   items:
                     type: string
-                photo:
+                logo:
                   type: string
       responses:
         201:
@@ -281,7 +281,7 @@ paths:
     put:
       tags:
         - Tour Guide Profile
-      summary: Updates the year and photo of a tour guide.
+      summary: Updates the year and logo of a tour guide.
       description: Note that even if the tour guide does not update a field, it should send the old field, otherwise it will be set to be empty. If previous work needs to be updated/created, use their respective apis and not this one
       parameters:
         - name: email
@@ -299,7 +299,7 @@ paths:
               properties:
                 phone_number:
                   type: string
-                photo:
+                logo:
                   type: string
                 years_of_experience:
                   type: number
@@ -383,7 +383,7 @@ components:
                     format: date-time
                   __v:
                     type: integer
-            photo:
+            logo:
               type: string
               format: uri
               example: "link.png"

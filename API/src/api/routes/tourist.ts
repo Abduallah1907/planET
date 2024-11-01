@@ -20,11 +20,26 @@ export default (app: Router) => {
     touristController.updateTourist
   );
   route.post("/createTourist", touristController.createTourist);
-  route.post("/rateandcommentTourGuide/:tourist_id", authorize([UserRoles.Tourist]), touristController.rateandcommentTour_guide);
-  route.post("/rateandcommentItinerary/:tourist_id", authorize([UserRoles.Tourist]), touristController.rateandcommentItinerary);
-  route.post("/rateandcommentActivity/:tourist_id", authorize([UserRoles.Tourist]), touristController.rateandcommentActivity);
+  route.post(
+    "/rateAndCommentTourGuide/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.rateAndCommentTour_guide
+  );
+  route.post(
+    "/rateAndCommentItinerary/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.rateAndCommentItinerary
+  );
+  route.post(
+    "/rateAndCommentActivity/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.rateAndCommentActivity
+  );
 
-  route.delete("/deleteTouristAccountRequest/:email", touristController.deleteTouristAccountRequest);
+  route.delete(
+    "/deleteTouristAccountRequest/:email",
+    touristController.deleteTouristAccountRequest
+  );
 
   route.post("/bookActivity", touristController.bookActivity);
 
@@ -46,7 +61,7 @@ export default (app: Router) => {
     authorize([UserRoles.Tourist]),
     touristController.recieveBadge
   );
-  route.put("/redeemPoints/:email", touristController.redeemPoints);
+
   route.get(
     "/checkTourGuide/:tourist_id",
     authorize([UserRoles.Tourist]),
@@ -67,4 +82,25 @@ export default (app: Router) => {
     authorize([UserRoles.Tourist]),
     touristController.fileComplaint
   );
+  route.get(
+    "/viewComplaints/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.viewComplaints
+  );
+  route.get(
+    "/flagToRateAndCommentProduct/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.flagToRateAndCommentProduct
+  );
+  route.post(
+    "/rateAndCommentProduct/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.rateAndCommentProduct
+  );
+  route.put(
+    "/cancelTicket/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.cancelTicket
+  );
+  route.put("/redeemPoints", touristController.redeemPoints);
 };

@@ -205,6 +205,7 @@ export default class ItineraryService {
       reviews_count: itinerary.comments.length,
     }));
    
+   
 
     return new response(true, itinerartiesOutput, "Page " + page + " of itineraries", 200);
   }

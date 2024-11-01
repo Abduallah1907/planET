@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CreateAdmin from "./views/CreateAdmin/CreateAdmin";
 import TopBar from "./components/TopBar/TopBar";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import CreateGoverner from "./views/CreateGoverner/CreateGovernor";
@@ -34,7 +34,6 @@ import HistoricalPlaces from "./views/ViewingPages/HistoricalPlaces";
 import Products from "./views/ViewingPages/Products";
 import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
 import StakeholderReg from "./views/auth/StakeholderReg/StakeholderReg";
-import ItineraryCardd from "./views/ItineraryCardd";
 import EditHistoricalLocation from "./views/EditPages/EditHistoricalLocation";
 import EditProduct from "./views/EditPages/EditProduct";
 import EditItinerary from "./views/EditPages/EditItinerary";
@@ -50,14 +49,26 @@ import Sidebar from "./components/SideBar/Sidebar";
 import CategoryTable from "./views/Tables/CategoryTable";
 import TagsTable from "./views/Tables/TagTable";
 import HistoricalTagsTable from "./views/Tables/HistoricalTagTable";
+import ItineraryDetails from "./views/ProductDetails/ItineraryDetails";
 import ChangePasswordForm from "./views/auth/ChangePasswordForm";
 import ForgetPassword from "./views/auth/ForgetPassword";
 import CheckOTP from "./views/auth/CheckOTP";
+import ChangePasswordG from "./views/auth/ChangePasswordG";
+import { Utils } from "./utils/utils";
+import FlightsPage from "./views/ViewingPages/Flights";
+import ComplaintForm from "./views/ViewingPages/ComplaintForm";
 
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const navItems = useAppSelector((state) => state.sidebar.navItems);
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (user && user.usernameOrEmail && user.password) {
+      Utils.handleLogin(user, dispatch, navigate);
+    }
+  }, [dispatch, navigate]);
   return (
     <AppProvider>
       <TopBar />
@@ -86,14 +97,10 @@ const App: React.FC = () => {
         <Route path="/test" element={<BookingLayout />} />
 
         <Route path="/Activity" element={<Activities />} />
-        <Route path="/Activity/:id" element={<ActivityDetails />} />
-
         <Route path="/Itinerary" element={<Itinerary />} />
-
         <Route path="/Historical" element={<HistoricalPlaces />} />
-        <Route path="/Historical/:id" element={<HistoricalDetails />} />
-
         <Route path="/Products" element={<Products />} />
+        <Route path="/Flights" element={<FlightsPage />} />
 
         <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
@@ -104,28 +111,19 @@ const App: React.FC = () => {
 
         <Route path="/AddNewProduct" element={<AddNewProduct />} />
         <Route path="/AddActivity" element={<AdvertiserCreate />} />
-        <Route
-          path="/AddHistoricalLocation"
-          element={<AddHistoricalLocation />}
-        />
+        <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
         <Route path="/AddItinerary" element={<AddItinerary />} />
-        <Route path="/ItineraryCard/:id" element={<ItineraryCardd  />} />
+
+        <Route path="/ActivityDetails/:id" element={<ActivityDetails />} />
+        <Route path="/ItineraryDetails/:id" element={<ItineraryDetails />} />
+        <Route path="/HistoricalDetails/:id" element={<HistoricalDetails />} />
 
         <Route path="/EditActivity/:activity_id" element={<EditActivity />} />
-        <Route
-          path="/EditHistoricalLocation/:historical_location_id"
-          element={<EditHistoricalLocation />}
-        />
-        <Route
-          path="/EditItinerary/:itinerary_id"
-          element={<EditItinerary />}
-        />
+        <Route path="/EditHistoricalLocation/:historical_location_id" element={<EditHistoricalLocation />} />
+        <Route path="/EditItinerary/:itinerary_id" element={<EditItinerary />} />
         <Route path="/EditProduct/:product_id" element={<EditProduct />} />
 
-        <Route path="/UsersTable" element={<UsersTable />} />
-
         <Route path="/MyActivities" element={<MyActivities />} />
-    
         <Route path="/MyHistoricalLocations" element={<MyHistoricalPlaces />} />
         <Route path="/MyItineraries" element={<MyItinerary />} />
         <Route path="/MyProducts" element={<MyProducts />} />
@@ -138,8 +136,12 @@ const App: React.FC = () => {
         <Route path="/Categories" element={<CategoryTable />} />
         <Route path="/Tags" element={<TagsTable />} />
         <Route path="/HistoricalTags" element={<HistoricalTagsTable />} />
-        <Route path="/ChangePasswordForm" element={<ChangePasswordForm />} />
+        <Route path="/UsersTable" element={<UsersTable />} />
 
+        <Route path="/Complaint" element={<ComplaintForm/>} />
+        
+        <Route path="/ChangePasswordForm" element={<ChangePasswordForm />} />
+        <Route path="/ChangePasswordG" element={<ChangePasswordG />} />
       </Routes>
     </AppProvider>
   );

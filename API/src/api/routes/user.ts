@@ -17,4 +17,6 @@ export default (app: Router) => {
   route.get("/requestOTP/:email", userController.requestOTP);
   route.get("/verifyOTP/:email/:otp", userController.verifyOTP);
   route.post("/resetPassword/:email", userController.resetPassword);
+
+  route.get("/getDocumentsRequired", userController.getDocumentsRequired);
 };

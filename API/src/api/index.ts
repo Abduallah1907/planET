@@ -15,6 +15,9 @@ import historical_tag from "./routes/historical_tag";
 import product from "./routes/product";
 import itinerary from "./routes/itinerary";
 import file from "./routes/file";
+import slot from "./routes/slot";
+import amadeus from "./routes/amadeus";
+import skyscanner from "./routes/skyscanner";
 export default () => {
   const app = Router();
 
@@ -32,6 +35,9 @@ export default () => {
   product(app);
   itinerary(app);
   file(app);
+  slot(app);
+  amadeus(app);
+  skyscanner(app);
 
   return app;
 };

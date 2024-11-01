@@ -5,6 +5,8 @@ import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form, Table } from "react-bootstrap";
 import { useAppSelector } from "../../store/hooks";
 import { TourGuideServices } from "../../services/TourGuideServices";
+import { isValidObjectId } from "../../utils/CheckObjectId";
+import { FileService } from "../../services/FileService";
 
 interface WorkExperience {
   id?: string;
@@ -40,41 +42,89 @@ const ProfileFormGuide: React.FC = () => {
     logo: null,
     previousWork: [],
   });
-
+  const [fileUrl, setFileUrl] = useState("");
   const [createdWork, setCreatedWork] = useState<WorkExperience[]>([]);
   const [editedWork, setEditedWork] = useState<WorkExperience[]>([]);
   const [deletedWork, setDeletedWork] = useState<string[]>([]);
 
   const TourGuide = useAppSelector((state) => state.user);
+  const getTourGuideData = async () => {
+    if (
+      TourGuide.stakeholder_id.logo &&
+      isValidObjectId(TourGuide.stakeholder_id.logo)
+    ) {
+      const file = await FileService.downloadFile(
+        TourGuide.stakeholder_id.logo
+      );
+
+      const url = URL.createObjectURL(file);
+      setFileUrl(url);
+      const workExperiences: WorkExperience[] =
+        TourGuide.stakeholder_id?.previous_work_description.map(
+          (work: any) => ({
+            id: work._id,
+            title: work.title,
+            place: work.place,
+            from: work.from
+              ? new Date(work.to).toISOString().split("T")[0]
+              : "",
+            to: work.to ? new Date(work.to).toISOString().split("T")[0] : "",
+          })
+        );
+      setFormData({
+        firstName: TourGuide.name.split(" ")[0],
+        lastName: TourGuide.name.split(" ")[1] || "", // Fallback for last name
+        email: TourGuide.email,
+        mobile: TourGuide.phone_number,
+        changePassword: "",
+        retypePassword: "",
+        username: TourGuide.username,
+        yearsOfExperience: TourGuide.stakeholder_id?.years_of_experience || "",
+        logo: file.data || null,
+        previousWork: workExperiences || [],
+      });
+    } else {
+      const workExperiences: WorkExperience[] =
+        TourGuide.stakeholder_id?.previous_work_description.map(
+          (work: any) => ({
+            id: work._id,
+            title: work.title,
+            place: work.place,
+            from: work.from
+              ? new Date(work.to).toISOString().split("T")[0]
+              : "",
+            to: work.to ? new Date(work.to).toISOString().split("T")[0] : "",
+          })
+        );
+      setFormData({
+        firstName: TourGuide.name.split(" ")[0],
+        lastName: TourGuide.name.split(" ")[1] || "", // Fallback for last name
+        email: TourGuide.email,
+        mobile: TourGuide.phone_number,
+        changePassword: "",
+        retypePassword: "",
+        username: TourGuide.username,
+        yearsOfExperience: TourGuide.stakeholder_id?.years_of_experience || "",
+        logo: null,
+        previousWork: workExperiences || [],
+      });
+    }
+  };
 
   useEffect(() => {
-    const workExperiences: WorkExperience[] =
-      TourGuide.stakeholder_id?.previous_work_description.map((work: any) => ({
-        id: work._id,
-        title: work.title,
-        place: work.place,
-        from: work.from ? new Date(work.to).toISOString().split("T")[0] : "",
-        to: work.to ? new Date(work.to).toISOString().split("T")[0] : "",
-      }));
-    setFormData({
-      firstName: TourGuide.name.split(" ")[0],
-      lastName: TourGuide.name.split(" ")[1] || "", // Fallback for last name
-      email: TourGuide.email,
-      mobile: TourGuide.phone_number,
-      changePassword: "",
-      retypePassword: "",
-      username: TourGuide.username,
-      yearsOfExperience: TourGuide.stakeholder_id?.years_of_experience || "",
-      logo: TourGuide.stakeholder_id?.photo || "",
-      previousWork: workExperiences || [],
-    });
+    getTourGuideData();
   }, [TourGuide]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFormData({ ...formData, logo: e.target.files[0] });
     }
@@ -133,26 +183,43 @@ const ProfileFormGuide: React.FC = () => {
     setFormData({ ...formData, previousWork: updatedWork });
     setCreatedWork((prev) => prev.filter((_, i) => i !== index));
   };
+  const OnClick = async () => {
+    if (formData.logo) {
+      const file = await FileService.uploadFile(formData.logo);
+      await TourGuideServices.updateTourGuide(TourGuide.email, {
+        name: `${formData.firstName} ${formData.lastName}`,
+        newEmail: formData.email,
+        phone_number: formData.mobile,
+        logo: file.data._id,
+        years_of_experience: formData.yearsOfExperience,
+        password: formData.changePassword,
 
-  const handleSubmit = async (e: React.FormEvent) => {
+        createdPreviousWork: createdWork,
+        updatedPreviousWork: editedWork,
+        deletedPreviousWork: deletedWork,
+      });
+    } else {
+      await TourGuideServices.updateTourGuide(TourGuide.email, {
+        name: `${formData.firstName} ${formData.lastName}`,
+        newEmail: formData.email,
+        phone_number: formData.mobile,
+        years_of_experience: formData.yearsOfExperience,
+        password: formData.changePassword,
+
+        createdPreviousWork: createdWork,
+        updatedPreviousWork: editedWork,
+        deletedPreviousWork: deletedWork,
+      });
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.changePassword !== formData.retypePassword) {
       alert("Passwords don't match!");
       return;
     }
-
-    await TourGuideServices.updateTourGuide(TourGuide.email, {
-      name: `${formData.firstName} ${formData.lastName}`,
-      newEmail: formData.email,
-      phone_number: formData.mobile,
-      photo: formData.logo,
-      years_of_experience: formData.yearsOfExperience,
-      password: formData.changePassword,
-
-      createdPreviousWork: createdWork,
-      updatedPreviousWork: editedWork,
-      deletedPreviousWork: deletedWork,
-    });
+    // Handle form submission, including the logo file and about text
   };
 
   const handleCancel = () => {
@@ -181,7 +248,7 @@ const ProfileFormGuide: React.FC = () => {
         </Col>
         <Col xs={3} className="text-center">
           <img
-            src={Logo}
+            src={fileUrl != "" ? fileUrl : Logo}
             width="70"
             height="50"
             className="align-top logo"
@@ -311,9 +378,16 @@ const ProfileFormGuide: React.FC = () => {
           </Row>
           <Row>
             <Col>
-              <Form.Group>
-                <Form.Label>Upload Logo</Form.Label>
-                <Form.Control type="file" onChange={handleLogoChange} />
+              <Form.Group controlId="formFile" className="mb-3">
+                <Form.Label>
+                  <h3>Upload Logo</h3> {/* Added 'Seller Logo' label */}
+                </Form.Label>
+                <Form.Control
+                  type="file"
+                  name="logo"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                />
               </Form.Group>
             </Col>
           </Row>
@@ -389,7 +463,12 @@ const ProfileFormGuide: React.FC = () => {
             </Col>
           </Row>
 
-          <Button type="submit" variant="primary" className="mt-4">
+          <Button
+            type="submit"
+            variant="primary"
+            className="mt-4"
+            onClick={OnClick}
+          >
             Update Profile
           </Button>
           <Button

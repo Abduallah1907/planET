@@ -42,6 +42,7 @@ const historicalLocationSchema = new mongoose.Schema(
     images: [
       {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "upload.files", // Reference the correct collection
       },
     ],
     location: {

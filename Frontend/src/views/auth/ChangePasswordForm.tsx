@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../../components/FormGroup/FormGroup";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { useAppSelector } from "../../store/hooks";
+import { AdminService } from "../../services/AdminService";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   changePassword: string;
@@ -34,8 +37,10 @@ const ChangePasswordForm: React.FC = () => {
       alert("Passwords don't match!");
       return;
     }
-
-    // Handle form submission logic here (e.g., API request)
+    const response = await AdminService.changePass(Admin.email, {
+      password: formData.changePassword,
+    });
+    showToast(response.message, ToastTypes.SUCCESS);
   };
 
   const handleCancel = () => {
@@ -46,7 +51,7 @@ const ChangePasswordForm: React.FC = () => {
   };
 
   return (
-    <div className="profile-form-container">
+    <div className="profile-form-container mt-5">
       <Container>
         <Form onSubmit={handleSubmit}>
           <Row>
@@ -78,13 +83,17 @@ const ChangePasswordForm: React.FC = () => {
             </Col>
           </Row>
 
-          <Button type="submit" variant="primary" className="mt-4">
+          <Button
+            type="submit"
+            variant="main-inverse"
+            className="mt-4"
+          >
             Update Profile
           </Button>
           <Button
             type="button"
             variant="secondary"
-            className="mt-4 ml-2"
+            className="mt-4 ms-2"
             onClick={handleCancel}
           >
             Cancel

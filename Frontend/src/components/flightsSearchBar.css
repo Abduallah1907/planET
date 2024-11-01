@@ -1,0 +1,362 @@
+.flights-search-container label {
+    margin-bottom: 0;
+    color: #626971;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.flights-search-container {
+    font-family: 'Skyscanner Relative', 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+.flights-search-container input {
+    padding: 0;
+}
+
+.flights-search-container .form-control {
+    border-radius: 0;
+}
+
+.flights-search-container .row.form-controls-row .col {
+    padding: 0.75rem 0.5rem;
+    background-color: white;
+}
+
+.swap-button {
+    position: absolute;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    z-index: 1;
+    background-color: white;
+    border: 0.15rem solid var(--main-color);
+    transition: transform .4s;
+}
+
+.swap-button span {
+    color: var(--main-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.swap-button:hover,
+.swap-button:focus,
+.swap-button:active,
+.swap-button:active:focus {
+    background-color: #e0e4e9 !important;
+    border: 0.15rem solid var(--main-color) !important;
+}
+
+@media (min-width: 768px) {
+    .swap-button-container {
+        margin-inline-start: -2rem !important;
+        justify-content: flex-start !important;
+    }
+
+    .swap-button {
+        transform: translateY(50%) rotate(0deg) !important;
+    }
+
+    .swap-button.rotated {
+        transform: translateY(50%) rotate(-180deg) !important;
+    }
+
+    .flights-search-container .row.form-controls-row .col:first-of-type {
+        padding-left: 1rem;
+        border-top-left-radius: 0.75rem;
+        border-bottom-left-radius: 0.75rem;
+        border-top-right-radius: 0 !important;
+    }
+
+    .flights-search-container .row.form-controls-row .col:nth-last-child(3) {
+        border-bottom-left-radius: 0 !important;
+    }
+
+    .flights-search-container .row.form-controls-row .col:nth-last-child(2) {
+        padding-right: 1rem;
+        border-top-right-radius: 0.75rem;
+        border-bottom-right-radius: 0.75rem;
+    }
+
+    .flights-search-container .row.form-controls-row .col:not(:nth-last-of-type(1)) {
+        margin-right: 0.25rem;
+    }
+
+    .flights-search-container .row.form-controls-row .col:last-of-type {
+        margin-right: 0;
+        margin-top: 0 !important;
+        margin-left: 0.5rem;
+    }
+}
+
+@media (min-width: 0px) {
+    .swap-button-container {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        margin-inline-start: -1rem;
+    }
+
+    .swap-button {
+        transform: translateY(-50%) rotate(0deg);
+    }
+
+    .swap-button.rotated {
+        transform: translateY(-50%) rotate(-180deg);
+    }
+
+    .flights-search-container .row.form-controls-row .col:first-of-type {
+        /* border: 10px solid var(--main-color); */
+        padding-left: 1rem;
+        border-top-left-radius: 0.75rem;
+        border-top-right-radius: 0.75rem;
+    }
+
+    .flights-search-container .row.form-controls-row .col:nth-last-child(3) {
+        padding-right: 1rem;
+        border-bottom-left-radius: 0.75rem;
+    }
+
+    .flights-search-container .row.form-controls-row .col:nth-last-child(2) {
+        padding-right: 1rem;
+        border-bottom-right-radius: 0.75rem;
+    }
+
+    .flights-search-container .row.form-controls-row .col {
+        margin-bottom: 0.25rem;
+    }
+
+    .flights-search-container .row.form-controls-row .col:last-of-type {
+        padding: 0;
+        margin-top: 0.5rem;
+        outline: none;
+    }
+
+    .flights-search-container .btn-custom {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.5rem;
+        outline: none !important;
+    }
+}
+
+.flights-search-container .destination-input{
+    font-size: 1rem;
+}
+
+.flights-search-container .submit-btn{
+    width: fit-content;
+}
+
+.flights-search-container .col.disabled label {
+    color: #0003;
+}
+
+.flights-search-container .col.disabled input:disabled {
+    color: #0003;
+    background-color: transparent;
+    pointer-events: none;
+}
+
+.flights-search-container .row.form-controls-row .col:last-of-type button {
+    border-radius: 0.75rem;
+    font-weight: bold;
+}
+
+.flights-search-container .dropdown button {
+    text-align: start;
+}
+
+.flights-search-container .dropdown-item:hover,
+.flights-search-container .dropdown-item:focus {
+    background-color: white;
+    color: #000;
+}
+
+.flights-search-container .dropdown-menu {
+    width: 20rem;
+}
+
+.flights-search-container .category-label .row:first-of-type span {
+    color: #000;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5rem;
+}
+
+.flights-search-container .category-label .row:last-of-type span {
+    color: #626971;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5rem;
+}
+
+.flights-search-container .row.form-controls-row .col:focus-within:not(.counter, :nth-last-child(1)) {
+    background-color: #fff;
+    border-color: var(--main-color);
+    outline-color: var(--main-color);
+    outline-style: auto;
+}
+
+.flights-search-container .counter-input {
+    border: 0;
+    font-weight: bold;
+    font-size: 1rem;
+    width: 2.5rem;
+    padding: 0.4rem 0;
+    z-index: 1;
+    vertical-align: middle;
+}
+
+.flights-search-container .counter-input:focus-visible {
+    outline: 0.1rem solid var(--main-color);
+    outline-offset: 0.1rem;
+}
+
+/* Hide the up and down arrows (spinners) for input[type="number"] */
+.flights-search-container .counter-input::-webkit-outer-spin-button,
+.flights-search-container .counter-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.flights-search-container .counter-input {
+    appearance: textfield;
+    /* Standard */
+    -moz-appearance: textfield;
+    /* Firefox */
+}
+
+.flights-search-container .above-input {
+    position: relative;
+    z-index: 2;
+    margin-left: -1px;
+}
+
+.flights-search-container .row.form-controls-row .col:focus-within:not(.counter, :nth-last-child(1)) .btn-clear {
+    display: flex;
+}
+
+/** Dropdown styling */
+.flights-search-container .airports-dropdown {
+    border-radius: 0.5rem;
+    width: 25rem !important;
+}
+
+.flights-search-container .airports-dropdown .dropdown-item:first-of-type {
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.flights-search-container .airports-dropdown .dropdown-item:last-of-type {
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.flights-search-container .airports-dropdown .dropdown-item:hover {
+    background-color: #e9e9e9;
+}
+
+.flights-search-container .airports-dropdown .dropdown-item .col {
+    background-color: transparent;
+}
+
+.flights-search-container .airports-dropdown .dropdown-item svg {
+    font-size: x-large;
+    color: #626971;
+}
+
+.flights-search-container .airports-dropdown .dropdown-item .location-name {
+    font-size: 0.9rem;
+}
+
+.flights-search-container .airports-dropdown .dropdown-item .location-address {
+    font-size: 0.75rem;
+    font-weight: lighter;
+}
+
+.btn-clear {
+    background-color: #626971;
+    color: white;
+    padding: 0.25rem;
+    width: 1.5rem;
+    /* Set a fixed width */
+    height: 1.5rem;
+    /* Set a fixed height */
+    border-radius: 50%;
+    /* Make it a circle */
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-clear:hover,
+.btn-clear:focus,
+.btn-clear:focus-visible {
+    background-color: #5e6368;
+    color: white;
+}
+
+.btn-clear:active {
+    background-color: white !important;
+    color: #5e6368 !important;
+}
+
+.flights-search-container .option-selector {
+    position: relative;
+}
+
+.flights-search-container .option-selector .btn {
+    background-color: transparent;
+    color: var(--main-color);
+    border: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.5s ease;
+    position: relative;
+    z-index: 1 !important;
+}
+
+.flights-search-container .option-selector .col-auto {
+    background-color: white;
+    border: 0.125rem solid white;
+}
+
+.flights-search-container .option-selector .col-auto::before {
+    content: "";
+    position: absolute;
+    top: 0.12rem;
+    left: 0.125rem;
+    height: 2.25rem;
+    width: 5.5rem;
+    background-color: var(--main-color);
+    border-radius: 2rem;
+    z-index: 0 !important;
+    transition: transform 0.3s ease, border-radius 0.5s ease;
+}
+
+/* If the first button is active */
+.flights-search-container .option-selector .col-auto:has(.btn:first-of-type.active):before {
+    transform: translateX(0);
+    /* Slide background to the first button */
+    border-top-right-radius: 1.75rem !important;
+    border-bottom-right-radius: 1.75rem !important;
+}
+
+/* If the last button is active */
+.flights-search-container .option-selector .col-auto:has(.btn:last-of-type.active)::before {
+    left: -0.05rem;
+    width: 6.5rem;
+    transform: translateX(100%);
+    /* Slide background to the second button */
+    border-top-left-radius: 1.75rem !important;
+    border-bottom-left-radius: 1.75rem !important;
+}
+
+.flights-search-container .option-selector .btn.active,
+.flights-search-container .option-selector .btn:active {
+    color: white;
+}
+
+.flights-search-container .option-selector .btn:focus-visible {
+    box-shadow: 0 0 0 0.125rem rgba(215, 111, 48, 0.5);
+}
