@@ -233,8 +233,8 @@ const CreateGoverner: React.FC = () => {
           </Row>
 
           <div className="form-actions">
-            <Button type="submit" className="update-btn mt-3">
-              create governor
+            <Button variant="main-inverse" type="submit" className= "mt-3">
+              Create Governor
             </Button>
           </div>
         </Form>

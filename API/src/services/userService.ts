@@ -52,7 +52,7 @@ export default class UserService {
     // throw new Error ("Internal server error");
     if (newUser == null) throw new HttpError("User not created", 404);
     // throw new Error("User not created");
-    if (userData.role == UserRoles.Admin) {
+    if (userData.role == UserRoles.Admin || userData.role == UserRoles.Governor || userData.role == UserRoles.Tourist) {
       newUser.status = UserStatus.APPROVED;
     }
     await newUser.save();
@@ -83,7 +83,7 @@ export default class UserService {
     const role = user.role;
     let stakeholder_id;
     switch (role) {
-      case UserRoles.Admin: break;
+      case UserRoles.Admin:
       case UserRoles.Seller:
         const seller = await this.sellerModel.findOne({ user_id: user_id });
         if (seller instanceof Error)

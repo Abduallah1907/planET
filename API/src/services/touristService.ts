@@ -253,7 +253,7 @@ export default class TouristService {
       200
     );
   }
-  public async rateandcommentTour_guideService(
+  public async rateAndCommentTour_guideService(
     id: string,
     data: IComment_RatingCreateDTOfortourGuide
   ) {
@@ -324,7 +324,7 @@ export default class TouristService {
     return new response(true, comment_rating, "Tour guide rated", 201);
   }
 
-  public async rateandcommentItineraryService(
+  public async rateAndCommentItineraryService(
     id: string,
     data: IComment_RatingCreateDTOforItinerary
   ) {
@@ -395,7 +395,7 @@ export default class TouristService {
     return new response(true, comment_rating, "Itinerary rated", 201);
   }
 
-  public async rateandcommentActivityService(
+  public async rateAndCommentActivityService(
     id: string,
     data: IComment_RatingCreateDTOforActivity
   ) {
@@ -955,7 +955,7 @@ export default class TouristService {
     return new response(true, complaints, "Complaints found", 200);
   }
   //Flag to rate and comment on a product
-  public async flagtoRateandcommentProductService(
+  public async flagToRateAndCommentProductService(
     tourist_id: string,
     product_id: string
   ) {
@@ -987,7 +987,7 @@ export default class TouristService {
     return new response(true, null, "Product found", 201);
   }
   //Rate and comment on product
-  public async rateandcommentProductService(
+  public async rateAndCommentProductService(
     tourist_id: string,
     data: IComment_RatingCreateDTOforProduct
   ) {

@@ -1,0 +1,65 @@
+openapi: "3.0.0"
+info:
+  title: Skyscanner API
+  version: 1.0.0
+  description: Skyscanner External API management
+tags:
+  - name: Skyscanner
+    description: Skyscanner External API management
+paths:
+  /api/skyscanner/locations:
+    get:
+      tags:
+        - Skyscanner
+      summary: Get locations
+      description: Get locations
+      parameters:
+        - name: keyword
+          in: query
+          description: keyword
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    type:
+                      type: string
+                    placeId:
+                      type: string
+                    iataCode:
+                      type: string
+                    address:
+                      type: string
+                    city:
+                      type: string
+                    country:
+                      type: string
+                    location:
+                      type: object
+                      properties:
+                        lat:
+                          type: number
+                        lon:
+                          type: number
+                    region:
+                      type: string
+                    timeZone:
+                      type: string
+                    currency:
+                      type: string
+                    locale:
+                      type: string
+                    active:
+                      type: boolean

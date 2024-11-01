@@ -27,7 +27,7 @@ class TouristService {
   public static rateAndCommentActivity = async (id: string, data:any) => {
     try {
       const response = await axiosInstance.post(
-        `/tourist/rateandcommentActivity/${id}`,data
+        `/tourist/rateAndCommentActivity/${id}`,data
       );
       return response.data;
     } catch (error) {
@@ -38,7 +38,7 @@ class TouristService {
   public static rateAndCommentItinerary = async (id: string, data:any) => {
     try {
       const response = await axiosInstance.post(
-        `/tourist/rateandcommentItinerary/${id}`,data
+        `/tourist/rateAndCommentItinerary/${id}`,data
       );
       return response.data;
     } catch (error) {
@@ -49,7 +49,7 @@ class TouristService {
   public static rateAndCommentTourGuide = async (id: string, data:any) => {
     try {
       const response = await axiosInstance.post(
-        `/tourist/rateandcommentTourGuide/${id}`,data
+        `/tourist/rateAndCommentTourGuide/${id}`,data
       );
       return response.data;
     } catch (error) {
@@ -78,6 +78,37 @@ class TouristService {
       throw error;
     }
   }
+  
+  public static checkActivity = async (id: string, activity_id: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/tourist/checkActivity/${id}`,{params:{activity_id}}
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public static checkItinerary = async (id: string, itinerary_id: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/tourist/checkItinerary/${id}`,{params:{itinerary_id}}
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public static checkTourGuide = async (id: string, tour_guide_email: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/tourist/checkTourGuide/${id}`,{params:{tour_guide_email}}
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
  public static getWalletBalance() {
     try {
       return axiosInstance.get('/tourist/getWalletBalance');
@@ -85,7 +116,7 @@ class TouristService {
       throw error;
     }
 }
-public 
+ 
 
 }
 

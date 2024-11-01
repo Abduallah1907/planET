@@ -1,7 +1,5 @@
 import { Router } from "express";
 import Container from "typedi";
-import authorize from "../middlewares/authorize";
-import UserRoles from "@/types/enums/userRoles";
 import AmadeusController from "../controllers/amadeusController";
 const router = Router();
 

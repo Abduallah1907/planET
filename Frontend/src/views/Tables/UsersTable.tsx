@@ -13,7 +13,8 @@ import { AdminService } from "../../services/AdminService";
 import { IUserManagmentDTO } from "../../types/IUser";
 import "./UsersTable.css";
 import { FileService } from "../../services/FileService";
-import Advertiser from "../../components/ProfileForm/Advertiser";
+import UserService from "../../services/UserService";
+import UserStatus from "../../types/userStatus";
 
 const UsersTable = () => {
   const [users, setUsers] = useState<Map<number, IUserManagmentDTO[]>>(
@@ -25,8 +26,10 @@ const UsersTable = () => {
   const [usersPerPage] = useState(10);
   const [showModal, setShowModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
-  const [selectedUserDocs, setSelectedUserDocs] = useState<string[]>([]);
+  const [showDocModal, setShowDocModal] = useState(false);
+
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [documentUrls, setDocumentUrls] = useState<string[]>([]); // Array to hold document URLs
 
   const handleDelete = (email: string) => {
     setUserToDelete(email);
@@ -36,20 +39,20 @@ const UsersTable = () => {
   const getUsers = async (page: number) => {
     const response = await AdminService.getUsers(page);
     setUsers((prevUsers) => {
-      const newUsers = new Map(prevUsers).set(page, response.data); // Append new users
+      const newUsers = new Map(prevUsers).set(page, response.data);
       setTotalUsers(
         Array.from(newUsers.values()).reduce(
           (acc, users) => acc + users.length,
           0
         )
-      ); // Update total users count
+      );
       return newUsers;
     });
   };
 
   const updateViewableUsers = () => {
     const usersForPage = users.get(page) || [];
-    setViewableUsers(usersForPage); // Update viewable users based on current page
+    setViewableUsers(usersForPage);
   };
 
   const confirmDelete = async () => {
@@ -65,7 +68,6 @@ const UsersTable = () => {
       const newUsers = new Map(prevUsers);
       let pageNum = 1;
 
-      // Remove the user from the map and shift users to maintain page length
       while (newUsers.has(pageNum)) {
         const userList = newUsers
           .get(pageNum)!
@@ -81,14 +83,12 @@ const UsersTable = () => {
         pageNum++;
       }
 
-      // Remove empty pages
       for (let [key, value] of newUsers) {
         if (value.length === 0) {
           newUsers.delete(key);
         }
       }
 
-      // Update total users count
       setTotalUsers(
         Array.from(newUsers.values()).reduce(
           (acc, users) => acc + users.length,
@@ -105,12 +105,66 @@ const UsersTable = () => {
   }, [page]);
 
   useEffect(() => {
-    updateViewableUsers(); // Update viewable users whenever users or page changes
-  }, [users, page]);
+    updateViewableUsers();
+  }, [users, page, updateViewableUsers]); // Added updateViewableUsers here
 
   const totalPages = Math.ceil((totalUsers + 1) / usersPerPage);
 
-  const handleView = async (role: string) => {};
+  const handleView = async (user: IUserManagmentDTO) => {
+    try {
+      const { _id: user_id, role } = user;
+      const userDocuments = await UserService.getDocuments(user_id, role);
+
+      if (userDocuments.data && userDocuments.data.length > 0) {
+        setSelectedUser(user.email);
+
+        const urls = await Promise.all(
+          userDocuments.data.map(async (docId: string) => {
+            const blob = await FileService.downloadFile(docId);
+            // Create a Blob URL if it's a Blob
+            const fileUrl = URL.createObjectURL(blob);
+            console.log("File URL for docId:", docId, "is", fileUrl);
+            return fileUrl;
+          })
+        );
+
+        // Filter out any null URLs
+        const validUrls = urls.filter((url) => url);
+        setDocumentUrls(validUrls);
+
+        setShowDocModal(true);
+      } else {
+        console.error("No documents returned or incorrect format");
+      }
+    } catch (error) {
+      console.error("Failed to fetch documents:", error);
+    }
+  };
+  const handleAccept = async (email: string | null) => {
+    if (email) {
+      try {
+        const response = await UserService.acceptUser(email);
+        console.log(response.data); // Handle the successful response
+        setShowDocModal(false); // Close the modal after action
+        getUsers(page); // Refresh the users list
+      } catch (error) {
+        console.error("Error accepting user:", error);
+      }
+    }
+  };
+
+  const handleReject = async (email: string | null) => {
+    if (email) {
+      try {
+        const response = await UserService.rejectUser(email);
+        console.log(response.data); // Handle the successful response
+        setShowDocModal(false); // Close the modal after action
+        getUsers(page); // Refresh the users list
+      } catch (error) {
+        console.error("Error rejecting user:", error);
+      }
+    }
+  };
 
   return (
     <Container className="profile-form-container">
@@ -135,7 +189,7 @@ const UsersTable = () => {
               <tr
                 key={user._id}
                 className={
-                  user.status === "Active" ? "active-row" : "closed-row"
+                  user.status === UserStatus.APPROVED ? "active-row" : "closed-row"
                 }
               >
                 <td>{user.email}</td>
@@ -143,7 +197,7 @@ const UsersTable = () => {
                 <td>{user.role}</td>
                 <td>
                   <Badge
-                    bg={user.status === "Approved" ? "success" : "warning"}
+                    bg={user.status === UserStatus.APPROVED ? "success" : (user.status === UserStatus.REJECTED ? "danger" : "warning")}
                     className="mt-2 custom-status-badge rounded-4 text-center"
                   >
                     {user.status}
@@ -151,17 +205,17 @@ const UsersTable = () => {
                 </td>
                 <td>
                   <Button
-                    className="mt-2 bg-danger"
+                    variant="danger"
+                    className="mt-2 me-2"
                     onClick={() => handleDelete(user.email)}
                   >
                     Delete
                   </Button>
-                  <Button
-                    className="mt-2 "
-                    onClick={() => handleView(user.email)}
-                  >
+                  {user.status === UserStatus.WAITING_FOR_APPROVAL && (
+                  <Button variant="main-inverse" className="mt-2" onClick={() => handleView(user)}>
                     View Doc
                   </Button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -177,6 +231,7 @@ const UsersTable = () => {
                 key={index}
                 active={index + 1 === page}
                 onClick={() => setPage(index + 1)}
+                className="custom-pagination-item"
               >
                 {index + 1}
               </Pagination.Item>
@@ -200,34 +255,55 @@ const UsersTable = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      {/* Modal for Viewing Documents */}
+
       <Modal
-        show={showModal}
-        onHide={() => setShowModal(false)}
+        show={showDocModal}
+        onHide={() => {
+          setShowDocModal(false);
+          setDocumentUrls([]); // Clear document URLs when closing
+        }}
         size="lg"
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>Documents for {selectedUser}</Modal.Title>
+          <Modal.Title>
+            Documents for {selectedUser}
+            <div className="mt-2">
+              <Button
+                variant="success"
+                className="me-2"
+                onClick={() => handleAccept(selectedUser)}
+              >
+                Accept
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => handleReject(selectedUser)}
+              >
+                Reject
+              </Button>
+            </div>
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {selectedUserDocs.length > 0 ? (
-            selectedUserDocs.map((doc, index) => (
-              <iframe
-                key={index}
-                src={doc}
-                width="100%"
-                height="500px"
-                title={`Document ${index + 1}`}
-                style={{ marginBottom: "10px" }}
-              />
-            ))
+          {documentUrls.length > 0 ? (
+            <div>
+              {documentUrls.map((url, index) => (
+                <div key={index} style={{ marginBottom: "10px" }}>
+                  <iframe
+                    src={url}
+                    title={`Document Viewer ${index + 1}`}
+                    style={{ width: "80%", height: "400px", border: "none" }} // Adjust these values as needed
+                  />
+                </div>
+              ))}
+            </div>
           ) : (
             <p>No documents available for this user.</p>
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
+          <Button variant="secondary" onClick={() => setShowDocModal(false)}>
             Close
           </Button>
         </Modal.Footer>

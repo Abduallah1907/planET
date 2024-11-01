@@ -3,6 +3,8 @@ import "../CreateAdmin/CreateAdmin.css";
 import AdminFormGroup from "../../components/FormGroup/FormGroup";
 import { Container, Button, Form } from "react-bootstrap";
 import { TouristService } from "../../services/TouristService";
+import { useParams } from "react-router-dom";
+import { useAppSelector } from "../../store/hooks";
 
 interface FormData {
   title: string;
@@ -11,6 +13,8 @@ interface FormData {
 }
 
 const ComplaintForm: React.FC = () => {
+  const { id = "" } = useParams<{ id: string }>();
+  const tourist=useAppSelector((state)=>state.user.stakeholder_id);
   const [formData, setFormData] = useState<FormData>({
     title: "",
     problem: "",
@@ -33,7 +37,7 @@ const ComplaintForm: React.FC = () => {
       problem: formData.problem,
       date: formData.date,
     };
-    //await TouristService.fileComplaint(data);
+    await TouristService.fileComplaint(tourist._id,data);
   };
 
   const handleCancel = () => {

@@ -15,6 +15,7 @@ const Avatar: React.FC = () => {
 
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to logout?")) {
+            localStorage.removeItem('user');
             dispatch(setLoginState(false));
             dispatch(disableSidebar());
             dispatch(closeSidebar());

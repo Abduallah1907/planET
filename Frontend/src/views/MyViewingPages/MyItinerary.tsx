@@ -85,7 +85,7 @@ export default function ItinerariesPage() {
   );
 
   const onItineraryClick = (id : string) => {
-    navigate(`/itinerary/${id}`);
+    navigate(`/ItineraryDetails/${id}`);
   }
 
   const deleteItinerary = async (id: string) => {
