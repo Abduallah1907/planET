@@ -62,7 +62,7 @@ const ProfileForm: React.FC = () => {
       return;
     }
   };
-  const Tourist = useAppSelector((state) => state.user);
+  const Tourist = useAppSelector((state: { user: any }) => state.user);
 
   useEffect(() => {
     setFormData({
