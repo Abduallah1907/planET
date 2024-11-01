@@ -18,7 +18,6 @@ const historicalLocationSchema = new mongoose.Schema(
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: false,
     },
     name: {
       type: String,
