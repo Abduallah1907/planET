@@ -8,6 +8,7 @@ import { closeSidebar, disableSidebar, setNavItems } from '../../store/sidebarSl
 import { TouristService } from '../../services/TouristService';
 import { AdvertiserService } from '../../services/AdvertiserService';
 import { SellerServices } from '../../services/SellerServices';
+import { TourGuideServices } from '../../services/TourGuideServices';
 
 const Avatar: React.FC = () => {
     const user = useAppSelector((state) => state.user);
@@ -37,7 +38,10 @@ const Avatar: React.FC = () => {
                 break;
             case "SELLER":
                 await SellerServices.deleteSellerServices(user.email);
-                break
+                break;
+            case "TOUR_GUIDE":
+                await TourGuideServices.deleteTourGuide(user.email);
+                break;
             }
 
             localStorage.removeItem('user');
