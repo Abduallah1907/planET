@@ -1,5 +1,5 @@
 import TouristBadge from "@/types/enums/touristBadge";
-import mongoose, { Document, mongo, ObjectId } from "mongoose";
+import mongoose, { Document, mongo, ObjectId, Types } from "mongoose";
 import { Cart } from "@/types/Cart";
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
@@ -70,4 +70,10 @@ export interface ITouristUpdateDTO {
   nation?: string;
   addresses?: string[];
   logo?: mongoose.Schema.Types.ObjectId;
+}
+
+// for some reason, the original ITourist does not have user_id
+// if added, it might break something, so i just made a new interface
+export interface ITouristUserID {
+  user_id: Types.ObjectId;
 }
