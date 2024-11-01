@@ -81,22 +81,26 @@ export class ProductService {
     };
     seller_id?: string;
   }) {
-    if (!filters || Object.keys(filters).length === 0 || (filters.seller_id && Object.keys(filters).length === 1)) {
-      const checks: any = {}
-      if(filters.seller_id){
+    if (
+      !filters ||
+      Object.keys(filters).length === 0 ||
+      (filters.seller_id && Object.keys(filters).length === 1)
+    ) {
+      const checks: any = {};
+      if (filters.seller_id) {
         checks.seller_id = filters.seller_id;
-      }else{
-        checks.archieve_flag = false
+      } else {
+        checks.archieve_flag = false;
       }
       const products = await this.productModel.find(checks);
       return new response(false, products, "No filters provided", 200);
     }
 
     const matchStage: any = {};
-    if(filters.seller_id){
+    if (filters.seller_id) {
       matchStage.seller_id = new MongoObjectID(filters.seller_id);
-    }else{
-    matchStage.archieve_flag = false;
+    } else {
+      matchStage.archieve_flag = false;
     }
 
     if (filters.price) {
@@ -114,9 +118,9 @@ export class ProductService {
       },
       {
         $addFields: {
-          reviews_count: { $size: "$comments" }
-        }
-      }
+          reviews_count: { $size: "$comments" },
+        },
+      },
     ]);
     if (products instanceof Error)
       throw new InternalServerError("Internal Server Error");
@@ -152,17 +156,16 @@ export class ProductService {
       { $match: { archieve_flag: false } },
       {
         $addFields: {
-          reviews_count: { $size: "$comments" }
-        }
-      }
+          reviews_count: { $size: "$comments" },
+        },
+      },
     ]);
-    
+
     if (products instanceof Error)
       throw new InternalServerError("Internal Server Error");
 
     return new response(true, products, "All products are fetched", 200);
   }
-
 
   public async getProductsBySellerIdService(seller_id: string) {
     const products = await this.productModel.find({ seller_id: seller_id });
@@ -212,8 +215,8 @@ export class ProductService {
 
     const filterComponents: IFilterComponents = {
       Price: {
-        min: cheapestProduct.price,
-        max: highestProduct.price,
+        min: cheapestProduct?.price ?? 0,
+        max: highestProduct?.price ?? 0,
         type: "slider",
       },
     };
