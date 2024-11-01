@@ -606,6 +606,7 @@ export default class TouristService {
       booking_id: itinerary_id,
       cancelled: false,
       points_received: points_received,
+      time_to_attend: itinerary.available_dates[0]
     });
     ticket.save();
     if (ticket instanceof Error)
@@ -690,6 +691,7 @@ export default class TouristService {
       booking_id: historical_location_id,
       cancelled: false,
       points_received: points_received,
+      time_to_attend: new Date(`${historical_location.date.toISOString().split('T')[0]}T${historical_location.time}`), // Combine date and time
     });
     ticket.save();
 
