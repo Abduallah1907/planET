@@ -106,7 +106,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
     setShowAdvertiserModal(false);
   };
   const handleBookNow = () => {
-    navigate(`/book/${activityData?._id}`);
+    navigate(`/bookActivity/${activityData?._id}`);
   }
   return (
     <Container className="activity-card-container mt-5">
