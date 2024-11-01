@@ -15,7 +15,9 @@ import {
 export default class Historical_tagService {
   constructor(
     @Inject("historical_tagModel")
-    private historical_tagModel: Models.Historical_tagModel
+    private historical_tagModel: Models.Historical_tagModel,
+    @Inject("historical_locationModel")
+    private historical_locationsModel: Models.Historical_locationsModel
   ) {}
   // Get all historical tags
   public getAllHistorical_tagService = async () => {
@@ -96,6 +98,24 @@ export default class Historical_tagService {
   public deleteHistorical_tagService = async (id: string) => {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID");
+    }
+    //delete it from the hash map in historical location
+    const Historical_tag_check = await this.historical_tagModel.findById(
+      new Types.ObjectId(id)
+    );
+    if (Historical_tag_check instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+    if (Historical_tag_check == null) {
+      throw new NotFoundError("Historical Location not found");
+    }
+    const historical_location = await this.historical_locationsModel.updateMany(
+      { [`tags.${id}`]: { $exists: true } }, // Search for documents containing the tag in the 'tags' field
+      { $unset: { [`tags.${id}`]: "" } } // Remove the tag from the 'tags' field
+    );
+
+    if (historical_location instanceof Error) {
+      throw new InternalServerError("Internal server error");
     }
     const Historical_tag = await this.historical_tagModel.findByIdAndDelete(
       new Types.ObjectId(id)
