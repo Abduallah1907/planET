@@ -1,33 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Button, Form, Card } from 'react-bootstrap';
-import { FaWallet, FaCreditCard } from 'react-icons/fa';
+import { FaWallet, FaCreditCard, FaCcVisa, FaCcMastercard } from 'react-icons/fa';
 import { ActivityService } from '../services/ActivityService';
 import { IActivity } from '../types/IActivity';
 import './bookingPage.css';
-import { useAppSelector } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { TouristService } from '../services/TouristService';
+import { setWalletBalance as setWalletBalanceAction } from '../store/userSlice';
 
 interface BookingPageProps {
-    email: string;
-    }
+  email: string;
+}
 
-interface FormData {
-    firstName: string;
-    lastName: string;
-    email: string;
-    mobile: string;
-    profession: string;
-    password: string;
-    retypePassword: string;
-    username: string;
-    nationality: string;
-    dob: string;
-  }
-const BookingPage: React.FC<BookingPageProps>= ({email}) => {
+const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
   const { id } = useParams<{ id: string }>();
   const [activityData, setActivityData] = useState<IActivity | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<string>('wallet');
+  const [cardType, setCardType] = useState<string | null>(null);
   const Tourist = useAppSelector((state) => state.user);
 
   const [cardDetails, setCardDetails] = useState({
@@ -45,12 +35,13 @@ const BookingPage: React.FC<BookingPageProps>= ({email}) => {
     lastName: '',
   });
   const navigate = useNavigate();
-  const [walletBalance, setWalletBalance] = useState<number>(0);
+  const [walletBalance, setWalletBalanceState] = useState<number>(0);
+
   const getActivityById = async (id: string) => {
-    // Fetch activity data by id
     const activity = await ActivityService.getActivityById(id);
     setActivityData(activity.data);
   };
+
   useEffect(() => {
     if (id) {
       getActivityById(id);
@@ -58,21 +49,17 @@ const BookingPage: React.FC<BookingPageProps>= ({email}) => {
   }, [id]);
 
   useEffect(() => {
-  
-      const fetchWalletBalance = async () => {
-        try {
-          
-          if (Tourist) {
-            setWalletBalance(Tourist.stakeholder_id.wallet);
-          }
-        } catch (error) {
-          console.error('Error fetching wallet balance:', error);
+    const fetchWalletBalance = async () => {
+      try {
+        if (Tourist) {
+          setWalletBalanceState(Tourist.stakeholder_id.wallet);
         }
-      };
-  
-      fetchWalletBalance();
-    }, [id, email]);
-  
+      } catch (error) {
+        console.error('Error fetching wallet balance:', error);
+      }
+    };
+    fetchWalletBalance();
+  }, [id, email]);
 
   const handlePaymentMethodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPaymentMethod(e.target.value);
@@ -80,14 +67,27 @@ const BookingPage: React.FC<BookingPageProps>= ({email}) => {
 
   const handleCardDetailsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setCardDetails(prevDetails => ({
+
+    setCardDetails((prevDetails) => ({
       ...prevDetails,
       [name]: value,
     }));
-    setErrors(prevErrors => ({
+
+    setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: value ? '' : `Please enter your ${name}`,
     }));
+
+    if (name === 'cardNumber') {
+      // Determine card type
+      if (value.startsWith('4')) {
+        setCardType('Visa');
+      } else if (/^5[1-5]/.test(value) || /^2(2[2-9]|[3-6]|7[0-1]|720)/.test(value)) {
+        setCardType('MasterCard');
+      } else {
+        setCardType(null); // Reset if card type is not recognized
+      }
+    }
   };
 
   const validateCardDetails = () => {
@@ -102,27 +102,31 @@ const BookingPage: React.FC<BookingPageProps>= ({email}) => {
     return !newErrors.cardNumber && !newErrors.expiryDate && !newErrors.cvv;
   };
 
+  const dispatch = useAppDispatch();
+
   const handleConfirmPayment = async () => {
-    if (paymentMethod === 'bankCard' && !validateCardDetails()) {
-     if(!validateCardDetails()){
-        return;
-     }
-    }
     if (paymentMethod === 'wallet') {
-        if(walletBalance < (activityData?.price ?? 0)){
-            alert("Insufficient funds in wallet, please top up your wallet to proceed with payment!");
-            navigate('/TouristEdit');
-            return;
+      if (activityData && activityData.price !== undefined && walletBalance < activityData.price) {
+        alert('Insufficient balance in your wallet');
+        return;
+      }
+      try {
+        if (id) {
+          await TouristService.bookActivity(email, id);
+        } else {
+          console.error('Activity ID is undefined');
+          alert('An error occurred while booking activity');
         }
-        try {
-            if (activityData && activityData.price !== undefined) {
-              const newBalance = walletBalance - activityData.price;
-              
-              
+        const newBalance = walletBalance - (activityData && activityData.price ? activityData.price : 0);
+        setWalletBalanceState(newBalance);
+        dispatch(setWalletBalanceAction(newBalance));
+        alert('Activity booked successfully');
+        navigate('/Touristedit');
+      } catch (error) {
+        console.error('Error booking activity:', error);
+        alert('An error occurred while booking activity');
+      }
     }
-
-
-    navigate('/activity'); // Navigate to a confirmation page or another route
   };
 
   return (
@@ -169,13 +173,18 @@ const BookingPage: React.FC<BookingPageProps>= ({email}) => {
                   <div className="bank-card-details">
                     <Form.Group className="mb-3">
                       <Form.Label>Card Number</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="cardNumber"
-                        value={cardDetails.cardNumber}
-                        onChange={handleCardDetailsChange}
-                        placeholder="Enter card number"
-                      />
+                      <div className="d-flex align-items-center">
+                        <Form.Control
+                          type="text"
+                          name="cardNumber"
+                          value={cardDetails.cardNumber}
+                          onChange={handleCardDetailsChange}
+                          placeholder="Enter card number"
+                        />
+                        {/* Display icon based on card type */}
+                        {cardType === 'Visa' && <FaCcVisa className="ms-2 text-primary" />}
+                        {cardType === 'MasterCard' && <FaCcMastercard className="ms-2 text-danger" />}
+                      </div>
                       {errors.cardNumber && <div className="text-danger">{errors.cardNumber}</div>}
                     </Form.Group>
                     <Form.Group className="mb-3">
@@ -238,4 +247,4 @@ const BookingPage: React.FC<BookingPageProps>= ({email}) => {
   );
 };
 
-export default BookingPage;
+export default BookingActivity;

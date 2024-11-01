@@ -534,6 +534,7 @@ export default class TouristService {
       booking_id: activity_id,
       cancelled: false,
       points_received: points_received,
+      time_to_attend: new Date(`${activity.date.toISOString().split('T')[0]}T${activity.time}`), // Combine date and time
     });
 
     await ticket.save();

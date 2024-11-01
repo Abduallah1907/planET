@@ -58,7 +58,8 @@ import { Utils } from "./utils/utils";
 import FlightsPage from "./views/ViewingPages/Flights";
 import ComplaintForm from "./views/ViewingPages/ComplaintForm";
 
-import BookingPage from "./views/BookingPage";
+import BookingActivity from "./views/BookingActivity";
+import BookingItinerary from "./views/BookingItinerary";
 
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen);
@@ -103,7 +104,8 @@ const App: React.FC = () => {
 
 
           <Route path="/Activity/:id" element={<ActivityDetails />} />
-          <Route path="/book/:id" element={< BookingPage email= {email}/>} />
+          <Route path="/bookActivity/:id" element={< BookingActivity email= {email}/>} />
+          <Route path="/bookItinerary/:id" element={< BookingItinerary email= {email}/>} />
       
 
         <Route path="/Itinerary" element={<Itinerary />} />
