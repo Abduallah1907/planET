@@ -2,7 +2,7 @@ import axiosInstance from '../utils/axiosInstance';
 import axios from 'axios';
 
 class TouristService {
-
+ 
   
 
   
@@ -59,7 +59,7 @@ class TouristService {
 
   public static redeemPoints = async (email: string, points: number) => {
     try {
-      const response = await axiosInstance.put(`/tourist/redeemPoints/${email}`, {points});
+      const response = await axiosInstance.put(`/tourist/redeemPoints/`, {email,points});
       return response.data;
     } catch (error) {
       throw error;
@@ -78,6 +78,15 @@ class TouristService {
       throw error;
     }
   }
+ public static getWalletBalance() {
+    try {
+      return axiosInstance.get('/tourist/getWalletBalance');
+    } catch (error) {
+      throw error;
+    }
+}
+public 
+
 }
 
 export { TouristService };

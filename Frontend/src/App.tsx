@@ -62,10 +62,13 @@ import ForgetPassword from "./views/auth/ForgetPassword";
 import CheckOTP from "./views/auth/CheckOTP";
 import ChangePasswordG from "./views/auth/ChangePasswordG";
 
+import BookingPage from "./views/BookingPage";
+
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen);
   const dispatch = useAppDispatch();
   const navItems = useAppSelector((state) => state.sidebar.navItems);
+  const email = useAppSelector((state) => state.user.email);
   return (
     <AppProvider>
       <TopBar />
@@ -94,7 +97,11 @@ const App: React.FC = () => {
         <Route path="/test" element={<BookingLayout />} />
 
         <Route path="/Activity" element={<Activities />} />
-        <Route path="/Activity/:id" element={<ActivityDetails />} />
+
+
+          <Route path="/Activity/:id" element={<ActivityDetails />} />
+          <Route path="/book/:id" element={< BookingPage email= {email}/>} />
+      
 
         <Route path="/Itinerary" element={<Itinerary />} />
 
