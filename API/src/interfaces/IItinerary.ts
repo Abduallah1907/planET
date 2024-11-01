@@ -4,7 +4,6 @@ import { ISlot } from "./ISlot";
 
 type ObjectId = mongoose.Schema.Types.ObjectId;
 
-
 export interface IItinerary extends Document {
   activities: ObjectId[];
   timeline: ObjectId[];
@@ -22,7 +21,7 @@ export interface IItinerary extends Document {
   inappropriate_flag: boolean;
   tour_guide_id: ObjectId;
   name: string;
-  category: ObjectId;
+  category?: ObjectId;
   average_rating: number;
   createdAt?: Date;
   updatedAt?: Date;
@@ -31,7 +30,7 @@ export interface IItinerary extends Document {
 export interface IItineraryCreateDTO {
   tour_guide_id: ObjectId;
   name: string;
-  category: ObjectId;
+  category?: ObjectId;
   activities: ObjectId[];
   slots: ISlot[];
   locations: Location[];

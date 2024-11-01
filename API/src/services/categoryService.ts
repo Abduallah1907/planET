@@ -10,7 +10,11 @@ import { ICategoryDTO } from "@/interfaces/ICategory";
 @Service()
 export default class CategoryService {
   constructor(
-    @Inject("categoryModel") private categoryModel: Models.CategoryModel
+    @Inject("categoryModel") private categoryModel: Models.CategoryModel,
+    @Inject("activityModel") private activityModel: Models.ActivityModel,
+    @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel,
+    @Inject("historical_locationModel")
+    private historical_locationsModel: Models.Historical_locationsModel
   ) {}
   //create Category
   public createCategoryService = async (categoryDatainput: ICategoryDTO) => {
@@ -97,6 +101,39 @@ export default class CategoryService {
   public deleteCategoryService = async (id: string) => {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID");
+    }
+    const c = await this.categoryModel.findById(new Types.ObjectId(id));
+    if (c == null) {
+      throw new NotFoundError("Category not found");
+    }
+    //change all activities of this category to null
+    let bol = true;
+    while (bol) {
+      const activites = await this.activityModel.findOneAndUpdate(
+        { category: new Types.ObjectId(id) },
+        { category: null }
+      );
+      if (activites == null) {
+        bol = false;
+      }
+    }
+    //Do the same with iterinaries
+    const iterinaries = await this.itineraryModel.updateMany(
+      { category: new Types.ObjectId(id) },
+      { category: null }
+    );
+    if (iterinaries instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+
+    //do the same with historical locations
+
+    const historicalLocations = await this.historical_locationsModel.updateMany(
+      { category: new Types.ObjectId(id) },
+      { category: null }
+    );
+    if (historicalLocations instanceof Error) {
+      throw new InternalServerError("Internal server error");
     }
     const category = await this.categoryModel.findByIdAndDelete(
       new Types.ObjectId(id)
