@@ -10,6 +10,11 @@ class AmadeusService {
         });
     }
 
+    public static async searchFlights(data: object) {
+        const response = await axiosInstance.get('/amadeus/flightOffers', { params: data });
+        return response.data;
+    }
+
 }
 
 export default AmadeusService;

@@ -14,7 +14,7 @@ interface FormData {
 
 const ComplaintForm: React.FC = () => {
   const { id = "" } = useParams<{ id: string }>();
-  const tourist=useAppSelector((state)=>state.user.stakeholder_id);
+  const tourist = useAppSelector((state) => state.user.stakeholder_id);
   const [formData, setFormData] = useState<FormData>({
     title: "",
     problem: "",
@@ -34,10 +34,10 @@ const ComplaintForm: React.FC = () => {
     e.preventDefault();
     const data = {
       title: formData.title,
-      problem: formData.problem,
+      body: formData.problem,
       date: formData.date,
     };
-    await TouristService.fileComplaint(tourist._id,data);
+    await TouristService.fileComplaint(tourist._id, data);
   };
 
   const handleCancel = () => {

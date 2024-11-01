@@ -74,7 +74,9 @@ export default class Historical_locationService {
     }
   };
   public getAllHistorical_locationsService = async (data: any) => {
-    const Historical_location = await this.historical_locationsModel.find({ active_flag: true });
+    const Historical_location = await this.historical_locationsModel.find({
+      active_flag: true,
+    });
     if (Historical_location instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
@@ -98,6 +100,7 @@ export default class Historical_locationService {
         images: locationi.images,
         tags: locationi.tags,
         reviewsCount: locationi.comments.length,
+        category: locationi.category,
       }))
     );
     return new response(
@@ -121,6 +124,7 @@ export default class Historical_locationService {
       opening_hours_to: historical_locationInput.opening_hours_to,
       native_price: historical_locationInput.native_price,
       foreign_price: historical_locationInput.foreign_price,
+      category: historical_locationInput.category,
       student_price: historical_locationInput.student_price,
       tags: historical_locationInput.tags,
       active_flag: historical_locationInput.active_flag
@@ -409,14 +413,20 @@ export default class Historical_locationService {
     job: string;
     governer_id?: string;
   }) {
-    if (!filters || Object.keys(filters).length === 0 || (filters.governer_id && Object.keys(filters).length === 1)) {
-      const checks: any = {}
+    if (
+      !filters ||
+      Object.keys(filters).length === 0 ||
+      (filters.governer_id && Object.keys(filters).length === 1)
+    ) {
+      const checks: any = {};
       if (filters.governer_id) {
         checks.governer_id = filters.governer_id;
       } else {
         checks.active_flag = true;
       }
-      const historical_locations = await this.historical_locationsModel.find(checks);
+      const historical_locations = await this.historical_locationsModel.find(
+        checks
+      );
       return new response(
         true,
         historical_locations,
