@@ -161,7 +161,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
             >
               {activityData?.advertiser_id.user_id.name}
             </p>
-            <p className="Category">{activityData?.category.type}</p>
+            <p className="Category">{activityData?.category? activityData?.category.type: ""}</p>
             <p className="date">
               {activityData?.date
                 ? new Date(activityData.date).toLocaleDateString()
