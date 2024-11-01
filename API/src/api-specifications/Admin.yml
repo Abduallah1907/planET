@@ -371,35 +371,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    complaint_id:
-                      type: string
-                      format: objectId
-                      description: The ID of the complaint
-                    tourist_id:
-                      type: string
-                      format: objectId
-                      description: The ID of the tourist
-                    title:
-                      type: string
-                      description: The title of the complaint
-                    body:
-                      type: string
-                      description: The body of the complaint
-                    reply:
-                      type: string
-                      description: The reply from the admin (optional)
-                    date:
-                      type: string
-                      format: date-time
-                      description: The date the complaint was created
-                    status:
-                      type: string
-                      enum:
-                        - Pending
-                        - Resolved
-                      description: The current status of the complaint
+                  $ref: "#/components/schemas/Complaint"
         "500":
           description: Internal Server Error.
   /api/admin/getSortComplaintByDate/{page}:
@@ -433,35 +405,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    complaint_id:
-                      type: string
-                      format: objectId
-                      description: The ID of the complaint
-                    tourist_id:
-                      type: string
-                      format: objectId
-                      description: The ID of the tourist
-                    title:
-                      type: string
-                      description: The title of the complaint
-                    body:
-                      type: string
-                      description: The body of the complaint
-                    reply:
-                      type: string
-                      description: The reply from the admin (optional)
-                    date:
-                      type: string
-                      format: date-time
-                      description: The date the complaint was created
-                    status:
-                      type: string
-                      enum:
-                        - Pending
-                        - Resolved
-                      description: The current status of the complaint
+                  $ref: "#/components/schemas/Complaint"
         "400":
           description: The direction inputted was an invalid one, or there was no direction in the body
         "500":
@@ -500,35 +444,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    complaint_id:
-                      type: string
-                      format: objectId
-                      description: The ID of the complaint
-                    tourist_id:
-                      type: string
-                      format: objectId
-                      description: The ID of the tourist
-                    title:
-                      type: string
-                      description: The title of the complaint
-                    body:
-                      type: string
-                      description: The body of the complaint
-                    reply:
-                      type: string
-                      description: The reply from the admin (optional)
-                    date:
-                      type: string
-                      format: date-time
-                      description: The date the complaint was created
-                    status:
-                      type: string
-                      enum:
-                        - Pending
-                        - Resolved
-                      description: The current status of the complaint
+                  $ref: "#/components/schemas/Complaint"
         "400":
           description: The filter_status inputted was an invalid one, or there was no filtered_status in the body
         "500":
@@ -554,35 +470,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  complaint_id:
-                    type: string
-                    format: objectId
-                    description: The ID of the complaint
-                  tourist_id:
-                    type: string
-                    format: objectId
-                    description: The ID of the tourist
-                  title:
-                    type: string
-                    description: The title of the complaint
-                  body:
-                    type: string
-                    description: The body of the complaint
-                  reply:
-                    type: string
-                    description: The reply from the admin (optional)
-                  date:
-                    type: string
-                    format: date-time
-                    description: The date the complaint was created
-                  status:
-                    type: string
-                    enum:
-                      - Pending
-                      - Resolved
-                    description: The current status of the complaint
+                $ref: "#/components/schemas/Complaint"
         "500":
           description: Internal Server Error.
   /api/admin/markComplaintResolved/{complaint_id}:
@@ -660,3 +548,47 @@ paths:
           description: Could not find the complaint using the complaint_id
         "500":
           description: Internal Server Error.
+
+components:
+  schemas:
+    Complaint:
+      type: object
+      properties:
+        complaint_id:
+          type: string
+          format: objectId
+          description: The ID of the complaint
+        tourist_name:
+          type: object
+          properties:
+            _id:
+              type: string
+              format: objectId
+            user_id:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  format: objectId
+                name:
+                  type: string
+                  description: The name that you want :)
+        title:
+          type: string
+          description: The title of the complaint
+        body:
+          type: string
+          description: The body of the complaint
+        reply:
+          type: string
+          description: The reply from the admin (optional)
+        date:
+          type: string
+          format: date-time
+          description: The date the complaint was created
+        status:
+          type: string
+          enum:
+            - Pending
+            - Resolved
+          description: The current status of the complaint
