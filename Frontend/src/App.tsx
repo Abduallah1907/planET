@@ -58,6 +58,7 @@ import { Utils } from "./utils/utils";
 import FlightsPage from "./views/ViewingPages/Flights";
 import ComplaintForm from "./views/ViewingPages/ComplaintForm";
 import AllComplaints from "./components/Complaints/AllComplaints";
+import ComplaintsTable from "./components/Complaints/ComplaintsTable";
 
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen);

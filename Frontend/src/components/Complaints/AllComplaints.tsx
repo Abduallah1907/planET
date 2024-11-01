@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import FilterBy from "../FilterBy/FilterBy";
 import { useNavigate } from "react-router-dom";
+import ComplaintsTable from "./ComplaintsTable";
 
 export default function AllComplaints() {
   //   const navigate = useNavigate();
@@ -47,6 +48,7 @@ export default function AllComplaints() {
           </h1>
         </Col>
       </Row>
+      <ComplaintsTable />
       {/* <Row>
         <Col
           md={3}
