@@ -49,7 +49,7 @@ export default function Login() {
       const storedUser = {
         usernameOrEmail: userData.usernameOrEmail,
         password: Utils.encryptPassword(userData.password),
-      }
+      };
       localStorage.setItem("user", JSON.stringify(storedUser));
       dispatch(setUser(user));
       switch (user.status) {
@@ -153,6 +153,7 @@ export default function Login() {
               { path: "/HistoricalTags", label: "Historical Tags" },
               { path: "/UsersTable", label: "User Managment" },
               { path: "/ChangePasswordForm", label: "Change Password" },
+              { path: "/Complaints", label: "Complaints" },
             ])
           );
           navigate("/AdminDashboard");
@@ -179,9 +180,14 @@ export default function Login() {
             </h1>
             <h2 className="LOGIN">
               {t("new_to_planet")}
-           
-                <NavLink  className="orange-text signup-text" to={"/Registeration"} > {t("signup")}</NavLink>
-             
+
+              <NavLink
+                className="orange-text signup-text"
+                to={"/Registeration"}
+              >
+                {" "}
+                {t("signup")}
+              </NavLink>
             </h2>
             {showAlert ? (
               <Alert variant="danger" className="text-center">

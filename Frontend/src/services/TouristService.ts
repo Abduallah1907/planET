@@ -127,6 +127,15 @@ class TouristService {
     }
   };
 
+
+  public static deleteTourist = async (email: string) => {
+    try {
+      const response = await axiosInstance.delete(`/tourist/deleteTouristAccountRequest/${email}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { TouristService };

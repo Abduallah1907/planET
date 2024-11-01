@@ -57,6 +57,8 @@ import ChangePasswordG from "./views/auth/ChangePasswordG";
 import { Utils } from "./utils/utils";
 import FlightsPage from "./views/ViewingPages/Flights";
 import ComplaintForm from "./views/ViewingPages/ComplaintForm";
+import AllComplaints from "./components/Complaints/AllComplaints";
+import ComplaintsTable from "./components/Complaints/ComplaintsTable";
 
 import BookingActivity from "./views/BookingActivity";
 import BookingItinerary from "./views/BookingItinerary";
@@ -122,7 +124,10 @@ const App: React.FC = () => {
 
         <Route path="/AddNewProduct" element={<AddNewProduct />} />
         <Route path="/AddActivity" element={<AdvertiserCreate />} />
-        <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
+        <Route
+          path="/AddHistoricalLocation"
+          element={<AddHistoricalLocation />}
+        />
         <Route path="/AddItinerary" element={<AddItinerary />} />
 
         <Route path="/ActivityDetails/:id" element={<ActivityDetails />} />
@@ -130,8 +135,14 @@ const App: React.FC = () => {
         <Route path="/HistoricalDetails/:id" element={<HistoricalDetails />} />
 
         <Route path="/EditActivity/:activity_id" element={<EditActivity />} />
-        <Route path="/EditHistoricalLocation/:historical_location_id" element={<EditHistoricalLocation />} />
-        <Route path="/EditItinerary/:itinerary_id" element={<EditItinerary />} />
+        <Route
+          path="/EditHistoricalLocation/:historical_location_id"
+          element={<EditHistoricalLocation />}
+        />
+        <Route
+          path="/EditItinerary/:itinerary_id"
+          element={<EditItinerary />}
+        />
         <Route path="/EditProduct/:product_id" element={<EditProduct />} />
 
         <Route path="/MyActivities" element={<MyActivities />} />
@@ -149,10 +160,11 @@ const App: React.FC = () => {
         <Route path="/HistoricalTags" element={<HistoricalTagsTable />} />
         <Route path="/UsersTable" element={<UsersTable />} />
 
-        <Route path="/Complaint" element={<ComplaintForm/>} />
-        
+        <Route path="/Complaint" element={<ComplaintForm />} />
+
         <Route path="/ChangePasswordForm" element={<ChangePasswordForm />} />
         <Route path="/ChangePasswordG" element={<ChangePasswordG />} />
+        <Route path="/Complaints" element={<AllComplaints />} />
       </Routes>
     </AppProvider>
   );

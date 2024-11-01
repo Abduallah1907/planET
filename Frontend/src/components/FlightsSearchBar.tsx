@@ -45,7 +45,11 @@ interface Location {
     Highlighting: number[][];
 }
 
-const FlightsSearchBar: React.FC = () => {
+interface FlightSearchBarProps{
+    onSubmit?: (data: object) => void;
+}
+
+const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({onSubmit}) => {
     const { t } = useTranslation();
     const directionButtons = ["oneWay", "roundTrip"]
     const [flightDirection, setFlightDirection] = useState(0);
@@ -78,6 +82,8 @@ const FlightsSearchBar: React.FC = () => {
         'BUSINESS': 'Business Class',
         'FIRST': 'First Class'
     }
+
+    const [nonStop, setNonStop] = useState<boolean>(false);
 
     const fromDropdownRef = useRef<HTMLDivElement>(null);
     const toDropdownRef = useRef<HTMLDivElement>(null);
@@ -343,9 +349,12 @@ const FlightsSearchBar: React.FC = () => {
             children: children,
             infants: infants,
             travelClass: travelClass,
+            nonStop: nonStop,
             ...(flightDirection !== 0 && { returnDate: returnDate })
         }
-        console.log(formData)
+        if (onSubmit) {
+            onSubmit(formData);
+        }
     };
 
     const isOneWay = directionButtons[flightDirection] === "oneWay";
@@ -717,6 +726,15 @@ const FlightsSearchBar: React.FC = () => {
                     </Button>
                 </Col>
             </Row >
+            <Row>
+                <FormGroup className="flight-direct-check">
+                    <Form.Check
+                        type="checkbox"
+                        checked={nonStop}
+                        onChange={(e) => setNonStop(e.target.checked)}
+                        label={<span>Direct Flights</span>} />
+                </FormGroup>
+            </Row>
         </Form >
     );
 };
