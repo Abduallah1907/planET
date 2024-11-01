@@ -168,7 +168,7 @@ export default class AdvertiserService {
     // also whether dates acutally works is up to luck, pray
     const advertiserData = await this.advertiserModel.findOne({ user_id: advertiserUser._id }).populate({
       path: "activities",
-      match: { date: { $gt: today } },
+      match: { date: { $gte: today } },
     });
 
     if (!advertiserData) throw new NotFoundError("Advertiser account was not found");
