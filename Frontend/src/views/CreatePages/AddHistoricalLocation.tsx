@@ -73,7 +73,7 @@ const HistoricalPlaceForm: React.FC = () => {
 
   const Governer = useAppSelector((state) => state.user);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -85,7 +85,7 @@ const HistoricalPlaceForm: React.FC = () => {
     const reqData = {
       name: formData.name,
       location: { latitude: 0, longitude: 0 },
-      images: ["Testing"],
+      images: null,
       description: formData.description,
       opening_days: formData.openingDays,
       opening_hours_from: formData.openingFrom,
@@ -96,12 +96,9 @@ const HistoricalPlaceForm: React.FC = () => {
       tags: tagsMap,
       governor_id: Governer.stakeholder_id._id,
       active_flag: formData.active_flag,
-    }
-    await HistoricalService.addHistoricalLocation(
-      reqData
-    );
-    navigate('/MyHistoricalLocations')
-
+    };
+    await HistoricalService.addHistoricalLocation(reqData);
+    navigate("/MyHistoricalLocations");
   };
 
   const getAllHistoricalTags = async () => {
