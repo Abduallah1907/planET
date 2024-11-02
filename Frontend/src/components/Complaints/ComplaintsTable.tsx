@@ -33,6 +33,7 @@ export default function ComplaintsTable() {
 
   const getComplaintsData = async () => {
     const ComplaintsData = await AdminService.getComplaints();
+    console.log(ComplaintsData.data);
     setComplaints(ComplaintsData.data);
   };
   const handleStatusChange = (complaintId: string, newStatus: string) => {
