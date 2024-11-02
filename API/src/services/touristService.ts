@@ -25,9 +25,11 @@ import {
 } from "@/interfaces/IComment_rating";
 import Historical_locationService from "./Historical_locationService";
 import TouristBadge from "@/types/enums/touristBadge";
-import { ObjectId, Types } from "mongoose";
+import { ObjectId, Schema, Types } from "mongoose";
 import { IComplaintCreateDTO } from "@/interfaces/IComplaint";
-
+import { ITicketBooking } from "@/interfaces/ITicket";
+import TicketType from "@/types/enums/ticketType";
+import { time } from "console";
 // comment and ratings
 // complaint
 // order
@@ -528,7 +530,7 @@ export default class TouristService {
     }
 
     const ticket = new this.ticketModel({
-      tourist_id: tourist_id,
+      tourist_id: tourist_id as ObjectId,
       type: "ACTIVITY",
       price: activity.price,
       booking_id: activity_id,
@@ -1089,7 +1091,6 @@ export default class TouristService {
           throw new BadRequestError("Activity is not available for booking");
         //check if the activity have 48 left to start
         if (ticket.time_to_attend) {
-          console.log(ticket.time_to_attend);
           const diff = ticket.time_to_attend.getTime() - new Date().getTime();
           if (diff < 48 * 60 * 1000) {
             throw new BadRequestError(
@@ -1180,5 +1181,470 @@ export default class TouristService {
     await ticket.save();
     return new response(true, ticket, "Ticket cancelled", 200);
   }
-  
+  public async getPastActivityBookingsService(email: string) {
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+    });
+
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const tourist_id = tourist._id;
+
+    const tickets = await this.ticketModel.find({
+      tourist_id: tourist_id,
+      type: TicketType.Activity,
+      time_to_attend: { $lt: Date.now() },
+      cancelled: false,
+    });
+
+    if (tickets instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+
+    if (tickets == null) {
+      throw new NotFoundError("Ticket not found");
+    }
+
+    const activities = await Promise.all(
+      tickets.map((t) => this.activityModel.findById(t.booking_id))
+    );
+
+    const bookings: ITicketBooking[] = [];
+
+    for (let i = 0; i < tickets.length; i++) {
+      const t = tickets[i];
+      const activity = activities[i];
+
+      if (activity instanceof Error) {
+        throw new InternalServerError(
+          "Internal server error while fetching activity"
+        );
+      }
+
+      if (activity == null) {
+        throw new NotFoundError(
+          `Activity not found for booking_id: ${t.booking_id}`
+        );
+      }
+
+      bookings.push({
+        type: t.type,
+        booking_id: t.booking_id,
+        booking_name: activity.name, // Use the activity name
+        price: t.price,
+        cancelled: t.cancelled,
+        points_received: t.points_received,
+        time_to_attend: t.time_to_attend,
+        image: activity.image, // Use the activity image
+      });
+    }
+    if (bookings.length == 0) {
+      throw new NotFoundError("No past activity bookings found");
+    }
+
+    return new response(true, bookings, "Past activity bookings found", 200);
+  }
+  public async getUpcomingActivityBookingsService(email: string) {
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+    });
+
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const tourist_id = tourist._id;
+
+    const tickets = await this.ticketModel.find({
+      tourist_id: tourist_id,
+      type: TicketType.Activity,
+      time_to_attend: { $gte: Date.now() },
+      cancelled: false,
+    });
+
+    if (tickets instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+
+    if (tickets == null) {
+      throw new NotFoundError("Ticket not found");
+    }
+
+    const activities = await Promise.all(
+      tickets.map((t) => this.activityModel.findById(t.booking_id))
+    );
+
+    const bookings: ITicketBooking[] = [];
+
+    for (let i = 0; i < tickets.length; i++) {
+      const t = tickets[i];
+      const activity = activities[i];
+
+      if (activity instanceof Error) {
+        throw new InternalServerError(
+          "Internal server error while fetching activity"
+        );
+      }
+
+      if (activity == null) {
+        throw new NotFoundError(
+          `Activity not found for booking_id: ${t.booking_id}`
+        );
+      }
+      bookings.push({
+        type: t.type,
+        booking_id: t.booking_id,
+        booking_name: activity.name, // Use the activity name
+        price: t.price,
+        cancelled: t.cancelled,
+        points_received: t.points_received,
+        time_to_attend: t.time_to_attend,
+        image: activity.image, // Use the activity image
+      });
+    }
+
+    if (bookings.length == 0) {
+      throw new NotFoundError("No upcoming activity bookings found");
+    }
+
+    return new response(
+      true,
+      bookings,
+      "Upcoming activity bookings found",
+      200
+    );
+  }
+
+  public async getPastItineraryBookingsService(email: string) {
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+    });
+
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const tourist_id = tourist._id;
+
+    const tickets = await this.ticketModel.find({
+      tourist_id: tourist_id,
+      type: TicketType.Itinerary,
+      time_to_attend: { $lt: Date.now() },
+      cancelled: false,
+    });
+
+    if (tickets instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+
+    if (tickets == null) {
+      throw new NotFoundError("Ticket not found");
+    }
+
+    const itineraries = await Promise.all(
+      tickets.map((t) => this.itineraryModel.findById(t.booking_id))
+    );
+
+    const bookings: ITicketBooking[] = [];
+
+    for (let i = 0; i < tickets.length; i++) {
+      const t = tickets[i];
+      const itinerary = itineraries[i];
+
+      if (itinerary instanceof Error) {
+        throw new InternalServerError(
+          "Internal server error while fetching itinerary"
+        );
+      }
+
+      if (itinerary == null) {
+        throw new NotFoundError(
+          `Itinerary not found for booking_id: ${t.booking_id}`
+        );
+      }
+
+      bookings.push({
+        type: t.type,
+        booking_id: t.booking_id,
+        booking_name: itinerary.name, // Use the itinerary name
+        price: t.price,
+        cancelled: t.cancelled,
+        points_received: t.points_received,
+        time_to_attend: t.time_to_attend,
+      });
+    }
+    if (bookings.length == 0) {
+      throw new NotFoundError("No past itinerary bookings found");
+    }
+
+    return new response(true, bookings, "Past itinerary bookings found", 200);
+  }
+
+  public async getUpcomingItineraryBookingsService(email: string) {
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+    });
+
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const tourist_id = tourist._id;
+
+    const tickets = await this.ticketModel.find({
+      tourist_id: tourist_id,
+      type: TicketType.Itinerary,
+      time_to_attend: { $gte: Date.now() },
+      cancelled: false,
+    });
+
+    if (tickets instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+
+    if (tickets == null) {
+      throw new NotFoundError("Ticket not found");
+    }
+
+    const itineraries = await Promise.all(
+      tickets.map((t) => this.itineraryModel.findById(t.booking_id))
+    );
+
+    const bookings: ITicketBooking[] = [];
+
+    for (let i = 0; i < tickets.length; i++) {
+      const t = tickets[i];
+      const itinerary = itineraries[i];
+
+      if (itinerary instanceof Error) {
+        throw new InternalServerError(
+          "Internal server error while fetching itinerary"
+        );
+      }
+
+      if (itinerary == null) {
+        throw new NotFoundError(
+          `Itinerary not found for booking_id: ${t.booking_id}`
+        );
+      }
+
+      bookings.push({
+        type: t.type,
+        booking_id: t.booking_id,
+        booking_name: itinerary.name, // Use the itinerary name
+        price: t.price,
+        cancelled: t.cancelled,
+        points_received: t.points_received,
+        time_to_attend: t.time_to_attend,
+      });
+    }
+    if (bookings.length == 0) {
+      throw new NotFoundError("No upcoming itinerary bookings found");
+    }
+
+    return new response(
+      true,
+      bookings,
+      "Upcoming itinerary bookings found",
+      200
+    );
+  }
+
+  public async getPastHistoricalLocationBookingsService(email: string) {
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+    });
+
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const tourist_id = tourist._id;
+
+    const tickets = await this.ticketModel.find({
+      tourist_id: tourist_id,
+      type: TicketType.Historical_Location,
+      time_to_attend: { $lt: Date.now() },
+      cancelled: false,
+    });
+
+    if (tickets instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+
+    if (tickets == null) {
+      throw new NotFoundError("Ticket not found");
+    }
+
+    const historicalLocations = await Promise.all(
+      tickets.map((t) => this.historical_locationsModel.findById(t.booking_id))
+    );
+
+    const bookings: ITicketBooking[] = [];
+
+    for (let i = 0; i < tickets.length; i++) {
+      const t = tickets[i];
+      const historicalLocation = historicalLocations[i];
+
+      if (historicalLocation instanceof Error) {
+        throw new InternalServerError(
+          "Internal server error while fetching historical location"
+        );
+      }
+
+      if (historicalLocation == null) {
+        throw new NotFoundError(
+          `Historical location not found for booking_id: ${t.booking_id}`
+        );
+      }
+
+      bookings.push({
+        type: t.type,
+        booking_id: t.booking_id,
+        booking_name: historicalLocation.name, // Use the historical location name
+        price: t.price,
+        cancelled: t.cancelled,
+        points_received: t.points_received,
+        time_to_attend: t.time_to_attend,
+        image: historicalLocation.images[0], // Fetch only first image of historical location
+      });
+    }
+    if (bookings.length == 0) {
+      throw new NotFoundError("No past historical location bookings found");
+    }
+
+    return new response(
+      true,
+      bookings,
+      "Past historical location bookings found",
+      200
+    );
+  }
+
+  public async getUpcomingHistoricalLocationBookingsService(email: string) {
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+    });
+
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const tourist_id = tourist._id;
+
+    const tickets = await this.ticketModel.find({
+      tourist_id: tourist_id,
+      type: TicketType.Historical_Location,
+      time_to_attend: { $gte: Date.now() },
+      cancelled: false,
+    });
+
+    if (tickets instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+
+    if (tickets == null) {
+      throw new NotFoundError("Ticket not found");
+    }
+
+    const historicalLocations = await Promise.all(
+      tickets.map((t) => this.historical_locationsModel.findById(t.booking_id))
+    );
+
+    const bookings: ITicketBooking[] = [];
+
+    for (let i = 0; i < tickets.length; i++) {
+      const t = tickets[i];
+      const historicalLocation = historicalLocations[i];
+
+      if (historicalLocation instanceof Error) {
+        throw new InternalServerError(
+          "Internal server error while fetching historical location"
+        );
+      }
+
+      if (historicalLocation == null) {
+        throw new NotFoundError(
+          `Historical location not found for booking_id: ${t.booking_id}`
+        );
+      }
+
+      bookings.push({
+        type: t.type,
+        booking_id: t.booking_id,
+        booking_name: historicalLocation.name, // Use the historical location name
+        price: t.price,
+        cancelled: t.cancelled,
+        points_received: t.points_received,
+        time_to_attend: t.time_to_attend,
+        image: historicalLocation.images[0], // Fetch only first image of historical location
+      });
+    }
+    if (bookings.length == 0) {
+      throw new NotFoundError("No upcoming historical location bookings found");
+    }
+
+    return new response(
+      true,
+      bookings,
+      "Upcoming historical location bookings found",
+      200
+    );
+  }
 }
