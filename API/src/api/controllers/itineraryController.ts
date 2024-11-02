@@ -41,22 +41,22 @@ export class ItineraryController {
     res.status(deletedItinerary.status).json(deletedItinerary);
   }
 
-  public async deactivateItinerary(req: Request, res: Response): Promise<any> {
-    const { itinerary_id } = req.params;
-    const itinerary_idObjectId = new Types.ObjectId(itinerary_id);
+  // public async deactivateItinerary(req: Request, res: Response): Promise<any> {
+  //   const { itinerary_id } = req.params;
+  //   const itinerary_idObjectId = new Types.ObjectId(itinerary_id);
 
-    const itineraryService: ItineraryService = Container.get(ItineraryService);
-    const updatedItinerary = await itineraryService.deactivateItineraryService(itinerary_idObjectId);
-    res.status(updatedItinerary.status).json(updatedItinerary);
-  }
-  public async activateItinerary(req: Request, res: Response): Promise<any> {
-    const { itinerary_id } = req.params;
-    const itinerary_idObjectId = new Types.ObjectId(itinerary_id);
+  //   const itineraryService: ItineraryService = Container.get(ItineraryService);
+  //   const updatedItinerary = await itineraryService.deactivateItineraryService(itinerary_idObjectId);
+  //   res.status(updatedItinerary.status).json(updatedItinerary);
+  // }
+  // public async activateItinerary(req: Request, res: Response): Promise<any> {
+  //   const { itinerary_id } = req.params;
+  //   const itinerary_idObjectId = new Types.ObjectId(itinerary_id);
 
-    const itineraryService: ItineraryService = Container.get(ItineraryService);
-    const updatedItinerary = await itineraryService.activateItineraryService(itinerary_idObjectId);
-    res.status(updatedItinerary.status).json(updatedItinerary);
-  }
+  //   const itineraryService: ItineraryService = Container.get(ItineraryService);
+  //   const updatedItinerary = await itineraryService.activateItineraryService(itinerary_idObjectId);
+  //   res.status(updatedItinerary.status).json(updatedItinerary);
+  // }
 
   public async flagItinerary(req: Request, res: Response): Promise<any> {
     const { itinerary_id } = req.params;
@@ -141,9 +141,7 @@ export class ItineraryController {
       filters = { ...filters, languages: languages };
     }
     if (tour_guide_id) filters = { ...filters, tour_guide_id: tour_guide_id };
-    const itineraries = await itineraryService.getFilteredItinerariesService(
-      filters
-    );
+    const itineraries = await itineraryService.getFilteredItinerariesService(filters);
     res.status(itineraries.status).json(itineraries);
   }
   public async getSortedItineraries(req: any, res: any) {

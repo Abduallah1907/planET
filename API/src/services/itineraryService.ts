@@ -50,7 +50,6 @@ export default class ItineraryService {
       .populate("activities")
       .populate("timeline");
     if (itineraryData instanceof Error) throw new InternalServerError("Internal server error");
-    
 
     if (!itineraryData) throw new HttpError("Itinerary not found", 404);
 
@@ -81,6 +80,9 @@ export default class ItineraryService {
     // Find the itinerary by ID
     const itinerary = await this.itineraryModel.findById(itinerary_id);
     if (!itinerary) throw new NotFoundError("Itinerary not found");
+
+    if (itineraryUpdatedData.active_flag === true) this.activateItineraryService(itinerary_id);
+    else this.deactivateItineraryService(itinerary_id);
 
     // Delete all slots with ObjectIds in itinerary.timeline
     await this.slotModel.deleteMany({ _id: { $in: itinerary.timeline } });
@@ -119,10 +121,10 @@ export default class ItineraryService {
     return new response(true, { itinerary_id: deletedItinerary._id }, "Itinerary deleted!", 200);
   }
 
-  public async deactivateItineraryService(itinerary_id: Types.ObjectId): Promise<any> {
+  private async deactivateItineraryService(itinerary_id: Types.ObjectId): Promise<any> {
     const itinerary = await this.itineraryModel.findById(itinerary_id);
     if (!itinerary) throw new NotFoundError("Itinerary not found! Did you enter the correct itinerary id?");
-    if (itinerary.active_flag === false) throw new ConflictError("The itinerary is already deactived");
+    // if (itinerary.active_flag === false) throw new ConflictError("The itinerary is already deactived");
 
     itinerary.active_flag = false;
     await itinerary.save();
@@ -130,11 +132,11 @@ export default class ItineraryService {
     return new response(true, { itinerary_id: itinerary_id }, "Itinerary deactivated", 200);
   }
 
-  public async activateItineraryService(itinerary_id: Types.ObjectId): Promise<any> {
+  private async activateItineraryService(itinerary_id: Types.ObjectId): Promise<any> {
     const itinerary = await this.itineraryModel.findById(itinerary_id);
     if (!itinerary) throw new NotFoundError("Itinerary not found! Did you enter the correct itinerary id?");
 
-    if (itinerary.active_flag === true) throw new ConflictError("The itinerary is already active");
+    // if (itinerary.active_flag === true) throw new ConflictError("The itinerary is already active");
     // we check if there's bookings, since, the excel mentions that "itineraries with bookings can only be deactivated"
     // need to double check with the ta on this info, but if it is true then the user must be warned with this information too
 
@@ -204,8 +206,6 @@ export default class ItineraryService {
       tags: itinerary.tags,
       reviews_count: itinerary.comments.length,
     }));
-   
-   
 
     return new response(true, itinerartiesOutput, "Page " + page + " of itineraries", 200);
   }
