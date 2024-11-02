@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Button, Form, Table } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Form,
+  Table,
+  Modal,
+} from "react-bootstrap";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import { useAppSelector } from "../../store/hooks";
 import { TourGuideServices } from "../../services/TourGuideServices";
@@ -29,7 +37,10 @@ const TourGuideFirst: React.FC = () => {
   });
 
   const [createdWork, setCreatedWork] = useState<WorkExperience[]>([]);
-
+  // Added state for modal visibility
+  const [showModal, setShowModal] = useState(false);
+  const handleShowModal = () => setShowModal(true); // <-- New handler to show modal
+  const handleCloseModal = () => setShowModal(false); // <-- New handler to close modal // <-- New state for modal
   useEffect(() => {
     setFormData({
       yearsOfExperience: "",
@@ -264,6 +275,23 @@ const TourGuideFirst: React.FC = () => {
             </Button>
           </Col>
         </Row>
+        {/* Terms and Conditions Checkbox */}
+        <div key="default-checkbox1" className="mb-4">
+          <Form.Check
+            type="checkbox"
+            label={
+              <span>
+                I agree to all the{" "}
+                <a href="#" onClick={handleShowModal} className="terms-link">
+                  {" "}
+                  {/* <-- Updated to open modal */}
+                  Terms & Conditions
+                </a>{" "}
+              </span>
+            }
+            required
+          />
+        </div>
 
         <div className="form-actions">
           <Button type="submit" className="update-btn" onClick={OnClick}>
@@ -274,6 +302,43 @@ const TourGuideFirst: React.FC = () => {
           </Button>
         </div>
       </Form>
+      {/* Terms and Conditions Modal */}
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Terms & Conditions</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h5>Terms & Conditions</h5>
+          <p>
+            By using this service, you agree to the following terms and
+            conditions:
+          </p>
+          <ul>
+            <li>You must be at least 18 years old to use this service.</li>
+            <li>
+              All information provided by you must be accurate and complete.
+            </li>
+            <li>
+              We reserve the right to modify or terminate the service for any
+              reason.
+            </li>
+            <li>
+              You are responsible for maintaining the confidentiality of your
+              account.
+            </li>
+            <li>
+              Any violation of these terms may result in termination of your
+              account.
+            </li>
+          </ul>
+          <p>For more detailed information, please contact our support team.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
