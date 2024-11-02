@@ -25,8 +25,11 @@ import {
 } from "@/interfaces/IComment_rating";
 import Historical_locationService from "./Historical_locationService";
 import TouristBadge from "@/types/enums/touristBadge";
-import { ObjectId, Types } from "mongoose";
+import { Document, ObjectId, Types } from "mongoose";
 import { IComplaintCreateDTO } from "@/interfaces/IComplaint";
+import { ITourGuideInfoOutputDTO } from "@/interfaces/ITour_guide";
+import { IUser } from "@/interfaces/IUser";
+import itinerary from "@/api/routes/itinerary";
 
 // comment and ratings
 // complaint
@@ -1180,5 +1183,50 @@ export default class TouristService {
     await ticket.save();
     return new response(true, ticket, "Ticket cancelled", 200);
   }
-  
+  public async showMyTourGuidesService(tourist_id: string) {
+    if (!Types.ObjectId.isValid(tourist_id)) {
+      throw new BadRequestError("Invalid id ");
+    }
+    const tourist = await this.touristModel.findById(tourist_id);
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+    const tickets = await this.ticketModel.find({
+      tourist_id: new Types.ObjectId(tourist_id),
+      type: "ITINERARY",
+    });
+    if (tickets instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tickets == null) throw new NotFoundError("Tickets not found");
+    let tour_guides: any[] = [];
+    let users = [];
+    let tour_guides_info: ITourGuideInfoOutputDTO[] = [];
+    let tour_guide_info: ITourGuideInfoOutputDTO;
+    let itinerary: any;
+    for (let i = 0; i < tickets.length; i++) {
+      itinerary = await this.itineraryModel.findById(tickets[i].booking_id);
+      let tour_guide = await this.tour_guideModel.findById({
+        _id: itinerary.tour_guide_id,
+      });
+      if (tour_guide) {
+        //check if the tour guide is already in the list
+        if (!tour_guides.some((tg) => tg._id.equals(tour_guide._id))) {
+          tour_guides.push(tour_guide);
+          let user = await this.userModel.findById(tour_guide.user_id);
+          users.push(user);
+          if (user) {
+            tour_guide_info = {
+              firstName: user.name.split(" ")[0],
+              lastName: user.name.split(" ")[1],
+              email: user.email,
+              logo: tour_guide.logo,
+              iternary_name: itinerary.name,
+            };
+            tour_guides_info.push(tour_guide_info);
+          }
+        }
+      }
+    }
+    return new response(true, tour_guides_info, "Tour guides found", 200);
+  }
 }

@@ -1,4 +1,8 @@
-import { ITourist, ITouristCreateDTO, ITouristUpdateDTO } from "@/interfaces/ITourist";
+import {
+  ITourist,
+  ITouristCreateDTO,
+  ITouristUpdateDTO,
+} from "@/interfaces/ITourist";
 import {
   IComment_Rating,
   IComment_RatingCreateDTOforActivity,
@@ -25,7 +29,9 @@ export class TouristController {
   public async createTourist(req: any, res: any) {
     const touristData: ITouristCreateDTO = req.body;
     const touristService: TouristService = Container.get(TouristService);
-    const createdTourist = await touristService.createTouristService(touristData);
+    const createdTourist = await touristService.createTouristService(
+      touristData
+    );
     res.status(createdTourist.status).json(createdTourist);
   }
 
@@ -33,35 +39,51 @@ export class TouristController {
     const { searchEmail } = req.params;
     const touristUpdateData: ITouristUpdateDTO = req.body;
     const touristService: TouristService = Container.get(TouristService);
-    const updatedTourist = await touristService.updateTouristService(searchEmail, touristUpdateData);
+    const updatedTourist = await touristService.updateTouristService(
+      searchEmail,
+      touristUpdateData
+    );
     res.status(updatedTourist.status).json(updatedTourist);
   }
 
-  public async deleteTouristAccountRequest(req: Request, res: Response): Promise<any> {
+  public async deleteTouristAccountRequest(
+    req: Request,
+    res: Response
+  ): Promise<any> {
     const { email } = req.params;
     const touristService: TouristService = Container.get(TouristService);
-    const deletionRequest = await touristService.requestTouristAccountDeletionService(email);
+    const deletionRequest =
+      await touristService.requestTouristAccountDeletionService(email);
     res.status(deletionRequest.status).json(deletionRequest);
   }
   public async rateAndCommentTour_guide(req: any, res: any) {
     const { tourist_id } = req.params;
     const data: IComment_RatingCreateDTOfortourGuide = req.body;
     const touristService: TouristService = Container.get(TouristService);
-    const ratedTourist = await touristService.rateAndCommentTour_guideService(tourist_id, data);
+    const ratedTourist = await touristService.rateAndCommentTour_guideService(
+      tourist_id,
+      data
+    );
     res.status(ratedTourist.status).json(ratedTourist);
   }
   public async rateAndCommentItinerary(req: any, res: any) {
     const { tourist_id } = req.params;
     const data: IComment_RatingCreateDTOforItinerary = req.body;
     const touristService: TouristService = Container.get(TouristService);
-    const ratedTourist = await touristService.rateAndCommentItineraryService(tourist_id, data);
+    const ratedTourist = await touristService.rateAndCommentItineraryService(
+      tourist_id,
+      data
+    );
     res.status(ratedTourist.status).json(ratedTourist);
   }
   public async rateAndCommentActivity(req: any, res: any) {
     const { tourist_id } = req.params;
     const data: IComment_RatingCreateDTOforActivity = req.body;
     const touristService: TouristService = Container.get(TouristService);
-    const ratedTourist = await touristService.rateAndCommentActivityService(tourist_id, data);
+    const ratedTourist = await touristService.rateAndCommentActivityService(
+      tourist_id,
+      data
+    );
     res.status(ratedTourist.status).json(ratedTourist);
   }
 
@@ -211,5 +233,13 @@ export class TouristController {
       ticket_id
     );
     res.status(cancelledTicket.status).json(cancelledTicket);
+  }
+  public async showMyTourGuides(req: any, res: any) {
+    const { tourist_id } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const showTourGuides = await touristService.showMyTourGuidesService(
+      tourist_id
+    );
+    res.status(showTourGuides.status).json(showTourGuides);
   }
 }

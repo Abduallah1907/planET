@@ -103,4 +103,9 @@ export default (app: Router) => {
     touristController.cancelTicket
   );
   route.put("/redeemPoints", touristController.redeemPoints);
+  route.get(
+    "/getMyTourGuides/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.showMyTourGuides
+  );
 };
