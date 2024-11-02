@@ -68,7 +68,6 @@ export default class UserService {
         username: loginData.username,
       });
     }
-
     if (user instanceof Error)
       throw new InternalServerError("Internal server error");
 
@@ -80,18 +79,14 @@ export default class UserService {
     );
     if (!isPasswordValid) throw new BadRequestError("Password is incorrect");
 
-    // if (user == null) throw new NotFoundError("User not found");
-    // // throw new Error("User not found");
-    // if (user.password !== loginData.password)
-    //   throw new BadRequestError("Password is incorrect");
-
     const user_id = user._id;
     const role = user.role;
     let stakeholder_id;
     switch (role) {
       case UserRoles.Admin:
+        break;
       case UserRoles.Seller:
-        const seller = await this.sellerModel.findOne({ user_id });
+        const seller = await this.sellerModel.findOne({ user_id: user_id });
         if (seller instanceof Error)
           throw new InternalServerError("Internal server error");
         if (seller == null) throw new NotFoundError("Seller not found");
@@ -99,7 +94,7 @@ export default class UserService {
         break;
 
       case UserRoles.Tourist:
-        const tourist = await this.touristModel.findOne({ user_id });
+        const tourist = await this.touristModel.findOne({ user_id: user_id });
         if (tourist instanceof Error)
           throw new InternalServerError("Internal server error");
         if (tourist == null) throw new NotFoundError("Tourist not found");
@@ -107,7 +102,9 @@ export default class UserService {
         break;
 
       case UserRoles.Advertiser:
-        const advertiser = await this.advertiserModel.findOne({ user_id });
+        const advertiser = await this.advertiserModel.findOne({
+          user_id: user_id,
+        });
         if (advertiser instanceof Error)
           throw new InternalServerError("Internal server error");
         if (advertiser == null) throw new NotFoundError("Advertiser not found");
@@ -116,7 +113,7 @@ export default class UserService {
 
       case UserRoles.TourGuide:
         const tourGuide = await this.tourGuideModel
-          .findOne({ user_id })
+          .findOne({ user_id: user_id })
           .populate("previous_work_description");
         if (tourGuide instanceof Error)
           throw new InternalServerError("Internal server error");
@@ -125,7 +122,7 @@ export default class UserService {
         break;
 
       case UserRoles.Governor:
-        const governor = await this.governorModel.findOne({ user_id });
+        const governor = await this.governorModel.findOne({ user_id: user_id });
         if (governor instanceof Error)
           throw new InternalServerError("Internal server error");
         if (governor == null) throw new NotFoundError("Governor not found");
@@ -163,6 +160,7 @@ export default class UserService {
 
     return new response(true, userOutput, "User found", 200);
   }
+
 
   public async forgetPasswordService(email: string) {
     const mailerServiceInstance = Container.get(MailerService);
