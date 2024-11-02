@@ -1,73 +1,85 @@
 .table-container {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
-  }
-  
-  .styled-table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 2px solid #e0a16e;
-    border-radius: 10px;
-    overflow: hidden;
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
 
-  }
-  
-  .styled-table th, 
-  .styled-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .styled-table th {
-    background-color: #f4f4f4;
-    color: #333;
-    font-weight: bold;
-  }
-  
-  .styled-table tr {
-    transition: background-color 0.3s ease;
-  }
-  
-  .styled-table tr:hover {
-    background-color: #f5f5f5;
-  }
-  
-  .styled-table .active-row {
-    background-color: #d4edda;
-  }
-  
-  .styled-table .closed-row {
-    background-color: #f8d7da;
-  }
-  
-  .update-btn {
-    background-color: #e0a16e;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .update-btn:hover {
-    background-color: var(--secondary-color);
-    border: 2px solid var(--main-color);
-  }
-  
-  .delete-btn {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    margin-left: 10px;
-    cursor: pointer;
-  }
-  
-  .delete-btn:hover {
-    background-color: #c82333;
-  }
-  
-  
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #e0a16e;
+  border-radius: 10px;
+  overflow: hidden;
+
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.styled-table th {
+  background-color: #f4f4f4;
+  color: #333;
+  font-weight: bold;
+}
+
+.styled-table tr {
+  transition: background-color 0.3s ease;
+}
+
+.styled-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.styled-table .active-row {
+  background-color: #d4edda;
+}
+
+.styled-table .closed-row {
+  background-color: #f8d7da;
+}
+
+.update-btn {
+  background-color: #e0a16e;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.update-btn:hover {
+  background-color: var(--secondary-color);
+  border: 2px solid var(--main-color);
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+}
+
+.custom-pagination-item .page-link {
+  color: var(--main-color);
+}
+
+.custom-pagination-item.active .page-link {
+  background-color: var(--main-color);
+  color: white;
+  border-color: var(--main-color);
+}
+
+.custom-pagination-item.active .page-link:focus {
+  box-shadow: 0 0 0 0.25rem rgba(215, 111, 48, 0.25);;
+}

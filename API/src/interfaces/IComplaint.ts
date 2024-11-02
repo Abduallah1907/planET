@@ -16,3 +16,11 @@ export interface IComplaintCreateDTO {
   date?: Date;
   body: string;
 }
+
+export interface IComplaintAdminViewDTO {
+  tourist_name: ObjectId;
+  complaint_id: ObjectId;
+  title: string;
+  date: Date;
+  status: ComplaintStatus;
+}

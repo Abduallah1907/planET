@@ -71,7 +71,7 @@ export default function ActivitiesPage() {
   });
 
   const onActivityClick = (id: string) => {
-    navigate(`/activity/${id}`);
+    navigate(`/ActivityDetails/${id}`);
   };
 
   const filteredActivities = sortedActivities.filter((activity) =>
@@ -156,7 +156,7 @@ export default function ActivitiesPage() {
                   id={activity._id}
                   Name={activity.name}
                   location={"cairo"}
-                  category={activity.category.type}
+                  category={activity.category ? activity.category.type: ""} // Category is an object
                   tags={activity.tags.map((item: { type: any }) => item.type)}
                   image={""}
                   RatingVal={activity.average_rating}

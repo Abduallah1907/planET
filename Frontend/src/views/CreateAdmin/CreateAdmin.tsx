@@ -204,8 +204,8 @@ const CreateAdmin: React.FC = () => {
           </Row>
 
           <div className="form-actions">
-            <Button type="submit" className="update-btn">
-              Create admin
+            <Button type="submit" variant="main-inverse">
+              Create Admin
             </Button>
           </div>
         </Form>

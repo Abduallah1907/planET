@@ -7,7 +7,6 @@ const activitySchema = new mongoose.Schema(
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: true,
     },
     comments: [
       {
@@ -81,9 +80,6 @@ const activitySchema = new mongoose.Schema(
 );
 // Pre-save validation to ensure only one of `price` or `priceRange` is provided
 
-const Activity = mongoose.model<IActivity & mongoose.Document>(
-  "Activity",
-  activitySchema
-);
+const Activity = mongoose.model<IActivity & mongoose.Document>("Activity", activitySchema);
 
 export default Activity;

@@ -1,5 +1,5 @@
 import React from "react";
-import { Navbar, Button, Dropdown, Container, Nav, Row } from "react-bootstrap";
+import { Navbar, Button, Dropdown, Container, Nav, Row, Col } from "react-bootstrap";
 import "./topbar.css";
 import Logo from "../../assets/LogoNoBackground.svg";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,8 @@ import { FaBars } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { toggleSidebar } from "../../store/sidebarSlice";
 import Avatar from "../Avatar/Avatar";
+import { SlBadge } from "react-icons/sl";
+
 
 const TopBar: React.FC = () => {
 
@@ -66,9 +68,6 @@ const TopBar: React.FC = () => {
 
   return (
     <Navbar expand="lg" className="top-bar" variant="dark">
-
-
-
       <Container fluid>
         {sidebarState ?
           <div className="sidebar-toggle-icon" onClick={() => dispatch(toggleSidebar())}>
@@ -147,7 +146,7 @@ const TopBar: React.FC = () => {
 
             {/* Currency Dropdown */}
             <Dropdown className="currency-dropdown">
-              <Dropdown.Toggle className="btn-text btn-main dropdown-toggle">
+              <Dropdown.Toggle className="btn-text btn-main dropdown-toggle p-1">
                 {t(currency.toLowerCase())}
               </Dropdown.Toggle>
               <Dropdown.Menu>
@@ -181,13 +180,27 @@ const TopBar: React.FC = () => {
             </Button>
 
             {IsLoggedIn ? (
-              <>
-                <Row>
-                  <h4 className="btn-text">{User.username}</h4>
-                </Row>
-                <Avatar />
+              <Row>
+                <Col className="pe-0 d-flex flex-column justify-content-center">
+                  <Avatar/>
+                </Col>
+                <Col>
 
-              </>
+                  <Row>
+                    <h5 className="text-white m-0">{User.username}</h5>
+                  </Row>
+
+                  {User.role === "TOURIST" ? (
+                    <Row>
+                      <SlBadge />
+                    </Row>
+
+                  ) : (null)}
+                </Col>
+
+
+
+              </Row>
             ) : (
               <>
                 <Button variant="" className="btn-text" onClick={handleJoinUs}>

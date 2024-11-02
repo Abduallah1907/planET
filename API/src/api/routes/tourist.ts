@@ -21,19 +21,19 @@ export default (app: Router) => {
   );
   route.post("/createTourist", touristController.createTourist);
   route.post(
-    "/rateandcommentTourGuide/:tourist_id",
+    "/rateAndCommentTourGuide/:tourist_id",
     authorize([UserRoles.Tourist]),
-    touristController.rateandcommentTour_guide
+    touristController.rateAndCommentTour_guide
   );
   route.post(
-    "/rateandcommentItinerary/:tourist_id",
+    "/rateAndCommentItinerary/:tourist_id",
     authorize([UserRoles.Tourist]),
-    touristController.rateandcommentItinerary
+    touristController.rateAndCommentItinerary
   );
   route.post(
-    "/rateandcommentActivity/:tourist_id",
+    "/rateAndCommentActivity/:tourist_id",
     authorize([UserRoles.Tourist]),
-    touristController.rateandcommentActivity
+    touristController.rateAndCommentActivity
   );
 
   route.delete(
@@ -88,14 +88,14 @@ export default (app: Router) => {
     touristController.viewComplaints
   );
   route.get(
-    "/flagtoRateandcommentProduct/:tourist_id",
+    "/flagToRateAndCommentProduct/:tourist_id",
     authorize([UserRoles.Tourist]),
-    touristController.flagtoRateandcommentProduct
+    touristController.flagToRateAndCommentProduct
   );
   route.post(
-    "/rateandcommentProduct/:tourist_id",
+    "/rateAndCommentProduct/:tourist_id",
     authorize([UserRoles.Tourist]),
-    touristController.RateandcommentProduct
+    touristController.rateAndCommentProduct
   );
   route.put(
     "/cancelTicket/:tourist_id",

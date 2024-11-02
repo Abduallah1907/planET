@@ -4,8 +4,8 @@ import { Container } from 'react-bootstrap';
 
 const LatestReviews: React.FC = () => {
   return (
-    <Container className='allcont mt-4'>
-    <div className="reviews-section">
+    <Container className='mt-4'>
+    <div className="reviews-section allcont">
       <h2>Latest Reviews</h2>
       <div className="reviews-list">
         {[...Array(3)].map((_, index) => (

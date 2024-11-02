@@ -1,7 +1,6 @@
-import axiosInstance from '../utils/axiosInstance';
+import axiosInstance from "../utils/axiosInstance";
 
 class AdminService {
-
   // Function to delete user account
   public static deleteUser = async (email: any) => {
     try {
@@ -19,18 +18,18 @@ class AdminService {
       throw error;
     }
   };
-  public static createAdmin = async (data:any) => {
+  public static createAdmin = async (data: any) => {
     try {
-      const response = await axiosInstance.post(`/admin/createAdmin/`,data);
+      const response = await axiosInstance.post(`/admin/createAdmin/`, data);
       return response.data;
     } catch (error) {
       throw error;
     }
   };
 
-  public static createGovernor = async (data:any) => {
+  public static createGovernor = async (data: any) => {
     try {
-      const response = await axiosInstance.post(`/admin/createGovernor/`,data);
+      const response = await axiosInstance.post(`/admin/createGovernor/`, data);
       return response.data;
     } catch (error) {
       throw error;
@@ -38,21 +37,55 @@ class AdminService {
   };
   public static getTags = async (page: number) => {
     try {
-    const response = await axiosInstance.get(`/admin/getTags/${page}`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  }
-  public static changePass = async (email: string, AdminData: object) => {
-    try {
-      const response = await axiosInstance.put(`/admin/updateAdmin/${email}`, AdminData);
+      const response = await axiosInstance.get(`/admin/getTags/${page}`);
       return response.data;
     } catch (error) {
       throw error;
     }
   };
-  
+  public static changePass = async (email: string, AdminData: object) => {
+    try {
+      const response = await axiosInstance.put(
+        `/admin/updateAdmin/${email}`,
+        AdminData
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static getComplaints = async () => {
+    try {
+      const response = await axiosInstance.get(`/admin/getComplaints/1`);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static markResolved = async (id: string) => {
+    try {
+      const response = await axiosInstance.put(
+        `/admin/markComplaintResolved/${id}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static markPending = async (id: string) => {
+    try {
+      const response = await axiosInstance.put(
+        `/admin/markComplaintPending/${id}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 export { AdminService };

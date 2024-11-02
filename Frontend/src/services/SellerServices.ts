@@ -23,6 +23,14 @@ class SellerServices {
       throw error;
     }
   };
+  public static deleteSellerServices = async (email: string) => {
+    try {
+      const response = await axiosInstance.delete(`/seller/deleteSellerAccountRequest/${email}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   
 }

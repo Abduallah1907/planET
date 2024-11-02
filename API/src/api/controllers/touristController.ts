@@ -43,25 +43,25 @@ export class TouristController {
     const deletionRequest = await touristService.requestTouristAccountDeletionService(email);
     res.status(deletionRequest.status).json(deletionRequest);
   }
-  public async rateandcommentTour_guide(req: any, res: any) {
+  public async rateAndCommentTour_guide(req: any, res: any) {
     const { tourist_id } = req.params;
     const data: IComment_RatingCreateDTOfortourGuide = req.body;
     const touristService: TouristService = Container.get(TouristService);
-    const ratedTourist = await touristService.rateandcommentTour_guideService(tourist_id, data);
+    const ratedTourist = await touristService.rateAndCommentTour_guideService(tourist_id, data);
     res.status(ratedTourist.status).json(ratedTourist);
   }
-  public async rateandcommentItinerary(req: any, res: any) {
+  public async rateAndCommentItinerary(req: any, res: any) {
     const { tourist_id } = req.params;
     const data: IComment_RatingCreateDTOforItinerary = req.body;
     const touristService: TouristService = Container.get(TouristService);
-    const ratedTourist = await touristService.rateandcommentItineraryService(tourist_id, data);
+    const ratedTourist = await touristService.rateAndCommentItineraryService(tourist_id, data);
     res.status(ratedTourist.status).json(ratedTourist);
   }
-  public async rateandcommentActivity(req: any, res: any) {
+  public async rateAndCommentActivity(req: any, res: any) {
     const { tourist_id } = req.params;
     const data: IComment_RatingCreateDTOforActivity = req.body;
     const touristService: TouristService = Container.get(TouristService);
-    const ratedTourist = await touristService.rateandcommentActivityService(tourist_id, data);
+    const ratedTourist = await touristService.rateAndCommentActivityService(tourist_id, data);
     res.status(ratedTourist.status).json(ratedTourist);
   }
 
@@ -182,21 +182,21 @@ export class TouristController {
     res.status(complaints.status).json(complaints);
   }
   //flag for commenting on complaint
-  public async flagtoRateandcommentProduct(req: any, res: any) {
+  public async flagToRateAndCommentProduct(req: any, res: any) {
     const { tourist_id } = req.params;
     const { product_id } = req.query;
     const touristService: TouristService = Container.get(TouristService);
-    const flag = await touristService.flagtoRateandcommentProductService(
+    const flag = await touristService.flagToRateAndCommentProductService(
       tourist_id,
       product_id
     );
     res.status(flag.status).json(flag);
   }
-  public async RateandcommentProduct(req: any, res: any) {
+  public async rateAndCommentProduct(req: any, res: any) {
     const { tourist_id } = req.params;
     const data: IComment_RatingCreateDTOforProduct = req.body;
     const touristService: TouristService = Container.get(TouristService);
-    const ratedTourist = await touristService.rateandcommentProductService(
+    const ratedTourist = await touristService.rateAndCommentProductService(
       tourist_id,
       data
     );

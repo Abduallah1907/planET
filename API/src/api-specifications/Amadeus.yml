@@ -1,0 +1,499 @@
+openapi: "3.0.0"
+info:
+  title: Amadeus API
+  version: 1.0.0
+  description: Amadeus External API management
+tags:
+  - name: Amadeus
+    description: Amadeus External API management
+components:
+  schemas:
+    FlightOffersSearchGetParamS:
+      type: object
+      properties:
+        originLocationCode:
+          type: string
+        destinationLocationCode:
+          type: string
+        departureDate:
+          type: string
+        returnDate:
+          type: string
+          nullable: true
+        adults:
+          type: number
+        children:
+          type: number
+          nullable: true
+        infants:
+          type: number
+          nullable: true
+        travelClass:
+          type: string
+          enum: [ECONOMY, PREMIUM_ECONOMY, BUSINESS, FIRST]
+          nullable: true
+        includedAirlineCodes:
+          type: string
+          nullable: true
+        excludedAirlineCodes:
+          type: string
+          nullable: true
+        nonStop:
+          type: boolean
+          nullable: true
+        currencyCode:
+          type: string
+          nullable: true
+        maxPrice:
+          type: number
+          nullable: true
+        max:
+          type: number
+          nullable: true
+    HotelOffersSearchParams:
+      type: object
+      properties:
+        hotelIds:
+          type: string
+        adults:
+          type: number
+          nullable: true
+        checkInDate:
+          type: string
+          nullable: true
+        checkOutDate:
+          type: string
+          nullable: true
+        countryOfResidence:
+          type: string
+          nullable: true
+        priceRange:
+          type: string
+          nullable: true
+        currencyCode:
+          type: string
+          nullable: true
+        paymentPolicy:
+          type: string
+          enum: [GUARANTEE, DEPOSIT, NONE]
+          nullable: true
+        boardType:
+          type: string
+          enum: [ROOM_ONLY, BREAKFAST, HALF_BOARD, FULL_BOARD, ALL_INCLUSIVE]
+          nullable: true
+        includeClosed:
+          type: boolean
+          nullable: true
+        bestRateOnly:
+          type: boolean
+          nullable: true
+        lang:
+          type: string
+          nullable: true
+    FlightOffersOutput:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            flightOffers:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  source:
+                    type: string
+                  instantTicketingRequired:
+                    type: boolean
+                  nonHomogeneous:
+                    type: boolean
+                  oneWay:
+                    type: boolean
+                  lastTicketingDate:
+                    type: string
+                  numberOfBookableSeats:
+                    type: number
+                  itineraries:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        duration:
+                          type: string
+                        segments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              departure:
+                                type: object
+                                properties:
+                                  iataCode:
+                                    type: string
+                                  at:
+                                    type: string
+                              arrival:
+                                type: object
+                                properties:
+                                  iataCode:
+                                    type: string
+                                  at:
+                                    type: string
+                              carrierCode:
+                                type: string
+                              number:
+                                type: string
+                              aircraft:
+                                type: object
+                                properties:
+                                  code:
+                                    type: string
+                              operating:
+                                type: object
+                                properties:
+                                  carrierCode:
+                                    type: string
+                                  number:
+                                    type: string
+                              duration:
+                                type: string
+                              id:
+                                type: string
+                  price:
+                    type: object
+                    properties:
+                      currency:
+                        type: string
+                      total:
+                        type: string
+                      base:
+                        type: string
+                      fees:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            amount:
+                              type: string
+                            type:
+                              type: string
+                      grandTotal:
+                        type: string
+                  pricingOptions:
+                    type: object
+                    properties:
+                      fareType:
+                        type: array
+                        items:
+                          type: string
+                      includedCheckedBagsOnly:
+                        type: boolean
+                  validatingAirlineCodes:
+                    type: array
+                    items:
+                      type: string
+                  travelerPricings:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        travelerId:
+                          type: string
+                        fareOption:
+                          type: string
+                        travelerType:
+                          type: string
+                        price:
+                          type: object
+                          properties:
+                            currency:
+                              type: string
+    HotelOffersOutput:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            hotelOffers:
+              type: array
+              items:
+                type: object
+                properties:
+                  hotelId:
+                    type: string
+                  roomType:
+                    type: string
+                  price:
+                    type: object
+                    properties:
+                      currency:
+                        type: string
+                      total:
+                        type: string
+                      base:
+                        type: string
+                  amenities:
+                    type: array
+                    items:
+                      type: string
+                  checkInDate:
+                    type: string
+                  checkOutDate:
+                    type: string
+                  guests:
+                    type: object
+                    properties:
+                      adults:
+                        type: number
+                      children:
+                        type: number
+                      infants:
+                        type: number
+                  boardType:
+                    type: string
+                  paymentPolicy:
+                    type: string
+                  bestRate:
+                    type: boolean
+                  includeClosed:
+                    type: boolean
+                  lang:
+                    type: string
+
+paths:
+  /api/amadeus/airports:
+    get:
+      tags:
+        - Amadeus
+      summary: Retrieve airports
+      description: Retrieve airports
+      parameters:
+        - in: query
+          name: keyword
+          required: true
+          schema:
+            type: string
+          description: Keyword to search for airports
+      responses:
+        "200":
+          description: List of airports
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      airports:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            iataCode:
+                              type: string
+                            name:
+                              type: string
+                            cityCode:
+                              type: string
+                            city:
+                              type: string
+                            countryName:
+                              type: string
+                            region:
+                              type: string
+                            timeZone:
+                              type: string
+                            latitude:
+                              type: number
+                            longitude:
+                              type: number
+  /api/amadeus/flightOffers:
+    get:
+      tags:
+        - Amadeus
+      summary: Search for flight offers
+      description: Search for flight offers
+      parameters:
+        - in: query
+          name: originLocationCode
+          required: true
+          schema:
+            type: string
+          description: Origin location code
+        - in: query
+          name: destinationLocationCode
+          required: true
+          schema:
+            type: string
+          description: Destination location code
+        - in: query
+          name: departureDate
+          required: true
+          schema:
+            type: string
+          description: Departure date
+        - in: query
+          name: returnDate
+          required: false
+          schema:
+            type: string
+          description: Return date
+        - in: query
+          name: adults
+          required: true
+          schema:
+            type: number
+          description: Number of adults
+        - in: query
+          name: children
+          required: false
+          schema:
+            type: number
+          description: Number of children
+        - in: query
+          name: infants
+          required: false
+          schema:
+            type: number
+          description: Number of infants
+        - in: query
+          name: travelClass
+          required: false
+          schema:
+            type: string
+            enum: [ECONOMY, PREMIUM_ECONOMY, BUSINESS, FIRST]
+          description: Travel class
+        - in: query
+          name: includedAirlineCodes
+          required: false
+          schema:
+            type: string
+          description: Included airline codes
+        - in: query
+          name: excludedAirlineCodes
+          required: false
+          schema:
+            type: string
+          description: Excluded airline codes
+        - in: query
+          name: nonStop
+          required: false
+          schema:
+            type: boolean
+          description: Non-stop flights only
+        - in: query
+          name: currencyCode
+          required: false
+          schema:
+            type: string
+          description: Currency code
+        - in: query
+          name: maxPrice
+          required: false
+          schema:
+            type: number
+          description: Maximum price
+        - in: query
+          name: max
+          required: false
+          schema:
+            type: number
+          description: Maximum number of results
+      responses:
+        "200":
+          description: Flight offers search result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlightOffersOutput"
+  /api/amadeus/hotelOffers:
+    get:
+      tags:
+        - Amadeus
+      summary: Search for hotel offers
+      description: Search for hotel offers
+      parameters:
+        - in: query
+          name: hotelIds
+          required: true
+          schema:
+            type: string
+          description: Comma-separated list of hotel IDs
+        - in: query
+          name: adults
+          required: false
+          schema:
+            type: number
+          description: Number of adults
+        - in: query
+          name: checkInDate
+          required: false
+          schema:
+            type: string
+          description: Check-in date
+        - in: query
+          name: checkOutDate
+          required: false
+          schema:
+            type: string
+          description: Check-out date
+        - in: query
+          name: countryOfResidence
+          required: false
+          schema:
+            type: string
+          description: Country of residence
+        - in: query
+          name: priceRange
+          required: false
+          schema:
+            type: string
+          description: Price range
+        - in: query
+          name: currencyCode
+          required: false
+          schema:
+            type: string
+          description: Currency code
+        - in: query
+          name: paymentPolicy
+          required: false
+          schema:
+            type: string
+            enum: [GUARANTEE, DEPOSIT, NONE]
+          description: Payment policy
+        - in: query
+          name: boardType
+          required: false
+          schema:
+            type: string
+            enum: [ROOM_ONLY, BREAKFAST, HALF_BOARD, FULL_BOARD, ALL_INCLUSIVE]
+          description: Board type
+        - in: query
+          name: includeClosed
+          required: false
+          schema:
+            type: boolean
+          description: Include closed hotels
+        - in: query
+          name: bestRateOnly
+          required: false
+          schema:
+            type: boolean
+          description: Only include best rates
+        - in: query
+          name: lang
+          required: false
+          schema:
+            type: string
+          description: Language code
+      responses:
+        "200":
+          description: Hotel offers search result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HotelOffersOutput"

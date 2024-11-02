@@ -3,24 +3,23 @@ import { Container, Row, Col, Button, Form, Alert } from "react-bootstrap";
 import CustomFormGroup from "../../../components/FormGroup/FormGroup";
 import { ChangeEvent, useEffect, useState } from "react";
 import AuthService from "../../../services/authService";
-import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../../store/hooks";
 import { activateSidebar, setNavItems } from "../../../store/sidebarSlice";
 import { login, setLoginState, setUser } from "../../../store/userSlice";
 import { useTranslation } from "react-i18next";
+import { Utils } from "../../../utils/utils";
 
 export default function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
     usernameOrEmail: "",
-    passwordLogin: "",
+    password: "",
   });
 
   const [error, setError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-  const state = useAppSelector((state) => state);
-  const { username } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -41,17 +40,22 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      let user = await AuthService.login(
+      const userOutput = await AuthService.login(
         userData.usernameOrEmail,
-        userData.passwordLogin
+        userData.password
       );
-      user = user.data;
+      const user = userOutput.data;
 
+      const storedUser = {
+        usernameOrEmail: userData.usernameOrEmail,
+        password: Utils.encryptPassword(userData.password),
+      };
+      localStorage.setItem("user", JSON.stringify(storedUser));
       dispatch(setUser(user));
       switch (user.status) {
         case "WAITING_FOR_APPROVAL":
         case "REJECTED":
-          navigate("/login");
+          navigate("/Login");
           break;
         case "APPROVED":
       }
@@ -59,7 +63,10 @@ export default function Login() {
       switch (user.role) {
         case "TOURIST":
           dispatch(
-            setNavItems([{ path: "/Touristedit", label: "Edit Profile" }])
+            setNavItems([
+              { path: "/Touristedit", label: "Edit Profile" },
+              { path: "/Complaint", label: "File Complaint" },
+            ])
           );
           // state.user.isLoggedIn = true;
           navigate("/Touristedit");
@@ -146,6 +153,7 @@ export default function Login() {
               { path: "/HistoricalTags", label: "Historical Tags" },
               { path: "/UsersTable", label: "User Managment" },
               { path: "/ChangePasswordForm", label: "Change Password" },
+              { path: "/Complaints", label: "Complaints" },
             ])
           );
           navigate("/AdminDashboard");
@@ -154,13 +162,12 @@ export default function Login() {
           navigate("/");
           break;
       }
-      dispatch(setLoginState(true))
       dispatch(activateSidebar());
+      dispatch(login());
     } catch (err: any) {
-      setError(err.response.data.message);
-      setShowAlert(true);
+      // setError(err.message);
+      // setShowAlert(true);
     }
-    dispatch(login());
   };
 
   return (
@@ -173,7 +180,14 @@ export default function Login() {
             </h1>
             <h2 className="LOGIN">
               {t("new_to_planet")}
-              <span className="orange-text"> {t("signup")}</span>
+
+              <NavLink
+                className="orange-text signup-text"
+                to={"/Registeration"}
+              >
+                {" "}
+                {t("signup")}
+              </NavLink>
             </h2>
             {showAlert ? (
               <Alert variant="danger" className="text-center">
@@ -196,11 +210,11 @@ export default function Login() {
                 label={t("password")}
                 type="password"
                 placeholder={t("enter_password")}
-                id={"passwordLogin"}
-                name={"passwordLogin"}
+                id={"password"}
+                name={"password"}
                 disabled={false}
                 required={true}
-                value={userData.passwordLogin}
+                value={userData.password}
                 onChange={handleChange}
               />
               <a

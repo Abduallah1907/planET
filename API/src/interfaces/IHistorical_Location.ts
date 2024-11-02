@@ -20,6 +20,7 @@ export interface IHistorical_location extends Document {
   date_time?: Date;
   createdAt?: Date;
   updatedAt?: Date;
+  category?: ObjectId;
 }
 export interface IHistorical_locationDTO {
   name: string;
@@ -36,6 +37,7 @@ export interface IHistorical_locationDTO {
   tags?: Map<string, string>;
   average_rating?: Number;
   active_flag?: boolean;
+  category?: ObjectId;
 }
 
 export interface Update_IHistorical_locationDTO {
@@ -51,6 +53,7 @@ export interface Update_IHistorical_locationDTO {
   student_price?: number;
   tags?: Map<string, string>;
   active_flag: boolean;
+  category?: ObjectId;
 }
 export interface IHistorical_locationOutputDTO {
   name: string;
@@ -65,4 +68,5 @@ export interface IHistorical_locationOutputDTO {
   isActive: boolean;
   images?: mongoose.Schema.Types.ObjectId[];
   tags?: Map<string, string>;
+  category?: ObjectId;
 }

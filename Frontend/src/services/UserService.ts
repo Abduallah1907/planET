@@ -1,11 +1,7 @@
 import axiosInstance from '../utils/axiosInstance';
-import axios from 'axios';
 
-class userServiceF {
+class UserService {
 
-  
-
-  
   public static getDocuments = async (user_id: string, role: string) => {
     try {
       const response = await axiosInstance.get(`/users/getDocumentsRequired`, {
@@ -35,4 +31,4 @@ class userServiceF {
   
 }
 
-export { userServiceF };
+export default UserService;

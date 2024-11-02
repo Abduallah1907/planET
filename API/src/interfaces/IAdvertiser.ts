@@ -8,13 +8,13 @@ export interface IAdvertiser extends Document {
   username: string;
   password: string;
   phone_number: string;
-  activities: ObjectId[];
+  activities?: ObjectId[];
   documents_required: mongoose.Schema.Types.ObjectId[];
-  link_to_website: string;
-  hotline: string;
-  about: string;
+  link_to_website?: string;
+  hotline?: string;
+  about?: string;
   logo?: mongoose.Schema.Types.ObjectId;
-  company_profile: string;
+  company_profile?: string;
 }
 export interface IAdvertiserCreateDTO {
   user_id: ObjectId;

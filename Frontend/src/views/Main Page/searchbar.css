@@ -135,6 +135,7 @@
 
 .btn-custom:hover{
     background-color: #003366;
+    color: white;
 }
 
 .search-wrapper .row{

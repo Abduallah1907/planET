@@ -72,5 +72,13 @@ export default {
     refershToken: process.env.OAUTH_MAIL_REFRESH_TOKEN,
   },
 
+  /**
+   * Amadeus API Config
+   */
+  amadeus: {
+    clientID: process.env.AMADEUS_CLIENTID,
+    clientSecret: process.env.AMADEUS_CLIENT_SECRET
+  },
+
   env: process.env.NODE_ENV || "development",
 };

@@ -1,6 +1,7 @@
 import { IActivityDTO, UpdateIActivityDTO } from "@/interfaces/IActivity";
 import {
   BadRequestError,
+  ForbiddenError,
   InternalServerError,
   NotFoundError,
 } from "@/types/Errors";
@@ -16,11 +17,15 @@ export default class ActivityService {
     @Inject("categoryModel") private categoryModel: Models.CategoryModel,
     @Inject("advertiserModel") private advertiserModel: Models.AdvertiserModel,
     @Inject("tagModel") private tagModel: Models.TagModel
-  ) { }
+  ) {}
 
   public getAllActivitiesService = async () => {
     const activitiesData = await this.activityModel
-      .find({ active_flag: true, booking_flag: true, inappropriate_flag: false })
+      .find({
+        active_flag: true,
+        booking_flag: true,
+        inappropriate_flag: false,
+      })
       .populate("category")
       .populate("tags")
       .populate({
@@ -60,7 +65,7 @@ export default class ActivityService {
       special_discount: activityDatainput.special_discount,
       booking_flag: activityDatainput.booking_flag,
       active_flag: activityDatainput.active_flag,
-      advertiser_id: activityDatainput.advertiser_id
+      advertiser_id: activityDatainput.advertiser_id,
     };
     if (
       activityData.price &&
@@ -124,9 +129,10 @@ export default class ActivityService {
     if (!Types.ObjectId.isValid(advertiserID)) {
       throw new BadRequestError("Invalid Adverstier ID format");
     }
-    const activitiesData = await this.activityModel.find({
-      advertiser_id: advertiserID,
-    })
+    const activitiesData = await this.activityModel
+      .find({
+        advertiser_id: advertiserID,
+      })
       .populate("category")
       .populate("tags");
     if (activitiesData instanceof Error) {
@@ -208,6 +214,9 @@ export default class ActivityService {
     const searchCriteria: any = {};
     if (name) searchCriteria.name = name;
     if (tag) searchCriteria.tags = tag;
+    searchCriteria.inappropriate_flag = false;
+    searchCriteria.active_flag = true;
+    searchCriteria.booking_flag = true;
 
     const activities = await this.activityModel
       .find(searchCriteria)
@@ -229,7 +238,12 @@ export default class ActivityService {
   public async getUpcomingActivitiesService() {
     const today = Date.now();
     const activities = await this.activityModel
-      .find({ date_time: { $gte: today } })
+      .find({
+        date: { $gte: today },
+        active_flag: true,
+        inappropriate_flag: false,
+        booking_flag: true,
+      })
       .populate("category")
       .populate("comments")
       .populate({ path: "advertiser_id", select: "name" });
@@ -253,8 +267,12 @@ export default class ActivityService {
     preferences?: string[];
     advertiser_id?: string;
   }) {
-    if (!filters || Object.keys(filters).length === 0 || (filters.advertiser_id && Object.keys(filters).length === 1)) {
-      const checks: any = {}
+    if (
+      !filters ||
+      Object.keys(filters).length === 0 ||
+      (filters.advertiser_id && Object.keys(filters).length === 1)
+    ) {
+      const checks: any = {};
       if (filters.advertiser_id) {
         checks.advertiser_id = filters.advertiser_id;
       } else {
@@ -332,13 +350,22 @@ export default class ActivityService {
             {
               $match: {
                 $expr: {
-                  $in: ["$_id", { $map: { input: "$$tagIds", as: "tagId", in: { $toObjectId: "$$tagId" } } }]
-                }
-              }
-            }
+                  $in: [
+                    "$_id",
+                    {
+                      $map: {
+                        input: "$$tagIds",
+                        as: "tagId",
+                        in: { $toObjectId: "$$tagId" },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
           ],
-          as: "tags"
-        }
+          as: "tags",
+        },
       },
       {
         $addFields: {
@@ -369,7 +396,7 @@ export default class ActivityService {
         $match: { "tags.type": { $in: filters.preferences } },
       });
     }
-    
+
     const activities = await this.activityModel.aggregate(aggregationPipeline);
     if (activities instanceof Error)
       throw new InternalServerError("Internal server error");
@@ -384,7 +411,11 @@ export default class ActivityService {
     let sortCriteria = {};
 
     if (!sort && !direction) {
-      const activities = await this.activityModel.find();
+      const activities = await this.activityModel.find({
+        active_flag: true,
+        booking_flag: true,
+        inappropriate_flag: false,
+      });
       return new response(
         true,
         activities,
@@ -399,7 +430,13 @@ export default class ActivityService {
     } else {
       throw new BadRequestError("Invalid sort criteria");
     }
-    const activities = await this.activityModel.find().sort(sortCriteria);
+    const activities = await this.activityModel
+      .find({
+        active_flag: true,
+        booking_flag: true,
+        inappropriate_flag: false,
+      })
+      .sort(sortCriteria);
     if (activities instanceof Error)
       throw new InternalServerError("Internal server error");
 
@@ -411,7 +448,11 @@ export default class ActivityService {
     const preferences = await this.tagModel.find().select("type").lean();
 
     const Dates = await this.activityModel
-      .find()
+      .find({
+        active_flag: true,
+        booking_flag: true,
+        inappropriate_flag: false,
+      })
       .sort({ date: 1 }) // Sort dates in ascending order
       .select("date") // Select only the date field
       .lean(); // Convert to plain JavaScript object
@@ -428,8 +469,8 @@ export default class ActivityService {
       (preference: any) => preference.type
     );
 
-    const earliestDate = Dates[0].date;
-    const latestDate = Dates[Dates.length - 1].date;
+    const earliestDate = Dates[0]?.date ?? Date.now();
+    const latestDate = Dates[Dates.length - 1]?.date ?? Date.now();
 
     const lowestPrice = prices[0]?.price ?? 0;
     const highestPrice = prices[prices.length - 1]?.price ?? 0;
@@ -462,5 +503,18 @@ export default class ActivityService {
       "Filter components fetched",
       200
     );
+  }
+
+  public async flagActivityInappropriateService(
+    activity_id: Types.ObjectId
+  ): Promise<response> {
+    const activity = await this.activityModel.findById(activity_id);
+    if (!activity) throw new NotFoundError("Activity not found");
+    if (activity.inappropriate_flag === true)
+      throw new ForbiddenError("Itinerary is already flagged");
+
+    activity.inappropriate_flag = true;
+    await activity.save();
+    return new response(true, { activity_id }, "Activity flagged", 200);
   }
 }

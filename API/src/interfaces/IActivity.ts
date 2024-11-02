@@ -4,7 +4,7 @@ import mongoose, { Document } from "mongoose";
 type ObjectId = mongoose.Schema.Types.ObjectId;
 
 export interface IActivity extends Document {
-  category: ObjectId;
+  category?: ObjectId;
   comments: ObjectId[];
   name: string;
   date: Date;
@@ -39,7 +39,7 @@ export interface IActivityDTO {
     min: number;
     max: number;
   };
-  category: ObjectId;
+  category?: ObjectId;
   special_discount?: number;
   tags?: ObjectId[];
   image?: mongoose.Schema.Types.ObjectId;

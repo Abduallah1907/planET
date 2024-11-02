@@ -23,5 +23,5 @@ export default (app: Router) => {
     advertiserController.createAdvertiserMainController
   );
 
-  router.delete("/deleteAdvertiserAccountRequest", advertiserController.deleteAdvertiserAccountRequest);
+  router.delete("/deleteAdvertiserAccountRequest/:email", advertiserController.deleteAdvertiserAccountRequest);
 };

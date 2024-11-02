@@ -253,7 +253,7 @@ export default class TouristService {
       200
     );
   }
-  public async rateandcommentTour_guideService(
+  public async rateAndCommentTour_guideService(
     id: string,
     data: IComment_RatingCreateDTOfortourGuide
   ) {
@@ -324,7 +324,7 @@ export default class TouristService {
     return new response(true, comment_rating, "Tour guide rated", 201);
   }
 
-  public async rateandcommentItineraryService(
+  public async rateAndCommentItineraryService(
     id: string,
     data: IComment_RatingCreateDTOforItinerary
   ) {
@@ -395,7 +395,7 @@ export default class TouristService {
     return new response(true, comment_rating, "Itinerary rated", 201);
   }
 
-  public async rateandcommentActivityService(
+  public async rateAndCommentActivityService(
     id: string,
     data: IComment_RatingCreateDTOforActivity
   ) {
@@ -526,12 +526,7 @@ export default class TouristService {
     if (tourist.wallet < activity.price) {
       throw new BadRequestError("Insufficient balance");
     }
-    const newWallet = tourist.wallet - activity.price;
-    const updatedTourist = await this.touristModel.findByIdAndUpdate(
-      tourist_id,
-      { wallet: newWallet },
-      { new: true }
-    );
+
     const ticket = new this.ticketModel({
       tourist_id: tourist_id,
       type: "ACTIVITY",
@@ -539,12 +534,20 @@ export default class TouristService {
       booking_id: activity_id,
       cancelled: false,
       points_received: points_received,
+      time_to_attend: new Date(`${activity.date.toISOString().split('T')[0]}T${activity.time}`), // Combine date and time
     });
 
     await ticket.save();
-
     if (ticket instanceof Error)
       throw new InternalServerError("Internal server error in saving ticket");
+
+    const newWallet = tourist.wallet - activity.price;
+    const updatedTourist = await this.touristModel.findByIdAndUpdate(
+      tourist_id,
+      { wallet: newWallet, $push: { tickets: ticket._id } },
+      { new: true }
+    );
+
     return new response(true, ticket, "Activity booked", 201);
   }
 
@@ -596,12 +599,6 @@ export default class TouristService {
     if (tourist.wallet < itinerary.price) {
       throw new BadRequestError("Insufficient balance");
     }
-    const newWallet = tourist.wallet - itinerary.price;
-    const updatedTourist = await this.touristModel.findByIdAndUpdate(
-      tourist_id,
-      { wallet: newWallet },
-      { new: true }
-    );
     const ticket = new this.ticketModel({
       tourist_id: tourist_id,
       type: "ITINERARY",
@@ -609,10 +606,18 @@ export default class TouristService {
       booking_id: itinerary_id,
       cancelled: false,
       points_received: points_received,
+      time_to_attend: itinerary.available_dates[0]
     });
     ticket.save();
     if (ticket instanceof Error)
       throw new InternalServerError("Internal server error in saving ticket");
+
+    const newWallet = tourist.wallet - itinerary.price;
+    const updatedTourist = await this.touristModel.findByIdAndUpdate(
+      tourist_id,
+      { wallet: newWallet, $push: { tickets: ticket._id } },
+      { new: true }
+    );
 
     return new response(true, ticket, "Itinerary booked", 201);
   }
@@ -678,12 +683,7 @@ export default class TouristService {
     if (tourist.wallet < price) {
       throw new BadRequestError("Insufficient balance");
     }
-    const newWallet = tourist.wallet - price;
-    const updatedTourist = await this.touristModel.findByIdAndUpdate(
-      tourist_id,
-      { wallet: newWallet },
-      { new: true }
-    );
+
     const ticket = new this.ticketModel({
       tourist_id: tourist_id,
       type: "HISTORICAL_LOCATION",
@@ -691,11 +691,19 @@ export default class TouristService {
       booking_id: historical_location_id,
       cancelled: false,
       points_received: points_received,
+      time_to_attend: new Date(`${historical_location.date.toISOString().split('T')[0]}T${historical_location.time}`), // Combine date and time
     });
     ticket.save();
 
     if (ticket instanceof Error)
       throw new InternalServerError("Internal server error in saving ticket");
+
+    const newWallet = tourist.wallet - price;
+    const updatedTourist = await this.touristModel.findByIdAndUpdate(
+      tourist_id,
+      { wallet: newWallet, $push: { tickets: ticket._id } },
+      { new: true }
+    );
     return new response(true, ticket, "Historical location booked", 201);
   }
 
@@ -950,7 +958,7 @@ export default class TouristService {
     return new response(true, complaints, "Complaints found", 200);
   }
   //Flag to rate and comment on a product
-  public async flagtoRateandcommentProductService(
+  public async flagToRateAndCommentProductService(
     tourist_id: string,
     product_id: string
   ) {
@@ -982,7 +990,7 @@ export default class TouristService {
     return new response(true, null, "Product found", 201);
   }
   //Rate and comment on product
-  public async rateandcommentProductService(
+  public async rateAndCommentProductService(
     tourist_id: string,
     data: IComment_RatingCreateDTOforProduct
   ) {
@@ -1175,4 +1183,5 @@ export default class TouristService {
     await ticket.save();
     return new response(true, ticket, "Ticket cancelled", 200);
   }
+  
 }

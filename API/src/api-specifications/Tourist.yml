@@ -226,7 +226,7 @@ paths:
           description: Bad request.
         500:
           description: Internal server error.
-  /api/tourist/rateandcommentTourGuide/{tourist_id}:
+  /api/tourist/rateAndCommentTourGuide/{tourist_id}:
     post:
       tags:
         - Tourist
@@ -262,7 +262,7 @@ paths:
           description: Bad request
         500:
           description: Internal server error
-  /api/tourist/rateandcommentItinerary/{tourist_id}:
+  /api/tourist/rateAndCommentItinerary/{tourist_id}:
     post:
       tags:
         - Tourist
@@ -298,7 +298,7 @@ paths:
           description: Bad request
         500:
           description: Internal server error
-  /api/tourist/rateandcommentActivity/{tourist_id}:
+  /api/tourist/rateAndCommentActivity/{tourist_id}:
     post:
       tags:
         - Tourist
@@ -652,7 +652,7 @@ paths:
         500:
           description: Internal server error
 
-  /api/tourist/flagtoRateandcommentProduct/{tourist_id}:
+  /api/tourist/flagToRateAndCommentProduct/{tourist_id}:
     get:
       tags:
         - Tourist
@@ -679,7 +679,7 @@ paths:
         500:
           description: Internal server error
 
-  /api/tourist/rateandcommentProduct/{tourist_id}:
+  /api/tourist/rateAndCommentProduct/{tourist_id}:
     post:
       tags:
         - Tourist

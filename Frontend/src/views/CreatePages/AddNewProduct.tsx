@@ -46,7 +46,7 @@ const AddNewProduct: React.FC = () => {
       name: formData.name,
       description: formData.description,
       price: formData.price,
-      image: formData.image ? formData.image.toString() : "",
+      image: formData.image ? formData.image.toString() : null,
       quantity: formData.quantity,
       archive_flag: formData.archive_flag,
     };
