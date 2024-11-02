@@ -742,3 +742,23 @@ paths:
           description: Bad request
         500:
           description: Internal server error
+  /api/tourist/getMyTourGuides/{tourist_id}:
+    get:
+      tags:
+        - Tourist
+      summary: Get my tour guides
+      description: Get my tour guides for a tourist
+      parameters:
+        - in: path
+          name: tourist_id
+          required: true
+          description: Tourist id
+          schema:
+            type: string
+      responses:
+        200:
+          description: Tour guides retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
