@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../CreateAdmin/CreateAdmin.css";
 import AdminFormGroup from "../../components/FormGroup/FormGroup";
-import { Container, Button, Form } from "react-bootstrap";
+import { Container, Button, Form, Modal } from "react-bootstrap"; // Import Modal
 import { TouristService } from "../../services/TouristService";
 import { useParams } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
@@ -20,6 +20,7 @@ const ComplaintForm: React.FC = () => {
     problem: "",
     date: "",
   });
+  const [showModal, setShowModal] = useState(false); // Modal state
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -38,6 +39,7 @@ const ComplaintForm: React.FC = () => {
       date: formData.date,
     };
     await TouristService.fileComplaint(tourist._id, data);
+    setShowModal(true); // Show the modal after successful submission
   };
 
   const handleCancel = () => {
@@ -46,6 +48,11 @@ const ComplaintForm: React.FC = () => {
       problem: "",
       date: "",
     });
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    handleCancel(); // Reset form data when modal closes
   };
 
   return (
@@ -70,7 +77,7 @@ const ComplaintForm: React.FC = () => {
 
           <AdminFormGroup
             label="Problem"
-            type="textarea" // Correct way to use textarea
+            type="textarea"
             placeholder="Describe your problem in detail"
             id="problem"
             name="problem"
@@ -80,10 +87,9 @@ const ComplaintForm: React.FC = () => {
             onChange={handleChange}
           />
 
-          {/* Date field with date picker */}
           <AdminFormGroup
             label="Date"
-            type="date" // Use date type to allow easy date picking
+            type="date"
             placeholder="Select the date the problem occurred"
             id="date"
             name="date"
@@ -104,6 +110,24 @@ const ComplaintForm: React.FC = () => {
           </div>
         </Form>
       </Container>
+
+      {/* Modal for success message */}
+      <Modal show={showModal} onHide={handleCloseModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Submission Successful</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Your complaint has been submitted successfully!</Modal.Body>
+        <Modal.Footer>
+          <Button
+            type="submit"
+            className="button"
+            style={{ backgroundColor: "#d76f30", borderColor: "#d76f30" }}
+            onClick={handleCloseModal}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
