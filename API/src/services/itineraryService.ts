@@ -151,11 +151,21 @@ export default class ItineraryService {
     if (!tourGuide) throw new HttpError("Tour guide not found", 404);
 
     const tickets = await this.ticketModel.find({ booking_id: itinerary_id });
+    const checkItineraryDate = await this.itineraryModel.findById(itinerary_id);
+    if (checkItineraryDate instanceof Error)
+      throw new InternalServerError("Internal server error");
 
-    if (tickets.length > 0)
-      throw new BadRequestError(
-        "Itinerary booked by some users so cannot delete"
-      );
+    if (!checkItineraryDate) throw new NotFoundError("Itinerary not found");
+
+    const available_dates = checkItineraryDate.available_dates;
+
+    for (const date of available_dates) {
+      if (date.getTime() >= Date.now() && tickets.length > 0) {
+        throw new BadRequestError(
+          "Itinerary is booked by some users so cannot delete and date is not passed"
+        );
+      }
+    }
 
     const deletedItinerary = await this.itineraryModel.findByIdAndDelete(
       itinerary_id
