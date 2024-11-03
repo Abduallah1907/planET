@@ -531,11 +531,12 @@ export default class TouristService {
 
     const ticket = new this.ticketModel({
       tourist_id: tourist_id as ObjectId,
-      type: "ACTIVITY",
+      type: TicketType.Activity,
       price: activity.price,
       booking_id: activity_id,
       cancelled: false,
       points_received: points_received,
+      time_to_attend: activity.date,
     });
 
     await ticket.save();
@@ -552,7 +553,11 @@ export default class TouristService {
     return new response(true, ticket, "Activity booked", 201);
   }
 
-  public async bookItineraryService(email: string, itinerary_id: string) {
+  public async bookItineraryService(
+    email: string,
+    itinerary_id: string,
+    time_to_attend: Date
+  ) {
     if (!Types.ObjectId.isValid(itinerary_id)) {
       throw new BadRequestError("Invalid id");
     }
@@ -607,6 +612,7 @@ export default class TouristService {
       booking_id: itinerary_id,
       cancelled: false,
       points_received: points_received,
+      time_to_attend: time_to_attend,
     });
     ticket.save();
     if (ticket instanceof Error)

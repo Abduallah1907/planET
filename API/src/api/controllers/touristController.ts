@@ -98,11 +98,12 @@ export class TouristController {
   }
 
   public async bookItinerary(req: any, res: any) {
-    const { email, itinerary_id } = req.body;
+    const { email, itinerary_id, time_to_attend } = req.body;
     const touristService: TouristService = Container.get(TouristService);
     const bookedItinerary = await touristService.bookItineraryService(
       email,
-      itinerary_id
+      itinerary_id,
+      time_to_attend
     );
     res.status(bookedItinerary.status).json(bookedItinerary);
   }

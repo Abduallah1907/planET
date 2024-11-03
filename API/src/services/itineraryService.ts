@@ -150,6 +150,13 @@ export default class ItineraryService {
     );
     if (!tourGuide) throw new HttpError("Tour guide not found", 404);
 
+    const tickets = await this.ticketModel.find({ booking_id: itinerary_id });
+
+    if (tickets.length > 0)
+      throw new BadRequestError(
+        "Itinerary booked by some users so cannot delete"
+      );
+
     const deletedItinerary = await this.itineraryModel.findByIdAndDelete(
       itinerary_id
     );
