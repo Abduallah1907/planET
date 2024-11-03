@@ -66,9 +66,10 @@ export default function Login() {
             setNavItems([
               { path: "/Touristedit", label: "Edit Profile" },
               { path: "/Complaint", label: "File Complaint" },
+              { path: "/TourGuidesTable", label: "View Tour Guides" },
             ])
           );
-          // state.user.isLoggedIn = true;
+          //state.user.isLoggedIn = true;
           navigate("/Touristedit");
           break;
         case "TOUR_GUIDE":
