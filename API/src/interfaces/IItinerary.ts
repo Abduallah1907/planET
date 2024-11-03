@@ -59,6 +59,7 @@ export interface IItineraryUpdateDTO {
   pickup_loc?: Location;
   drop_off_loc?: Location;
   tags?: ObjectId[];
+  active_flag: boolean;
 }
 
 export interface IItineraryOutputDTO {

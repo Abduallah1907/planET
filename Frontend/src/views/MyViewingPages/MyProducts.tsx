@@ -8,6 +8,7 @@ import { IProduct } from "../../types/IProduct";
 import { useNavigate } from "react-router-dom";
 import { ProductService } from "../../services/ProductService";
 import { useAppSelector } from "../../store/hooks";
+import { FileService } from "../../services/FileService";
 
 export default function ProductsPage() {
   const navigate = useNavigate();
@@ -47,8 +48,21 @@ export default function ProductsPage() {
   const Seller = useAppSelector((state) => state.user);
 
   const getProducts = async () => {
-    const productsData = await ProductService.getProductsBySellerId(Seller.stakeholder_id._id);
-    setProducts(productsData.data);
+    const productsData = await ProductService.getProductsBySellerId(
+      Seller.stakeholder_id._id
+    );
+    const productsWithImages = await Promise.all(
+      productsData.data.map(async (product: IProduct) => {
+        if (product.image) {
+          const file = await FileService.downloadFile(product.image); // Download the image
+          const url = URL.createObjectURL(file);
+          return { ...product, image: url }; // Set the image URL
+        }
+        return product;
+      })
+    );
+
+    setProducts(productsWithImages);
   };
 
   const getFilteredProducts = async () => {
@@ -58,9 +72,23 @@ export default function ProductsPage() {
       )
     );
     modifiedFilter["seller_id"] = Seller.stakeholder_id._id;
-    const productsData = await ProductService.getFilteredProducts(modifiedFilter);
-    setProducts(productsData.data);
+    const productsData = await ProductService.getFilteredProducts(
+      modifiedFilter
+    );
+    const productsWithImages = await Promise.all(
+      productsData.data.map(async (product: IProduct) => {
+        if (product.image) {
+          const file = await FileService.downloadFile(product.image); // Download the image
+          const url = URL.createObjectURL(file);
+          return { ...product, image: url }; // Set the image URL
+        }
+        return product;
+      })
+    );
+
+    setProducts(productsWithImages);
   };
+
   const handleApplyFilters = () => {
     getFilteredProducts();
   };
@@ -77,7 +105,7 @@ export default function ProductsPage() {
     navigate(`/product/${name}`);
   };
 
-  const filteredProducts = sortedProducts.filter(product =>
+  const filteredProducts = sortedProducts.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -151,7 +179,7 @@ export default function ProductsPage() {
                 <option value="ratingLowToHigh">Rating: Low to High</option>
               </Form.Select>
             </div>
-            {filteredProducts.map((product:IProduct, index) => (
+            {filteredProducts.map((product: IProduct, index) => (
               <Col key={index} xs={12} className="mb-4 ps-0">
                 <ProductCard
                   id={product._id}

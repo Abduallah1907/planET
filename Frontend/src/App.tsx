@@ -60,6 +60,9 @@ import ComplaintForm from "./views/ViewingPages/ComplaintForm";
 import AllComplaints from "./components/Complaints/AllComplaints";
 import ComplaintsTable from "./components/Complaints/ComplaintsTable";
 
+import BookingActivity from "./views/BookingActivity";
+import BookingItinerary from "./views/BookingItinerary";
+
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen);
   const dispatch = useAppDispatch();
@@ -71,6 +74,7 @@ const App: React.FC = () => {
       Utils.handleLogin(user, dispatch, navigate);
     }
   }, [dispatch, navigate]);
+  const email = useAppSelector((state) => state.user.email);
   return (
     <AppProvider>
       <TopBar />
@@ -99,6 +103,13 @@ const App: React.FC = () => {
         <Route path="/test" element={<BookingLayout />} />
 
         <Route path="/Activity" element={<Activities />} />
+
+
+          <Route path="/Activity/:id" element={<ActivityDetails />} />
+          <Route path="/bookActivity/:id" element={< BookingActivity email= {email}/>} />
+          <Route path="/bookItinerary/:id" element={< BookingItinerary email= {email}/>} />
+      
+
         <Route path="/Itinerary" element={<Itinerary />} />
         <Route path="/Historical" element={<HistoricalPlaces />} />
         <Route path="/Products" element={<Products />} />

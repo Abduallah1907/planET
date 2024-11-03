@@ -540,7 +540,7 @@ export default class TouristService {
       booking_id: activity_id,
       cancelled: false,
       points_received: points_received,
-      time_to_attend: activity.date,
+      time_to_attend: new Date(`${activity.date.toISOString().split('T')[0]}T${activity.time}`), // Combine date and time
     });
 
     await ticket.save();
@@ -701,6 +701,7 @@ export default class TouristService {
       booking_id: historical_location_id,
       cancelled: false,
       points_received: points_received,
+      time_to_attend: new Date(`${historical_location.date.toISOString().split('T')[0]}T${historical_location.time}`), // Combine date and time
     });
     ticket.save();
 

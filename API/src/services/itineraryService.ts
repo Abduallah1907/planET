@@ -108,6 +108,9 @@ export default class ItineraryService {
     const itinerary = await this.itineraryModel.findById(itinerary_id);
     if (!itinerary) throw new NotFoundError("Itinerary not found");
 
+    if (itineraryUpdatedData.active_flag === true) this.activateItineraryService(itinerary_id);
+    else this.deactivateItineraryService(itinerary_id);
+
     // Delete all slots with ObjectIds in itinerary.timeline
     await this.slotModel.deleteMany({ _id: { $in: itinerary.timeline } });
 

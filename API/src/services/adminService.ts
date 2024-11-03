@@ -374,6 +374,8 @@ export default class AdminService {
       title: complaint.title,
       complaint_id: complaint._id as ObjectId,
       tourist_name: complaint.tourist_id,
+      body: complaint.body,
+      reply: complaint.reply,
     }));
     return new response(true, complaintsOutput, "Complaints", 200);
   }
@@ -390,6 +392,8 @@ export default class AdminService {
       title: complaint.title,
       complaint_id: complaint._id as ObjectId,
       tourist_name: complaint.tourist_id,
+      body: complaint.body,
+      reply: complaint.reply,
     };
 
     return new response(true, complaintOutput, "Complaint", 200);
@@ -429,6 +433,8 @@ export default class AdminService {
       title: complaint.title,
       complaint_id: complaint._id as ObjectId,
       tourist_name: complaint.tourist_id,
+      body: complaint.body,
+      reply: complaint.reply,
     }));
     return new response(true, sortedComplaintsDTO, "Compliants sorted!", 200);
   }
@@ -447,6 +453,8 @@ export default class AdminService {
       title: complaint.title,
       complaint_id: complaint._id as ObjectId,
       tourist_name: complaint.tourist_id,
+      body: complaint.body,
+      reply: complaint.reply,
     }));
 
     return new response(true, filteredComplaintsDTO, "Filtered complaints", 200);

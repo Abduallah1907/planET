@@ -7,15 +7,17 @@ import { FaSearch } from "react-icons/fa";
 import { IProduct } from "../../types/IProduct";
 import { useNavigate } from "react-router-dom";
 import { ProductService } from "../../services/ProductService";
+import { FileService } from "../../services/FileService";
+import { useAppSelector } from "../../store/hooks";
 
 export default function ProductsPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [products, setProducts] = React.useState<IProduct[]>([])
-  const [filtercomponent, setfilterComponents] = React.useState({})
+  const [products, setProducts] = React.useState<IProduct[]>([]);
+  const [filtercomponent, setfilterComponents] = React.useState({});
   const [sortBy, setSortBy] = useState("topPicks");
   const [filter, setFilter] = React.useState({});
-
+  const Seller = useAppSelector((state) => state.user);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -43,19 +45,35 @@ export default function ProductsPage() {
     setSortBy(e.target.value);
   };
   const getProducts = async () => {
-    const productsData = await ProductService.getAllProducts();
-    setProducts(productsData.data);
+    const productsData = await ProductService.getAllProducts(); // Use getAllProducts here
+    const productsWithImages = await Promise.all(
+      productsData.data.map(async (product: IProduct) => {
+        if (product.image) {
+          const file = await FileService.downloadFile(product.image);
+          const url = URL.createObjectURL(file);
+          return { ...product, image: url };
+        }
+        return product;
+      })
+    );
+    setProducts(productsWithImages);
   };
   const getFilteredProducts = async () => {
-    const modifiedFilter = Object.fromEntries(
-      Object.entries(filter).map(([key, value]) =>
-        Array.isArray(value) ? [key, value.join(",")] : [key, value]
-      )
-    );
+    const modifiedFilter = { ...filter };
     const productsData = await ProductService.getFilteredProducts(
       modifiedFilter
     );
-    setProducts(productsData.data);
+    const productsWithImages = await Promise.all(
+      productsData.data.map(async (product: IProduct) => {
+        if (product.image) {
+          const file = await FileService.downloadFile(product.image);
+          const url = URL.createObjectURL(file);
+          return { ...product, image: url };
+        }
+        return product;
+      })
+    );
+    setProducts(productsWithImages);
   };
   const handleApplyFilters = () => {
     getFilteredProducts();
@@ -72,9 +90,9 @@ export default function ProductsPage() {
 
   const onProductClick = (id: string) => {
     navigate(`/product/${id}`);
-  }
+  };
 
-  const onFilterChange = (newFilter: { [key: string]: any; }) => {
+  const onFilterChange = (newFilter: { [key: string]: any }) => {
     setFilter(newFilter);
   };
 
@@ -122,9 +140,17 @@ export default function ProductsPage() {
       </Row>
 
       <Row>
-        <Col md={3} className="border-bottom pb-2 d-flex flex-column align-items-md-center">
-          <Button variant="main-inverse" onClick={handleApplyFilters}>Apply Filters</Button>
-          <FilterBy filterOptions={filtercomponent} onFilterChange={onFilterChange} />
+        <Col
+          md={3}
+          className="border-bottom pb-2 d-flex flex-column align-items-md-center"
+        >
+          <Button variant="main-inverse" onClick={handleApplyFilters}>
+            Apply Filters
+          </Button>
+          <FilterBy
+            filterOptions={filtercomponent}
+            onFilterChange={onFilterChange}
+          />
         </Col>
 
         <Col md={9} className="p-3">
@@ -151,12 +177,18 @@ export default function ProductsPage() {
                   description={product.description}
                   sales={product.sales}
                   Reviews={product.reviews_count}
-                  createdAt={product.createdAt ? new Date(product.createdAt) : new Date()}
-                  updatedAt={product.updatedAt ? new Date(product.updatedAt) : new Date()}
+                  createdAt={
+                    product.createdAt ? new Date(product.createdAt) : new Date()
+                  }
+                  updatedAt={
+                    product.updatedAt ? new Date(product.updatedAt) : new Date()
+                  }
                   image={product.image}
                   isActiveArchive={product.archieve_flag}
-                  onChange={() => console.log(`${product.name} booking status changed`)}
-                  onClick={()=>onProductClick(product._id)}
+                  onChange={() =>
+                    console.log(`${product.name} booking status changed`)
+                  }
+                  onClick={() => onProductClick(product._id)}
                   isSeller={false}
                   isAdmin={false}
                 />

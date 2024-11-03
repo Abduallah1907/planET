@@ -9,6 +9,8 @@ import { TouristService } from "../../services/TouristService";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { FaExchangeAlt, FaInfoCircle } from "react-icons/fa";
 import { setStakeholder } from "../../store/userSlice";
+import { useAppContext } from "../../AppContext";
+
 
 interface NationalityOption {
   value: string;
@@ -60,7 +62,7 @@ const ProfileForm: React.FC = () => {
       return;
     }
   };
-  const Tourist = useAppSelector((state) => state.user);
+  const Tourist = useAppSelector((state: { user: any }) => state.user);
 
   useEffect(() => {
     setFormData({
@@ -138,7 +140,7 @@ const ProfileForm: React.FC = () => {
     }
   };
 
-
+  const {currency} = useAppContext()
 
   return (
     <div className="profile-form-container">
@@ -200,7 +202,7 @@ const ProfileForm: React.FC = () => {
 
         <div className="wallet-card">
           <h3>Wallet</h3>
-          <p>{Tourist.stakeholder_id.wallet}</p>
+          <p>{currency} {Tourist.stakeholder_id.wallet}</p>
           <Modal show={isTransferModalOpen} onHide={closeTransferModal} centered>
             <Modal.Header closeButton>
               <Modal.Title>Transfer Points</Modal.Title>
