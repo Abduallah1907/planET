@@ -159,6 +159,7 @@ export default function ProductsPage() {
                   onClick={()=>onProductClick(product._id)}
                   isSeller={false}
                   isAdmin={false}
+                  
                 />
               </Col>
             ))}

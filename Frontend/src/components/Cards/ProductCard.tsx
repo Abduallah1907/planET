@@ -14,6 +14,8 @@ import Rating from "../Rating/Rating";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext";
+import { useAppDispatch } from "../../store/hooks";
+import { addProduct } from "../../store/cartSlice";
 
 
 interface InputData {
@@ -83,6 +85,12 @@ const ProductCard = ({
   const cancelDelete = () => {
     setShowDeleteModal(false); // Close modal without action
   };
+  const dispatch=useAppDispatch();
+  const purchaseProduct = () => {
+    console.log("Product Purchased");
+    dispatch(addProduct({product:{id,name,price,quantity,image},quantity:1}));
+  }
+
   return (
     <Card
       className="p-3 shadow-sm"
@@ -124,6 +132,9 @@ const ProductCard = ({
                 Created: {createdAt.toLocaleDateString()} | Updated: {updatedAt.toLocaleDateString()}
               </Card.Text>
             }
+            <div className="d-flex justify-content-center">
+            <Button className="w-25 " variant="main-inverse" onClick={purchaseProduct} >Purchase</Button>
+            </div>
           </Card.Body>
         </Col>
 

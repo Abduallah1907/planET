@@ -7,6 +7,8 @@ import CategoryService from "../../services/CategoryService";
 import { useNavigate, useParams } from "react-router-dom";
 import { ActivityService } from "../../services/ActivityService";
 import { AdminService } from "../../services/AdminService";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   name: string;
@@ -186,6 +188,7 @@ const AdvertiserCreate: React.FC = () => {
     };
     if (activity_id) {
       await ActivityService.updateActivity(activity_id, productData);
+      showToast("Activity updated successfully", ToastTypes.SUCCESS);
       navigate("/MyActivities");
     } else {
       console.error("Advertiser Id is undefined");
