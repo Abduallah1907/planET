@@ -21,6 +21,8 @@ import UserService from "./userService";
 import { IUserInputDTO } from "@/interfaces/IUser";
 import bcrypt from "bcryptjs";
 import { IItinerary } from "@/interfaces/IItinerary";
+import User from "@/models/user";
+import UserStatus from "@/types/enums/userStatus";
 
 @Service()
 export default class TourGuideService {
@@ -228,6 +230,17 @@ export default class TourGuideService {
       hashedPassword = await bcrypt.hash(password, 10); // Await bcrypt.hash here
     }
     let finalUpdatedPreviousWork: ObjectId[] = [];
+
+    const checkApproveedUser = await this.userModel.findOne({
+      emaiL: email,
+      role: UserRoles.TourGuide,
+      status: UserStatus.APPROVED,
+    });
+    if (!checkApproveedUser) {
+      throw new ForbiddenError(
+        "Tour guide cannot update account because not approved yet"
+      );
+    }
 
     const tourGuideUser = await this.userModel
       .findOneAndUpdate(

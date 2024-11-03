@@ -98,11 +98,12 @@ export class TouristController {
   }
 
   public async bookItinerary(req: any, res: any) {
-    const { email, itinerary_id } = req.body;
+    const { email, itinerary_id, time_to_attend } = req.body;
     const touristService: TouristService = Container.get(TouristService);
     const bookedItinerary = await touristService.bookItineraryService(
       email,
-      itinerary_id
+      itinerary_id,
+      time_to_attend
     );
     res.status(bookedItinerary.status).json(bookedItinerary);
   }
@@ -233,6 +234,66 @@ export class TouristController {
       ticket_id
     );
     res.status(cancelledTicket.status).json(cancelledTicket);
+  }
+
+  public async getPastActivityBookings(req: any, res: any) {
+    const { email } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const pastActivityBookings =
+      await touristService.getPastActivityBookingsService(email);
+
+    res.status(pastActivityBookings.status).json(pastActivityBookings);
+  }
+
+  public async getUpcomingActivityBookings(req: any, res: any) {
+    const { email } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const upcomingActivityBookings =
+      await touristService.getUpcomingActivityBookingsService(email);
+
+    res.status(upcomingActivityBookings.status).json(upcomingActivityBookings);
+  }
+
+  public async getPastItineraryBookings(req: any, res: any) {
+    const { email } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const pastItineraryBookings =
+      await touristService.getPastItineraryBookingsService(email);
+
+    res.status(pastItineraryBookings.status).json(pastItineraryBookings);
+  }
+
+  public async getUpcomingItineraryBookings(req: any, res: any) {
+    const { email } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const upcomingItineraryBookings =
+      await touristService.getUpcomingItineraryBookingsService(email);
+
+    res
+      .status(upcomingItineraryBookings.status)
+      .json(upcomingItineraryBookings);
+  }
+
+  public async getPastHistoricalLocationBookings(req: any, res: any) {
+    const { email } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const pastHistoricalLocationBookings =
+      await touristService.getPastHistoricalLocationBookingsService(email);
+
+    res
+      .status(pastHistoricalLocationBookings.status)
+      .json(pastHistoricalLocationBookings);
+  }
+
+  public async getUpcomingHistoricalLocationBookings(req: any, res: any) {
+    const { email } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const upcomingHistoricalLocationBookings =
+      await touristService.getUpcomingHistoricalLocationBookingsService(email);
+
+    res
+      .status(upcomingHistoricalLocationBookings.status)
+      .json(upcomingHistoricalLocationBookings);
   }
   public async showMyTourGuides(req: any, res: any) {
     const { tourist_id } = req.params;

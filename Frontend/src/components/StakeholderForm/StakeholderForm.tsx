@@ -35,6 +35,8 @@ export default function StakeholderForm() {
     phone_number: "",
   });
 
+  const navigate = useNavigate();
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -46,15 +48,13 @@ export default function StakeholderForm() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      // Add selected files to the array
       const selectedFiles = Array.from(e.target.files);
       setStakeData((prevData) => ({
         ...prevData,
-        fileL: [...prevData.fileL, ...selectedFiles], // Append new files to the list
+        fileL: [...prevData.fileL, ...selectedFiles],
       }));
     }
   };
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,41 +66,28 @@ export default function StakeholderForm() {
 
     const fileObjectIds = await Promise.all(
       StakeData.fileL.map(async (file) => {
-        // Simulate the file upload process and generate objectId for each file
         const response = await FileService.uploadFile(file);
-        return response.data._id; // Replace with actual file upload handling
+        return response.data._id;
       })
     );
-    const updatedStakeData = {
-      ...StakeData, // Spread existing StakeData
 
+    const updatedStakeData = {
+      ...StakeData,
       name: `${StakeData.firstName} ${StakeData.lastName}`,
       documents_required: fileObjectIds,
     };
 
-    if (StakeData.role === "Seller") {
-      try {
-        const seller = await AuthService.registerSeller(updatedStakeData);
-        navigate("/login"); // Call the API
-      } catch (error) {
-        console.error("Seller registration failed: ", error);
+    try {
+      if (StakeData.role === "Seller") {
+        await AuthService.registerSeller(updatedStakeData);
+      } else if (StakeData.role === "Advertiser") {
+        await AuthService.registerAdvertiser(updatedStakeData);
+      } else if (StakeData.role === "Tour Guide") {
+        await AuthService.registerTourGuide(updatedStakeData);
       }
-    } else if (StakeData.role === "Advertiser") {
-      try {
-        const advertiser = await AuthService.registerAdvertiser(
-          updatedStakeData
-        ); // Call the API
-        navigate("/login");
-      } catch (error) {
-        console.error("Advertiser registration failed: ", error);
-      }
-    } else if (StakeData.role === "Tour Guide") {
-      try {
-        const tourGuide = await AuthService.registerTourGuide(updatedStakeData);
-        navigate("/login"); // Call the API
-      } catch (error) {
-        console.error("Tour Guide registration failed: ", error);
-      }
+      navigate("/login");
+    } catch (error) {
+      console.error("Registration failed: ", error);
     }
   };
 
@@ -209,7 +196,7 @@ export default function StakeholderForm() {
         <Col>
           <Form.Group controlId="formFile" className="mb-3">
             <Form.Label>
-              <h3>Upload Files </h3> {/* Added 'Seller Logo' label */}
+              <h3>Upload Files</h3>
             </Form.Label>
             <Form.Control
               type="file"
@@ -239,7 +226,6 @@ export default function StakeholderForm() {
       <div key="default-checkbox1" className="mb-4">
         <Form.Check
           type="checkbox"
-          // id="default-checkbox"
           label={
             <span>
               I agree to all the{" "}
@@ -258,8 +244,14 @@ export default function StakeholderForm() {
       <div className="d-flex flex-column text-center">
         <ButtonWide label="Create account" />
         <p className="mt-2">
-          Already have an account?
-          <a href="#" className="terms-link">
+          Already have an account?{" "}
+          <a
+            href="#"
+            className="terms-link"
+            onClick={(e) => {
+              navigate("/Login");
+            }}
+          >
             Login
           </a>
         </p>
