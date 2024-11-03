@@ -20,7 +20,7 @@ import { addProduct } from "../../store/cartSlice";
 
 interface InputData {
   name: string;
-  id?: string;
+  id: string;
   average_rating: number;
   Reviews: number;
   sales: number;
@@ -86,9 +86,10 @@ const ProductCard = ({
     setShowDeleteModal(false); // Close modal without action
   };
   const dispatch=useAppDispatch();
-  const purchaseProduct = () => {
-    console.log("Product Purchased");
-    dispatch(addProduct({product:{id,name,price,quantity,image},quantity:1}));
+  const addToCart = (e: any) => {
+    e.stopPropagation();
+    e.preventDefault();
+    dispatch(addProduct({product:{id,name,price,description,image},quantity:1}));
   }
 
   return (
@@ -133,7 +134,7 @@ const ProductCard = ({
               </Card.Text>
             }
             <div className="d-flex justify-content-center">
-            <Button className="w-25 " variant="main-inverse" onClick={purchaseProduct} >Purchase</Button>
+            <Button className="w-25 " variant="main-inverse" onClick={addToCart} >Add to Cart</Button>
             </div>
           </Card.Body>
         </Col>

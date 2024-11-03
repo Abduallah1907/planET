@@ -1,39 +1,25 @@
 import React from "react";
 import { Row, Col, Card, Button } from "react-bootstrap";
 import CartCard from "../components/Cards/CartCard";
+import { useAppSelector } from "../store/hooks";
 
+
+interface Product {
+  id: any;
+    name: string;
+    price: number;
+    description: string;
+    image: any;
+}
 interface CartItem {
-  id: number;
-  name: string;
-  price: number;
-  description: string;
+  product: Product;
   quantity: number;
-  image: string;
 }
 
 const CartPage: React.FC = () => {
   // Dummy data for two cart items
-  const cartItems: CartItem[] = [
-    {
-      id: 1,
-      name: "Smashed Avo",
-      price: 20.0,
-      description: "Delicious smashed avocado on toast.",
-      quantity: 1,
-      image: "https://via.placeholder.com/250x250",
-    },
-    {
-      id: 2,
-      name: "Pancakes",
-      price: 25.0,
-      description: "Fluffy pancakes with maple syrup.",
-      quantity: 1,
-      image: "https://via.placeholder.com/250x250",
-    },
-  ];
-
-  // Calculate subtotal based on dummy data
-  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const cart = useAppSelector((state)=>state.cart)
+  const cartItems: CartItem[] = cart.products;
 
   return (
     <div className="cart-page p-3">
@@ -47,15 +33,16 @@ const CartPage: React.FC = () => {
       <Row>
         {/* Left Column: List of Purchased Products */}
         <Col md={8}>
-          {cartItems.map((item) => (
+          {cartItems.map((item, index) => (
             <CartCard
-              key={item.id}
-              id={item.id.toString()}
-              name={item.name}
-              price={item.price}
-              description={item.description}
+              index={index}
+              key={item.product.id}
+              id={item.product.id}
+              name={item.product.name}
+              price={item.product.price}
+              description={item.product.description}
               quantity={item.quantity}
-              image={item.image}            />
+              image={item.product.image}            />
           ))}
         </Col>
 
@@ -64,7 +51,7 @@ const CartPage: React.FC = () => {
           <Card className="p-3 shadow-sm">
             <Card.Body>
               <h5>Your Subtotal</h5>
-              <h4 className="my-3">${subtotal.toFixed(2)}</h4>
+              <h4 className="my-3">${cart.total.toFixed(2)}</h4>
               <Button variant="main-inverse" className="w-100 mb-4">Confirm Order</Button>
             </Card.Body>
           </Card>

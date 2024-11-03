@@ -73,6 +73,7 @@ const AdvertiserCreate: React.FC = () => {
 
       // Ensure special_discount and price do not accept negative values
       if ((name === "special_discount" || name === "price") && Number(updatedValue) < 0) {
+        showToast("Value cannot be negative", ToastTypes.ERROR);
         setFormData({
           ...formData,
           [name]: 0,

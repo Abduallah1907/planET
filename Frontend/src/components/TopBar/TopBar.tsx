@@ -174,7 +174,7 @@ const TopBar: React.FC = () => {
             <Button
               variant=""
               onClick={handleHelp}
-              className="btn-help btn-margin"
+              className="btn-help btn-margin me-1"
             >
               <MdHelpOutline />
             </Button>
@@ -184,7 +184,7 @@ const TopBar: React.FC = () => {
               <Button
                 variant=""
                 onClick={() => navigate("/Cart")}
-                className="btn-help btn-margin"
+                className="btn-help btn-margin me-3"
               >
                 <FaShoppingCart />
               </Button>

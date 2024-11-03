@@ -7,11 +7,11 @@ interface CartState {
     total: number;
 }
 interface Product {
-    id : any;
-    name : string;
-    price : number;
-    quantity : number;
-    image : any;
+    id: any;
+    name: string;
+    price: number;
+    description: string;
+    image: any;
     // add other properties of Product here
 }
 
@@ -29,7 +29,12 @@ export const cartSlice = createSlice({
     initialState,
     reducers: {
         addProduct: (state, action: PayloadAction<CartItem>) => {
-            state.products.push(action.payload);
+            const existingProduct = state.products.find((item) => item.product.id === action.payload.product.id);
+            if (existingProduct) {
+                existingProduct.quantity += action.payload.quantity;
+            } else {
+                state.products.push(action.payload);
+            }
             state.total += action.payload.product.price * action.payload.quantity;
         },
         removeProduct: (state, action: PayloadAction<number>) => {
@@ -45,7 +50,7 @@ export const cartSlice = createSlice({
     }
 });
 
-export const {addProduct , removeProduct , updateQuantity} = cartSlice.actions;
+export const { addProduct, removeProduct, updateQuantity } = cartSlice.actions;
 
 export const cartState = (state: RootState) => state.cart;
 
