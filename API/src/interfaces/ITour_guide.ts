@@ -51,3 +51,10 @@ export interface ITourGuideOutput {
   name: string;
   phone_number: string;
 }
+export interface ITourGuideInfoOutputDTO {
+  firstName: string;
+  lastName: string;
+  email: string;
+  logo?: string;
+  iternary_name: string;
+}

@@ -16,7 +16,9 @@ export default class ActivityService {
     @Inject("activityModel") private activityModel: Models.ActivityModel,
     @Inject("categoryModel") private categoryModel: Models.CategoryModel,
     @Inject("advertiserModel") private advertiserModel: Models.AdvertiserModel,
-    @Inject("tagModel") private tagModel: Models.TagModel
+    @Inject("tagModel") private tagModel: Models.TagModel,
+    @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel,
+    @Inject("ticketModel") private ticketModel: Models.TicketModel
   ) {}
 
   public getAllActivitiesService = async () => {
@@ -187,6 +189,12 @@ export default class ActivityService {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID format");
     }
+    const tickets = await this.ticketModel.find({ booking_id: id });
+    if (tickets.length > 0) {
+      throw new BadRequestError(
+        "Activity is booked by some users so cannot delete"
+      );
+    }
     const activity = await this.activityModel.findByIdAndDelete(
       new Types.ObjectId(id)
     );
@@ -195,6 +203,17 @@ export default class ActivityService {
     }
     if (activity == null) {
       throw new NotFoundError("Activity not found");
+    }
+    const itineraries = await this.itineraryModel.find();
+    for (const itinerary of itineraries) {
+      const activityIndex = itinerary.activities.findIndex(
+        (activityId) =>
+          activityId.toString() === (activity!._id as Types.ObjectId).toString()
+      );
+      if (activityIndex !== -1) {
+        itinerary.activities.splice(activityIndex, 1);
+        await itinerary.save();
+      }
     }
     await this.advertiserModel.findByIdAndUpdate(
       activity.advertiser_id,

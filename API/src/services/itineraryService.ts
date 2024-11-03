@@ -108,6 +108,9 @@ export default class ItineraryService {
     const itinerary = await this.itineraryModel.findById(itinerary_id);
     if (!itinerary) throw new NotFoundError("Itinerary not found");
 
+    if (itineraryUpdatedData.active_flag === true) this.activateItineraryService(itinerary_id);
+    else this.deactivateItineraryService(itinerary_id);
+
     // Delete all slots with ObjectIds in itinerary.timeline
     await this.slotModel.deleteMany({ _id: { $in: itinerary.timeline } });
 
@@ -149,6 +152,13 @@ export default class ItineraryService {
       findTour_guide_id.tour_guide_id
     );
     if (!tourGuide) throw new HttpError("Tour guide not found", 404);
+
+    const tickets = await this.ticketModel.find({ booking_id: itinerary_id });
+
+    if (tickets.length > 0)
+      throw new BadRequestError(
+        "Itinerary booked by some users so cannot delete"
+      );
 
     const deletedItinerary = await this.itineraryModel.findByIdAndDelete(
       itinerary_id
