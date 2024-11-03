@@ -3,9 +3,9 @@ import axios from 'axios';
 
 class TouristService {
 
-  
 
-  
+
+
   public static getTouristByemail = async (email: string) => {
     try {
       const response = await axiosInstance.get(`/tourist/getTourist/${email}`);
@@ -23,11 +23,11 @@ class TouristService {
       throw error;
     }
   };
-  
-  public static rateAndCommentActivity = async (id: string, data:any) => {
+
+  public static rateAndCommentActivity = async (id: string, data: any) => {
     try {
       const response = await axiosInstance.post(
-        `/tourist/rateAndCommentActivity/${id}`,data
+        `/tourist/rateAndCommentActivity/${id}`, data
       );
       return response.data;
     } catch (error) {
@@ -35,21 +35,21 @@ class TouristService {
     }
   }
 
-  public static rateAndCommentItinerary = async (id: string, data:any) => {
+  public static rateAndCommentItinerary = async (id: string, data: any) => {
     try {
       const response = await axiosInstance.post(
-        `/tourist/rateAndCommentItinerary/${id}`,data
+        `/tourist/rateAndCommentItinerary/${id}`, data
       );
       return response.data;
     } catch (error) {
       throw error;
     }
   }
-  
-  public static rateAndCommentTourGuide = async (id: string, data:any) => {
+
+  public static rateAndCommentTourGuide = async (id: string, data: any) => {
     try {
       const response = await axiosInstance.post(
-        `/tourist/rateAndCommentTourGuide/${id}`,data
+        `/tourist/rateAndCommentTourGuide/${id}`, data
       );
       return response.data;
     } catch (error) {
@@ -59,7 +59,7 @@ class TouristService {
 
   public static redeemPoints = async (email: string, points: number) => {
     try {
-      const response = await axiosInstance.put(`/tourist/redeemPoints/${email}`, {points});
+      const response = await axiosInstance.put(`/tourist/redeemPoints/`, { email, points });
       return response.data;
     } catch (error) {
       throw error;
@@ -67,22 +67,22 @@ class TouristService {
   };
 
 
-  
-  public static fileComplaint = async (id: string, data:any) => {
+
+  public static fileComplaint = async (id: string, data: any) => {
     try {
       const response = await axiosInstance.post(
-        `/tourist/fileComplaint/${id}`,data
+        `/tourist/fileComplaint/${id}`, data
       );
       return response.data;
     } catch (error) {
       throw error;
     }
   }
-  
+
   public static checkActivity = async (id: string, activity_id: string) => {
     try {
       const response = await axiosInstance.get(
-        `/tourist/checkActivity/${id}`,{params:{activity_id}}
+        `/tourist/checkActivity/${id}`, { params: { activity_id } }
       );
       return response.data;
     } catch (error) {
@@ -92,7 +92,7 @@ class TouristService {
   public static checkItinerary = async (id: string, itinerary_id: string) => {
     try {
       const response = await axiosInstance.get(
-        `/tourist/checkItinerary/${id}`,{params:{itinerary_id}}
+        `/tourist/checkItinerary/${id}`, { params: { itinerary_id } }
       );
       return response.data;
     } catch (error) {
@@ -102,13 +102,31 @@ class TouristService {
   public static checkTourGuide = async (id: string, tour_guide_email: string) => {
     try {
       const response = await axiosInstance.get(
-        `/tourist/checkTourGuide/${id}`,{params:{tour_guide_email}}
+        `/tourist/checkTourGuide/${id}`, { params: { tour_guide_email } }
       );
       return response.data;
     } catch (error) {
       throw error;
     }
   }
+
+  public static bookActivity = async (email: string, activity_id: string) => {
+    try {
+      const response = await axiosInstance.post(`/tourist/bookActivity`, { email, activity_id });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+  public static bookItinerary = async (email: string, itinerary_id: string) => {
+    try {
+      const response = await axiosInstance.post(`/tourist/bookItinerary`, { email, itinerary_id });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
 
   public static deleteTourist = async (email: string) => {
     try {

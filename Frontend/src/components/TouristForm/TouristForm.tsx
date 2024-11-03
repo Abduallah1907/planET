@@ -78,7 +78,7 @@ export default function TouristForm() {
       console.error("Invalid mobile number");
       return;
     }
-    const formData={
+    const formData = {
       name: regData.firstName + " " + regData.lastName,
       username: regData.username,
       email: regData.email,
@@ -87,7 +87,7 @@ export default function TouristForm() {
       nation: regData.nation,
       date_of_birth: regData.date_of_birth,
       job: regData.job,
-    } 
+    };
 
     try {
       const user = await AuthService.registerTourist(formData); // Call the API
@@ -294,7 +294,7 @@ export default function TouristForm() {
         <ButtonWide label="Create account" />
         <p className="mt-2">
           Already have an account?
-          <a href="#" className="terms-link">
+          <a href="#" className="terms-link" onClick={() => navigate("/login")}>
             Login
           </a>
         </p>

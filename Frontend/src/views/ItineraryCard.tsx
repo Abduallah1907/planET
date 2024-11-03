@@ -5,12 +5,14 @@ import { FaRegBookmark, FaBookmark } from 'react-icons/fa';
 import { MdTimeline } from 'react-icons/md';
 import Rating from '../components/Rating/Rating'; // Optional
 import { ItineraryService } from '../services/ItineraryService';
+import { useNavigate } from 'react-router-dom';
 
 interface ItineraryCardProps {
   id: string;
 }
 
 interface ItineraryData {
+
   name: string;
   tags: { type: string }[];
   average_rating: number;
@@ -34,6 +36,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
   const [showTourGuideModal, setShowTourGuideModal] = useState(false);
   const [showTimelineModal, setShowTimelineModal] = useState(false);
   const [showDatesModal, setShowDatesModal] = useState(false);
+  const navigate = useNavigate();
   const [itineraryData, setItineraryData] = useState<ItineraryData>({
     name: "",
     tags: [],
@@ -87,6 +90,14 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
     setSelectedDateTime(dateObj); // Set the selected date and time
     setShowDatesModal(false); // Close the dates modal
   };
+  const confirmReserve = () => {
+     handleBookNow();
+
+   
+  };
+  const handleBookNow = () => {
+    navigate(`/bookItinerary/${id}`);
+  }
 
   return (
     <Container className='mt-3'>
@@ -127,7 +138,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
             <p className="price">${itineraryData.price}</p>
 
             <div className="d-flex justify-content-center">
-              <button className="reserve-button" onClick={handleDetailsModal}>View Details</button>
+              <button className="reserve-button" onClick={handleDetailsModal}>Reserve</button>
             </div>
 
           </div>
@@ -148,6 +159,9 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
         <Modal.Footer>
           <Button variant="secondary" onClick={handleDetailsModal}>
             Close
+          </Button>
+          <Button variant="primary" onClick={confirmReserve}>
+            Confirm
           </Button>
         </Modal.Footer>
       </Modal>

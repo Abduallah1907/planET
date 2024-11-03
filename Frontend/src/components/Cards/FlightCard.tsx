@@ -1,6 +1,6 @@
 import React from 'react';
 import './Cards.css';
-import { Card, Row, Col } from 'react-bootstrap';
+import { Card, Row, Col, Button } from 'react-bootstrap';
 import airlinesData from '../../airlines.json';
 
 interface FlightCardProps {
@@ -94,11 +94,11 @@ const FlightCard: React.FC<FlightCardProps> = ({ flightData }) => {
                             </Col>
                             <Col sm={9} md={9}>
                                 <Row className='h-100 align-content-center'>
-                                    <Col sm={4} md={4} className='text-end d-flex flex-column justify-content-center'>
+                                    <Col xs={4} sm={4} md={4} className='text-end d-flex flex-column justify-content-center'>
                                         <span className='flight-time'>{itinerary.segments[0].departure.at.split("T")[1].substring(0, 5)}</span>
                                         <span className='flight-airline-iataCode'>{itinerary.segments[0].departure.iataCode}</span>
                                     </Col>
-                                    <Col sm={5} md={5} className='text-center'>
+                                    <Col xs={5} sm={5} md={5} className='text-center'>
                                         <span className='flight-duration'>{formatDuration(itinerary.duration)}</span>
                                         <div className='flight-path'>
                                             {itinerary.segments.map((segment, segmentIndex) => {
@@ -128,7 +128,7 @@ const FlightCard: React.FC<FlightCardProps> = ({ flightData }) => {
                                             )}
                                         </div>
                                     </Col>
-                                    <Col sm={3} md={3} className='text-start d-flex flex-column justify-content-center'>
+                                    <Col xs={3} sm={3} md={3} className='text-start d-flex flex-column justify-content-center'>
                                         <span className='flight-time'>{itinerary.segments[itinerary.segments.length - 1].arrival.at.split("T")[1].substring(0, 5)}</span>
                                         <span className='flight-airline-iataCode'>{itinerary.segments[itinerary.segments.length - 1].arrival.iataCode}</span>
                                     </Col>
@@ -137,10 +137,13 @@ const FlightCard: React.FC<FlightCardProps> = ({ flightData }) => {
                         </Row>
                     ))}
                 </Col>
-                <Col sm={12} md={4} className='p-3 flight-pricing'>
+                <Col sm={12} md={4} className='p-3 flight-pricing d-flex align-items-center justify-content-end'>
                     <Row className='text-center'>
                         <span className='flight-base-price'>{flightData.travelerPricings[0].price.total} {flightData.travelerPricings[0].price.currency}</span>
                         <span className='flight-total-price'>{flightData.price.total} {flightData.price.currency} total</span>
+                        <div>   
+                            <Button variant="custom" className='w-100 border-0'>Book Now</Button>
+                        </div>
                     </Row>
                 </Col>
             </Row>
