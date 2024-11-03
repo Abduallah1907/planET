@@ -6,6 +6,8 @@ import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
 import { AdminService } from "../../services/AdminService";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface NationalityOption {
   value: string;
@@ -18,7 +20,7 @@ interface FormData {
   fname: string;
   lname: string;
   email: string;
-  phone: string;
+  phone_number: string;
   password: string;
   retypePassword: string;
   username: string;
@@ -29,7 +31,7 @@ const CreateAdmin: React.FC = () => {
     fname: "",
     lname: "",
     email: "",
-    phone: "",
+    phone_number: "",
     password: "",
     retypePassword: "",
     username: "",
@@ -53,11 +55,12 @@ const CreateAdmin: React.FC = () => {
     const data = {
       email: formData.email,
       name: formData.fname + " " + formData.lname,
-      phone: formData.phone,
+      phone_number: formData.phone_number,
       username: formData.username,
       password: formData.password,
     };
     await AdminService.createAdmin(data);
+    showToast("Admin created successfully", ToastTypes.SUCCESS);
   };
 
   const handleCancel = () => {
@@ -65,7 +68,7 @@ const CreateAdmin: React.FC = () => {
       fname: "",
       lname: "",
       email: "",
-      phone: "",
+      phone_number: "",
       password: "",
       retypePassword: "",
       username: "",
@@ -146,11 +149,11 @@ const CreateAdmin: React.FC = () => {
                 label="Phone Number"
                 type="tel"
                 placeholder="Enter your phone number"
-                id="phone"
-                name="phone"
+                id="phone_number"
+                name="phone_number"
                 disabled={false}
                 required={true}
-                value={formData.phone}
+                value={formData.phone_number}
                 onChange={handleChange}
               />
             </Col>
