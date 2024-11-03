@@ -1,8 +1,10 @@
 import { Router } from "express";
 import Container from "typedi";
 import { ItineraryController } from "../controllers/itineraryController";
+import { Request, Response, NextFunction } from "express";
 import authorize from "../middlewares/authorize";
 import UserRoles from "@/types/enums/userRoles";
+import getRoleAndID from "../middlewares/getRole";
 const router = Router();
 // all routers have /api/tourGuide before each router
 
@@ -30,7 +32,7 @@ export default (app: Router) => {
 
   // get all itineraries
   router.get("/getAllItinerariesByTourGuideID/:tour_guide_id", authorize([UserRoles.TourGuide]), itineraryController.getAllItinerariesByTourGuideID);
-  router.get("/getAllItineraries/:page", itineraryController.getAllItineraries);
+  router.get("/getAllItineraries/:page", getRoleAndID, itineraryController.getAllItineraries);
 
   router.get("/getSortedItineraries", itineraryController.getSortedItineraries);
 
