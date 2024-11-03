@@ -1,8 +1,10 @@
 import { IItineraryCreateDTO, IItineraryUpdateDTO } from "@/interfaces/IItinerary";
 import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
 import { Types } from "mongoose";
 import ItineraryService from "@/services/itineraryService";
 import Container, { Service } from "typedi";
+import UserRoles from "@/types/enums/userRoles";
 
 @Service()
 export class ItineraryController {
