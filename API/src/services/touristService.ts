@@ -549,7 +549,9 @@ export default class TouristService {
       booking_id: activity_id,
       cancelled: false,
       points_received: points_received,
-      time_to_attend: new Date(`${activity.date.toISOString().split('T')[0]}T${activity.time}`), // Combine date and time
+      time_to_attend: new Date(
+        `${activity.date.toISOString().split("T")[0]}T${activity.time}`
+      ), // Combine date and time
     });
 
     await ticket.save();
@@ -730,7 +732,11 @@ export default class TouristService {
       booking_id: historical_location_id,
       cancelled: false,
       points_received: points_received,
-      time_to_attend: new Date(`${historical_location.date.toISOString().split('T')[0]}T${historical_location.time}`), // Combine date and time
+      time_to_attend: new Date(
+        `${historical_location.date.toISOString().split("T")[0]}T${
+          historical_location.time
+        }`
+      ), // Combine date and time
     });
     ticket.save();
 
@@ -1286,6 +1292,7 @@ export default class TouristService {
         cancelled: t.cancelled,
         points_received: t.points_received,
         time_to_attend: t.time_to_attend,
+        active: activity.active_flag,
         image: activity.image, // Use the activity image
       });
     }
@@ -1359,6 +1366,7 @@ export default class TouristService {
         cancelled: t.cancelled,
         points_received: t.points_received,
         time_to_attend: t.time_to_attend,
+        active: activity.active_flag,
         image: activity.image, // Use the activity image
       });
     }
@@ -1439,6 +1447,7 @@ export default class TouristService {
         price: t.price,
         cancelled: t.cancelled,
         points_received: t.points_received,
+        active: itinerary.active_flag,
         time_to_attend: t.time_to_attend,
       });
     }
@@ -1513,6 +1522,7 @@ export default class TouristService {
         price: t.price,
         cancelled: t.cancelled,
         points_received: t.points_received,
+        active: itinerary.active_flag,
         time_to_attend: t.time_to_attend,
       });
     }
@@ -1593,6 +1603,7 @@ export default class TouristService {
         cancelled: t.cancelled,
         points_received: t.points_received,
         time_to_attend: t.time_to_attend,
+        active: historicalLocation.active_flag,
         image: historicalLocation.images[0], // Fetch only first image of historical location
       });
     }
@@ -1673,6 +1684,7 @@ export default class TouristService {
         cancelled: t.cancelled,
         points_received: t.points_received,
         time_to_attend: t.time_to_attend,
+        active: historicalLocation.active_flag,
         image: historicalLocation.images[0], // Fetch only first image of historical location
       });
     }
