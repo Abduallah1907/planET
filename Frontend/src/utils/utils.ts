@@ -82,6 +82,7 @@ export class Utils {
             setNavItems([
               { path: "/Touristedit", label: "Edit Profile" },
               { path: "/Complaint", label: "File Complaint" },
+              { path: "/MyComplaints", label: "My Complaints" },
             ])
           );
           break;

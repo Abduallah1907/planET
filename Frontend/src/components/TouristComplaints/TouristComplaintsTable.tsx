@@ -8,11 +8,11 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Button } from "react-bootstrap";
-import { AdminService } from "../../services/AdminService";
-import { IComplaint } from "../../types/IComplaint";
-import ComplaintsModal from "./ComplaintsModal";
+import { IComplaintTourist } from "../../types/IComplaint";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import TablePagination from "@mui/material/TablePagination";
+import { TouristService } from "../../services/TouristService";
+import { useAppSelector } from "../../store/hooks";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -30,29 +30,29 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 type Order = "asc" | "desc";
 
 interface HeadCell {
-  id: keyof IComplaint;
+  id: keyof IComplaintTourist;
   label: string;
   numeric: boolean;
   disablePadding?: boolean;
 }
 
 const headCells: readonly HeadCell[] = [
-  { id: "tourist_name", numeric: false, label: "Name" },
+  //   { id: "tourist_name", numeric: false, label: "Name" },
   { id: "title", numeric: false, label: "Title" },
+  { id: "body", numeric: false, label: "Body" },
   { id: "date", numeric: true, label: "Date" },
   { id: "status", numeric: false, label: "Status" },
+  { id: "reply", numeric: false, label: "Reply" },
 ];
 
 function descendingComparator(
-  a: IComplaint,
-  b: IComplaint,
-  orderBy: keyof IComplaint
+  a: IComplaintTourist,
+  b: IComplaintTourist,
+  orderBy: keyof IComplaintTourist
 ) {
-  const valueA =
-    orderBy === "tourist_name" ? a.tourist_name.user_id.name || "" : a[orderBy];
+  const valueA = orderBy === "title" ? a.title || "" : a[orderBy];
 
-  const valueB =
-    orderBy === "tourist_name" ? b.tourist_name.user_id.name || "" : b[orderBy];
+  const valueB = orderBy === "title" ? b.title || "" : b[orderBy];
 
   if (valueB < valueA) {
     return -1;
@@ -63,60 +63,45 @@ function descendingComparator(
   return 0;
 }
 
-function getComparator<Key extends keyof IComplaint>(
+function getComparator<Key extends keyof IComplaintTourist>(
   order: Order,
   orderBy: Key
-): (a: IComplaint, b: IComplaint) => number {
+): (a: IComplaintTourist, b: IComplaintTourist) => number {
   return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-export default function ComplaintsTable() {
-  const [complaints, setComplaints] = useState<IComplaint[]>([]);
-  const [modalShow, setModalShow] = useState(false);
-  const [selectedComplaint, setSelectedComplaint] = useState<IComplaint | null>(
-    null
-  );
+export default function TouristComplaintsTable() {
+  const [complaints, setComplaints] = useState<IComplaintTourist[]>([]);
+
   const [order, setOrder] = useState<Order>("asc");
-  const [orderBy, setOrderBy] = useState<keyof IComplaint>("date");
+  const [orderBy, setOrderBy] = useState<keyof IComplaintTourist>("date");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const getComplaintsData = async () => {
-    const ComplaintsData = await AdminService.getComplaints();
-    // console.log(ComplaintsData.data);
-    setComplaints(ComplaintsData.data);
-  };
+  const Tourist = useAppSelector((state) => state.user);
+  const TouristId = Tourist.stakeholder_id?._id;
 
-  const handleStatusChange = (complaintId: string, newStatus: string) => {
-    setComplaints((prevComplaints: any) =>
-      prevComplaints.map((complaint: any) =>
-        complaint.complaint_id === complaintId
-          ? { ...complaint, status: newStatus }
-          : complaint
-      )
-    );
+  const getComplaintsData = async () => {
+    const ComplaintsData = await TouristService.viewMyComplaints(TouristId);
+    console.log(ComplaintsData.data);
+    setComplaints(ComplaintsData.data);
   };
 
   useEffect(() => {
     getComplaintsData();
-  }, []);
+  }, [TouristId]);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
-    property: keyof IComplaint
+    property: keyof IComplaintTourist
   ) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
-  };
-
-  const handleViewDetails = (complaint: IComplaint) => {
-    setSelectedComplaint(complaint);
-    setModalShow(true);
   };
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -156,7 +141,7 @@ export default function ComplaintsTable() {
                 </TableSortLabel>
               </TableCell>
             ))}
-            <TableCell align="center">
+            <TableCell align="inherit">
               <FilterListIcon
                 style={{ marginRight: "4px", cursor: "pointer" }}
                 onClick={(event) =>
@@ -201,44 +186,18 @@ export default function ComplaintsTable() {
         </TableHead>
         <TableBody>
           {visibleRows.map((complaint) => (
-            <TableRow
-              hover
-              sx={{
-                "&:hover": {
-                  cursor: "pointer",
-                  backgroundColor: "#f5f5f5",
-                  width: "100%",
-                },
-              }}
-              key={complaint.complaint_id}
-            >
-              <TableCell align="center">
-                {complaint.tourist_name.user_id.name}
-              </TableCell>
+            <TableRow key={complaint.complaint_id}>
               <TableCell align="center">{complaint.title}</TableCell>
+              <TableCell align="center">{complaint.body}</TableCell>
               <TableCell align="center">
                 {new Date(complaint.date).toLocaleDateString()}
               </TableCell>
               <TableCell align="center">{complaint.status}</TableCell>
               <TableCell align="center">
-                <Button
-                  variant="main-inverse"
-                  onClick={() => handleViewDetails(complaint)}
-                >
-                  View Details
-                </Button>
+                {complaint.reply ? complaint.reply : "-"}
               </TableCell>
             </TableRow>
           ))}
-          <ComplaintsModal
-            show={modalShow}
-            onHide={() => {
-              setModalShow(false);
-              setSelectedComplaint(null);
-            }}
-            complaint={selectedComplaint}
-            onStatusChange={handleStatusChange}
-          />
         </TableBody>
       </Table>
       <TablePagination

@@ -66,6 +66,7 @@ export default function Login() {
             setNavItems([
               { path: "/Touristedit", label: "Edit Profile" },
               { path: "/Complaint", label: "File Complaint" },
+              { path: "/MyComplaints", label: "My Complaints" },
             ])
           );
           // state.user.isLoggedIn = true;

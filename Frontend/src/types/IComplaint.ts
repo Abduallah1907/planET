@@ -13,3 +13,13 @@ export interface IComplaint {
   date: Date;
   status: string;
 }
+
+export interface IComplaintTourist {
+  complaint_id: string;
+  tourist_id: string;
+  title: string;
+  body: string;
+  reply: string;
+  date: Date;
+  status: string;
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
@@ -12,6 +12,12 @@ export default function ComplaintsModal(props: any) {
   const { complaint, onStatusChange } = props;
 
   const [reply, setReply] = useState("");
+
+  useEffect(() => {
+    if (complaint) {
+      setReply(complaint.reply || ""); // Set reply to complaint.reply if it exists
+    }
+  }, [complaint]);
 
   if (!complaint) {
     return null;
@@ -39,6 +45,7 @@ export default function ComplaintsModal(props: any) {
     try {
       await AdminService.replyComplaint(complaint.complaint_id, reply);
       console.log("Reply Submitted");
+      setReply("");
     } catch (error) {
       console.error("Error submitting reply:", error);
     }
