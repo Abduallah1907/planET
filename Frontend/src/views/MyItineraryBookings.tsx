@@ -52,10 +52,19 @@ const MyItineraryBookings: React.FC = () => {
             prevSelectedBooking === bookingId ? null : bookingId
         );
     };
-    const cancelTicket = async (tourist_id: string, booking_id: string) => {
+    const cancelTicket = async (tourist_id: string, ticket_id: string) => {
+        if (!ticket_id) {
+            console.error('Error cancelling ticket: No ticket ID found');
+            return;
+        }
         try {
-            await TouristService.cancelTicket(tourist_id, booking_id);
-            fetchBookings('upcoming');
+            const response = await TouristService.cancelTicket(tourist_id, ticket_id);
+            console.log('Ticket cancellation response:', response);
+            if (response && response.data) {
+                fetchBookings('upcoming');
+            } else {
+                setError('Error cancelling ticket: No response data');
+            }
         } catch (error: any) {
             console.error('Error cancelling ticket:', error);
             setError(`Error cancelling ticket: ${error.message || 'Unknown error'}`);
@@ -87,7 +96,7 @@ const MyItineraryBookings: React.FC = () => {
                             {selectedBooking === index && (
                                 <Button
                                     variant="danger"
-                                    onClick={() => cancelTicket(booking.tourist_id, booking.booking_id)}
+                                    onClick={() => cancelTicket(Tourist.stakeholder_id._id, booking.ticket_id)}
                                 >
                                     Cancel Booking
                                 </Button>

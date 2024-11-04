@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Button, Col, Nav, Row } from "react-bootstrap";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import './mybookings.css';
+import { set } from "react-datepicker/dist/date_utils";
 
 const MyBookings: React.FC = () => {
     const Tourist = useAppSelector((state) => state.user);
@@ -20,10 +21,10 @@ const MyBookings: React.FC = () => {
         setError('');
         setBookings(null);  // Reset bookings to null immediately to indicate loading/resetting
         try {
-            const response = 
+            const response =
                 type === 'upcoming'
-                ? await TouristService.getUpcomingActivityBookings(Tourist.email)
-                : await TouristService.getPastActivityBookings(Tourist.email);
+                    ? await TouristService.getUpcomingActivityBookings(Tourist.email)
+                    : await TouristService.getPastActivityBookings(Tourist.email);
 
             console.log(`Response for ${type} bookings:`, response);
 
@@ -55,22 +56,22 @@ const MyBookings: React.FC = () => {
         );
     };
     const cancelTicket = async (tourist_id: string, ticket_id: string) => {
-      if (!ticket_id) {
-        console.error('Error cancelling ticket: No ticket ID found');
-        return;
-      }
-      try {
-        const response = await TouristService.cancelTicket(tourist_id, ticket_id);
-        console.log('Ticket cancellation response:', response);
-        if (response && response.data) {
-          fetchBookings('upcoming');
-        } else {
-          setError('Error cancelling ticket: No response data');
+        if (!ticket_id) {
+            console.error('Error cancelling ticket: No ticket ID found');
+            return;
         }
-      } catch (error: any) {
-        console.error('Error cancelling ticket:', error);
-        setError(`Error cancelling ticket: ${error.message || 'Unknown error'}`);
-      }
+        try {
+            const response = await TouristService.cancelTicket(tourist_id, ticket_id);
+            console.log('Ticket cancellation response:', response);
+            if (response && response.data) {
+                fetchBookings('upcoming');
+            } else {
+                setError('Error cancelling ticket: No response data');
+            }
+        } catch (error: any) {
+            console.error('Error cancelling ticket:', error);
+            setError(`Error cancelling ticket: ${error.message || 'Unknown error'}`);
+        }
     };
 
     return (
@@ -87,11 +88,10 @@ const MyBookings: React.FC = () => {
                     </NavLink>
                 </Nav.Item>
             </Nav>
-            {loading && <p>Loading...</p>}
-            {error && <p>{error}</p>}
-            {bookings === null && !loading && <p>Loading new data...</p>}
-            {Array.isArray(bookings) && bookings.length === 0 && !loading && <p>No bookings found</p>}
-            <Row className="w-100">
+      {Array.isArray(bookings) && bookings.length === 0 && !loading && (
+        <p>No bookings found</p>      
+      )}
+                        <Row className="w-100">
                 {Array.isArray(bookings) && bookings.map((booking: any, index: number) => (
                     <Col sm={12} md={3} key={index}>
                         <div onClick={() => handleCardClick(index)}>
@@ -99,7 +99,7 @@ const MyBookings: React.FC = () => {
                                 id={String(index)}
                                 Name={booking.booking_name}
                                 Price={booking.price}
-                                Date_Time={booking.time_to_attend.toLocaleString()}                            />
+                                Date_Time={booking.time_to_attend.toLocaleString()} />
                             {selectedBooking === index && (
                                 <Button
                                     variant="danger"
