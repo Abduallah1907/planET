@@ -13,7 +13,6 @@ export class ItineraryController {
     const itineraryService: ItineraryService = Container.get(ItineraryService);
     const newItinerary = await itineraryService.createItineraryService(itineraryData);
     res.status(newItinerary.status).json(newItinerary);
-    res.status(newItinerary.status).json(newItinerary);
   }
 
   public async getItineraryByID(req: Request, res: Response): Promise<any> {
@@ -76,23 +75,23 @@ export class ItineraryController {
 
   public async getAllItineraries(req: Request, res: Response): Promise<any> {
     const { page } = req.params;
-    const { role, stakeholder_id } = req.body;
+    const { role } = req.body;
     const pageNum: number = parseInt(page);
     const itineraryService: ItineraryService = Container.get(ItineraryService);
-    const itineraries = await itineraryService.getAllItinerariesService(pageNum, stakeholder_id, role);
+    const itineraries = await itineraryService.getAllItinerariesService(pageNum, role);
     res.status(itineraries.status).json(itineraries);
   }
   public async getSearchItinerary(req: any, res: any) {
     const { name, category, tag } = req.query;
-    const { role, stakeholder_id } = req.body;
+    const { role } = req.body;
     const itineraryService: ItineraryService = Container.get(ItineraryService);
-    const itineraries = await itineraryService.getSearchItineraryService(name, category, tag, stakeholder_id, role);
+    const itineraries = await itineraryService.getSearchItineraryService(name, category, tag, role);
     res.status(itineraries.status).json(itineraries);
   }
   public async getUpcomingItineraries(req: any, res: any) {
     const itineraryService: ItineraryService = Container.get(ItineraryService);
-    const { role, stakeholder_id } = req.body;
-    const upcomingItineraries = await itineraryService.getUpcomingItinerariesService(stakeholder_id, role);
+    const { role } = req.body;
+    const upcomingItineraries = await itineraryService.getUpcomingItinerariesService(role);
     res.status(upcomingItineraries.status).json(upcomingItineraries);
   }
   public async getFilteredItineraries(req: any, res: any) {
@@ -144,21 +143,21 @@ export class ItineraryController {
       filters = { ...filters, languages: languages };
     }
     if (tour_guide_id) filters = { ...filters, tour_guide_id: tour_guide_id };
-    const { role, stakeholder_id } = req.body;
-    const itineraries = await itineraryService.getFilteredItinerariesService(filters, stakeholder_id, role);
+    const { role } = req.body;
+    const itineraries = await itineraryService.getFilteredItinerariesService(filters, role);
     res.status(itineraries.status).json(itineraries);
   }
   public async getSortedItineraries(req: any, res: any) {
     const { sort, direction } = req.query;
     const itineraryService: ItineraryService = Container.get(ItineraryService);
-    const { role, stakeholder_id } = req.body;
-    const itineraries = await itineraryService.getSortedItinerariesService(sort, direction, stakeholder_id, role);
+    const { role } = req.body;
+    const itineraries = await itineraryService.getSortedItinerariesService(sort, direction, role);
     res.status(itineraries.status).json(itineraries);
   }
   public async getFilterComponents(req: any, res: any) {
     const itineraryService: ItineraryService = Container.get(ItineraryService);
-    const { role, stakeholder_id } = req.body;
-    const filterComponent = await itineraryService.getFilterComponentsService(stakeholder_id, role);
+    const { role } = req.body;
+    const filterComponent = await itineraryService.getFilterComponentsService(role);
     res.status(filterComponent.status).json(filterComponent);
   }
 }

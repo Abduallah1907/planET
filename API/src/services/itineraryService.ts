@@ -196,7 +196,7 @@ export default class ItineraryService {
     return new response(true, itinerariesOutput, "Returning all found itineraries!", 200);
   }
 
-  public async getAllItinerariesService(page: number, stakeholder_id: ObjectId, role: string): Promise<any> {
+  public async getAllItinerariesService(page: number, role: string): Promise<any> {
     let itineraries = null;
     if (role === UserRoles.Admin)
       itineraries = await this.itineraryModel
@@ -208,7 +208,7 @@ export default class ItineraryService {
     else {
       // this part is to find any itineraries the tourist booked and are not active
       // this part will not work for now, as for some retarded reason, the stakeholder id is a string containing everything about the user
-      // how frontend manages to use that i really dont know
+      // this will not be used because 1) it will require changing the jwt token and 2) too much work for a QoL feature
       // let booked_itinerary;
       // if (role === UserRoles.Tourist && stakeholder_id)
       // booked_itinerary = await this.ticketModel.find({ tourist_id: stakeholder_id, type: TicketType.Itinerary }).select("booking_id");
@@ -245,7 +245,7 @@ export default class ItineraryService {
     return new response(true, itinerartiesOutput, "Page " + page + " of itineraries", 200);
   }
 
-  public async getSearchItineraryService(name: string, category: string, tag: string, stakeholder_id: ObjectId, role: string) {
+  public async getSearchItineraryService(name: string, category: string, tag: string, role: string) {
     if (!name && !category && !tag) throw new BadRequestError("Invalid input");
     let itineraries;
     if (role === UserRoles.Admin)
@@ -279,7 +279,7 @@ export default class ItineraryService {
     return new response(true, itineraries, "Fetched itineraries", 200);
   }
 
-  public async getUpcomingItinerariesService(stakeholder_id: ObjectId, role: string) {
+  public async getUpcomingItinerariesService(role: string) {
     const today = Date.now();
     let itineraries;
     if (role === UserRoles.Admin)
@@ -320,11 +320,11 @@ export default class ItineraryService {
       languages?: string[];
       tour_guide_id?: string;
     },
-    stakeholder_id: ObjectId,
+
     role: string
   ) {
     if (role === UserRoles.Admin) return await this.getFilteredItinerariesAdminService(filters);
-    else return await this.getFilteredItinerariesTouristService(filters, stakeholder_id);
+    else return await this.getFilteredItinerariesTouristService(filters);
   }
   // i dont even know what is this code, pray it works
   private async getFilteredItinerariesAdminService(filters: {
@@ -412,16 +412,13 @@ export default class ItineraryService {
     if (itineraries instanceof Error) throw new InternalServerError("Internal server error");
     return new response(true, itineraries, "Filtered itineraries are fetched", 200);
   }
-  private async getFilteredItinerariesTouristService(
-    filters: {
-      price?: { min?: number; max?: number };
-      date?: { start?: Date; end?: Date };
-      preferences?: string[];
-      languages?: string[];
-      tour_guide_id?: string;
-    },
-    stakeholder_id: ObjectId
-  ): Promise<response> {
+  private async getFilteredItinerariesTouristService(filters: {
+    price?: { min?: number; max?: number };
+    date?: { start?: Date; end?: Date };
+    preferences?: string[];
+    languages?: string[];
+    tour_guide_id?: string;
+  }): Promise<response> {
     if (!filters || Object.keys(filters).length === 0 || (filters.tour_guide_id && Object.keys(filters).length === 1)) {
       const checks: any = {};
       if (filters.tour_guide_id) {
@@ -507,7 +504,7 @@ export default class ItineraryService {
     return new response(true, itineraries, "Filtered itineraries are fetched", 200);
   }
 
-  public async getSortedItinerariesService(sort: string, direction: string, stakeholder_id: ObjectId, role: string) {
+  public async getSortedItinerariesService(sort: string, direction: string, role: string) {
     let sortCriteria = {};
     if (!sort && !direction) {
       const itineraries = await this.itineraryModel.find({
@@ -532,11 +529,11 @@ export default class ItineraryService {
 
     return new response(true, itineraries, "Sorted activities are fetched", 200);
   }
-  public async getFilterComponentsService(stakeholder_id: ObjectId, role: string) {
+  public async getFilterComponentsService(role: string) {
     if (role === UserRoles.Admin) return await this.getFilterComponentsAdminService();
-    else return await this.getFilterComponentsTouristService(stakeholder_id);
+    else return await this.getFilterComponentsTouristService();
   }
-  private async getFilterComponentsTouristService(stakeholder_id: ObjectId) {
+  private async getFilterComponentsTouristService() {
     const preferences = await this.tagModel.find().select("type").lean();
 
     const prices = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false }).select("price").sort({ price: 1 }).lean();

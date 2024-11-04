@@ -1,15 +1,12 @@
 import { IActivityDTO, UpdateIActivityDTO } from "@/interfaces/IActivity";
-import {
-  BadRequestError,
-  ForbiddenError,
-  InternalServerError,
-  NotFoundError,
-} from "@/types/Errors";
+import { BadRequestError, ForbiddenError, InternalServerError, NotFoundError } from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Inject, Service } from "typedi";
 import mongoose, { Types } from "mongoose";
 import { IFilterComponents } from "@/interfaces/IFilterComponents";
 import { ObjectId } from "mongodb";
+import UserRoles from "@/types/enums/userRoles";
+import User from "@/models/user";
 @Service()
 export default class ActivityService {
   constructor(
@@ -21,13 +18,17 @@ export default class ActivityService {
     @Inject("ticketModel") private ticketModel: Models.TicketModel
   ) {}
 
-  public getAllActivitiesService = async () => {
+  public async getAllActivitiesService(role: string) {
+    const activityCriteria: any = {};
+    if (role !== UserRoles.Admin) {
+      console.log("i am not an admin!");
+      activityCriteria.inappropriate_flag = false;
+      activityCriteria.active_flag = true;
+      activityCriteria.booking_flag = true;
+    }
+
     const activitiesData = await this.activityModel
-      .find({
-        active_flag: true,
-        booking_flag: true,
-        inappropriate_flag: false,
-      })
+      .find(activityCriteria)
       .populate("category")
       .populate("tags")
       .populate({
@@ -52,7 +53,7 @@ export default class ActivityService {
     }));
 
     return new response(true, activities, "All activities are fetched", 200);
-  };
+  }
 
   public async createActivityService(activityDatainput: IActivityDTO) {
     const activityData: IActivityDTO = {
@@ -69,24 +70,14 @@ export default class ActivityService {
       active_flag: activityDatainput.active_flag,
       advertiser_id: activityDatainput.advertiser_id,
     };
-    if (
-      activityData.price &&
-      activityData.price_range?.max &&
-      activityData.price_range.min
-    ) {
+    if (activityData.price && activityData.price_range?.max && activityData.price_range.min) {
       throw new BadRequestError("Price and price range can't be both defined");
     }
-    if (
-      !activityData.price &&
-      (!activityData.price_range ||
-        !activityData.price_range.min ||
-        !activityData.price_range.max)
-    ) {
+    if (!activityData.price && (!activityData.price_range || !activityData.price_range.min || !activityData.price_range.max)) {
       throw new BadRequestError("You can only input price or price range");
     }
     const activity = await this.activityModel.create(activityData);
-    if (activity instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (activity instanceof Error) throw new InternalServerError("Internal server error");
 
     if (activity == null) throw new NotFoundError("activity not created");
     const advertiser = await this.advertiserModel.findByIdAndUpdate(
@@ -94,8 +85,7 @@ export default class ActivityService {
       { $push: { activities: activity._id } },
       { new: true }
     );
-    if (advertiser instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (advertiser instanceof Error) throw new InternalServerError("Internal server error");
     if (advertiser == null) throw new NotFoundError("Advertiser not found");
 
     return new response(true, activity, "Activity", 201);
@@ -118,8 +108,7 @@ export default class ActivityService {
         },
       });
 
-    if (activity instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (activity instanceof Error) throw new InternalServerError("Internal server error");
     // throw new Error ("Internal server error");
 
     if (activity == null) throw new NotFoundError("Activity not found");
@@ -148,27 +137,14 @@ export default class ActivityService {
     return new response(true, activities, "Activities are found", 200);
   }
 
-  public async updateActivityService(
-    id: string,
-    activityData: UpdateIActivityDTO
-  ) {
+  public async updateActivityService(id: string, activityData: UpdateIActivityDTO) {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestError("Invalid ID format");
     }
-    if (
-      activityData?.price &&
-      activityData.price_range?.max &&
-      activityData.price_range?.min
-    ) {
-      throw new BadRequestError(
-        "Cannot enter both price and price range,choose one of them"
-      );
+    if (activityData?.price && activityData.price_range?.max && activityData.price_range?.min) {
+      throw new BadRequestError("Cannot enter both price and price range,choose one of them");
     }
-    const updatedActivity = await this.activityModel.findByIdAndUpdate(
-      new Types.ObjectId(id),
-      activityData,
-      { new: true }
-    );
+    const updatedActivity = await this.activityModel.findByIdAndUpdate(new Types.ObjectId(id), activityData, { new: true });
     if (updatedActivity instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
@@ -176,12 +152,7 @@ export default class ActivityService {
       throw new NotFoundError("No Activity with this ID");
     }
 
-    return new response(
-      true,
-      updatedActivity,
-      "Activity is Updated Successfully",
-      200
-    );
+    return new response(true, updatedActivity, "Activity is Updated Successfully", 200);
   }
 
   //Delete Actitivity
@@ -196,14 +167,10 @@ export default class ActivityService {
     }
 
     if (activityCheckDate.date.getTime() >= Date.now() && tickets.length > 0) {
-      throw new BadRequestError(
-        "Activity is booked by some users so cannot delete and date is not passed"
-      );
+      throw new BadRequestError("Activity is booked by some users so cannot delete and date is not passed");
     }
 
-    const activity = await this.activityModel.findByIdAndDelete(
-      new Types.ObjectId(id)
-    );
+    const activity = await this.activityModel.findByIdAndDelete(new Types.ObjectId(id));
     if (activity instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
@@ -212,36 +179,27 @@ export default class ActivityService {
     }
     const itineraries = await this.itineraryModel.find();
     for (const itinerary of itineraries) {
-      const activityIndex = itinerary.activities.findIndex(
-        (activityId) =>
-          activityId.toString() === (activity!._id as Types.ObjectId).toString()
-      );
+      const activityIndex = itinerary.activities.findIndex((activityId) => activityId.toString() === (activity!._id as Types.ObjectId).toString());
       if (activityIndex !== -1) {
         itinerary.activities.splice(activityIndex, 1);
         await itinerary.save();
       }
     }
-    await this.advertiserModel.findByIdAndUpdate(
-      activity.advertiser_id,
-      { $pull: { activities: activity._id } },
-      { new: true }
-    );
+    await this.advertiserModel.findByIdAndUpdate(activity.advertiser_id, { $pull: { activities: activity._id } }, { new: true });
     return new response(true, activity, "Activity deleted successfully", 200);
   }
 
-  public async getSearchActivityService(
-    name: string,
-    category: string,
-    tag: string
-  ) {
+  public async getSearchActivityService(name: string, category: string, tag: string, role: string) {
     if (!name && !category && !tag) throw new BadRequestError("Invalid input");
 
     const searchCriteria: any = {};
     if (name) searchCriteria.name = name;
     if (tag) searchCriteria.tags = tag;
-    searchCriteria.inappropriate_flag = false;
-    searchCriteria.active_flag = true;
-    searchCriteria.booking_flag = true;
+    if (role !== UserRoles.Admin) {
+      searchCriteria.inappropriate_flag = false;
+      searchCriteria.active_flag = true;
+      searchCriteria.booking_flag = true;
+    }
 
     const activities = await this.activityModel
       .find(searchCriteria)
@@ -249,74 +207,71 @@ export default class ActivityService {
       .populate("comments")
       .populate({ path: "advertiser_id", select: "name" });
 
-    if (activities instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (activities instanceof Error) throw new InternalServerError("Internal server error");
 
     if (activities == null) throw new NotFoundError("Activities not found");
 
-    if (activities.length == 0)
-      throw new NotFoundError("No activities with this search data");
+    if (activities.length == 0) throw new NotFoundError("No activities with this search data");
 
     return new response(true, activities, "Fetched activities", 200);
   }
 
-  public async getUpcomingActivitiesService() {
+  public async getUpcomingActivitiesService(role: string) {
     const today = Date.now();
+    const activityCriteria: any = {};
+    if (role !== UserRoles.Admin) {
+      activityCriteria.inappropriate_flag = false;
+      activityCriteria.active_flag = true;
+      activityCriteria.booking_flag = true;
+    }
+
     const activities = await this.activityModel
-      .find({
-        date: { $gte: today },
-        active_flag: true,
-        inappropriate_flag: false,
-        booking_flag: true,
-      })
+      .find(
+        {
+          date: { $gte: today },
+        },
+        activityCriteria
+      )
       .populate("category")
       .populate("comments")
       .populate({ path: "advertiser_id", select: "name" });
 
-    if (activities instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (activities instanceof Error) throw new InternalServerError("Internal server error");
 
     if (activities == null) throw new NotFoundError("Activities not found");
 
-    if (activities.length == 0)
-      throw new NotFoundError("No upcoming activities with searched data");
+    if (activities.length == 0) throw new NotFoundError("No upcoming activities with searched data");
 
     return new response(true, activities, "Fetched upcoming activities", 200);
   }
 
-  public async getFilteredActivitiesService(filters: {
-    price?: { min?: number; max?: number };
-    date?: { start?: Date; end?: Date };
-    category?: string[];
-    rating?: { min?: number; max?: number };
-    preferences?: string[];
-    advertiser_id?: string;
-  }) {
-    if (
-      !filters ||
-      Object.keys(filters).length === 0 ||
-      (filters.advertiser_id && Object.keys(filters).length === 1)
-    ) {
+  public async getFilteredActivitiesService(
+    filters: {
+      price?: { min?: number; max?: number };
+      date?: { start?: Date; end?: Date };
+      category?: string[];
+      rating?: { min?: number; max?: number };
+      preferences?: string[];
+      advertiser_id?: string;
+    },
+    role: string
+  ) {
+    if (!filters || Object.keys(filters).length === 0 || (filters.advertiser_id && Object.keys(filters).length === 1)) {
       const checks: any = {};
       if (filters.advertiser_id) {
         checks.advertiser_id = filters.advertiser_id;
-      } else {
+      } else if (role !== UserRoles.Admin) {
         checks.booking_flag = true;
         checks.active_flag = true;
         checks.inappropriate_flag = false;
       }
       const activities = await this.activityModel.find(checks);
-      return new response(
-        true,
-        activities,
-        "All activities are fetched no filters applied",
-        200
-      );
+      return new response(true, activities, "All activities are fetched no filters applied", 200);
     }
     const matchStage: any = {};
     if (filters.advertiser_id) {
       matchStage.advertiser_id = new ObjectId(filters.advertiser_id);
-    } else {
+    } else if (role !== UserRoles.Admin) {
       matchStage.booking_flag = true;
       matchStage.active_flag = true;
       matchStage.inappropriate_flag = false;
@@ -406,10 +361,7 @@ export default class ActivityService {
     if (filters.category || filters.preferences) {
       aggregationPipeline.push({
         $match: {
-          $or: [
-            { "category.type": { $in: filters.category || [] } },
-            { "tags.type": { $in: filters.preferences || [] } },
-          ],
+          $or: [{ "category.type": { $in: filters.category || [] } }, { "tags.type": { $in: filters.preferences || [] } }],
         },
       });
     } else if (filters.category) {
@@ -423,30 +375,21 @@ export default class ActivityService {
     }
 
     const activities = await this.activityModel.aggregate(aggregationPipeline);
-    if (activities instanceof Error)
-      throw new InternalServerError("Internal server error");
-    return new response(
-      true,
-      activities,
-      "Filtered activities are fetched",
-      200
-    );
+    if (activities instanceof Error) throw new InternalServerError("Internal server error");
+    return new response(true, activities, "Filtered activities are fetched", 200);
   }
-  public async getSortedActivitiesService(sort: string, direction: string) {
-    let sortCriteria = {};
 
+  public async getSortedActivitiesService(sort: string, direction: string, role: string) {
+    let sortCriteria = {};
+    const activityCriteria: any = {};
+    if (role !== UserRoles.Admin) {
+      activityCriteria.inappropriate_flag = false;
+      activityCriteria.active_flag = true;
+      activityCriteria.booking_flag = true;
+    }
     if (!sort && !direction) {
-      const activities = await this.activityModel.find({
-        active_flag: true,
-        booking_flag: true,
-        inappropriate_flag: false,
-      });
-      return new response(
-        true,
-        activities,
-        "Activities with no sort criteria provided",
-        200
-      );
+      const activities = await this.activityModel.find(activityCriteria);
+      return new response(true, activities, "Activities with no sort criteria provided", 200);
     }
     if (sort === "price") {
       sortCriteria = { price: parseInt(direction) };
@@ -455,44 +398,33 @@ export default class ActivityService {
     } else {
       throw new BadRequestError("Invalid sort criteria");
     }
-    const activities = await this.activityModel
-      .find({
-        active_flag: true,
-        booking_flag: true,
-        inappropriate_flag: false,
-      })
-      .sort(sortCriteria);
-    if (activities instanceof Error)
-      throw new InternalServerError("Internal server error");
+
+    const activities = await this.activityModel.find(activityCriteria).sort(sortCriteria);
+    if (activities instanceof Error) throw new InternalServerError("Internal server error");
 
     return new response(true, activities, "Sorted activities are fetched", 200);
   }
-  public async getFilterComponentsService() {
+  public async getFilterComponentsService(role: string) {
     const categories = await this.categoryModel.find().select("type").lean();
 
     const preferences = await this.tagModel.find().select("type").lean();
-
+    const activityCriteria: any = {};
+    if (role !== UserRoles.Admin) {
+      activityCriteria.inappropriate_flag = false;
+      activityCriteria.active_flag = true;
+      activityCriteria.booking_flag = true;
+    }
     const Dates = await this.activityModel
-      .find({
-        active_flag: true,
-        booking_flag: true,
-        inappropriate_flag: false,
-      })
+      .find(activityCriteria)
       .sort({ date: 1 }) // Sort dates in ascending order
       .select("date") // Select only the date field
       .lean(); // Convert to plain JavaScript object
 
-    const prices = await this.activityModel
-      .find()
-      .select("price")
-      .sort({ price: 1 })
-      .lean();
+    const prices = await this.activityModel.find().select("price").sort({ price: 1 }).lean();
 
     const categoryTypes = categories.map((category) => category.type);
 
-    const preferencesList = preferences.map(
-      (preference: any) => preference.type
-    );
+    const preferencesList = preferences.map((preference: any) => preference.type);
 
     const earliestDate = Dates[0]?.date ?? Date.now();
     const latestDate = Dates[Dates.length - 1]?.date ?? Date.now();
@@ -522,21 +454,13 @@ export default class ActivityService {
         max: 5,
       },
     };
-    return new response(
-      true,
-      filterComponents,
-      "Filter components fetched",
-      200
-    );
+    return new response(true, filterComponents, "Filter components fetched", 200);
   }
 
-  public async flagActivityInappropriateService(
-    activity_id: Types.ObjectId
-  ): Promise<response> {
+  public async flagActivityInappropriateService(activity_id: Types.ObjectId): Promise<response> {
     const activity = await this.activityModel.findById(activity_id);
     if (!activity) throw new NotFoundError("Activity not found");
-    if (activity.inappropriate_flag === true)
-      throw new ForbiddenError("Itinerary is already flagged");
+    if (activity.inappropriate_flag === true) throw new ForbiddenError("Itinerary is already flagged");
 
     activity.inappropriate_flag = true;
     await activity.save();

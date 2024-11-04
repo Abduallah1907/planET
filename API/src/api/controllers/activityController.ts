@@ -17,7 +17,8 @@ export class ActivityController {
   //Get all Acivites in the DB
   public async getAllActivities(req: any, res: any) {
     const activityService: ActivityService = Container.get(ActivityService);
-    const activities = await activityService.getAllActivitiesService();
+    const { role } = req.body;
+    const activities = await activityService.getAllActivitiesService(role);
     res.status(activities.status).json(activities);
   }
   //Get activity using ID
@@ -50,20 +51,23 @@ export class ActivityController {
 
   public async getSearchActivity(req: any, res: any) {
     const { name, category, tag } = req.query;
+    const { role } = req.body;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activities = await activityService.getSearchActivityService(name, category, tag);
+    const activities = await activityService.getSearchActivityService(name, category, tag, role);
     res.status(activities.status).json(activities);
   }
 
   public async getUpcomingActivities(req: any, res: any) {
     const activityService: ActivityService = Container.get(ActivityService);
-    const upcomingActivities = await activityService.getUpcomingActivitiesService();
+    const { role } = req.body;
+    const upcomingActivities = await activityService.getUpcomingActivitiesService(role);
 
     res.status(upcomingActivities.status).json(upcomingActivities);
   }
 
   public async getFilteredActivities(req: any, res: any) {
     const { price, date, category, rating, tag, advertiser_id } = req.query;
+    const { role } = req.body;
     const activityService: ActivityService = Container.get(ActivityService);
     var filters = {};
     if (price)
@@ -115,18 +119,20 @@ export class ActivityController {
       }
     }
     if (advertiser_id) filters = { ...filters, advertiser_id: advertiser_id };
-    const activities = await activityService.getFilteredActivitiesService(filters);
+    const activities = await activityService.getFilteredActivitiesService(filters, role);
     res.status(activities.status).json(activities);
   }
   public async getSortedActivities(req: any, res: any) {
     const { sort, direction } = req.query;
+    const { role } = req.body;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activities = await activityService.getSortedActivitiesService(sort, direction);
+    const activities = await activityService.getSortedActivitiesService(sort, direction, role);
     res.status(activities.status).json(activities);
   }
   public async getFilterComponents(req: any, res: any) {
+    const { role } = req.body;
     const activityService: ActivityService = Container.get(ActivityService);
-    const filterComponents = await activityService.getFilterComponentsService();
+    const filterComponents = await activityService.getFilterComponentsService(role);
     res.status(filterComponents.status).json(filterComponents);
   }
 
