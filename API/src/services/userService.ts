@@ -1,17 +1,7 @@
-import {
-  BadRequestError,
-  HttpError,
-  InternalServerError,
-  NotFoundError,
-} from "../types/Errors";
+import { BadRequestError, HttpError, InternalServerError, NotFoundError } from "../types/Errors";
 import response from "../types/responses/response";
 import Container, { Inject, Service } from "typedi";
-import {
-  IGovernorUpdateDTO,
-  IUserInputDTO,
-  IUserLoginDTO,
-  IUserLoginOutputDTO,
-} from "@/interfaces/IUser";
+import { IGovernorUpdateDTO, IUserInputDTO, IUserLoginDTO, IUserLoginOutputDTO } from "@/interfaces/IUser";
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
 import jwt, { Algorithm } from "jsonwebtoken";
@@ -42,13 +32,9 @@ export default class UserService {
     //   throw new BadRequestError("Invalid email");
 
     const newUser = new this.userModel(userData);
-    newUser.password = await bcrypt.hash(
-      userData.password,
-      parseInt(newUser.salt)
-    );
+    newUser.password = await bcrypt.hash(userData.password, parseInt(newUser.salt));
 
-    if (newUser instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (newUser instanceof Error) throw new InternalServerError("Internal server error");
     // throw new Error ("Internal server error");
     if (newUser == null) throw new HttpError("User not created", 404);
     // throw new Error("User not created");
@@ -68,15 +54,11 @@ export default class UserService {
         username: loginData.username,
       });
     }
-    if (user instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (user instanceof Error) throw new InternalServerError("Internal server error");
 
     if (!user) throw new NotFoundError("User not found");
 
-    const isPasswordValid = await bcrypt.compare(
-      loginData.password,
-      user.password
-    );
+    const isPasswordValid = await bcrypt.compare(loginData.password, user.password);
     if (!isPasswordValid) throw new BadRequestError("Password is incorrect");
 
     const user_id = user._id;
@@ -87,16 +69,14 @@ export default class UserService {
         break;
       case UserRoles.Seller:
         const seller = await this.sellerModel.findOne({ user_id: user_id });
-        if (seller instanceof Error)
-          throw new InternalServerError("Internal server error");
+        if (seller instanceof Error) throw new InternalServerError("Internal server error");
         if (seller == null) throw new NotFoundError("Seller not found");
         stakeholder_id = seller;
         break;
 
       case UserRoles.Tourist:
         const tourist = await this.touristModel.findOne({ user_id: user_id });
-        if (tourist instanceof Error)
-          throw new InternalServerError("Internal server error");
+        if (tourist instanceof Error) throw new InternalServerError("Internal server error");
         if (tourist == null) throw new NotFoundError("Tourist not found");
         stakeholder_id = tourist;
         break;
@@ -105,26 +85,21 @@ export default class UserService {
         const advertiser = await this.advertiserModel.findOne({
           user_id: user_id,
         });
-        if (advertiser instanceof Error)
-          throw new InternalServerError("Internal server error");
+        if (advertiser instanceof Error) throw new InternalServerError("Internal server error");
         if (advertiser == null) throw new NotFoundError("Advertiser not found");
         stakeholder_id = advertiser;
         break;
 
       case UserRoles.TourGuide:
-        const tourGuide = await this.tourGuideModel
-          .findOne({ user_id: user_id })
-          .populate("previous_work_description");
-        if (tourGuide instanceof Error)
-          throw new InternalServerError("Internal server error");
+        const tourGuide = await this.tourGuideModel.findOne({ user_id: user_id }).populate("previous_work_description");
+        if (tourGuide instanceof Error) throw new InternalServerError("Internal server error");
         if (tourGuide == null) throw new NotFoundError("Tour Guide not found");
         stakeholder_id = tourGuide;
         break;
 
       case UserRoles.Governor:
         const governor = await this.governorModel.findOne({ user_id: user_id });
-        if (governor instanceof Error)
-          throw new InternalServerError("Internal server error");
+        if (governor instanceof Error) throw new InternalServerError("Internal server error");
         if (governor == null) throw new NotFoundError("Governor not found");
         stakeholder_id = governor;
         break;
@@ -161,12 +136,10 @@ export default class UserService {
     return new response(true, userOutput, "User found", 200);
   }
 
-
   public async forgetPasswordService(email: string) {
     const mailerServiceInstance = Container.get(MailerService);
     const user = await this.userModel.findOne({ email: email });
-    if (user instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (user instanceof Error) throw new InternalServerError("Internal server error");
     if (user == null) throw new NotFoundError("User not found");
 
     // Send email with reset password link
@@ -174,17 +147,12 @@ export default class UserService {
     const mailSent = mailerServiceInstance.SendPasswordReminderEmail(user);
 
     if ((await mailSent).status == "error") {
-      throw new InternalServerError(
-        "Internal server error while sending email or email not valid"
-      );
+      throw new InternalServerError("Internal server error while sending email or email not valid");
     }
     return new response(true, user, "Email sent", 200);
   }
 
-  public async updateGovernorService(
-    email: string,
-    updateData: IGovernorUpdateDTO
-  ) {
+  public async updateGovernorService(email: string, updateData: IGovernorUpdateDTO) {
     const { newEmail, name, phone_number, password, nation } = updateData;
     let hashedPassword;
     if (password) {
@@ -201,17 +169,11 @@ export default class UserService {
       },
       { new: true }
     );
-    if (updatedUser instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (updatedUser instanceof Error) throw new InternalServerError("Internal server error");
     if (updatedUser == null) throw new NotFoundError("User not found");
 
-    const updatedGovernor = await this.governorModel.findOneAndUpdate(
-      { user_id: updatedUser._id },
-      { nation: nation },
-      { new: true }
-    );
-    if (updatedGovernor instanceof Error)
-      throw new InternalServerError("Internal server error");
+    const updatedGovernor = await this.governorModel.findOneAndUpdate({ user_id: updatedUser._id }, { nation: nation }, { new: true });
+    if (updatedGovernor instanceof Error) throw new InternalServerError("Internal server error");
 
     if (updatedGovernor == null) throw new NotFoundError("Governor not found");
 
@@ -228,8 +190,7 @@ export default class UserService {
   public async requestOTPService(email: string) {
     const mailerServiceInstance = Container.get(MailerService);
     const user = await this.userModel.findOne({ email: email });
-    if (user instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (user instanceof Error) throw new InternalServerError("Internal server error");
     if (user == null) throw new NotFoundError("User not found");
 
     const sentOTPs = await this.otpModel.find({ user_id: user._id });
@@ -243,27 +204,21 @@ export default class UserService {
       user_id: user._id,
       code: otp,
     });
-    if (createdOTP instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (createdOTP instanceof Error) throw new InternalServerError("Internal server error");
     const mailSent = mailerServiceInstance.sendOTPMail(email, otp);
 
     if ((await mailSent).status == "error") {
-      throw new InternalServerError(
-        "Internal server error while sending email or email not valid"
-      );
+      throw new InternalServerError("Internal server error while sending email or email not valid");
     }
     return new response(true, user, "Email sent", 200);
   }
 
   public async verifyOTPService(email: string, otp: string) {
     const user = await this.userModel.findOne({ email: email });
-    if (user instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (user instanceof Error) throw new InternalServerError("Internal server error");
     if (user == null) throw new NotFoundError("User not found");
 
-    const sentOTPs = await this.otpModel
-      .find({ user_id: user._id })
-      .sort({ createdAt: 1 });
+    const sentOTPs = await this.otpModel.find({ user_id: user._id }).sort({ createdAt: 1 });
     if (sentOTPs.length == 0) {
       throw new BadRequestError("No OTPs sent. Please request an OTP first");
     }
@@ -279,19 +234,12 @@ export default class UserService {
     return new response(true, user, "OTP verified", 200);
   }
 
-  public async resetPasswordService(
-    email: string,
-    password: string,
-    otp: string
-  ) {
+  public async resetPasswordService(email: string, password: string, otp: string) {
     const user = await this.userModel.findOne({ email: email });
-    if (user instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (user instanceof Error) throw new InternalServerError("Internal server error");
     if (user == null) throw new NotFoundError("User not found");
 
-    const sentOTPs = await this.otpModel
-      .find({ user_id: user._id })
-      .sort({ createdAt: 1 });
+    const sentOTPs = await this.otpModel.find({ user_id: user._id }).sort({ createdAt: 1 });
     const lastOTP = sentOTPs[sentOTPs.length - 1];
     if (lastOTP.code != otp) {
       throw new BadRequestError("Incorrect OTP");
@@ -303,10 +251,7 @@ export default class UserService {
     return new response(true, user, "Password reset", 200);
   }
 
-  public async getDocumentsRequiredService(
-    user_id: Types.ObjectId,
-    role: UserRoles
-  ) {
+  public async getDocumentsRequiredService(user_id: Types.ObjectId, role: UserRoles) {
     let user;
     switch (role) {
       case UserRoles.Admin:
@@ -332,16 +277,10 @@ export default class UserService {
       default:
         throw new BadRequestError("Invalid role");
     }
-    if (user instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (user instanceof Error) throw new InternalServerError("Internal server error");
     if (user == null) throw new NotFoundError("User not found");
 
     const documents_required = user.documents_required;
-    return new response(
-      true,
-      documents_required,
-      "Documents returned for user",
-      200
-    );
+    return new response(true, documents_required, "Documents returned for user", 200);
   }
 }

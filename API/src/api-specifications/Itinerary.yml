@@ -121,7 +121,7 @@ paths:
       description:
         If an itinerary is to be activated, it must have no bookings done by a tourist, even if the itinerary has multiple dates and the other dates are not booked.
         Deactivating an itinerary is possibly irreversible if the itinerary has bookings. Make sure to warn the user of such a thing.
-        This does not prevent the tour guide who created the itinerary to see it. The admin should also be to see it, but this logic is not handled yet.
+        This does not prevent the tour guide who created the itinerary to see it, or users that booked it to see it.
         Note that even information not updated should be sent inside the request body.
       parameters:
         - name: itinerary_id
