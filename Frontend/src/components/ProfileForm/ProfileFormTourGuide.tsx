@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import "./ProfileFormTourist.css";
+import "./Advertiser";
 import Logo from "../../assets/person-circle.svg";
 import {
   Container,
@@ -524,22 +524,14 @@ const ProfileFormGuide: React.FC = () => {
             </Col>
           </Row>
 
-          <Button
-            type="submit"
-            variant="primary"
-            className="mt-4"
-            onClick={OnClick}
-          >
-            Update Profile
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            className="mt-4 ml-2"
-            onClick={handleCancel}
-          >
-            Cancel
-          </Button>
+          <div className="d-flex justify-content-center">
+            <button className="update-btn" onClick={OnClick}>
+              Confirm
+            </button>
+            <button className="cancel-btn" onClick={handleCancel}>
+              Cancel
+            </button>
+          </div>
         </Form>
         <Modal show={showDeleteModal} onHide={cancelDeleteWork} centered>
           <Modal.Header closeButton>
