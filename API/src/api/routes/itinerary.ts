@@ -15,11 +15,7 @@ export default (app: Router) => {
   // CRUD for itinerary
   router.post("/createItinerary", authorize([UserRoles.TourGuide]), itineraryController.createItinerary);
   router.get("/getItineraryByID/:itinerary_id", authorize([UserRoles.TourGuide]), itineraryController.getItineraryByID);
-  router.put(
-    "/updateItinerary/:itinerary_id",
-    // authorize([UserRoles.TourGuide]),
-    itineraryController.updateItinerary
-  );
+  router.put("/updateItinerary/:itinerary_id", authorize([UserRoles.TourGuide]), itineraryController.updateItinerary);
   router.delete("/deleteItinerary/:itinerary_id", authorize([UserRoles.TourGuide]), itineraryController.deleteItinerary);
 
   // activation for itinerary (can only be done by the tourguide)
@@ -34,12 +30,12 @@ export default (app: Router) => {
   router.get("/getAllItinerariesByTourGuideID/:tour_guide_id", authorize([UserRoles.TourGuide]), itineraryController.getAllItinerariesByTourGuideID);
   router.get("/getAllItineraries/:page", getRoleAndID, itineraryController.getAllItineraries);
 
-  router.get("/getSortedItineraries", itineraryController.getSortedItineraries);
+  router.get("/getSortedItineraries", getRoleAndID, itineraryController.getSortedItineraries);
 
-  router.get("/getSearchItinerary", itineraryController.getSearchItinerary);
+  router.get("/getSearchItinerary", getRoleAndID, itineraryController.getSearchItinerary);
 
-  router.get("/getUpcomingItineraries", itineraryController.getUpcomingItineraries);
+  router.get("/getUpcomingItineraries", getRoleAndID, itineraryController.getUpcomingItineraries);
 
-  router.get("/getFilteredItineraries", itineraryController.getFilteredItineraries);
-  router.get("/getFilterComponents", itineraryController.getFilterComponents);
+  router.get("/getFilteredItineraries", getRoleAndID, itineraryController.getFilteredItineraries);
+  router.get("/getFilterComponents", getRoleAndID, itineraryController.getFilterComponents);
 };

@@ -17,16 +17,15 @@ export function getRoleAndID(req: Request, res: Response, next: NextFunction): v
   if (token)
     jwt.verify(token, config.jwtSecret, (err, decoded: any) => {
       if (err) return res.status(401).send("Unauthorized");
-
+      userRole = decoded.role;
       stakeHolderId = decoded.stakeholder_id;
       userId = decoded.id;
-      userRole = decoded.role;
     });
 
-  console.log(userId + " - role: ", userRole + "- stakeid" + stakeHolderId);
-  req.body.userId = userId;
-  req.body.stakeHolderId = stakeHolderId;
-  req.body.userRole = userRole;
+  // console.log(userId + " - role: ", userRole + "- stakeid" + stakeHolderId);
+  req.body.user_id = userId;
+  req.body.stakeholder_id = stakeHolderId;
+  req.body.role = userRole;
   next();
 }
 
