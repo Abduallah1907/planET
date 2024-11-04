@@ -38,8 +38,8 @@ const DaysModal: React.FC<DaysModalProps> = ({ show, handleClose, selectedDays, 
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
+        <Button variant="main-inverse" onClick={handleClose}>
+          Confirm
         </Button>
       </Modal.Footer>
     </Modal>

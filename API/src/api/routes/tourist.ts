@@ -103,4 +103,40 @@ export default (app: Router) => {
     touristController.cancelTicket
   );
   route.put("/redeemPoints", touristController.redeemPoints);
+  ///////////
+
+  route.get(
+    "/getPastActivityBookings/:email",
+    touristController.getPastActivityBookings
+  );
+
+  route.get(
+    "/getUpcomingActivityBookings/:email",
+    touristController.getUpcomingActivityBookings
+  );
+
+  route.get(
+    "/getPastItineraryBookings/:email",
+    touristController.getPastItineraryBookings
+  );
+
+  route.get(
+    "/getUpcomingItineraryBookings/:email",
+    touristController.getUpcomingItineraryBookings
+  );
+
+  route.get(
+    "/getPastHistoricalLocationBookings/:email",
+    touristController.getPastHistoricalLocationBookings
+  );
+
+  route.get(
+    "/getUpcomingHistoricalLocationBookings/:email",
+    touristController.getUpcomingHistoricalLocationBookings
+  );
+  route.get(
+    "/getMyTourGuides/:tourist_id",
+    authorize([UserRoles.Tourist]),
+    touristController.showMyTourGuides
+  );
 };

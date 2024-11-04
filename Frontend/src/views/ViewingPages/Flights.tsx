@@ -2,9 +2,10 @@ import AmadeusService from "../../services/AmadeusService";
 import { useAppContext } from "../../AppContext";
 import FlightsSearchBar from "../../components/FlightsSearchBar";
 import { useState } from "react";
-import { Container } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import FlightCard from "../../components/Cards/FlightCard";
+import FilterBy from "../../components/FilterBy/FilterBy";
 
 export default function FlightsPage() {
     const navigate = useNavigate();
@@ -58,11 +59,29 @@ export default function FlightsPage() {
                     <FlightsSearchBar onSubmit={handleSearchSubmit} />
                 </Container>
             </div>
-            <Container>
-                {flights.map((flightData: any, index: number) => (
-                    <FlightCard key={index} flightData={flightData} />
-                ))}
-            </Container>
+            <Row>
+                <Col sm={12} md={3} lg={3}>
+                    <FilterBy filterOptions={{
+                        Price: {
+                            type: "slider",
+                            min: 2000,
+                            max: 50000
+                        }
+                    }} onFilterChange={function (filter: any): void {
+                        // throw new Error("Function not implemented.");
+
+                    }} />
+                </Col>
+                <Col sm={12} md={8} lg={6}>
+                    <Row className="m-1">
+                        {flights.map((flightData: any, index: number) => (
+                            <Col md={12} className="mt-2">
+                                <FlightCard key={index} flightData={flightData} />
+                            </Col>
+                        ))}
+                    </Row>
+                </Col>
+            </Row>
         </>
     )
 }

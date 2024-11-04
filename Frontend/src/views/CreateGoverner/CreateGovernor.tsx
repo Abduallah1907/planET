@@ -7,6 +7,8 @@ import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adj
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
 import { AdminService } from "../../services/AdminService";
 import { useTranslation } from "react-i18next";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface NationalityOption {
   value: string;
@@ -19,7 +21,7 @@ interface FormData {
   fname: string;
   lname: string;
   email: string;
-  phone: string;
+  phone_number: string;
   password: string;
   retypePassword: string;
   username: string;
@@ -35,7 +37,7 @@ const CreateGoverner: React.FC = () => {
     fname: "",
     lname: "",
     email: "",
-    phone: "",
+    phone_number: "",
     password: "",
     retypePassword: "",
     username: "",
@@ -60,12 +62,13 @@ const CreateGoverner: React.FC = () => {
     const data = {
       email: formData.email,
       name: formData.fname + " " + formData.lname,
-      phone: formData.phone,
+      phone_number: formData.phone_number,
       username: formData.username,
       password: formData.password,
       nation: formData.nationality,
     };
     await AdminService.createGovernor(data);
+    showToast("Governor created successfully", ToastTypes.SUCCESS);
   };
 
   const handleCancel = () => {
@@ -73,7 +76,7 @@ const CreateGoverner: React.FC = () => {
       fname: "",
       lname: "",
       email: "",
-      phone: "",
+      phone_number: "",
       password: "",
       retypePassword: "",
       username: "",
@@ -143,6 +146,7 @@ const CreateGoverner: React.FC = () => {
                     name="nationality"
                     value={formData.nationality}
                     onChange={handleChange}
+                    className="custom-form-control"
                     required
                   >
                     <option value="">Select your nationality</option>
@@ -178,11 +182,11 @@ const CreateGoverner: React.FC = () => {
                 label="Phone Number"
                 type="tel"
                 placeholder="Enter your phone number"
-                id="phone"
-                name="phone"
+                id="phone_number"
+                name="phone_number"
                 disabled={false}
                 required={true}
-                value={formData.phone}
+                value={formData.phone_number}
                 onChange={handleChange}
               />
             </Col>
