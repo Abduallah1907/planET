@@ -8,7 +8,7 @@ interface ButtonLargeProps {
 export default function ButtonWide({ label }: ButtonLargeProps) {
   return (
     <div>
-      <Button type="submit" className="button">
+      <Button variant="main" type="submit" className="button">
         {label}
       </Button>
     </div>

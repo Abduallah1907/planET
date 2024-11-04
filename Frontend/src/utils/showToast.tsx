@@ -1,16 +1,16 @@
-import { createRoot } from 'react-dom/client'; // Import createRoot for React 18
-import React from 'react';
-import ToastComponent from '../components/ToastComponent'; // Import your ToastComponent
-import { ToastTypes } from './toastTypes';
+import { createRoot } from "react-dom/client"; // Import createRoot for React 18
+import React from "react";
+import ToastComponent from "../components/ToastComponent"; // Import your ToastComponent
+import { ToastTypes } from "./toastTypes";
 
 const showToast = (message: string, type: ToastTypes) => {
   // Create a div element to render the toast
-  const toastRoot = document.createElement('div');
-  toastRoot.style.position = 'fixed';
-  toastRoot.style.bottom = '1rem';
-  toastRoot.style.right = '1rem';
-  toastRoot.style.zIndex = '9999';
-  toastRoot.style.width = '300px';
+  const toastRoot = document.createElement("div");
+  toastRoot.style.position = "fixed";
+  toastRoot.style.bottom = "1rem";
+  toastRoot.style.right = "1rem";
+  toastRoot.style.zIndex = "9999";
+  toastRoot.style.width = "300px";
   document.body.appendChild(toastRoot);
 
   // Create a root for the React component using React 18's createRoot API
@@ -30,7 +30,7 @@ const showToast = (message: string, type: ToastTypes) => {
   // Automatically close the toast after 3 seconds
   setTimeout(() => {
     handleClose();
-  }, 1000);
+  }, 3000);
 };
 
 export default showToast;

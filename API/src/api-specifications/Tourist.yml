@@ -745,7 +745,7 @@ paths:
           description: Bad request
         500:
           description: Internal server error
-  /api/tourist/getPastActivitiyBookings/{email}:
+  /api/tourist/getPastActivityBookings/{email}:
     get:
       tags:
         - Tourist

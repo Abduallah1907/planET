@@ -81,7 +81,7 @@ paths:
                   type: string
                 name:
                   type: string
-                phone:
+                phone_number:
                   type: string
                 username:
                   type: string
@@ -110,7 +110,7 @@ paths:
                   type: string
                 name:
                   type: string
-                phone:
+                phone_number:
                   type: string
                 username:
                   type: string

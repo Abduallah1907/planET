@@ -190,11 +190,17 @@ export default class ActivityService {
       throw new BadRequestError("Invalid ID format");
     }
     const tickets = await this.ticketModel.find({ booking_id: id });
-    if (tickets.length > 0) {
+    const activityCheckDate = await this.activityModel.findById(id);
+    if (activityCheckDate == null) {
+      throw new NotFoundError("Activity not found");
+    }
+
+    if (activityCheckDate.date.getTime() >= Date.now() && tickets.length > 0) {
       throw new BadRequestError(
-        "Activity is booked by some users so cannot delete"
+        "Activity is booked by some users so cannot delete and date is not passed"
       );
     }
+
     const activity = await this.activityModel.findByIdAndDelete(
       new Types.ObjectId(id)
     );

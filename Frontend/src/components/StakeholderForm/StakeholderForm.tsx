@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import ButtonWide from "../ButtonWide/ButtonWide";
 import "./StakeholderForm.css";
 import AuthService from "../../services/authService";
 import { FileService } from "../../services/FileService";
 import { useNavigate } from "react-router-dom";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface StakeData {
   firstName: string;
@@ -86,6 +88,7 @@ export default function StakeholderForm() {
         await AuthService.registerTourGuide(updatedStakeData);
       }
       navigate("/login");
+      showToast("Account created successfully", ToastTypes.SUCCESS);
     } catch (error) {
       console.error("Registration failed: ", error);
     }
@@ -194,16 +197,16 @@ export default function StakeholderForm() {
           />
         </Col>
         <Col>
-          <Form.Group controlId="formFile" className="mb-3">
-            <Form.Label>
-              <h3>Upload Files</h3>
-            </Form.Label>
+          <Form.Group controlId="formFile" className="mb-3 form-group">
+            <Form.Label>Upload Files</Form.Label>
             <Form.Control
               type="file"
               name="fileL"
               onChange={handleFileChange}
+              className="custom-form-control"
               accept="pdf/*"
-              multiple
+              disabled={false}
+              required={true}
             />
           </Form.Group>
         </Col>
@@ -241,8 +244,14 @@ export default function StakeholderForm() {
           required
         />
       </div>
-      <div className="d-flex flex-column text-center">
-        <ButtonWide label="Create account" />
+      <Row className="justify-content-center">
+        <Col sm={10} md={4} className="d-flex justify-content-center">
+          <Button type="submit" variant="main-inverse">
+            Create account
+          </Button>
+        </Col>
+      </Row>
+      <Row className="text-center">
         <p className="mt-2">
           Already have an account?{" "}
           <a
@@ -255,7 +264,7 @@ export default function StakeholderForm() {
             Login
           </a>
         </p>
-      </div>
+      </Row>
     </Form>
   );
 }

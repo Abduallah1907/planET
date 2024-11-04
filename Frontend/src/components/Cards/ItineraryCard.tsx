@@ -1,5 +1,15 @@
 import React, { useMemo, useState } from "react";
-import { Card, Badge, Row, Col, Image, DropdownButton, Dropdown, Modal, Button } from "react-bootstrap";
+import {
+  Card,
+  Badge,
+  Row,
+  Col,
+  Image,
+  DropdownButton,
+  Dropdown,
+  Modal,
+  Button,
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkedAlt, faMap } from "@fortawesome/free-solid-svg-icons"; // Import travel-related icons
 import "./Cards.css";
@@ -55,19 +65,19 @@ const ItineraryCard = ({
   onClick,
   onDelete,
   onFlag,
-  
 }: InputData) => {
   // Manage the state for the booking status
   const [bookingStatus, setBookingStatus] = useState(isActive); // Initialize booking status from props
   const [showFlagModal, setShowFlagModal] = useState(false); // State for flag confirmation modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } =
+    useAppContext();
 
   const convertedPrice = useMemo(() => {
     return getConvertedCurrencyWithSymbol(Price, baseCurrency, currency);
   }, [Price, baseCurrency, currency]);
 
-  const user = useAppSelector((state)=>state.user);
+  const user = useAppSelector((state) => state.user);
   const isAdmin = user?.role === "ADMIN";
 
   // Function to handle edit action
@@ -76,7 +86,6 @@ const ItineraryCard = ({
   const handleEdit = (itinerary_id: string) => {
     navigate(`/EditItinerary/${itinerary_id}`); // Navigate to the EditProduct page
   };
-
 
   const handleDelete = () => {
     setShowDeleteModal(true);
@@ -91,12 +100,12 @@ const ItineraryCard = ({
   const cancelDelete = () => {
     setShowDeleteModal(false); // Close modal without action
   };
-  
+
   const handleFlag = () => {
     setShowFlagModal(true); // Show flag confirmation modal
   };
 
-  const confirmFlag = async() => {
+  const confirmFlag = async () => {
     await ItineraryService.flagInappropriate(id); // Call the flagInappropriate function from the service
     setShowFlagModal(false); // Close modal after confirming
     onFlag && onFlag(); // Call the onFlag function passed as a prop
@@ -122,7 +131,11 @@ const ItineraryCard = ({
     >
       <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
         {/* Image Section */}
-        <Col md={3} className="p-0 d-flex align-items-stretch" onClick={onClick}>
+        <Col
+          md={3}
+          className="p-0 d-flex align-items-stretch"
+          onClick={onClick}
+        >
           <Image
             src="https://via.placeholder.com/250x250"
             rounded
@@ -131,7 +144,11 @@ const ItineraryCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={isTourGuide|| isAdmin ? 5 : 6} className="d-flex align-items-stretch" onClick={onClick}>
+        <Col
+          md={isTourGuide || isAdmin ? 5 : 6}
+          className="d-flex align-items-stretch"
+          onClick={onClick}
+        >
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
@@ -143,17 +160,18 @@ const ItineraryCard = ({
                 </Card.Title>
                 {/* Badges next to Activity Name */}
                 {tags?.map((tag: any, index: any) => (
-                  <Badge pill bg="tag" className="me-2 custom-badge" key={index}>
+                  <Badge
+                    pill
+                    bg="tag"
+                    className="me-2 custom-badge"
+                    key={index}
+                  >
                     {tag.type}
                   </Badge>
                 ))}
               </div>
-              <Card.Text className="text-muted mb-2">
-                {comments}
-              </Card.Text>
-              <Card.Text className="text-muted">
-                Timeline: {timeline}
-              </Card.Text>
+              <Card.Text className="text-muted mb-2">{comments}</Card.Text>
+              <Card.Text className="text-muted">Timeline: {timeline}</Card.Text>
 
               <Card.Text>
                 <a
@@ -186,7 +204,10 @@ const ItineraryCard = ({
 
               {/* Date and Duration */}
               <Card.Text className="text-muted">
-                {Available_Dates.map(date => date.toString().split('T')[0]).join(", ")} • Duration: {Duration}
+                {Available_Dates.map(
+                  (date) => date.toString().split("T")[0]
+                ).join(", ")}{" "}
+                • Duration: {Duration}
               </Card.Text>
             </div>
           </Card.Body>
@@ -231,32 +252,37 @@ const ItineraryCard = ({
             ) : null}
           </div>
         </Col>
-        {isTourGuide || isAdmin ?
+        {isTourGuide || isAdmin ? (
           <Col md={1} className="d-flex align-items-baseline">
             <DropdownButton
               align="end"
-              title="⋮"  // Three-dot symbol
+              title="⋮" // Three-dot symbol
               variant="light"
-              className="d-flex justify-content-end ms-3 btn-main-inverse">
-              {isTourGuide ? (<>
-              <Dropdown.Item onClick={() => id && handleEdit(id)}>Edit</Dropdown.Item>
-              <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item></>): 
-              (
-              <Dropdown.Item onClick={() => id && handleFlag()}>Flag Innaproprite</Dropdown.Item>
+              className="d-flex justify-content-end ms-3 btn-main-inverse"
+            >
+              {isTourGuide ? (
+                <>
+                  <Dropdown.Item onClick={() => id && handleEdit(id)}>
+                    Edit
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item>
+                </>
+              ) : (
+                <Dropdown.Item onClick={() => id && handleFlag()}>
+                  Flag Innaproprite
+                </Dropdown.Item>
               )}
             </DropdownButton>
           </Col>
-          : null}
+        ) : null}
       </Row>
 
       {/* Delete Confirmation Modal */}
       <Modal show={showDeleteModal} onHide={cancelDelete} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Delete Product</Modal.Title>
+          <Modal.Title>Delete Itinerary</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to delete this Itinerary?
-        </Modal.Body>
+        <Modal.Body>Are you sure you want to delete this Itinerary?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={cancelDelete}>
             Cancel
