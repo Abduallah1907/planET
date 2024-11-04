@@ -33,6 +33,9 @@ import { time } from "console";
 import { ITourGuideInfoOutputDTO } from "@/interfaces/ITour_guide";
 import { IUser } from "@/interfaces/IUser";
 import itinerary from "@/api/routes/itinerary";
+import { IOrderCartDTO } from "@/interfaces/IOrder";
+import PaymentType from "@/types/enums/paymentType";
+import OrderStatus from "@/types/enums/orderStatus";
 
 // comment and ratings
 // complaint
@@ -53,7 +56,8 @@ export default class TouristService {
     private comment_ratingModel: Models.Comment_ratingModel,
     @Inject("tour_guideModel") private tour_guideModel: Models.Tour_guideModel,
     @Inject("productModel") private productModel: Models.ProductModel,
-    @Inject("ticketModel") private ticketModel: Models.TicketModel
+    @Inject("ticketModel") private ticketModel: Models.TicketModel,
+    @Inject("cartModel") private cartModel: Models.CartModel
   ) {}
 
   public async getTouristService(email: string) {
@@ -1744,5 +1748,69 @@ export default class TouristService {
       }
     }
     return new response(true, tour_guides_info, "Tour guides found", 200);
+  }
+  public async orderCartService(orderData: IOrderCartDTO) {
+    const { tourist_id, cart, cost, payment_type } = orderData;
+    if (!Types.ObjectId.isValid(tourist_id.toString())) {
+      throw new BadRequestError("Invalid id ");
+    }
+
+    if (payment_type == PaymentType.CreditCard) {
+      //Sprint 3
+    }
+    // for (const item of cart.items) {
+    //   const { product_id, quantity } = item;
+    //   const product = await this.productModel.findById(product_id);
+
+    //   if (product instanceof Error)
+    //     throw new InternalServerError("Internal server error");
+
+    //   if (product == null) throw new NotFoundError("Product not found");
+
+    //   if (quantity > product.quantity) {
+    //     throw new BadRequestError("Quantity not available to place order");
+    //   }
+    //   product.quantity -= quantity;
+    //   await product.save();
+
+    //   //Already handled in frontend but why not
+    // }
+    const tourist = await this.touristModel.findById(tourist_id);
+
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const newWallet = tourist.wallet - cost;
+    if (newWallet < 0) {
+      throw new BadRequestError("Insufficient funds to place order");
+    }
+    const updatedTourist = await this.touristModel.findByIdAndUpdate(
+      tourist_id,
+      { wallet: newWallet },
+      { new: true }
+    );
+
+    if (updatedTourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (updatedTourist == null) throw new NotFoundError("Tourist not found");
+
+    const order = new this.orderModel({
+      tourist_id: new Types.ObjectId(tourist_id.toString()),
+      products: cart,
+      date: Date.now(),
+      status: OrderStatus.Pending,
+      payment_type: payment_type,
+    });
+    await order.save();
+
+    if (order instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (order == null) throw new NotFoundError("Order not found");
+
+    return new response(true, order, "Order placed", 201);
   }
 }

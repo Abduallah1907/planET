@@ -72,6 +72,12 @@ const touristSchema = new mongoose.Schema(
         ref: "Ticket",
       },
     ],
+    orders: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order",
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -17,6 +17,7 @@ import { start } from "repl";
 import Comment_Rating from "@/models/Comment_rating";
 import { Types } from "mongoose";
 import { IComplaintCreateDTO } from "@/interfaces/IComplaint";
+import { IOrderCartDTO } from "@/interfaces/IOrder";
 @Service()
 export class TouristController {
   public async getTourist(req: any, res: any) {
@@ -302,5 +303,11 @@ export class TouristController {
       tourist_id
     );
     res.status(showTourGuides.status).json(showTourGuides);
+  }
+  public async orderCart(req: any, res: any) {
+    const orderData: IOrderCartDTO = req.body;
+    const touristService: TouristService = Container.get(TouristService);
+    const orderedCart = await touristService.orderCartService(orderData);
+    res.status(orderedCart.status).json(orderedCart);
   }
 }

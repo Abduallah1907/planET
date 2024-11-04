@@ -139,4 +139,6 @@ export default (app: Router) => {
     authorize([UserRoles.Tourist]),
     touristController.showMyTourGuides
   );
+
+  route.post("/orderCart", touristController.orderCart);
 };

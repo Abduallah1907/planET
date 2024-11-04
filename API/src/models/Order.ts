@@ -2,7 +2,7 @@ import { IOrder } from "@/interfaces/IOrder";
 import OrderStatus from "@/types/enums/orderStatus";
 import PaymentType from "@/types/enums/paymentType";
 import mongoose from "mongoose";
-import Cart_ItemSchema from "@/types/Cart";
+import CartSchema from "@/types/Cart";
 
 const orderSchema = new mongoose.Schema(
   {
@@ -11,12 +11,10 @@ const orderSchema = new mongoose.Schema(
       ref: "Tourist",
       required: true,
     },
-    products: [
-      {
-        type: Cart_ItemSchema,
-        required: true,
-      },
-    ],
+    products: {
+      type: CartSchema,
+      required: true,
+    },
     date: {
       type: Date,
       required: true,
@@ -34,10 +32,6 @@ const orderSchema = new mongoose.Schema(
     payment_type: {
       type: String,
       enum: Object.values(PaymentType),
-      required: true,
-    },
-    points_received: {
-      type: Number,
       required: true,
     },
   },
