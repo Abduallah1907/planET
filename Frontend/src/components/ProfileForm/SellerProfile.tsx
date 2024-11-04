@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import "./ProfileFormTourist.css";
+import "./Advertiser.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { useAppSelector } from "../../store/hooks";
@@ -310,13 +310,13 @@ const SellerProfile: React.FC = () => {
             </Col>
           </Row>
 
-          <div className="form-actions">
-            <Button type="submit" className="update-btn" onClick={OnClick}>
-              Update
-            </Button>
-            <Button type="button" className="cancel-btn" onClick={handleCancel}>
+          <div className="d-flex justify-content-center">
+            <button className="update-btn" onClick={OnClick}>
+              Confirm
+            </button>
+            <button className="cancel-btn" onClick={handleCancel}>
               Cancel
-            </Button>
+            </button>
           </div>
         </Form>
       </Container>
