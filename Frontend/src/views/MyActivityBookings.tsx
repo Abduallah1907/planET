@@ -54,7 +54,6 @@ const MyBookings: React.FC = () => {
             prevSelectedBooking === bookingId ? null : bookingId
         );
     };
-    const ticket_id = bookings?.[selectedBooking || 0]?.ticket_id;
     const cancelTicket = async (tourist_id: string, ticket_id: string) => {
       if (!ticket_id) {
         console.error('Error cancelling ticket: No ticket ID found');
@@ -104,7 +103,7 @@ const MyBookings: React.FC = () => {
                             {selectedBooking === index && (
                                 <Button
                                     variant="danger"
-                                    onClick={() => cancelTicket(Tourist.stakeholder_id._id, booking.booking_id)}
+                                    onClick={() => cancelTicket(Tourist.stakeholder_id._id, booking.ticket_id)}
                                 >
                                     Cancel Booking
                                 </Button>

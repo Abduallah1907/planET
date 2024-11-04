@@ -30,7 +30,7 @@ const ToastComponent: React.FC<ToastComponentProps> = ({
   })();
   return (
     <ToastContainer position="bottom-end" className="p-3">
-      <Toast onClose={onClose} show={!!message} bg={bg} delay={3000} autohide>
+      <Toast onClose={onClose} show={!!message} bg={bg}>
         <Toast.Header>
           <strong className="me-auto">
             {Utils.capitalizeFirstLetter(type)}

@@ -1114,6 +1114,7 @@ export default class TouristService {
     if (!Types.ObjectId.isValid(ticket_id)) {
       throw new BadRequestError("Invalid ticket id ");
     }
+    console.log(ticket_id)
     const ticket = await this.ticketModel.findById(ticket_id);
     if (ticket instanceof Error)
       throw new InternalServerError("Internal server error");
