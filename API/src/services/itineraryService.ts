@@ -197,28 +197,23 @@ export default class ItineraryService {
   }
 
   public async getAllItinerariesService(page: number, role: string): Promise<any> {
-    let itineraries = null;
-    if (role === UserRoles.Admin)
-      itineraries = await this.itineraryModel
-        .find({})
-        .limit(10)
-        .populate("comments")
-        .populate("tags")
-        .skip((page - 1) * 10);
-    else {
-      // this part is to find any itineraries the tourist booked and are not active
-      // this part will not work for now, as for some retarded reason, the stakeholder id is a string containing everything about the user
-      // this will not be used because 1) it will require changing the jwt token and 2) too much work for a QoL feature
-      // let booked_itinerary;
-      // if (role === UserRoles.Tourist && stakeholder_id)
-      // booked_itinerary = await this.ticketModel.find({ tourist_id: stakeholder_id, type: TicketType.Itinerary }).select("booking_id");
-      itineraries = await this.itineraryModel
-        .find({ active_flag: true, inappropriate_flag: false })
-        .limit(10)
-        .populate("comments")
-        .populate("tags")
-        .skip((page - 1) * 10);
+    const itineraryCriteria: any = {};
+    if (role !== UserRoles.Admin) {
+      itineraryCriteria.active_flag = true;
+      itineraryCriteria.inappropriate_flag = false;
     }
+    const itineraries = await this.itineraryModel
+      .find(itineraryCriteria)
+      .limit(10)
+      .populate("comments")
+      .populate("tags")
+      .skip((page - 1) * 10);
+    // this part is to find any itineraries the tourist booked and are not active
+    // this part will not work for now, as for some retarded reason, the stakeholder id is a string containing everything about the user
+    // this will not be used because 1) it will require changing the jwt token and 2) too much work for a QoL feature
+    // let booked_itinerary;
+    // if (role === UserRoles.Tourist && stakeholder_id)
+    // booked_itinerary = await this.ticketModel.find({ tourist_id: stakeholder_id, type: TicketType.Itinerary }).select("booking_id");
     if (itineraries instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
@@ -247,29 +242,24 @@ export default class ItineraryService {
 
   public async getSearchItineraryService(name: string, category: string, tag: string, role: string) {
     if (!name && !category && !tag) throw new BadRequestError("Invalid input");
-    let itineraries;
-    if (role === UserRoles.Admin)
-      itineraries = await this.itineraryModel
-        .find({
+    const itineraryCriteria: any = {};
+    if (role !== UserRoles.Admin) {
+      itineraryCriteria.active_flag = true;
+      itineraryCriteria.inappropriate_flag = false;
+    }
+    const itineraries = await this.itineraryModel
+      .find(
+        {
           name: name,
           tags: tag,
-        })
-        .populate({ path: "category", match: { type: category } })
-        .populate("timeline")
-        .populate("activities")
-        .populate({ path: "tour_guide_id", select: "name" });
-    else
-      itineraries = await this.itineraryModel
-        .find({
-          name: name,
-          tags: tag,
-          active_flag: true,
-          inappropriate_flag: false,
-        })
-        .populate({ path: "category", match: { type: category } })
-        .populate("timeline")
-        .populate("activities")
-        .populate({ path: "tour_guide_id", select: "name" });
+        },
+        itineraryCriteria
+      )
+      .populate({ path: "category", match: { type: category } })
+      .populate("timeline")
+      .populate("activities")
+      .populate({ path: "tour_guide_id", select: "name" });
+
     if (itineraries instanceof Error) throw new InternalServerError("Internal server error");
 
     if (itineraries == null) throw new NotFoundError("Itineraries not found");
@@ -281,27 +271,22 @@ export default class ItineraryService {
 
   public async getUpcomingItinerariesService(role: string) {
     const today = Date.now();
-    let itineraries;
-    if (role === UserRoles.Admin)
-      itineraries = await this.itineraryModel
-        .find({
+    const itineraryCriteria: any = {};
+    if (role !== UserRoles.Admin) {
+      itineraryCriteria.active_flag = true;
+      itineraryCriteria.inappropriate_flag = false;
+    }
+    const itineraries = await this.itineraryModel
+      .find(
+        {
           available_dates: { $gte: today },
-        })
-        .populate("category")
-        .populate("timeline")
-        .populate("activities")
-        .populate({ path: "tour_guide_id", select: "name" });
-    else
-      itineraries = await this.itineraryModel
-        .find({
-          available_dates: { $gte: today },
-          active_flag: true,
-          inappropriate_flag: false,
-        })
-        .populate("category")
-        .populate("timeline")
-        .populate("activities")
-        .populate({ path: "tour_guide_id", select: "name" });
+        },
+        itineraryCriteria
+      )
+      .populate("category")
+      .populate("timeline")
+      .populate("activities")
+      .populate({ path: "tour_guide_id", select: "name" });
 
     if (itineraries instanceof Error) throw new InternalServerError("Internal server error");
 
@@ -311,7 +296,7 @@ export default class ItineraryService {
 
     return new response(true, itineraries, "Fetched upcoming itineraries", 200);
   }
-  // todo lmao
+
   public async getFilteredItinerariesService(
     filters: {
       price?: { min?: number; max?: number };
@@ -323,107 +308,11 @@ export default class ItineraryService {
 
     role: string
   ) {
-    if (role === UserRoles.Admin) return await this.getFilteredItinerariesAdminService(filters);
-    else return await this.getFilteredItinerariesTouristService(filters);
-  }
-  // i dont even know what is this code, pray it works
-  private async getFilteredItinerariesAdminService(filters: {
-    price?: { min?: number; max?: number };
-    date?: { start?: Date; end?: Date };
-    preferences?: string[];
-    languages?: string[];
-    tour_guide_id?: string;
-  }): Promise<response> {
     if (!filters || Object.keys(filters).length === 0 || (filters.tour_guide_id && Object.keys(filters).length === 1)) {
       const checks: any = {};
       if (filters.tour_guide_id) {
         checks.tour_guide_id = filters.tour_guide_id;
-      }
-      const itineraries = await this.itineraryModel.find(checks);
-      return new response(true, itineraries, "All itineraries are fetched no filter applied", 200);
-    }
-    const matchStage: any = {};
-    if (filters.tour_guide_id) {
-      matchStage.tour_guide_id = new MongoObjectID(filters.tour_guide_id);
-    }
-
-    if (filters.price) {
-      if (filters.price.min !== undefined) {
-        matchStage.price = { ...matchStage.price, $gte: filters.price.min };
-      }
-      if (filters.price.max !== undefined) {
-        matchStage.price = { ...matchStage.price, $lte: filters.price.max };
-      }
-    }
-
-    if (filters.date) {
-      if (filters.date.start !== undefined && filters.date.end !== undefined) {
-        matchStage.available_dates = {
-          $elemMatch: {
-            $gte: new Date(filters.date.start),
-            $lte: new Date(filters.date.end),
-          },
-        };
-      } else if (filters.date.start !== undefined) {
-        matchStage.available_dates = {
-          $elemMatch: {
-            $gte: new Date(filters.date.start),
-          },
-        };
-      } else if (filters.date.end !== undefined) {
-        matchStage.available_dates = {
-          $elemMatch: {
-            $lte: new Date(filters.date.end),
-          },
-        };
-      }
-    }
-
-    if (filters.languages) {
-      matchStage.languages = { $in: filters.languages };
-    }
-
-    var aggregationPipeline: any[] = [
-      {
-        $lookup: {
-          from: "tags", // The name of the tag collection
-          localField: "tags", // The field in the tags collection
-          foreignField: "_id", // The field in the tags collection
-          as: "tags",
-        },
-      },
-      {
-        $match: matchStage,
-      },
-      {
-        $addFields: {
-          reviews_count: { $size: "$comments" },
-        },
-      },
-    ];
-    if (filters.preferences) {
-      aggregationPipeline.push({
-        $match: {
-          "tags.type": { $in: filters.preferences },
-        },
-      });
-    }
-    const itineraries = await this.itineraryModel.aggregate(aggregationPipeline);
-    if (itineraries instanceof Error) throw new InternalServerError("Internal server error");
-    return new response(true, itineraries, "Filtered itineraries are fetched", 200);
-  }
-  private async getFilteredItinerariesTouristService(filters: {
-    price?: { min?: number; max?: number };
-    date?: { start?: Date; end?: Date };
-    preferences?: string[];
-    languages?: string[];
-    tour_guide_id?: string;
-  }): Promise<response> {
-    if (!filters || Object.keys(filters).length === 0 || (filters.tour_guide_id && Object.keys(filters).length === 1)) {
-      const checks: any = {};
-      if (filters.tour_guide_id) {
-        checks.tour_guide_id = filters.tour_guide_id;
-      } else {
+      } else if (role !== UserRoles.Admin) {
         checks.active_flag = true;
         checks.inappropriate_flag = false;
       }
@@ -433,7 +322,7 @@ export default class ItineraryService {
     const matchStage: any = {};
     if (filters.tour_guide_id) {
       matchStage.tour_guide_id = new MongoObjectID(filters.tour_guide_id);
-    } else {
+    } else if (role !== UserRoles.Admin) {
       matchStage.active_flag = true;
       matchStage.inappropriate_flag = false;
     }
@@ -505,12 +394,15 @@ export default class ItineraryService {
   }
 
   public async getSortedItinerariesService(sort: string, direction: string, role: string) {
+    const itineraryCriteria: any = {};
+    if (role !== UserRoles.Admin) {
+      itineraryCriteria.active_flag = true;
+      itineraryCriteria.inappropriate_flag = false;
+    }
+
     let sortCriteria = {};
     if (!sort && !direction) {
-      const itineraries = await this.itineraryModel.find({
-        active_flag: true,
-        inappropriate_flag: false,
-      });
+      const itineraries = await this.itineraryModel.find(itineraryCriteria);
       return new response(true, itineraries, "Itineraries with no sort criteria provided", 200);
     }
 
@@ -522,61 +414,29 @@ export default class ItineraryService {
       throw new BadRequestError("Invalid sort criteria");
     }
 
-    let itineraries;
-    if (role === UserRoles.Admin) itineraries = await this.itineraryModel.find({}).sort(sortCriteria);
-    else itineraries = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false }).sort(sortCriteria);
+    const itineraries = await this.itineraryModel.find(itineraryCriteria).sort(sortCriteria);
     if (itineraries instanceof Error) throw new InternalServerError("Internal server error");
 
     return new response(true, itineraries, "Sorted activities are fetched", 200);
   }
+
   public async getFilterComponentsService(role: string) {
-    if (role === UserRoles.Admin) return await this.getFilterComponentsAdminService();
-    else return await this.getFilterComponentsTouristService();
-  }
-  private async getFilterComponentsTouristService() {
+    const itineraryCriteria: any = {};
+    if (role !== UserRoles.Admin) {
+      itineraryCriteria.active_flag = true;
+      itineraryCriteria.inappropriate_flag = false;
+    }
+
     const preferences = await this.tagModel.find().select("type").lean();
 
-    const prices = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false }).select("price").sort({ price: 1 }).lean();
+    const prices = await this.itineraryModel.find(itineraryCriteria).select("price").sort({ price: 1 }).lean();
 
-    const dates = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false }).select("available_dates").lean();
-
-    const allDates = dates.flatMap((itinerary: any) => itinerary.available_dates);
-    allDates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
-
-    const languages = await this.itineraryModel.find({ active_flag: true, inappropriate_flag: false }).select("languages").lean();
-
-    const preferencesList = preferences.map((preference: any) => preference.type);
-
-    const lowestPrice = prices[0]?.price ?? 0;
-    const highestPrice = prices[prices.length - 1]?.price ?? 0;
-
-    const earliestDate = allDates[0] ?? Date.now();
-    const latestDate = allDates[allDates.length - 1] ?? Date.now();
-
-    const languagesList = [...new Set(languages.flatMap((language: any) => language.languages))];
-
-    const filterComponents: IFilterComponents = {
-      Tag: { type: "multi-select", values: preferencesList },
-
-      Language: { type: "multi-select", values: languagesList },
-
-      Price: { type: "slider", min: lowestPrice, max: highestPrice },
-
-      Date: { type: "date-range", start: earliestDate, end: latestDate },
-    };
-    return new response(true, filterComponents, "Filter components fetched", 200);
-  }
-  private async getFilterComponentsAdminService() {
-    const preferences = await this.tagModel.find({}).select("type").lean();
-
-    const prices = await this.itineraryModel.find({}).select("price").sort({ price: 1 }).lean();
-
-    const dates = await this.itineraryModel.find({}).select("available_dates").lean();
+    const dates = await this.itineraryModel.find(itineraryCriteria).select("available_dates").lean();
 
     const allDates = dates.flatMap((itinerary: any) => itinerary.available_dates);
     allDates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
 
-    const languages = await this.itineraryModel.find({}).select("languages").lean();
+    const languages = await this.itineraryModel.find(itineraryCriteria).select("languages").lean();
 
     const preferencesList = preferences.map((preference: any) => preference.type);
 
