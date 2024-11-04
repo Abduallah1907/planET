@@ -124,3 +124,9 @@
   font-weight: 400;
   line-height: 1rem;
 }
+
+.bookingCard{
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+  padding: 1rem;
+}
