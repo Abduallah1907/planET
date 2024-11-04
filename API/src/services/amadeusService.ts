@@ -1,6 +1,6 @@
 import config from '@/config';
 import { Service } from 'typedi';
-import Amadeus, { FlightOffersSearchGetParams, HotelOffersSearchParams } from 'amadeus-ts';
+import Amadeus, { FlightOffersSearchGetParams, HotelOffersSearchParams, ReferenceDataLocationsHotelsByCityParams } from 'amadeus-ts';
 import Response from '@/types/responses/response';
 
 @Service()
@@ -39,8 +39,17 @@ export default class AmadeusService {
         }
     }
 
+    public async getHotelsListService(params: ReferenceDataLocationsHotelsByCityParams){
+        try {
+            const response = await this.amadeus.referenceData.locations.hotels.byCity.get(params);
+            return new Response(true, response.data, 'Hotels List Fetched successfully', 200);
+        } catch (error){
+            throw error;
+        }
+    }
+
     public async getHotelOffersService(params: HotelOffersSearchParams){
-        try{
+        try {
             const response = await this.amadeus.shopping.hotelOffersSearch.get(params);
             return new Response(true, response.data, 'Hotel Offers Fetched successfully', 200);
         } catch (error){
