@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import "./ProfileFormTourist.css";
+import "./Advertiser.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { AdvertiserService } from "../../services/AdvertiserService";
@@ -378,13 +378,13 @@ const Advertiser: React.FC = () => {
 
           {/* New row for 'About' section */}
 
-          <div className="form-actions">
-            <Button type="submit" className="update-btn" onClick={OnClick}>
+          <div className="d-flex justify-content-center">
+            <button className="update-btn" onClick={OnClick}>
               Confirm
-            </Button>
-            <Button type="button" className="cancel-btn" onClick={handleCancel}>
+            </button>
+            <button className="cancel-btn" onClick={handleCancel}>
               Cancel
-            </Button>
+            </button>
           </div>
         </Form>
       </Container>

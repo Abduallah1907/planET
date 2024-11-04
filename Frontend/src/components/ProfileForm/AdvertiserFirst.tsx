@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import "./ProfileFormTourist.css";
+import "./Advertiser.css";
 import { Container, Row, Col, Button, Form, Modal } from "react-bootstrap";
 import LogoPlaceholder from "../../assets/person-circle.svg"; // Placeholder logo
 import { useAppSelector } from "../../store/hooks";
 import { AdvertiserService } from "../../services/AdvertiserService";
 
 import { FileService } from "../../services/FileService";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   about: string;
@@ -48,20 +50,36 @@ const AdvertiserFirst: React.FC = () => {
   const OnClick = async () => {
     if (formData.logo) {
       const file = await FileService.uploadFile(formData.logo);
-      await AdvertiserService.updateAdvertiser(AdvertiserFirst.email, {
-        about: formData.about,
-        link_to_website: formData.website,
-        hotline: formData.hotline,
-        company_profile: formData.companyProfile,
-        logo: file.data._id,
-      });
+      const adv = await AdvertiserService.updateAdvertiser(
+        AdvertiserFirst.email,
+        {
+          about: formData.about,
+          link_to_website: formData.website,
+          hotline: formData.hotline,
+          company_profile: formData.companyProfile,
+          logo: file.data._id,
+        }
+      );
+      if (adv.status === 200) {
+        showToast("Updated successfully", ToastTypes.SUCCESS);
+      } else {
+        showToast("Error in updating", ToastTypes.ERROR);
+      }
     } else {
-      await AdvertiserService.updateAdvertiser(AdvertiserFirst.email, {
-        about: formData.about,
-        link_to_website: formData.website,
-        hotline: formData.hotline,
-        company_profile: formData.companyProfile,
-      });
+      const adv2 = await AdvertiserService.updateAdvertiser(
+        AdvertiserFirst.email,
+        {
+          about: formData.about,
+          link_to_website: formData.website,
+          hotline: formData.hotline,
+          company_profile: formData.companyProfile,
+        }
+      );
+      if (adv2.status === 200) {
+        showToast("Updated successfully", ToastTypes.SUCCESS);
+      } else {
+        showToast("Error in updating", ToastTypes.ERROR);
+      }
     }
   };
 
@@ -204,13 +222,13 @@ const AdvertiserFirst: React.FC = () => {
             />
           </div>
 
-          <div className="form-actions">
-            <Button type="submit" className="update-btn" onClick={OnClick}>
-              Update
-            </Button>
-            <Button type="button" className="cancel-btn" onClick={handleCancel}>
+          <div className="d-flex justify-content-center">
+            <button className="update-btn" onClick={OnClick}>
+              Confirm
+            </button>
+            <button className="cancel-btn" onClick={handleCancel}>
               Cancel
-            </Button>
+            </button>
           </div>
         </Form>
         {/* Terms and Conditions Modal */}
