@@ -1114,9 +1114,7 @@ export default class TouristService {
     if (!Types.ObjectId.isValid(ticket_id)) {
       throw new BadRequestError("Invalid ticket id ");
     }
-    const ticket = await this.ticketModel.findById({
-      _id: new Types.ObjectId(ticket_id),
-    });
+    const ticket = await this.ticketModel.findById(ticket_id);
     if (ticket instanceof Error)
       throw new InternalServerError("Internal server error");
     if (ticket == null) throw new NotFoundError("Ticket not found");
@@ -1359,6 +1357,7 @@ export default class TouristService {
         );
       }
       bookings.push({
+        ticket_id: t._id as ObjectId,
         type: t.type,
         booking_id: t.booking_id,
         booking_name: activity.name, // Use the activity name
@@ -1516,6 +1515,7 @@ export default class TouristService {
       }
 
       bookings.push({
+        ticket_id: t._id as ObjectId,
         type: t.type,
         booking_id: t.booking_id,
         booking_name: itinerary.name, // Use the itinerary name
@@ -1677,6 +1677,7 @@ export default class TouristService {
       }
 
       bookings.push({
+        ticket_id: t._id as ObjectId,
         type: t.type,
         booking_id: t.booking_id,
         booking_name: historicalLocation.name, // Use the historical location name

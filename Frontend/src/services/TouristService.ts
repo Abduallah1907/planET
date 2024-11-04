@@ -171,7 +171,7 @@ class TouristService {
 
   public static cancelTicket = async (tourist_id:string,ticket_id:string) => {
     try {
-      const response = await axiosInstance.delete(`/tourist/cancelTicket/${tourist_id}`, { params: { ticket_id } });
+      const response = await axiosInstance.put(`/tourist/cancelTicket/${tourist_id}?ticket_id=${ticket_id}`);
       return response.data;
     } catch (error) {
       throw error;

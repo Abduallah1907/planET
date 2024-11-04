@@ -15,6 +15,7 @@ export interface ITicket extends Document {
 }
 
 export interface ITicketBooking {
+  ticket_id?: ObjectId;
   tourist_id?: ObjectId;
   type: TicketType;
   booking_id: ObjectId;
