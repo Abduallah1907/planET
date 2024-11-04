@@ -63,6 +63,7 @@ import Cart from "./views/Cart";
 
 import BookingActivity from "./views/BookingActivity";
 import BookingItinerary from "./views/BookingItinerary";
+import TourGuidesTable from "./views/Tables/TourGuidesTable";
 
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen);
@@ -160,6 +161,7 @@ const App: React.FC = () => {
         <Route path="/Tags" element={<TagsTable />} />
         <Route path="/HistoricalTags" element={<HistoricalTagsTable />} />
         <Route path="/UsersTable" element={<UsersTable />} />
+        <Route path="/TourGuidesTable" element={<TourGuidesTable />} />
 
         <Route path="/Complaint" element={<ComplaintForm />} />
 
