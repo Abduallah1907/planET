@@ -70,7 +70,7 @@ const Avatar: React.FC = () => {
                 />
             </Dropdown.Toggle>
             <Dropdown.Menu className='custom-dropdown-menu'>
-                <Dropdown.Item as={Link} to={`/${user.role}/Profile`}>Profile</Dropdown.Item>
+                <Dropdown.Item as={Link} to={`/${user.role.toLowerCase()}/Profile`}>Profile</Dropdown.Item>
                 {user.role=="TOURIST"||
                 user.role=="TOUR_GUIDE"||
                 user.role=="ADVERTISER"||

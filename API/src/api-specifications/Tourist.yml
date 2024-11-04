@@ -865,7 +865,7 @@ paths:
         400:
           description: Bad request
         500:
-          description: Internal server error                                                
+          description: Internal server error
   /api/tourist/getMyTourGuides/{tourist_id}:
     get:
       tags:
