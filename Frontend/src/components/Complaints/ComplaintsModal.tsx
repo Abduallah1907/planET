@@ -1,31 +1,53 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
+import Form from "react-bootstrap/Form";
 import { AdminService } from "../../services/AdminService";
+import "../FormGroup/FormGroup.css";
 
 export default function ComplaintsModal(props: any) {
   const { complaint, onStatusChange } = props;
 
+  const [reply, setReply] = useState("");
+
+  useEffect(() => {
+    if (complaint) {
+      setReply(complaint.reply || ""); // Set reply to complaint.reply if it exists
+    }
+  }, [complaint]);
+
   if (!complaint) {
-    return null; // or you can return a loading state/modal
+    return null;
   }
 
   const handleStatusChange = async () => {
     try {
       if (complaint.status === "Pending") {
-        await AdminService.markResolved(complaint.complaint_id); // Assuming complaint_id is the identifier
-        // Optionally, call onStatusChange to update local state in the parent component
+        await AdminService.markResolved(complaint.complaint_id);
         onStatusChange(complaint.complaint_id, "Resolved");
       } else {
         await AdminService.markPending(complaint.complaint_id);
-        // Optionally, call onStatusChange to update local state in the parent component
         onStatusChange(complaint.complaint_id, "Pending");
       }
     } catch (error) {
       console.error("Error updating complaint status:", error);
+    }
+  };
+
+  const handleReplyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setReply(event.target.value);
+  };
+
+  const handleReplySubmit = async () => {
+    try {
+      await AdminService.replyComplaint(complaint.complaint_id, reply);
+      console.log("Reply Submitted");
+      setReply("");
+    } catch (error) {
+      console.error("Error submitting reply:", error);
     }
   };
 
@@ -46,15 +68,38 @@ export default function ComplaintsModal(props: any) {
               <strong>Title:</strong> {complaint.title}
             </Col>
           </Row>
-          <Row>
+          <Row className="pt-2">
             <Col xs={12} md={8}>
               <strong>Date:</strong> {complaint.date.toString()}
             </Col>
             <Col xs={6} md={4}>
               <strong>Status:</strong> {complaint.status}
             </Col>
+          </Row>
+          <Row className="pt-2">
+            <Col xs={12} md={12}>
+              <strong>Body:</strong> {complaint.body}
+            </Col>
+          </Row>
+          <Row className="pt-3">
+            <Col xs={12} md={8}>
+              <Form.Control
+                type="text"
+                className="custom-form-control"
+                placeholder="Add a reply"
+                value={reply}
+                onChange={handleReplyChange}
+              />
+            </Col>
             <Col xs={6} md={4}>
-              {/* .col-xs-6 .col-md-4 */}
+              <Button
+                type="submit"
+                variant="main-inverse"
+                disabled={!reply}
+                onClick={handleReplySubmit}
+              >
+                Add reply
+              </Button>
             </Col>
           </Row>
         </Container>

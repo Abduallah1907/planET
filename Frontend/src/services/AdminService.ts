@@ -58,7 +58,7 @@ class AdminService {
   public static getComplaints = async () => {
     try {
       const response = await axiosInstance.get(`/admin/getComplaints/1`);
-      console.log(response.data);
+      console.log("Service: ", response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -86,6 +86,16 @@ class AdminService {
       throw error;
     }
   };
-}
 
+  public static replyComplaint = async (id: string, reply: string) => {
+    try {
+      const response = await axiosInstance.put(`/admin/replyComplaint/${id}`, {
+        reply,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+}
 export { AdminService };

@@ -59,6 +59,7 @@ import FlightsPage from "./views/ViewingPages/Flights";
 import ComplaintForm from "./views/ViewingPages/ComplaintForm";
 import AllComplaints from "./components/Complaints/AllComplaints";
 import ComplaintsTable from "./components/Complaints/ComplaintsTable";
+import MyComplaints from "./components/TouristComplaints/MyComplaints";
 import Cart from "./views/Cart";
 
 import BookingActivity from "./views/BookingActivity";
@@ -184,7 +185,9 @@ const App: React.FC = () => {
 
         <Route path="/ChangePasswordForm" element={<ChangePasswordForm />} />
         <Route path="/ChangePasswordG" element={<ChangePasswordG />} />
+
         <Route path="/Complaints" element={<AllComplaints />} />
+        <Route path="/MyComplaints" element={<MyComplaints />} />
         <Route path="/Cart" element={<Cart />} />
       </Routes>
     </AppProvider>

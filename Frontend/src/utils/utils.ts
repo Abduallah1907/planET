@@ -81,6 +81,7 @@ export class Utils {
           dispatch(
             setNavItems([
               { path: "/Complaint", label: "File Complaint" },
+              { path: "/MyComplaints", label: "My Complaints" },
               {path: "/MyBookings/upcoming", label: "My Activities"},
               {path: "/MyItineraryBookings/upcoming", label: "My Itineraries"},
               { path: "/TourGuidesTable", label: "View My Tour Guides" },
