@@ -177,6 +177,14 @@ class TouristService {
       throw error;
     }
   }
+  public static getMyTourGuides = async (tourist_id: string) => {
+    try {
+      const response = await axiosInstance.get(`/tourist/getMyTourGuides/${tourist_id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { TouristService };

@@ -12,6 +12,10 @@ import CustomFormGroup from "../FormGroup/FormGroup";
 import { useAppSelector } from "../../store/hooks";
 import { TourGuideServices } from "../../services/TourGuideServices";
 import { FileService } from "../../services/FileService";
+import { FaTrashAlt } from "react-icons/fa";
+import "./Advertiser.css";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface WorkExperience {
   id?: string; // ID from the backend
@@ -35,6 +39,10 @@ const TourGuideFirst: React.FC = () => {
     previousWork: [],
     photo: null,
   });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [workToDeleteIndex, setWorkToDeleteIndex] = useState<number | null>(
+    null
+  );
 
   const [createdWork, setCreatedWork] = useState<WorkExperience[]>([]);
   // Added state for modal visibility
@@ -130,7 +138,7 @@ const TourGuideFirst: React.FC = () => {
   const OnClick = async () => {
     if (formData.photo) {
       const file = await FileService.uploadFile(formData.photo);
-      await TourGuideServices.updateTourGuide(TourGuideFirst.email, {
+      const TG = await TourGuideServices.updateTourGuide(TourGuideFirst.email, {
         years_of_experience: formData.yearsOfExperience,
         createdPreviousWork: createdWork.map((work) => ({
           id: work.id, // Send the ID to the backend
@@ -143,20 +151,31 @@ const TourGuideFirst: React.FC = () => {
         updatedPreviousWork: [],
         photo: file.data._id,
       });
+      if (TG.status === 200) {
+        showToast("Updated successfully", ToastTypes.SUCCESS);
+      } else {
+        showToast("Error in updating", ToastTypes.ERROR);
+      }
     } else {
-      await TourGuideServices.updateTourGuide(TourGuideFirst.email, {
-        years_of_experience: formData.yearsOfExperience,
-        photo: formData.photo,
-        createdPreviousWork: createdWork.map((work) => ({
-          id: work.id, // Send the ID to the backend
-          title: work.title,
-          place: work.place,
-          from: work.from,
-          to: work.to,
-        })),
+      const TG2 = await TourGuideServices.updateTourGuide(
+        TourGuideFirst.email,
+        {
+          years_of_experience: formData.yearsOfExperience,
+          photo: formData.photo,
+          createdPreviousWork: createdWork.map((work) => ({
+            id: work.id, // Send the ID to the backend
+            title: work.title,
+            place: work.place,
+            from: work.from,
+            to: work.to,
+          })),
 
-        updatedPreviousWork: [],
-      });
+          updatedPreviousWork: [],
+        }
+      );
+      if (TG2.status === 200)
+        showToast("Updated successfully", ToastTypes.SUCCESS);
+      else showToast("Error in updating", ToastTypes.ERROR);
     }
   };
 
@@ -167,6 +186,23 @@ const TourGuideFirst: React.FC = () => {
       photo: null,
     });
     setCreatedWork([]);
+  };
+  const handleDeleteWork = (index: number) => {
+    setWorkToDeleteIndex(index);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteWork = () => {
+    if (workToDeleteIndex !== null) {
+      handleRemoveWork(workToDeleteIndex); // Call your existing remove function
+    }
+    setShowDeleteModal(false);
+    setWorkToDeleteIndex(null);
+  };
+
+  const cancelDeleteWork = () => {
+    setShowDeleteModal(false);
+    setWorkToDeleteIndex(null);
   };
 
   return (
@@ -259,20 +295,19 @@ const TourGuideFirst: React.FC = () => {
                       />
                     </td>
                     <td>
-                      <Button
-                        variant="danger"
-                        onClick={() => handleRemoveWork(index)}
-                      >
-                        Delete
+                      <Button variant="main-inverse" className="mt-2">
+                        <FaTrashAlt onClick={() => handleDeleteWork(index)}>
+                          Delete
+                        </FaTrashAlt>
                       </Button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </Table>
-            <Button onClick={handleAddWork} variant="success">
+            <button className="update-btn" onClick={handleAddWork}>
               + Add Work Experience
-            </Button>
+            </button>
           </Col>
         </Row>
         {/* Terms and Conditions Checkbox */}
@@ -293,13 +328,13 @@ const TourGuideFirst: React.FC = () => {
           />
         </div>
 
-        <div className="form-actions">
-          <Button type="submit" className="update-btn" onClick={OnClick}>
-            Update
-          </Button>
-          <Button type="button" className="cancel-btn" onClick={handleCancel}>
+        <div className="d-flex justify-content-center">
+          <button className="update-btn" onClick={OnClick}>
+            Confirm
+          </button>
+          <button className="cancel-btn" onClick={handleCancel}>
             Cancel
-          </Button>
+          </button>
         </div>
       </Form>
       {/* Terms and Conditions Modal */}
@@ -336,6 +371,26 @@ const TourGuideFirst: React.FC = () => {
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal}>
             Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showDeleteModal} onHide={cancelDeleteWork} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Are you sure you want to delete this work experience?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="main"
+            className="border-warning-subtle"
+            onClick={cancelDeleteWork}
+          >
+            Cancel
+          </Button>
+          <Button variant="main-inverse" onClick={confirmDeleteWork}>
+            Confirm
           </Button>
         </Modal.Footer>
       </Modal>

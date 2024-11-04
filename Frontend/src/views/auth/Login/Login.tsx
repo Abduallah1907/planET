@@ -67,10 +67,11 @@ export default function Login() {
             setNavItems([
               { path: "/Complaint", label: "File Complaint" },
               {path: "/MyBookings/upcoming", label: "My Activities"},
-              {path: "/MyItineraryBookings/upcoming", label: "My Itineraries"}
+              {path: "/MyItineraryBookings/upcoming", label: "My Itineraries"},
+              { path: "/TourGuidesTable", label: "View Tour Guides" },
+              { path: "/RecentOrders", label: "Recent Orders" },
             ])
           );
-          // state.user.isLoggedIn = true;
           navigate("/tourist/Profile");
           break;
         case "TOUR_GUIDE":

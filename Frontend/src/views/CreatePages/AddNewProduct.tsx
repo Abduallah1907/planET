@@ -5,6 +5,8 @@ import { useAppSelector } from "../../store/hooks";
 import { ProductService } from "../../services/ProductService";
 import { useNavigate } from "react-router-dom";
 import { FileService } from "../../services/FileService";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   name: string;
@@ -25,8 +27,22 @@ const AddNewProduct: React.FC = () => {
     archive_flag: false,
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
+
+    // Check if the field is Price or Quantity
+    if (name === "price" || name === "quantity") {
+      const numericalValue = parseFloat(value); // Use parseFloat for Price
+
+      // Validate for negative values
+      if (numericalValue < 0) {
+        showToast(`${name} cannot be negative`, ToastTypes.ERROR);
+        setFormData({ ...formData, [name]: "0" }); // Reset to 0 if negative
+        return;
+      }
+    }
+
+    // Update formData based on the input type
     setFormData({
       ...formData,
       [name]: type === "checkbox" ? checked : value,

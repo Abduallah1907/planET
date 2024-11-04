@@ -23,5 +23,6 @@ export interface ITicketBooking {
   cancelled: boolean;
   points_received: Number;
   time_to_attend: Date;
+  active: boolean;
   image?: mongoose.Schema.Types.ObjectId;
 }

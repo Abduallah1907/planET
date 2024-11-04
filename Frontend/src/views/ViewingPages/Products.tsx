@@ -169,7 +169,7 @@ export default function ProductsPage() {
             {filteredProducts.map((product: IProduct, index) => (
               <Col key={index} xs={12} className="mb-4 ps-0">
                 <ProductCard
-                  id={product.user_id}
+                  id={product._id}
                   name={product.name}
                   average_rating={product.average_rating}
                   quantity={product.quantity}
@@ -191,6 +191,7 @@ export default function ProductsPage() {
                   onClick={() => onProductClick(product._id)}
                   isSeller={false}
                   isAdmin={false}
+                  
                 />
               </Col>
             ))}

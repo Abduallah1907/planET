@@ -516,6 +516,15 @@ export default class TouristService {
           activity.price - activity.price * (activity.special_discount / 100);
       }
     }
+    const findPreviousTicket = await this.ticketModel.findOne({
+      tourist_id: tourist_id,
+      booking_id: activity_id,
+      type: TicketType.Activity,
+      cancelled: false,
+    });
+    if (findPreviousTicket) {
+      throw new BadRequestError("Already booked this activity");
+    }
     let points_received;
     if (activity.price !== undefined) {
       points_received = await this.recievePointsService(
@@ -540,7 +549,9 @@ export default class TouristService {
       booking_id: activity_id,
       cancelled: false,
       points_received: points_received,
-      time_to_attend: new Date(`${activity.date.toISOString().split('T')[0]}T${activity.time}`), // Combine date and time
+      time_to_attend: new Date(
+        `${activity.date.toISOString().split("T")[0]}T${activity.time}`
+      ), // Combine date and time
     });
 
     await ticket.save();
@@ -553,6 +564,12 @@ export default class TouristService {
       { wallet: newWallet, $push: { tickets: ticket._id } },
       { new: true }
     );
+    if (updatedTourist instanceof Error)
+      throw new InternalServerError(
+        "Internal server error in updating tourist"
+      );
+
+    if (updatedTourist == null) throw new NotFoundError("Tourist not found");
 
     return new response(true, ticket, "Activity booked", 201);
   }
@@ -597,6 +614,15 @@ export default class TouristService {
     if (itinerary.inappropriate_flag == true)
       throw new BadRequestError("Itinerary is inappropriate");
 
+    const findPreviousTicket = await this.ticketModel.findOne({
+      tourist_id: tourist_id,
+      booking_id: itinerary_id,
+      type: TicketType.Itinerary,
+      cancelled: false,
+    });
+    if (findPreviousTicket) {
+      throw new BadRequestError("Already booked this itinerary");
+    }
     let points_received = await this.recievePointsService(
       tourist_id as Types.ObjectId,
       itinerary.price
@@ -628,6 +654,11 @@ export default class TouristService {
       { wallet: newWallet, $push: { tickets: ticket._id } },
       { new: true }
     );
+
+    if (updatedTourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (updatedTourist == null) throw new NotFoundError("Tourist not found");
 
     return new response(true, ticket, "Itinerary booked", 201);
   }
@@ -701,7 +732,11 @@ export default class TouristService {
       booking_id: historical_location_id,
       cancelled: false,
       points_received: points_received,
-      time_to_attend: new Date(`${historical_location.date.toISOString().split('T')[0]}T${historical_location.time}`), // Combine date and time
+      time_to_attend: new Date(
+        `${historical_location.date.toISOString().split("T")[0]}T${
+          historical_location.time
+        }`
+      ), // Combine date and time
     });
     ticket.save();
 
@@ -1257,6 +1292,7 @@ export default class TouristService {
         cancelled: t.cancelled,
         points_received: t.points_received,
         time_to_attend: t.time_to_attend,
+        active: activity.active_flag,
         image: activity.image, // Use the activity image
       });
     }
@@ -1330,6 +1366,7 @@ export default class TouristService {
         cancelled: t.cancelled,
         points_received: t.points_received,
         time_to_attend: t.time_to_attend,
+        active: activity.active_flag,
         image: activity.image, // Use the activity image
       });
     }
@@ -1410,6 +1447,7 @@ export default class TouristService {
         price: t.price,
         cancelled: t.cancelled,
         points_received: t.points_received,
+        active: itinerary.active_flag,
         time_to_attend: t.time_to_attend,
       });
     }
@@ -1484,6 +1522,7 @@ export default class TouristService {
         price: t.price,
         cancelled: t.cancelled,
         points_received: t.points_received,
+        active: itinerary.active_flag,
         time_to_attend: t.time_to_attend,
       });
     }
@@ -1564,6 +1603,7 @@ export default class TouristService {
         cancelled: t.cancelled,
         points_received: t.points_received,
         time_to_attend: t.time_to_attend,
+        active: historicalLocation.active_flag,
         image: historicalLocation.images[0], // Fetch only first image of historical location
       });
     }
@@ -1644,6 +1684,7 @@ export default class TouristService {
         cancelled: t.cancelled,
         points_received: t.points_received,
         time_to_attend: t.time_to_attend,
+        active: historicalLocation.active_flag,
         image: historicalLocation.images[0], // Fetch only first image of historical location
       });
     }

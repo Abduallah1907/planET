@@ -10,7 +10,7 @@ import DeutschFlag from "../../assets/Deutsch.webp";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "../../AppContext";
 import { MdHelpOutline } from "react-icons/md";
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaShoppingCart } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { toggleSidebar } from "../../store/sidebarSlice";
 import Avatar from "../Avatar/Avatar";
@@ -187,33 +187,41 @@ const TopBar: React.FC = () => {
             <Button
               variant=""
               onClick={handleHelp}
-              className="btn-help btn-margin"
+              className="btn-help btn-margin me-1"
             >
               <MdHelpOutline />
             </Button>
 
             {IsLoggedIn ? (
+              <>
+              <Button
+                variant=""
+                onClick={() => navigate("/Cart")}
+                className="btn-help btn-margin me-3"
+              >
+                <FaShoppingCart />
+              </Button>
               <Row>
-                <Col className="pe-0 d-flex flex-column justify-content-center">
-                  <Avatar/>
-                </Col>
-                <Col>
+                  <Col className="pe-0 d-flex flex-column justify-content-center">
+                    <Avatar />
+                  </Col>
+                  <Col>
 
-                  <Row>
-                    <h5 className="text-white m-0">{User.username}</h5>
-                  </Row>
+                    <Row>
+                      <h5 className="text-white m-0">{User.username}</h5>
+                    </Row>
 
                   {User.role === "TOURIST" ? (
                     <Row>
                       <SlBadge className={getBadgeColor(User.stakeholder_id.badge) }/>
                     </Row>
 
-                  ) : (null)}
-                </Col>
+                    ) : (null)}
+                  </Col>
 
 
 
-              </Row>
+                </Row></>
             ) : (
               <>
                 <Button variant="" className="btn-text" onClick={handleJoinUs}>

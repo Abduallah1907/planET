@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import "./ProfileFormTourist.css";
+import "./Advertiser.css";
 import Logo from "../../assets/person-circle.svg";
-import { Container, Row, Col, Button, Form, Table } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Form,
+  Table,
+  Modal,
+} from "react-bootstrap";
 import { useAppSelector } from "../../store/hooks";
 import { TourGuideServices } from "../../services/TourGuideServices";
 import { isValidObjectId } from "../../utils/CheckObjectId";
 import { FileService } from "../../services/FileService";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
+import { FaTrashAlt } from "react-icons/fa";
 
 interface WorkExperience {
   id?: string;
@@ -42,6 +53,11 @@ const ProfileFormGuide: React.FC = () => {
     logo: null,
     previousWork: [],
   });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [workToDeleteIndex, setWorkToDeleteIndex] = useState<number | null>(
+    null
+  );
+
   const [fileUrl, setFileUrl] = useState("");
   const [createdWork, setCreatedWork] = useState<WorkExperience[]>([]);
   const [editedWork, setEditedWork] = useState<WorkExperience[]>([]);
@@ -121,6 +137,14 @@ const ProfileFormGuide: React.FC = () => {
     >
   ) => {
     const { name, value } = e.target;
+    if (name === "yearsOfExperience") {
+      const numericalValue = parseInt(value);
+      if (numericalValue < 0) {
+        showToast("Years of Experience cannot be negative", ToastTypes.ERROR);
+        setFormData({ ...formData, [name]: "0" });
+        return;
+      }
+    }
     setFormData({ ...formData, [name]: value });
   };
 
@@ -186,7 +210,7 @@ const ProfileFormGuide: React.FC = () => {
   const OnClick = async () => {
     if (formData.logo) {
       const file = await FileService.uploadFile(formData.logo);
-      await TourGuideServices.updateTourGuide(TourGuide.email, {
+      const TourG = await TourGuideServices.updateTourGuide(TourGuide.email, {
         name: `${formData.firstName} ${formData.lastName}`,
         newEmail: formData.email,
         phone_number: formData.mobile,
@@ -198,8 +222,13 @@ const ProfileFormGuide: React.FC = () => {
         updatedPreviousWork: editedWork,
         deletedPreviousWork: deletedWork,
       });
+      if (TourG.status === 200) {
+        showToast("Updated successfully", ToastTypes.SUCCESS);
+      } else {
+        showToast("Error in updating", ToastTypes.ERROR);
+      }
     } else {
-      await TourGuideServices.updateTourGuide(TourGuide.email, {
+      const TourG = await TourGuideServices.updateTourGuide(TourGuide.email, {
         name: `${formData.firstName} ${formData.lastName}`,
         newEmail: formData.email,
         phone_number: formData.mobile,
@@ -210,14 +239,30 @@ const ProfileFormGuide: React.FC = () => {
         updatedPreviousWork: editedWork,
         deletedPreviousWork: deletedWork,
       });
+      if (TourG.status === 200) {
+        showToast("Updated successfully", ToastTypes.SUCCESS);
+      } else {
+        showToast("Error in updating", ToastTypes.ERROR);
+      }
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.changePassword !== formData.retypePassword) {
-      alert("Passwords don't match!");
+    if (
+      (formData.changePassword && !formData.retypePassword) ||
+      (!formData.changePassword && formData.retypePassword)
+    ) {
+      alert("Please fill out both password fields.");
       return;
+    }
+
+    // If both password fields are filled, validate that they match
+    if (formData.changePassword && formData.retypePassword) {
+      if (formData.changePassword !== formData.retypePassword) {
+        alert("Passwords don't match!");
+        return;
+      }
     }
     // Handle form submission, including the logo file and about text
   };
@@ -238,6 +283,23 @@ const ProfileFormGuide: React.FC = () => {
     setCreatedWork([]);
     setEditedWork([]);
     setDeletedWork([]);
+  };
+  const handleDeleteWork = (index: number) => {
+    setWorkToDeleteIndex(index);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteWork = () => {
+    if (workToDeleteIndex !== null) {
+      handleRemoveWork(workToDeleteIndex); // Call your existing remove function
+    }
+    setShowDeleteModal(false);
+    setWorkToDeleteIndex(null);
+  };
+
+  const cancelDeleteWork = () => {
+    setShowDeleteModal(false);
+    setWorkToDeleteIndex(null);
   };
 
   return (
@@ -324,7 +386,7 @@ const ProfileFormGuide: React.FC = () => {
                 placeholder="Enter your password"
                 id="changePassword"
                 name="changePassword"
-                required={true}
+                required={false}
                 value={formData.changePassword}
                 onChange={handleChange}
                 disabled={false}
@@ -337,7 +399,7 @@ const ProfileFormGuide: React.FC = () => {
                 placeholder="Retype your password"
                 id="retypePassword"
                 name="retypePassword"
-                required={true}
+                required={false}
                 value={formData.retypePassword}
                 onChange={handleChange}
                 disabled={false}
@@ -448,38 +510,51 @@ const ProfileFormGuide: React.FC = () => {
                         />
                       </td>
                       <td>
-                        <Button
-                          variant="danger"
-                          onClick={() => handleRemoveWork(index)}
-                        >
-                          Remove
+                        <Button variant="main-inverse" className="mt-2">
+                          <FaTrashAlt onClick={() => handleDeleteWork(index)}>
+                            Delete
+                          </FaTrashAlt>
                         </Button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </Table>
-              <Button onClick={handleAddWork}>Add Work Experience</Button>
+              <button className="update-btn" onClick={handleAddWork}>
+                Add Work Experience
+              </button>
             </Col>
           </Row>
 
-          <Button
-            type="submit"
-            variant="primary"
-            className="mt-4"
-            onClick={OnClick}
-          >
-            Update Profile
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            className="mt-4 ml-2"
-            onClick={handleCancel}
-          >
-            Cancel
-          </Button>
+          <div className="d-flex justify-content-center">
+            <button className="update-btn" onClick={OnClick}>
+              Confirm
+            </button>
+            <button className="cancel-btn" onClick={handleCancel}>
+              Cancel
+            </button>
+          </div>
         </Form>
+        <Modal show={showDeleteModal} onHide={cancelDeleteWork} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirm Deletion</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Are you sure you want to delete this work experience?</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="main"
+              className="border-warning-subtle"
+              onClick={cancelDeleteWork}
+            >
+              Cancel
+            </Button>
+            <Button variant="main-inverse" onClick={confirmDeleteWork}>
+              Confirm
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </Container>
     </div>
   );

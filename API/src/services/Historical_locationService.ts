@@ -13,6 +13,7 @@ import {
   Update_IHistorical_locationDTO,
 } from "@/interfaces/IHistorical_Location";
 import { IFilterComponents } from "@/interfaces/IFilterComponents";
+import { ObjectId as MongoObjectID } from "mongodb";
 @Service()
 export default class Historical_locationService {
   constructor(
@@ -23,8 +24,18 @@ export default class Historical_locationService {
     @Inject("governorModel") private governorModel: Models.GovernorModel
   ) {}
   //this function is to choose the price based on the user data
-  public choosePrice = async (location: any, data: { job: string, nation: string}) => {
-    if (data.job == null || data.job == undefined || data.job == "" || data.nation == null || data.nation == undefined || data.nation == "") {
+  public choosePrice = async (
+    location: any,
+    data: { job: string; nation: string }
+  ) => {
+    if (
+      data.job == null ||
+      data.job == undefined ||
+      data.job == "" ||
+      data.nation == null ||
+      data.nation == undefined ||
+      data.nation == ""
+    ) {
       return location.foreign_price;
     }
     if (data.job.toLowerCase() == "student") {
@@ -411,16 +422,16 @@ export default class Historical_locationService {
     tags?: string[];
     nation: string;
     job: string;
-    governer_id?: string;
+    governor_id?: string;
   }) {
     if (
       !filters ||
       Object.keys(filters).length === 0 ||
-      (filters.governer_id && Object.keys(filters).length === 1)
+      (filters.governor_id && Object.keys(filters).length === 1)
     ) {
       const checks: any = {};
-      if (filters.governer_id) {
-        checks.governer_id = filters.governer_id;
+      if (filters.governor_id) {
+        checks.governor_id = filters.governor_id;
       } else {
         checks.active_flag = true;
       }
@@ -435,8 +446,8 @@ export default class Historical_locationService {
       );
     }
     const matchStage: any = {};
-    if (filters.governer_id) {
-      matchStage.governer_id = new Types.ObjectId(filters.governer_id);
+    if (filters.governor_id) {
+      matchStage.governor_id = new MongoObjectID(filters.governor_id);
     } else {
       matchStage.active_flag = true;
     }
@@ -463,7 +474,7 @@ export default class Historical_locationService {
     if (historical_locations instanceof Error)
       throw new InternalServerError("Internal server error");
 
-    if (!filters.governer_id) {
+    if (!filters.governor_id) {
       const historical_locations_with_prices = await Promise.all(
         historical_locations.map(async (location) => {
           location.price = await this.choosePrice(location, {
