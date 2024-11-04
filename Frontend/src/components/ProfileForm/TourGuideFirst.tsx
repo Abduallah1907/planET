@@ -305,9 +305,9 @@ const TourGuideFirst: React.FC = () => {
                 ))}
               </tbody>
             </Table>
-            <Button onClick={handleAddWork} variant="success">
+            <button className="update-btn" onClick={handleAddWork}>
               + Add Work Experience
-            </Button>
+            </button>
           </Col>
         </Row>
         {/* Terms and Conditions Checkbox */}

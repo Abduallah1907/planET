@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import "./Advertiser";
+import "./Advertiser.css";
 import Logo from "../../assets/person-circle.svg";
 import {
   Container,
@@ -520,7 +520,9 @@ const ProfileFormGuide: React.FC = () => {
                   ))}
                 </tbody>
               </Table>
-              <Button onClick={handleAddWork}>Add Work Experience</Button>
+              <button className="update-btn" onClick={handleAddWork}>
+                Add Work Experience
+              </button>
             </Col>
           </Row>
 
