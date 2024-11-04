@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Adjust the path as necessary
-import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import { Container, Row, Col, Button, Form, Modal } from "react-bootstrap";
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
 import "../tagsinput.css";
 import { useAppSelector } from "../../store/hooks";
@@ -8,6 +8,13 @@ import { useNavigate } from "react-router-dom";
 import { ActivityService } from "../../services/ActivityService";
 import CategoryService from "../../services/CategoryService";
 import { AdminService } from "../../services/AdminService";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
+
+
+
+// Other interface and component definitions...
+
 
 interface FormData {
   name: string;
@@ -51,29 +58,43 @@ const AdvertiserCreate: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [showMapModal, setShowMapModal] = useState(false); // State to manage modal visibility
+
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     if (name === "booking") {
-      if (value === "Open") {
+      setFormData({
+        ...formData,
+        [name]: value === "Open",
+      });
+    } else {
+      const updatedValue = type === "checkbox" ? checked : value;
+
+      // Ensure special_discount and price do not accept negative values
+      if ((name === "special_discount" || name === "price") && Number(updatedValue) < 0) {
+        showToast("Value cannot be negative", ToastTypes.ERROR);
         setFormData({
           ...formData,
-          [name]: true,
+          [name]: 0,
         });
       } else {
         setFormData({
           ...formData,
-          [name]: false,
+          [name]: updatedValue,
         });
       }
-    } else {
-      setFormData({
-        ...formData,
-        [name]: type === "checkbox" ? checked : value,
-      });
     }
   };
 
+
+  const handleAddLocation = () => {
+    setShowMapModal(true); // Show the modal
+  };
+
+  const handleCloseMapModal = () => {
+    setShowMapModal(false); // Close the modal
+  };
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue) {
@@ -165,6 +186,7 @@ const AdvertiserCreate: React.FC = () => {
     };
     if (AdvertiserId) {
       await ActivityService.createActivity(productData);
+      showToast("Activity created successfully", ToastTypes.SUCCESS);
       navigate("/MyActivities");
     } else {
       console.error("Advertiser Id is undefined");
@@ -199,7 +221,7 @@ const AdvertiserCreate: React.FC = () => {
               <Form.Group className="form-group" controlId="category">
                 <Form.Label>Category</Form.Label>
                 <div className="custom-select-container">
-                <Form.Control
+                  <Form.Control
                     as="select"
                     name="category"
                     value={formData.category}
@@ -267,7 +289,7 @@ const AdvertiserCreate: React.FC = () => {
               <Form.Group className="form-group" controlId="booking">
                 <Form.Label>Booking</Form.Label>
                 <div className="custom-select-container">
-                <Form.Control
+                  <Form.Control
                     placeholder="Select Booking"
                     as="select"
                     name="booking"
@@ -300,7 +322,7 @@ const AdvertiserCreate: React.FC = () => {
               />
             </Col>
             <Col>
-            <Form.Group className="form-group" controlId="tags">
+              <Form.Group className="form-group" controlId="tags">
                 <Form.Label>Tags</Form.Label>
                 <div className="tags-input">
                   {selectedTags.map((tag) => (
@@ -340,20 +362,34 @@ const AdvertiserCreate: React.FC = () => {
           </Row>
 
           <Row>
-            <div className="card w-50 p-3 mt-3 border-1 m-2 m-auto p-md-2 loc">
-              <div className="card-body">
-                <h5 className="card-title">Location</h5>
-              </div>
-              <div className="ratio ratio-1x1">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3455.7252495085836!2d31.435660077332482!3d29.98732507495249!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14583cb2bfafbe73%3A0x6e7220116094726d!2sGerman%20University%20in%20Cairo%20(GUC)!5e0!3m2!1sen!2seg!4v1728233137915!5m2!1sen!2seg"
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
-              </div>
-              <Button variant="main-inverse" className="mt-2 m-auto">Add Location</Button>
-            </div>
+            <Button variant="main-inverse" className="mt-2 m-auto w-25" onClick={handleAddLocation}>
+              Add Location
+            </Button>
+            {/* Modal for Location */}
+            <Modal show={showMapModal} onHide={handleCloseMapModal}>
+              <Modal.Header closeButton>
+                <Modal.Title>Select Location</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div className="ratio ratio-1x1">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3455.7252495085836!2d31.435660077332482!3d29.98732507495249!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14583cb2bfafbe73%3A0x6e7220116094726d!2sGerman%20University%20in%20Cairo%20(GUC)!5e0!3m2!1sen!2seg!4v1728233137915!5m2!1sen!2seg"
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  ></iframe>
+                </div>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="main" className="border-warning-subtle" onClick={handleCloseMapModal}>
+                  Close
+                </Button>
+                <Button variant="main-inverse" onClick={handleCloseMapModal}>
+                  Save Location
+                </Button>
+              </Modal.Footer>
+            </Modal>
+
           </Row>
           <Row>
             <Col>
@@ -370,8 +406,8 @@ const AdvertiserCreate: React.FC = () => {
           </Row>
           <Row>
             <div className="form-actions">
-              <Button type="submit" variant="main-inverse">
-                Create Advertiser
+              <Button type="submit" variant="main-inverse" >
+                Create Activity
               </Button>
             </div>
           </Row>

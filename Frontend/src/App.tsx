@@ -59,9 +59,11 @@ import FlightsPage from "./views/ViewingPages/Flights";
 import ComplaintForm from "./views/ViewingPages/ComplaintForm";
 import AllComplaints from "./components/Complaints/AllComplaints";
 import ComplaintsTable from "./components/Complaints/ComplaintsTable";
+import Cart from "./views/Cart";
 
 import BookingActivity from "./views/BookingActivity";
 import BookingItinerary from "./views/BookingItinerary";
+import TourGuidesTable from "./views/Tables/TourGuidesTable";
 
 const App: React.FC = () => {
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen);
@@ -159,12 +161,14 @@ const App: React.FC = () => {
         <Route path="/Tags" element={<TagsTable />} />
         <Route path="/HistoricalTags" element={<HistoricalTagsTable />} />
         <Route path="/UsersTable" element={<UsersTable />} />
+        <Route path="/TourGuidesTable" element={<TourGuidesTable />} />
 
         <Route path="/Complaint" element={<ComplaintForm />} />
 
         <Route path="/ChangePasswordForm" element={<ChangePasswordForm />} />
         <Route path="/ChangePasswordG" element={<ChangePasswordG />} />
         <Route path="/Complaints" element={<AllComplaints />} />
+        <Route path="/Cart" element={<Cart />} />
       </Routes>
     </AppProvider>
   );

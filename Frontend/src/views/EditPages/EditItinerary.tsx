@@ -115,6 +115,12 @@ const ItineraryForm: React.FC = () => {
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
 
+  const handleActiveChange = (e: ChangeEvent<HTMLInputElement>) => {
+    alert("itinerary cannot be deactivated unless there are no bookings so this may fail");
+    setFormData({ ...formData, active_flag: e.target.checked });
+  }
+
+
   const handleActivityChange = (index: number, value: string) => {
     const newActivities = [...choosenActivities];
     const activity = activities.find((activity) => activity._id === value);
@@ -662,7 +668,7 @@ const ItineraryForm: React.FC = () => {
                   label="Active"
                   checked={formData.active_flag}
                   name="active_flag"
-                  onChange={handleChange}
+                  onChange={handleActiveChange}
                 />
               </Form.Group>
             </Col>

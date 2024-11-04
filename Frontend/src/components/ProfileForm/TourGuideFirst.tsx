@@ -12,6 +12,7 @@ import CustomFormGroup from "../FormGroup/FormGroup";
 import { useAppSelector } from "../../store/hooks";
 import { TourGuideServices } from "../../services/TourGuideServices";
 import { FileService } from "../../services/FileService";
+import { FaTrashAlt } from "react-icons/fa";
 
 interface WorkExperience {
   id?: string; // ID from the backend
@@ -35,6 +36,10 @@ const TourGuideFirst: React.FC = () => {
     previousWork: [],
     photo: null,
   });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [workToDeleteIndex, setWorkToDeleteIndex] = useState<number | null>(
+    null
+  );
 
   const [createdWork, setCreatedWork] = useState<WorkExperience[]>([]);
   // Added state for modal visibility
@@ -168,6 +173,23 @@ const TourGuideFirst: React.FC = () => {
     });
     setCreatedWork([]);
   };
+  const handleDeleteWork = (index: number) => {
+    setWorkToDeleteIndex(index);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteWork = () => {
+    if (workToDeleteIndex !== null) {
+      handleRemoveWork(workToDeleteIndex); // Call your existing remove function
+    }
+    setShowDeleteModal(false);
+    setWorkToDeleteIndex(null);
+  };
+
+  const cancelDeleteWork = () => {
+    setShowDeleteModal(false);
+    setWorkToDeleteIndex(null);
+  };
 
   return (
     <Container>
@@ -259,11 +281,10 @@ const TourGuideFirst: React.FC = () => {
                       />
                     </td>
                     <td>
-                      <Button
-                        variant="danger"
-                        onClick={() => handleRemoveWork(index)}
-                      >
-                        Delete
+                      <Button variant="main-inverse" className="mt-2">
+                        <FaTrashAlt onClick={() => handleDeleteWork(index)}>
+                          Delete
+                        </FaTrashAlt>
                       </Button>
                     </td>
                   </tr>
@@ -336,6 +357,26 @@ const TourGuideFirst: React.FC = () => {
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal}>
             Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showDeleteModal} onHide={cancelDeleteWork} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Are you sure you want to delete this work experience?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="main"
+            className="border-warning-subtle"
+            onClick={cancelDeleteWork}
+          >
+            Cancel
+          </Button>
+          <Button variant="main-inverse" onClick={confirmDeleteWork}>
+            Confirm
           </Button>
         </Modal.Footer>
       </Modal>

@@ -15,6 +15,7 @@ import "./UsersTable.css";
 import { FileService } from "../../services/FileService";
 import UserService from "../../services/UserService";
 import UserStatus from "../../types/userStatus";
+import { FaTrashAlt } from "react-icons/fa";
 
 const UsersTable = () => {
   const [users, setUsers] = useState<Map<number, IUserManagmentDTO[]>>(
@@ -204,12 +205,12 @@ const UsersTable = () => {
                   </Badge>
                 </td>
                 <td>
-                  <Button
-                    variant="danger"
-                    className="mt-2 me-2"
+                  <Button variant="main-inverse" className="mt-2">
+                  <FaTrashAlt
                     onClick={() => handleDelete(user.email)}
                   >
                     Delete
+                  </FaTrashAlt>
                   </Button>
                   {user.status === UserStatus.WAITING_FOR_APPROVAL && (
                   <Button variant="main-inverse" className="mt-2" onClick={() => handleView(user)}>
@@ -247,10 +248,10 @@ const UsersTable = () => {
           <p>Are you sure you want to delete this user?</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
+          <Button variant="main" className="border-warning-subtle" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={confirmDelete}>
+          <Button variant="main-inverse" onClick={confirmDelete}>
             Confirm
           </Button>
         </Modal.Footer>
