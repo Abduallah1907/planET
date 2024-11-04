@@ -157,7 +157,8 @@ export class ItineraryController {
   }
   public async getFilterComponents(req: any, res: any) {
     const itineraryService: ItineraryService = Container.get(ItineraryService);
-    const filterComponent = await itineraryService.getFilterComponentsService();
+    const { role, stakeholder_id } = req.body;
+    const filterComponent = await itineraryService.getFilterComponentsService(stakeholder_id, role);
     res.status(filterComponent.status).json(filterComponent);
   }
 }

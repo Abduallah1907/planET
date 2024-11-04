@@ -59,7 +59,7 @@ export default class UserService {
     if (!user) throw new NotFoundError("User not found");
 
     const isPasswordValid = await bcrypt.compare(loginData.password, user.password);
-    // if (!isPasswordValid) throw new BadRequestError("Password is incorrect");
+    if (!isPasswordValid) throw new BadRequestError("Password is incorrect");
 
     const user_id = user._id;
     const role = user.role;
