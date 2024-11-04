@@ -10,7 +10,8 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { FaExchangeAlt, FaInfoCircle } from "react-icons/fa";
 import { setStakeholder } from "../../store/userSlice";
 import { useAppContext } from "../../AppContext";
-
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface NationalityOption {
   value: string;
@@ -57,9 +58,20 @@ const ProfileForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.password !== formData.retypePassword) {
-      alert("Passwords don't match!");
+    if (
+      (formData.password && !formData.retypePassword) ||
+      (!formData.password && formData.retypePassword)
+    ) {
+      alert("Please fill out both password fields.");
       return;
+    }
+
+    // If both password fields are filled, validate that they match
+    if (formData.password && formData.retypePassword) {
+      if (formData.password !== formData.retypePassword) {
+        alert("Passwords don't match!");
+        return;
+      }
     }
   };
   const Tourist = useAppSelector((state: { user: any }) => state.user);
@@ -79,13 +91,18 @@ const ProfileForm: React.FC = () => {
     });
   }, [Tourist]); // Dependency array to rerun this effect when Tourist data changes
   const OnClick = async () => {
-    await TouristService.updateTourist(Tourist.email, {
+    const Tourist1 = await TouristService.updateTourist(Tourist.email, {
       name: formData.firstName + " " + formData.lastName,
       newEmail: formData.email,
       password: formData.password,
       job: formData.profession,
       nation: formData.nationality,
     });
+    if (Tourist1.status === 200) {
+      showToast("Updated successfully", ToastTypes.SUCCESS);
+    } else {
+      showToast("Error in updating", ToastTypes.ERROR);
+    }
   };
   const handleCancel = () => {
     setFormData({
@@ -103,9 +120,11 @@ const ProfileForm: React.FC = () => {
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [pointsToTransfer, setPointsToTransfer] = useState('');
+  const [pointsToTransfer, setPointsToTransfer] = useState("");
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
-  const [loyaltyPoints, setLoyaltyPoints] = useState(Tourist.stakeholder_id.loyality_points);
+  const [loyaltyPoints, setLoyaltyPoints] = useState(
+    Tourist.stakeholder_id.loyality_points
+  );
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -122,7 +141,9 @@ const ProfileForm: React.FC = () => {
     setIsTransferModalOpen(false);
   };
 
-  const handlePointsChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+  const handlePointsChange = (e: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setPointsToTransfer(e.target.value);
   };
 
@@ -130,17 +151,22 @@ const ProfileForm: React.FC = () => {
 
   const transferPointsToWallet = async () => {
     try {
-      const user = await TouristService.redeemPoints(Tourist.email, Number(pointsToTransfer));
-      setLoyaltyPoints((prevPoints: number) => prevPoints - Number(pointsToTransfer));
-      setPointsToTransfer('');
+      const user = await TouristService.redeemPoints(
+        Tourist.email,
+        Number(pointsToTransfer)
+      );
+      setLoyaltyPoints(
+        (prevPoints: number) => prevPoints - Number(pointsToTransfer)
+      );
+      setPointsToTransfer("");
       closeTransferModal();
       dispatch(setStakeholder(user.data));
     } catch (error) {
-      console.error('Error transferring points:', error);
+      console.error("Error transferring points:", error);
     }
   };
 
-  const {currency} = useAppContext()
+  const { currency } = useAppContext();
 
   return (
     <div className="profile-form-container">
@@ -159,23 +185,21 @@ const ProfileForm: React.FC = () => {
         </Col>
       </Row>
       <Row className="align-items-center">
-
-
-
-
         <div className="wallet-card">
-          <h3>Points
-            <FaInfoCircle style={{ cursor: 'pointer', marginLeft: '10px' }} onClick={openModal} />
-
-
-
-          </h3> {/* Add the info icon */}
+          <h3>
+            Points
+            <FaInfoCircle
+              style={{ cursor: "pointer", marginLeft: "10px" }}
+              onClick={openModal}
+            />
+          </h3>{" "}
+          {/* Add the info icon */}
           <p>{Tourist.stakeholder_id.loyality_points}</p>
         </div>
         <Col xs={3} className="text-center ">
           <FaExchangeAlt
             className="exchange-icon"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             onClick={openTransferModal}
           />
         </Col>
@@ -194,25 +218,32 @@ const ProfileForm: React.FC = () => {
             <Button variant="secondary" onClick={closeModal}>
               Close
             </Button>
-
           </Modal.Footer>
         </Modal>
 
-
-
         <div className="wallet-card">
           <h3>Wallet</h3>
-          <p>{currency} {Tourist.stakeholder_id.wallet}</p>
-          <Modal show={isTransferModalOpen} onHide={closeTransferModal} centered>
+          <p>
+            {currency} {Tourist.stakeholder_id.wallet}
+          </p>
+          <Modal
+            show={isTransferModalOpen}
+            onHide={closeTransferModal}
+            centered
+          >
             <Modal.Header closeButton>
               <Modal.Title>Transfer Points</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <Form>
                 <Form.Group controlId="formPoints">
-                  <Form.Label>Enter the number of points to transfer</Form.Label>
+                  <Form.Label>
+                    Enter the number of points to transfer
+                  </Form.Label>
                   <div>
-                    <Form.Text>Every 10,000 points is equal to 100 EGP</Form.Text>
+                    <Form.Text>
+                      Every 10,000 points is equal to 100 EGP
+                    </Form.Text>
                   </div>
                   <div className="d-flex align-items-center">
                     <Form.Control
@@ -224,7 +255,6 @@ const ProfileForm: React.FC = () => {
                       step="10000"
                       min="0"
                     />
-
                   </div>
                 </Form.Group>
               </Form>
@@ -238,14 +268,8 @@ const ProfileForm: React.FC = () => {
               </Button>
             </Modal.Footer>
           </Modal>
-
         </div>
-
       </Row>
-
-
-
-
 
       <Container>
         <Form onSubmit={handleSubmit}>
@@ -258,7 +282,7 @@ const ProfileForm: React.FC = () => {
                 id="firstName"
                 name="firstName"
                 disabled={false}
-                required={true}
+                required={false}
                 value={formData.firstName}
                 onChange={handleChange}
               />
@@ -271,7 +295,7 @@ const ProfileForm: React.FC = () => {
                 id="lastName"
                 name="lastName"
                 disabled={false}
-                required={true}
+                required={false}
                 value={formData.lastName}
                 onChange={handleChange}
               />
@@ -384,7 +408,7 @@ const ProfileForm: React.FC = () => {
                 id="password"
                 name="password"
                 disabled={false}
-                required={true}
+                required={false}
                 value={formData.password}
                 onChange={handleChange}
               />
@@ -397,7 +421,7 @@ const ProfileForm: React.FC = () => {
                 id="retypePassword"
                 name="retypePassword"
                 disabled={false}
-                required={true}
+                required={false}
                 value={formData.retypePassword}
                 onChange={handleChange}
               />

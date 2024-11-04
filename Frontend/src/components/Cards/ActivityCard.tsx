@@ -16,6 +16,8 @@ import { useMemo, useState } from "react";
 import { useAppContext } from "../../AppContext";
 import { useAppSelector } from "../../store/hooks";
 import { ActivityService } from "../../services/ActivityService";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 
 interface InputData {
@@ -64,7 +66,7 @@ const CustomActivityCard = ({
     return getConvertedCurrencyWithSymbol(Price, baseCurrency, currency);
   }, [Price, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
 
-  const user = useAppSelector((state)=>state.user);
+  const user = useAppSelector((state) => state.user);
   const isAdmin = user?.role === "ADMIN";
 
 
@@ -77,12 +79,12 @@ const CustomActivityCard = ({
   const handleDelete = () => {
     setShowDeleteModal(true);
   };
-  
+
   const handleFlag = () => {
     setShowFlagModal(true); // Show flag confirmation modal
   };
 
-  const confirmFlag = async() => {
+  const confirmFlag = async () => {
     await ActivityService.flagInappropriate(id); // Call the flagInappropriate function from the service
     setShowFlagModal(false); // Close modal after confirming
     onFlag && onFlag(); // Call the onFlag function passed as a prop
@@ -94,8 +96,12 @@ const CustomActivityCard = ({
 
   const confirmDelete = async () => {
     // Perform the delete action here
-    onDelete && onDelete(); // Call the onDelete function passed as a prop
+    const deletedActivity = await ActivityService.deleteActivity(id); // Call the deleteActivity function from the service
     setShowDeleteModal(false); // Close modal after confirming
+    if (deletedActivity && deletedActivity.status === 200) {
+      showToast("Activity deleted successfully", ToastTypes.SUCCESS);
+      onDelete && onDelete(); // Call the onDelete function passed as a prop
+    }
   };
 
   const cancelDelete = () => {
@@ -209,8 +215,8 @@ const CustomActivityCard = ({
                 {!isActive
                   ? "Inactive"
                   : isBooked
-                  ? "Booking On"
-                  : "Booking Off"}
+                    ? "Booking On"
+                    : "Booking Off"}
               </Badge>
             ) : null}
           </div>
@@ -224,11 +230,11 @@ const CustomActivityCard = ({
               className="d-flex justify-content-end ms-3 btn-main-inverse"
             >
               {isAdvertiser ? (<>
-              <Dropdown.Item onClick={() => id && handleEdit(id)}>
-                Edit
-              </Dropdown.Item>
-              <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item></>
-            ) : <Dropdown.Item onClick={() => id && handleFlag()}>
+                <Dropdown.Item onClick={() => id && handleEdit(id)}>
+                  Edit
+                </Dropdown.Item>
+                <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item></>
+              ) : <Dropdown.Item onClick={() => id && handleFlag()}>
                 Flag Inappropriate
               </Dropdown.Item>}
             </DropdownButton>
@@ -239,14 +245,14 @@ const CustomActivityCard = ({
       {/* Delete Confirmation Modal */}
       <Modal show={showDeleteModal} onHide={cancelDelete} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Delete Product</Modal.Title>
+          <Modal.Title>Delete activity</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this product?</Modal.Body>
+        <Modal.Body>Are you sure you want to delete this activity?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={cancelDelete}>
+          <Button variant="main" className="border-warning-subtle" onClick={cancelDelete} >
             Cancel
           </Button>
-          <Button variant="danger" onClick={confirmDelete}>
+          <Button variant="main-inverse" onClick={confirmDelete}>
             Confirm
           </Button>
         </Modal.Footer>
@@ -260,10 +266,10 @@ const CustomActivityCard = ({
           Are you sure you want to flag this Activity as inappropriate?
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={cancelFlag}>
+          <Button variant="main" className="border-warning-subtle" onClick={cancelFlag}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={confirmFlag}>
+          <Button variant="main-inverse" onClick={confirmFlag}>
             Confirm
           </Button>
         </Modal.Footer>

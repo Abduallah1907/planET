@@ -255,6 +255,7 @@ export default function TouristForm() {
                 as="select"
                 name="job"
                 value={regData.job}
+                className="custom-form-control"
                 id="job"
                 onChange={handleChange}
                 required
