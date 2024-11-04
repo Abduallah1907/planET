@@ -205,7 +205,7 @@ const TopBar: React.FC = () => {
 
                   {User.role === "TOURIST" ? (
                     <Row>
-                      <SlBadge className={getBadgeColor(User.stakeholder_id.badge)}/>
+                      <SlBadge className={getBadgeColor(User.stakeholder_id.badge) }/>
                     </Row>
 
                   ) : (null)}
