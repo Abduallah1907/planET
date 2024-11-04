@@ -121,7 +121,7 @@ const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
         setWalletBalanceState(newBalance);
         dispatch(setWalletBalanceAction(newBalance));
         alert('Activity booked successfully');
-        navigate('/Touristedit');
+        navigate('/tourist/Profile');
       } catch (error) {
         console.error('Error booking activity:', error);
         alert('An error occurred while booking activity');

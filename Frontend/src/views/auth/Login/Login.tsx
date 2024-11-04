@@ -9,6 +9,7 @@ import { activateSidebar, setNavItems } from "../../../store/sidebarSlice";
 import { login, setLoginState, setUser } from "../../../store/userSlice";
 import { useTranslation } from "react-i18next";
 import { Utils } from "../../../utils/utils";
+import path from "path";
 
 export default function Login() {
   const { t } = useTranslation();
@@ -64,12 +65,13 @@ export default function Login() {
         case "TOURIST":
           dispatch(
             setNavItems([
-              { path: "/Touristedit", label: "Edit Profile" },
               { path: "/Complaint", label: "File Complaint" },
+              {path: "/MyBookings/upcoming", label: "My Activities"},
+              {path: "/MyItineraryBookings/upcoming", label: "My Itineraries"}
             ])
           );
           // state.user.isLoggedIn = true;
-          navigate("/Touristedit");
+          navigate("/tourist/Profile");
           break;
         case "TOUR_GUIDE":
           dispatch(

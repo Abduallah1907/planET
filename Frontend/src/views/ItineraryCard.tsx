@@ -95,9 +95,11 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
 
    
   };
+
   const handleBookNow = () => {
-    navigate(`/bookItinerary/${id}`);
-  }
+    const formattedDate = `${selectedDateTime.date}T${selectedDateTime.time.substring(0, 5)}:00`;
+    navigate(`/bookItinerary/${id}?time_to_attend=${encodeURIComponent(formattedDate)}`);
+  };
 
   return (
     <Container className='mt-3'>

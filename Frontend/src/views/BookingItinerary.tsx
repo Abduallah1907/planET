@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { Container, Row, Col, Button, Form, Card } from 'react-bootstrap';
 import { FaWallet, FaCreditCard } from 'react-icons/fa';
 import { IItinerary } from '../types/IItinerary';
@@ -11,16 +11,16 @@ import { ItineraryService } from '../services/ItineraryService';
 // Import Visa and MasterCard icons
 import { FaCcVisa, FaCcMastercard } from 'react-icons/fa';
 
-interface BookingPageProps {
-  email: string;
-}
 
-const BookingItinerary: React.FC<BookingPageProps> = ({ email }) => {
+const BookingItinerary: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const time_to_attend = searchParams.get("time_to_attend");
   const [itineraryData, setItineraryData] = useState<IItinerary | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<string>('wallet');
   const [cardType, setCardType] = useState<string | null>(null);
   const Tourist = useAppSelector((state) => state.user);
+  const email = Tourist.email;
 
   const [cardDetails, setCardDetails] = useState({
     cardNumber: '',
@@ -112,8 +112,8 @@ const BookingItinerary: React.FC<BookingPageProps> = ({ email }) => {
         return;
       }
       try {
-        if (id) {
-          await TouristService.bookItinerary(email, id);
+        if (id && time_to_attend) {
+          await TouristService.bookItinerary(email, id,time_to_attend);
         } else {
           console.error('Itinerary ID is undefined');
           alert('An error occurred while booking itinerary');
@@ -122,7 +122,8 @@ const BookingItinerary: React.FC<BookingPageProps> = ({ email }) => {
         setWalletBalanceState(newBalance);
         dispatch(setWalletBalanceAction(newBalance));
         alert('Itinerary booked successfully');
-        navigate('/Touristedit');
+        console.log(Tourist._id);
+        navigate('/tourist/Profile');
       } catch (error) {
         console.error('Error booking itinerary:', error);
         alert('An error occurred while booking itinerary');

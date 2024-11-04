@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CreateAdmin from "./views/CreateAdmin/CreateAdmin";
 import TopBar from "./components/TopBar/TopBar";
 import { Route, Routes, useNavigate } from "react-router-dom";
@@ -62,19 +62,31 @@ import ComplaintsTable from "./components/Complaints/ComplaintsTable";
 
 import BookingActivity from "./views/BookingActivity";
 import BookingItinerary from "./views/BookingItinerary";
+import MyBookings from "./views/MyActivityBookings";
+import MyItineraryBookings from "./views/MyItineraryBookings";
 
 const App: React.FC = () => {
+  const [isLoginComplete, setIsLoginComplete] = useState(false);
   const isSidebarOpen = useAppSelector((state) => state.sidebar.isOpen);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const navItems = useAppSelector((state) => state.sidebar.navItems);
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    if (user && user.usernameOrEmail && user.password) {
-      Utils.handleLogin(user, dispatch, navigate);
-    }
+    const handleLogin = () => {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      if (user && user.usernameOrEmail && user.password) {
+        Utils.handleLogin(user, dispatch, navigate);
+      }
+      setIsLoginComplete(true);
+    };
+    handleLogin();
   }, [dispatch, navigate]);
   const email = useAppSelector((state) => state.user.email);
+
+  if (!isLoginComplete) {
+    return <div>Loading...</div>
+  }
+
   return (
     <AppProvider>
       <TopBar />
@@ -105,10 +117,15 @@ const App: React.FC = () => {
         <Route path="/Activity" element={<Activities />} />
 
 
-          <Route path="/Activity/:id" element={<ActivityDetails />} />
-          <Route path="/bookActivity/:id" element={< BookingActivity email= {email}/>} />
-          <Route path="/bookItinerary/:id" element={< BookingItinerary email= {email}/>} />
-      
+        <Route path="/Activity/:id" element={<ActivityDetails />} />
+        <Route path="/bookActivity/:id" element={< BookingActivity email={email} />} />
+        <Route path="/bookItinerary/:id" element={< BookingItinerary />} />
+        <Route path="/MyBookings/upcoming" element={< MyBookings />} />
+        <Route path="/MyBookings/past" element={< MyBookings />} />
+        <Route path="/MyItineraryBookings/upcoming" element={<MyItineraryBookings/>} />
+        <Route path="/MyItineraryBookings/past" element={<MyItineraryBookings/>} />
+
+
 
         <Route path="/Itinerary" element={<Itinerary />} />
         <Route path="/Historical" element={<HistoricalPlaces />} />
@@ -152,7 +169,7 @@ const App: React.FC = () => {
 
         <Route path="/JoinUs" element={<StakeholderReg />} />
 
-        <Route path="/TouristEdit" element={<ProfileForm />} />
+        <Route path="/Tourist/Profile" element={<ProfileForm />} />
         <Route path="/SellerProfile" element={<SellerProfile />} />
 
         <Route path="/Categories" element={<CategoryTable />} />

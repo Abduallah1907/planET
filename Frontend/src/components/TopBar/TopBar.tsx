@@ -66,6 +66,19 @@ const TopBar: React.FC = () => {
   const User = useAppSelector((state) => state.user);
   const IsLoggedIn = User.isLoggedIn // Assuming you have an auth slice in your Redux store
 
+  function getBadgeColor(badge: any): string | string {
+    switch (badge) {  
+      case "1":
+        return 'badge-bronze';
+      case "2":
+        return "badge-silver";
+      case "3":
+        return "badge-gold";
+      default:
+        return "badge-bronze";  
+      }
+    }
+
   return (
     <Navbar expand="lg" className="top-bar" variant="dark">
       <Container fluid>
@@ -192,7 +205,7 @@ const TopBar: React.FC = () => {
 
                   {User.role === "TOURIST" ? (
                     <Row>
-                      <SlBadge />
+                      <SlBadge className={getBadgeColor(User.stakeholder_id.badge)}/>
                     </Row>
 
                   ) : (null)}

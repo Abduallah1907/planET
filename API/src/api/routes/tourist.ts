@@ -106,7 +106,7 @@ export default (app: Router) => {
   ///////////
 
   route.get(
-    "/getPastActivitiyBookings/:email",
+    "/getPastActivityBookings/:email",
     touristController.getPastActivityBookings
   );
 
