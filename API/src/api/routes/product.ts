@@ -20,6 +20,7 @@ export default (app: Router) => {
   route.get("/getSortedProducts", getRoleAndID, productController.getSortedProducts);
   route.get("/getAllProducts", getRoleAndID, productController.getAllProducts);
   route.get("/getProductsBySellerId/:seller_id", productController.getProductsBySellerId);
+  // the below api isn't even called lmao, eshtemo fe team el frontend
   route.get("/getProductByName/:product_name", productController.getProductByName);
   route.get("/getProductByID/:id", productController.getProductById);
 };
