@@ -3,6 +3,8 @@ import { Container } from "typedi";
 import { ProductController } from "../controllers/productController";
 import authorize from "../middlewares/authorize";
 import UserRoles from "@/types/enums/userRoles";
+import { get } from "http";
+import getRoleAndID from "../middlewares/getRole";
 
 const route = Router();
 export default (app: Router) => {
@@ -13,11 +15,11 @@ export default (app: Router) => {
 
   route.put("/updateProduct/:product_id", authorize([UserRoles.Seller]), productController.updateProduct);
 
-  route.get("/getFilteredProducts", productController.getFilteredProducts);
-  route.get("/getSortedProducts", productController.getSortedProducts);
-  route.get("/getAllProducts", productController.getAllProducts);
+  route.get("/getFilterComponents", getRoleAndID, productController.getFilterComponents);
+  route.get("/getFilteredProducts", getRoleAndID, productController.getFilteredProducts);
+  route.get("/getSortedProducts", getRoleAndID, productController.getSortedProducts);
+  route.get("/getAllProducts", getRoleAndID, productController.getAllProducts);
   route.get("/getProductsBySellerId/:seller_id", productController.getProductsBySellerId);
   route.get("/getProductByName/:product_name", productController.getProductByName);
   route.get("/getProductByID/:id", productController.getProductById);
-  route.get("/getFilterComponents", productController.getFilterComponents);
 };

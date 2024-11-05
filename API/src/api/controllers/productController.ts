@@ -10,10 +10,7 @@ export class ProductController {
     const productService: ProductService = Container.get(ProductService);
     const product: IProduct = req.body;
     const { seller_id } = req.params;
-    const newProduct = await productService.createProductService(
-      seller_id,
-      product
-    );
+    const newProduct = await productService.createProductService(seller_id, product);
     res.status(newProduct.status).json(newProduct);
   }
 
@@ -21,15 +18,13 @@ export class ProductController {
     const productService: ProductService = Container.get(ProductService);
     const product: IProductInputDTO = req.body;
     const { product_id } = req.params;
-    const updatedProduct = await productService.updateProductService(
-      product_id,
-      product
-    );
+    const updatedProduct = await productService.updateProductService(product_id, product);
     res.status(updatedProduct.status).json(updatedProduct);
   }
 
   public async getFilteredProducts(req: any, res: any) {
     const { price, seller_id } = req.query;
+    const { role } = req.body;
     const productService: ProductService = Container.get(ProductService);
     var filters = {};
     if (price) {
@@ -56,22 +51,21 @@ export class ProductController {
         seller_id: seller_id,
       };
     }
-    const products = await productService.getFilteredProductsService(filters);
+    const products = await productService.getFilteredProductsService(filters, role);
     res.status(products.status).json(products);
   }
 
   public async getSortedProducts(req: any, res: any) {
     const { sort, direction } = req.query;
+    const { role } = req.body;
     const productService: ProductService = Container.get(ProductService);
-    const products = await productService.getSortedProductsService(
-      sort,
-      direction
-    );
+    const products = await productService.getSortedProductsService(sort, direction, role);
     res.status(products.status).json(products);
   }
   public async getAllProducts(req: any, res: any) {
+    const { role } = req.body;
     const productService: ProductService = Container.get(ProductService);
-    const products = await productService.getAllProductsService();
+    const products = await productService.getAllProductsService(role);
     res.status(products.status).json(products);
   }
 
@@ -89,15 +83,16 @@ export class ProductController {
     res.status(product.status).json(product);
   }
   public async getProductById(req: any, res: any) {
-    const productService: ProductService = Container.get(ProductService);    
+    const productService: ProductService = Container.get(ProductService);
     const { id } = req.params;
     const idObject = new Types.ObjectId(id);
     const product = await productService.getProductByIdService(idObject);
     res.status(product.status).json(product);
   }
   public async getFilterComponents(req: any, res: any) {
+    const { role } = req.body;
     const productService: ProductService = Container.get(ProductService);
-    const filterComponent = await productService.getFilterComponentsService();
+    const filterComponent = await productService.getFilterComponentsService(role);
     res.status(filterComponent.status).json(filterComponent);
   }
 }
