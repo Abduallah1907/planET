@@ -140,5 +140,5 @@ export default (app: Router) => {
     touristController.showMyTourGuides
   );
 
-  route.post("/orderCart", touristController.orderCart);
+  route.post("/createOrder", touristController.createOrder);
 };

@@ -51,11 +51,6 @@ const touristSchema = new mongoose.Schema(
         type: String,
       },
     ],
-    cart: {
-      type: CartSchema,
-      default: { items: [], cost: 0 },
-      // required: true,
-    },
     wishlist: [
       {
         type: mongoose.Schema.Types.ObjectId,

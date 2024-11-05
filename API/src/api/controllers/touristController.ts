@@ -304,10 +304,10 @@ export class TouristController {
     );
     res.status(showTourGuides.status).json(showTourGuides);
   }
-  public async orderCart(req: any, res: any) {
+  public async createOrder(req: any, res: any) {
     const orderData: IOrderCartDTO = req.body;
     const touristService: TouristService = Container.get(TouristService);
-    const orderedCart = await touristService.orderCartService(orderData);
-    res.status(orderedCart.status).json(orderedCart);
+    const order = await touristService.createOrderService(orderData);
+    res.status(order.status).json(order);
   }
 }
