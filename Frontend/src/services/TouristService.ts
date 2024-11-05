@@ -203,6 +203,31 @@ class TouristService {
       throw error;
     }
   }
+
+  public static createOrder = async (orderData: any) => {
+    try {
+      const response = await axiosInstance.post(`/tourist/createOrder/`, orderData);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public static getPastOrders = async (email: string) => {
+    try {
+      const response = await axiosInstance.get(`/tourist/getPastOrders/${email}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public static rateAndCommentProduct = async (tourist_id: string,product_id: string, comment: string, rating: number) => {
+    try {
+      const response = await axiosInstance.post(`/tourist/rateAndCommentProduct/${tourist_id}`, {product_id, comment, rating });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { TouristService };

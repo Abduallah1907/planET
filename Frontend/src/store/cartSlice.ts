@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk, RootState } from './store';
 import { useNavigate } from 'react-router-dom';
+import { clear } from 'console';
 
 interface CartState {
     products: CartItem[];
@@ -47,11 +48,16 @@ export const cartSlice = createSlice({
             state.total += (action.payload.quantity - product.quantity) * product.product.price;
             product.quantity = action.payload.quantity;
         },
+        clearCart: (state) => {
+            state.products = [];
+            state.total = 0;
+        },
     }
 });
 
-export const { addProduct, removeProduct, updateQuantity } = cartSlice.actions;
+export const { addProduct, removeProduct, updateQuantity, clearCart } = cartSlice.actions;
 
 export const cartState = (state: RootState) => state.cart;
+
 
 export default cartSlice.reducer;

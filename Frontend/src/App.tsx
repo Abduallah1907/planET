@@ -67,6 +67,8 @@ import BookingItinerary from "./views/BookingItinerary";
 import MyBookings from "./views/MyActivityBookings";
 import MyItineraryBookings from "./views/MyItineraryBookings";
 import TourGuidesTable from "./views/Tables/TourGuidesTable";
+import RecentOrders from "./views/RecentOrders";
+import ProductPayemnt from "./views/ProductPayemnt";
 
 const App: React.FC = () => {
   const [isLoginComplete, setIsLoginComplete] = useState(false);
@@ -189,6 +191,8 @@ const App: React.FC = () => {
         <Route path="/Complaints" element={<AllComplaints />} />
         <Route path="/MyComplaints" element={<MyComplaints />} />
         <Route path="/Cart" element={<Cart />} />
+        <Route path="/ProductPayment" element={<ProductPayemnt />} />
+        <Route path="/RecentOrders" element={<RecentOrders />} />
       </Routes>
     </AppProvider>
   );

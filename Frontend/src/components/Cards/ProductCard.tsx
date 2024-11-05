@@ -14,7 +14,7 @@ import Rating from "../Rating/Rating";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext";
-import { useAppDispatch } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { addProduct } from "../../store/cartSlice";
 
 
@@ -66,6 +66,7 @@ const ProductCard = ({
 
   // Function to handle edit action
   const navigate = useNavigate();
+  const user = useAppSelector((state) => state.user);
 
   const handleEdit = (product_id: string) => {
     navigate(`/EditProduct/${product_id}`); // Navigate to the EditProduct page
@@ -133,9 +134,11 @@ const ProductCard = ({
                 Created: {createdAt.toLocaleDateString()} | Updated: {updatedAt.toLocaleDateString()}
               </Card.Text>
             }
+            {user.role==="TOURIST" && (
             <div className="d-flex justify-content-center">
             <Button className="w-25 " variant="main-inverse" onClick={addToCart} >Add to Cart</Button>
             </div>
+            )}
           </Card.Body>
         </Col>
 
