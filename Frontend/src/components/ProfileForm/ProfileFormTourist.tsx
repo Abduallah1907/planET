@@ -428,13 +428,13 @@ const ProfileForm: React.FC = () => {
             </Col>
           </Row>
 
-          <div className="form-actions">
-            <Button type="submit" className="update-btn" onClick={OnClick}>
-              Update
-            </Button>
-            <Button type="button" className="cancel-btn" onClick={handleCancel}>
+          <div className="d-flex justify-content-center">
+            <button className="update-btn" onClick={OnClick}>
+              Confirm
+            </button>
+            <button className="cancel-btn" onClick={handleCancel}>
               Cancel
-            </Button>
+            </button>
           </div>
         </Form>
       </Container>

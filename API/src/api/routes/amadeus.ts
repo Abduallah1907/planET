@@ -11,6 +11,6 @@ export default (app: Router) => {
 
     router.get("/flightOffers", amadeusController.getFlightOffers);
 
-    router.get("/hotelOffers", amadeusController.getHotelOffers);
+    router.get("/hotelsList", amadeusController.getHotelsList);
 
 };

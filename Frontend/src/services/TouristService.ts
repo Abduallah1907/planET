@@ -118,9 +118,9 @@ class TouristService {
       throw error;
     }
   };
-  public static bookItinerary = async (email: string, itinerary_id: string) => {
+  public static bookItinerary = async (email: string, itinerary_id: string, time_to_attend:string) => {
     try {
-      const response = await axiosInstance.post(`/tourist/bookItinerary`, { email, itinerary_id });
+      const response = await axiosInstance.post(`/tourist/bookItinerary`, { email, itinerary_id, time_to_attend });
       return response.data;
     } catch (error) {
       throw error;
@@ -131,6 +131,47 @@ class TouristService {
   public static deleteTourist = async (email: string) => {
     try {
       const response = await axiosInstance.delete(`/tourist/deleteTouristAccountRequest/${email}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public static getUpcomingActivityBookings = async (email: string) => {
+    try {
+      const response = await axiosInstance.get(`/tourist/getUpcomingActivityBookings/${email}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public static getPastActivityBookings = async (email: string) => {
+    try {
+      const response = await axiosInstance.get(`/tourist/getPastActivityBookings/${email}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public static getUpcomingItineraryBookings = async (email: string) => {
+    try {
+      const response = await axiosInstance.get(`/tourist/getUpcomingItineraryBookings/${email}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public static getPastItineraryBookings = async (email: string) => {
+    try {
+      const response = await axiosInstance.get(`/tourist/getPastItineraryBookings/${email}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public static cancelTicket = async (tourist_id:string,ticket_id:string) => {
+    try {
+      const response = await axiosInstance.delete(`/tourist/cancelTicket/${tourist_id}`, { params: { ticket_id } });
       return response.data;
     } catch (error) {
       throw error;

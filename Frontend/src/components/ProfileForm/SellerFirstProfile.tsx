@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import "./ProfileFormTourist.css";
+import "./Advertiser.css";
 import { Container, Row, Col, Button, Form, Modal } from "react-bootstrap";
 import LogoPlaceholder from "../../assets/person-circle.svg";
 import { SellerServices } from "../../services/SellerServices";
 import { useAppSelector } from "../../store/hooks";
 import { FileService } from "../../services/FileService";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   description: string;
@@ -50,14 +52,28 @@ const SellerFirstProfile: React.FC = () => {
   const OnClick = async () => {
     if (formData.logo) {
       const file = await FileService.uploadFile(formData.logo);
-      await SellerServices.updateSellerServices(SellerFirst.email, {
-        description: formData.description,
-        logo: file.data._id,
-      });
+      const seller = await SellerServices.updateSellerServices(
+        SellerFirst.email,
+        {
+          description: formData.description,
+          logo: file.data._id,
+        }
+      );
+      if (seller.status === 200) {
+        showToast("Updated successfully", ToastTypes.SUCCESS);
+      } else {
+        showToast("Error in updating", ToastTypes.ERROR);
+      }
     } else {
-      await SellerServices.updateSellerServices(SellerFirst.email, {
-        description: formData.description,
-      });
+      const seller2 = await SellerServices.updateSellerServices(
+        SellerFirst.email,
+        {
+          description: formData.description,
+        }
+      );
+      if (seller2.status === 200)
+        showToast("Updated successfully", ToastTypes.SUCCESS);
+      else showToast("Error in updating", ToastTypes.ERROR);
     }
   };
 
@@ -136,13 +152,13 @@ const SellerFirstProfile: React.FC = () => {
             />
           </div>
 
-          <div className="form-actions">
-            <Button type="submit" className="update-btn" onClick={OnClick}>
-              Update
-            </Button>
-            <Button type="button" className="cancel-btn" onClick={handleCancel}>
+          <div className="d-flex justify-content-center">
+            <button className="update-btn" onClick={OnClick}>
+              Confirm
+            </button>
+            <button className="cancel-btn" onClick={handleCancel}>
               Cancel
-            </Button>
+            </button>
           </div>
         </Form>
         <Modal show={showModal} onHide={handleCloseModal}>
