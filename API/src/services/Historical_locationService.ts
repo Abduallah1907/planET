@@ -287,10 +287,15 @@ export default class Historical_locationService {
 
     return new response(true, historical_locations, "Fetched historical locations", 200);
   }
-  public async getUpcomingHistorical_locationsService() {
+
+  public async getUpcomingHistorical_locationsService(role: string) {
+    const historicalCriteria: any = {};
+    if (role !== UserRoles.Admin) {
+      historicalCriteria.active_flag = true;
+    }
     const today = Date.now();
     const historical_locations = await this.historical_locationsModel
-      .find({ date_time: { $gte: today } })
+      .find({ date_time: { $gte: today } }, historicalCriteria)
       .populate("category")
       .populate("comments")
       .populate({ path: "governor_id", select: "name" });
