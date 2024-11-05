@@ -108,6 +108,23 @@
         color: var(--main-color) !important;
     }
 }
+.badge-bronze {
+    color: #cd7f32; /* Bronze color */
+  }
+  
+  .badge-silver {
+    color: #c0c0c0; /* Silver color */
+  }
+  
+  .badge-gold {
+    color: #ffd700; /* Gold color */
+  }
+  
+  
+  
+  .badge-default {
+    color: #ffffff; /* Default color */
+  }
 
 
 
