@@ -20,8 +20,8 @@ export default class ActivityService {
 
   public async getAllActivitiesService(role: string) {
     const activityCriteria: any = {};
+    console.log("Role: " + role);
     if (role !== UserRoles.Admin) {
-      console.log("i am not an admin!");
       activityCriteria.inappropriate_flag = false;
       activityCriteria.active_flag = true;
       activityCriteria.booking_flag = true;

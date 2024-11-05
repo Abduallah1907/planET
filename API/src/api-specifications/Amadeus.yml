@@ -8,88 +8,6 @@ tags:
     description: Amadeus External API management
 components:
   schemas:
-    FlightOffersSearchGetParamS:
-      type: object
-      properties:
-        originLocationCode:
-          type: string
-        destinationLocationCode:
-          type: string
-        departureDate:
-          type: string
-        returnDate:
-          type: string
-          nullable: true
-        adults:
-          type: number
-        children:
-          type: number
-          nullable: true
-        infants:
-          type: number
-          nullable: true
-        travelClass:
-          type: string
-          enum: [ECONOMY, PREMIUM_ECONOMY, BUSINESS, FIRST]
-          nullable: true
-        includedAirlineCodes:
-          type: string
-          nullable: true
-        excludedAirlineCodes:
-          type: string
-          nullable: true
-        nonStop:
-          type: boolean
-          nullable: true
-        currencyCode:
-          type: string
-          nullable: true
-        maxPrice:
-          type: number
-          nullable: true
-        max:
-          type: number
-          nullable: true
-    HotelOffersSearchParams:
-      type: object
-      properties:
-        hotelIds:
-          type: string
-        adults:
-          type: number
-          nullable: true
-        checkInDate:
-          type: string
-          nullable: true
-        checkOutDate:
-          type: string
-          nullable: true
-        countryOfResidence:
-          type: string
-          nullable: true
-        priceRange:
-          type: string
-          nullable: true
-        currencyCode:
-          type: string
-          nullable: true
-        paymentPolicy:
-          type: string
-          enum: [GUARANTEE, DEPOSIT, NONE]
-          nullable: true
-        boardType:
-          type: string
-          enum: [ROOM_ONLY, BREAKFAST, HALF_BOARD, FULL_BOARD, ALL_INCLUSIVE]
-          nullable: true
-        includeClosed:
-          type: boolean
-          nullable: true
-        bestRateOnly:
-          type: boolean
-          nullable: true
-        lang:
-          type: string
-          nullable: true
     FlightOffersOutput:
       type: object
       properties:
@@ -409,87 +327,64 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FlightOffersOutput"
-  /api/amadeus/hotelOffers:
+  /api/amadeus/hotelsList:
     get:
       tags:
         - Amadeus
-      summary: Search for hotel offers
-      description: Search for hotel offers
+      summary: Search for hotels by city
+      description: Search for hotels by city
       parameters:
-        - in: query
-          name: hotelIds
+        - name: cityCode
+          in: query
           required: true
           schema:
             type: string
-          description: Comma-separated list of hotel IDs
-        - in: query
-          name: adults
+          description: The IATA code of the city
+        - name: radius
+          in: query
           required: false
           schema:
             type: number
-          description: Number of adults
-        - in: query
-          name: checkInDate
+          description: The radius around the city in which to search for hotels
+        - name: radiusUnit
+          in: query
           required: false
           schema:
             type: string
-          description: Check-in date
-        - in: query
-          name: checkOutDate
+            enum: [MILE, KM]
+          description: The unit of the radius (MILE or KM)
+        - name: chainCodes
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Array of hotel chain codes. Each code is a string consisted of 2 capital alphabetic characters.
+        - name: amenities
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            enum: [SWIMMING_POOL, SPA, FITNESS_CENTER, AIR_CONDITIONING, RESTAURANT, PARKING, PETS_ALLOWED, AIRPORT_SHUTTLE, BUSINESS_CENTER, DISABLED_FACILITIES, WIFI, MEETING_ROOMS, NO_KID_ALLOWED, TENNIS, GOLF, KITCHEN, ANIMAL_WATCHING, BABY_SITTING, BEACH, CASINO, JACUZZI, SAUNA, SOLARIUM, MASSAGE, VALET_PARKING, BAR, LOUNGE, KIDS_WELCOME, NO_PORN_FILMS, MINIBAR, TELEVISION, WI-FI_IN_ROOM, ROOM_SERVICE, GUARDED_PARKG, SERV_SPEC_MENU]
+          description: "List of amenities.\nAvailable values : SWIMMING_POOL, SPA, FITNESS_CENTER, AIR_CONDITIONING, RESTAURANT, PARKING, PETS_ALLOWED, AIRPORT_SHUTTLE, BUSINESS_CENTER, DISABLED_FACILITIES, WIFI, MEETING_ROOMS, NO_KID_ALLOWED, TENNIS, GOLF, KITCHEN, ANIMAL_WATCHING, BABY-SITTING, BEACH, CASINO, JACUZZI, SAUNA, SOLARIUM, MASSAGE, VALET_PARKING, BAR or LOUNGE, KIDS_WELCOME, NO_PORN_FILMS, MINIBAR, TELEVISION, WI-FI_IN_ROOM, ROOM_SERVICE, GUARDED_PARKG, SERV_SPEC_MENU"
+        - name: ratings
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: The ratings of the hotels
+        - name: hotelScore
+          in: query
           required: false
           schema:
             type: string
-          description: Check-out date
-        - in: query
-          name: countryOfResidence
-          required: false
-          schema:
-            type: string
-          description: Country of residence
-        - in: query
-          name: priceRange
-          required: false
-          schema:
-            type: string
-          description: Price range
-        - in: query
-          name: currencyCode
-          required: false
-          schema:
-            type: string
-          description: Currency code
-        - in: query
-          name: paymentPolicy
-          required: false
-          schema:
-            type: string
-            enum: [GUARANTEE, DEPOSIT, NONE]
-          description: Payment policy
-        - in: query
-          name: boardType
-          required: false
-          schema:
-            type: string
-            enum: [ROOM_ONLY, BREAKFAST, HALF_BOARD, FULL_BOARD, ALL_INCLUSIVE]
-          description: Board type
-        - in: query
-          name: includeClosed
-          required: false
-          schema:
-            type: boolean
-          description: Include closed hotels
-        - in: query
-          name: bestRateOnly
-          required: false
-          schema:
-            type: boolean
-          description: Only include best rates
-        - in: query
-          name: lang
-          required: false
-          schema:
-            type: string
-          description: Language code
+            enum: [BEDBANK, DIRECTCHAIN, ALL]
+          description: The score of the hotels
       responses:
         "200":
           description: Hotel offers search result
