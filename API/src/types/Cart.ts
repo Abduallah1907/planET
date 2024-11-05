@@ -1,19 +1,19 @@
-import { ObjectId, SchemaType } from 'mongoose';
-import { Interface } from 'readline';
-import { Schema, model, Document } from 'mongoose';
-
-const CartSchema = new Schema({
-  items: [{ type: Schema.Types.ObjectId, ref: 'Cart_Item' }],
-  cost: { type: Number, required: true },
-});
+import { ObjectId, SchemaType } from "mongoose";
+import { Interface } from "readline";
+import { Schema, model, Document } from "mongoose";
 
 const Cart_ItemSchema = new Schema({
-  product_id: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+  product_id: { type: Schema.Types.ObjectId, ref: "Product", required: true },
   quantity: { type: Number, required: true },
 });
 
+const CartSchema = new Schema({
+  items: [{ type: Cart_ItemSchema, required: true }],
+  cost: { type: Number, required: true },
+});
+
 type Cart = {
-  items: ObjectId[];
+  items: Cart_Item[];
   cost: number;
 };
 
@@ -22,7 +22,5 @@ type Cart_Item = {
   quantity: number;
 };
 
-
-export default{ CartSchema, Cart_ItemSchema };
-export type { Cart, Cart_Item };
-
+export default CartSchema;
+export type { Cart };

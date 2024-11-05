@@ -139,4 +139,8 @@ export default (app: Router) => {
     authorize([UserRoles.Tourist]),
     touristController.showMyTourGuides
   );
+
+  route.post("/createOrder", touristController.createOrder);
+
+  route.get("/getPastOrders/:email", touristController.getPastOrders);
 };

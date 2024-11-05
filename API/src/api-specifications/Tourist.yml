@@ -886,3 +886,70 @@ paths:
           description: Bad request
         500:
           description: Internal server error
+  /api/tourist/createOrder:
+    post:
+      tags:
+        - Tourist
+      summary: Create order cart
+      description: Create an order cart for a tourist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tourist_id:
+                  type: string
+                  description: ID of the tourist
+                cart:
+                  type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          product_id:
+                            type: string
+                            description: ID of the product
+                          quantity:
+                            type: number
+                            description: Quantity of the product
+                      description: List of items in cart (product_id,quantity)
+                    cost:
+                      type: number
+                      description: Total cost of the cart
+                cost:
+                  type: number
+                  description: Total cost of the cart
+                payment_type:
+                  type: string
+                  description: Payment type
+      responses:
+        200:
+          description: Order cart created successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+  /api/tourist/getPastOrders/{email}:
+    get:
+      tags:
+        - Tourist
+      summary: Get past orders
+      description: Get past orders for a tourist
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        200:
+          description: Past orders retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error        
