@@ -933,3 +933,23 @@ paths:
           description: Bad request
         500:
           description: Internal server error
+  /api/tourist/getPastOrders/{email}:
+    get:
+      tags:
+        - Tourist
+      summary: Get past orders
+      description: Get past orders for a tourist
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        200:
+          description: Past orders retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error        

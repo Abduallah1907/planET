@@ -310,4 +310,11 @@ export class TouristController {
     const order = await touristService.createOrderService(orderData);
     res.status(order.status).json(order);
   }
+
+  public async getPastOrders(req: any, res: any) {
+    const { email } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const pastOrders = await touristService.getPastOrdersService(email);
+    res.status(pastOrders.status).json(pastOrders);
+  }
 }

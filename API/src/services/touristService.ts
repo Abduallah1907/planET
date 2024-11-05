@@ -1779,9 +1779,9 @@ export default class TouristService {
       if (quantity > product.quantity) {
         throw new BadRequestError("Quantity not available to place order");
       }
-      const newQuantity = (product.quantity -= quantity);
       await this.productModel.findByIdAndUpdate(product_id, {
-        quantity: newQuantity,
+        sales: product.sales + quantity,
+        quantity: product.quantity - quantity,
         $addToSet: { tourist_id: tourist_id },
       });
 
@@ -1819,5 +1819,38 @@ export default class TouristService {
     if (updatedTourist == null) throw new NotFoundError("Tourist not found");
 
     return new response(true, order, "Order placed", 201);
+  }
+
+  public async getPastOrdersService(email: string) {
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+    });
+
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const orders = await this.orderModel
+      .find({ tourist_id: tourist._id })
+      .populate("products.items.product_id"); //In sprint 3 add status to be delivered products only
+
+    if (orders instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+
+    if (orders == null) {
+      throw new NotFoundError("Order not found");
+    }
+
+    return new response(true, orders, "Past orders found", 200);
   }
 }

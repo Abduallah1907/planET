@@ -141,4 +141,6 @@ export default (app: Router) => {
   );
 
   route.post("/createOrder", touristController.createOrder);
+
+  route.get("/getPastOrders/:email", touristController.getPastOrders);
 };
