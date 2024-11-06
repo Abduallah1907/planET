@@ -459,49 +459,18 @@ export default class ItineraryService {
       }
     }
 
-    // if (filters.date) {
-    //   if (filters.date.start !== undefined) {
-    //     const startDate = filters.date.start; // The input date is in day/month/year format
-    //     const dashedStartDate = startDate.split("/").join("-");
-    //     console.log("START DATE", dashedStartDate);
-
-    //     matchStage.available_dates = {
-    //       ...matchStage.available_dates,
-    //       $elemMatch: {
-    //         ...(matchStage.available_dates.$elemMatch || {}),
-    //         $gte: new Date(dashedStartDate),
-    //       },
-    //     };
-    //     console.log("Stage after start", matchStage.available_dates);
-    //   }
-    //   if (filters.date.end !== undefined) {
-    //     const endDate = filters.date.end;
-    //     const dashedEndDate = endDate.split("/").join("-");
-    //     console.log("END DATE", dashedEndDate);
-
-    //     matchStage.available_dates = {
-    //       ...matchStage.available_dates,
-    //       $elemMatch: {
-    //         ...(matchStage.available_dates.$elemMatch || {}),
-    //         $lte: new Date(dashedEndDate),
-    //       },
-    //     };
-    //   }
-    //   console.log("Stage after end", matchStage.available_dates);
-    // }
-
     if (filters.date) {
       let dashedStartDate = "";
       if (filters.date.start) {
         const startDate = filters.date.start; // The input date is in day/month/year format
         dashedStartDate = startDate.split("/").join("-");
-        console.log("START DATE", dashedStartDate);
+        // console.log("START DATE", dashedStartDate);
       }
       let dashedEndDate = "";
       if (filters.date.end) {
         const endDate = filters.date.end;
         dashedEndDate = endDate.split("/").join("-");
-        console.log("END DATE", dashedEndDate);
+        // console.log("END DATE", dashedEndDate);
       }
       if (filters.date.start !== undefined && filters.date.end !== undefined) {
         matchStage.available_dates = {
@@ -547,7 +516,7 @@ export default class ItineraryService {
         },
       },
     ];
-    console.log("AggregationPipeline: ", JSON.stringify(aggregationPipeline));
+    // console.log("AggregationPipeline: ", JSON.stringify(aggregationPipeline));
 
     if (filters.preferences) {
       aggregationPipeline.push({
