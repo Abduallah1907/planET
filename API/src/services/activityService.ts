@@ -436,7 +436,7 @@ export default class ActivityService {
         $match: matchStage,
       },
     ];
-    console.log("AggregationPipeline: ", JSON.stringify(aggregationPipeline));
+    // console.log("AggregationPipeline: ", JSON.stringify(aggregationPipeline));
     // Add conditional filters
     if (filters.category || filters.preferences) {
       aggregationPipeline.push({
