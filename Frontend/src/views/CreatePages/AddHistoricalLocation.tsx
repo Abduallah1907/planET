@@ -8,6 +8,7 @@ import { ToastTypes } from "../../utils/toastTypes";
 import DaysModal from "../../components/DaysModals";
 import { useAppSelector } from "../../store/hooks";
 import { useNavigate } from "react-router-dom";
+import { set } from "react-datepicker/dist/date_utils";
 
 interface FormData {
   name: string;
@@ -68,12 +69,25 @@ const HistoricalPlaceForm: React.FC = () => {
   };
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
+  
+    // Check if the input is for a price field
+    if (name === "nativePrice" || name === "foreignPrice" || name === "studentPrice") {
+      const numericValue = parseFloat(value);
+      if (numericValue < 0) {
+        showToast("Price cannot be negative", ToastTypes.ERROR);
+        setFormData({ ...formData, [name]: 0 });
+        // Ignore negative values, you might also want to show a warning here
+        return; 
+      }
+    }
+  
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
+  
 
   const Governer = useAppSelector((state) => state.user);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -85,7 +99,7 @@ const HistoricalPlaceForm: React.FC = () => {
     const reqData = {
       name: formData.name,
       location: { latitude: 0, longitude: 0 },
-      images: ["Testing"],
+      images: null,
       description: formData.description,
       opening_days: formData.openingDays,
       opening_hours_from: formData.openingFrom,
@@ -96,12 +110,9 @@ const HistoricalPlaceForm: React.FC = () => {
       tags: tagsMap,
       governor_id: Governer.stakeholder_id._id,
       active_flag: formData.active_flag,
-    }
-    await HistoricalService.addHistoricalLocation(
-      reqData
-    );
-    navigate('/MyHistoricalLocations')
-
+    };
+    await HistoricalService.addHistoricalLocation(reqData);
+    navigate("/MyHistoricalLocations");
   };
 
   const getAllHistoricalTags = async () => {

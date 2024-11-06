@@ -3,6 +3,8 @@ import CustomFormGroup from "../../components/FormGroup/FormGroup";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { useAppSelector } from "../../store/hooks";
 import { GovernorService } from "../../services/GovernorService";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   changePassword: string;
@@ -40,7 +42,7 @@ const ChangePasswordG: React.FC = () => {
       alert("Passwords don't match!");
       return;
     }
-
+    showToast("Password Changed Successfully", ToastTypes.SUCCESS);
     // Handle form submission logic here (e.g., API request)
   };
 
@@ -84,18 +86,13 @@ const ChangePasswordG: React.FC = () => {
             </Col>
           </Row>
 
-          <Button
-            type="submit"
-            variant="primary"
-            className="mt-4"
-            onClick={OnClick}
-          >
+          <Button variant="main-inverse" type="submit" className="mt-3">
             Update Profile
           </Button>
           <Button
             type="button"
             variant="secondary"
-            className="mt-4 ml-2"
+            className="mt-3 ml-2"
             onClick={handleCancel}
           >
             Cancel

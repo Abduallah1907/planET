@@ -276,6 +276,22 @@ export default class AdminService {
   }
 
   public async deleteTagService(type: String): Promise<any> {
+    //search for tag by name
+    const tag = await this.tagModel.findOne({ type });
+    //remove this tag from all activities
+    //find in the tag array of activities and pull this tag from the array
+    const activities = await this.activityModel.updateMany(
+      { tags: { $in: [tag?._id] } },
+      { $pull: { tags: tag?._id } }
+    );
+    if (activities instanceof Error)
+      throw new InternalServerError("Internal server error");
+    //remove this tag from all itineraries
+    const itineraries = await this.itineraryModel.updateMany(
+      { tags: { $in: [tag?._id] } },
+      { $pull: { tags: tag?._id } }
+    );
+
     const deletedTag = await this.tagModel.findOneAndDelete({ type });
 
     if (deletedTag instanceof Error) throw new InternalServerError("Internal server error");

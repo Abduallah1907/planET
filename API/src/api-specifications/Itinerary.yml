@@ -118,7 +118,11 @@ paths:
       tags:
         - Itinerary
       summary: Update an itinerary for a tour guide
-      description: Note that even information not updated should be sent inside the request body.
+      description:
+        If an itinerary is to be activated, it must have no bookings done by a tourist, even if the itinerary has multiple dates and the other dates are not booked.
+        Deactivating an itinerary is possibly irreversible if the itinerary has bookings. Make sure to warn the user of such a thing.
+        This does not prevent the tour guide who created the itinerary to see it, or users that booked it to see it.
+        Note that even information not updated should be sent inside the request body.
       parameters:
         - name: itinerary_id
           in: path
@@ -133,12 +137,95 @@ paths:
         content:
           application/json:
             schema:
-              type: string
-              format: objectId
-              example: "6700067cce53c3263e1f8e5c"
+              type: object
+              properties:
+                name:
+                  type: string
+                category:
+                  type: string
+                  format: objectId
+                activities:
+                  type: array
+                  items:
+                    type: string
+                    format: objectId
+                    example: ["60d5f484f3f0c08d5c0f1b45", "60d5f484f3f0c08d5c0f1e85"]
+                slots:
+                  type: string
+                  example: "ana le7ad delwaty mesh 3aref slots metrepresent ezay - es2al kamal fe deeh"
+                locations:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      longitude:
+                        type: number
+                        example: 39085.29
+                      latitude:
+                        type: number
+                duration:
+                  type: string
+                languages:
+                  type: array
+                  items:
+                    type: string
+                price:
+                  type: number
+                  format: float
+                available_dates:
+                  type: array
+                  items:
+                    type: string
+                    format: date
+                accessibility:
+                  type: boolean
+                pickup_loc:
+                  type: object
+                  properties:
+                    longitude:
+                      type: number
+                    latitude:
+                      type: number
+                drop_off_loc:
+                  type: object
+                  properties:
+                    longitude:
+                      type: number
+                    latitude:
+                      type: number
+                tags:
+                  type: array
+                  items:
+                    type: string
+                    format: objectId
+                active_flag:
+                  type: boolean
+              example:
+                name: "Tayren 7awela el 3alem"
+                category: "60d5f484f3f0c08d5c0f1b45"
+                activities:
+                  - "60d5f484f3f0c08d5c0f1b45"
+                  - "60d5f485f3f0c08d5c0f1b46"
+                slots: "ana le 7ad delwaty mesh fahem slots betrepresent ezay - es2al kamal fe deh"
+                locations:
+                  - { "longitude": 34.0522, "latitude": -118.2437 }
+                  - { "longitude": 904.0522, "latitude": -18.2437 }
+                duration: "string"
+                languages: ["English", "Spanish"]
+                price: 3000
+                available_dates: ["2024-11-01", "2024-11-05"]
+                accessibility: true
+                pickup_loc: { "longitude": 34.0522, "latitude": -118.2437 }
+                drop_off_loc: { "longitude": 84.0522, "latitude": -818.2437 }
+                tags:
+                  - "60d5f484f3f0c08d5c0f1b45"
+                  - "60d5f485f3f0c08d5c0f1b46"
+                active_flag: true
       responses:
         200:
           description: Itinerary updated successfully
+        400:
+          description: Tourists have booked this itinerary, and it cannot be activated.
         404:
           description: Itinerary not found.
         500:
@@ -311,59 +398,6 @@ paths:
         500:
           description: Internal server error.
 
-  /api/itinerary/activateItinerary/{itinerary_id}:
-    put:
-      tags:
-        - Itinerary
-        - Tour Guide
-      summary: Activate an itinerary ONLY if there are no bookings
-      description: An itinerary cannot be activated if a single tourist books it, even if the itinerary has multiple dates and the other dates are not booked.
-      parameters:
-        - name: itinerary_id
-          in: path
-          description: The itinerary we want to activate.
-          required: true
-          schema:
-            type: string
-            format: objectId
-            example: "6700067cce53c3263e1f8e5c"
-      responses:
-        200:
-          description: Itinerary activated successfully
-        400:
-          description: Tourists have booked this itinerary, and it cannot be activated.
-        404:
-          description: Itinerary not found.
-        409:
-          description: The itinerary is already activated
-        500:
-          description: Internal server error.
-  /api/itinerary/deactivateItinerary/{itinerary_id}:
-    put:
-      tags:
-        - Itinerary
-        - Tour Guide
-      summary: Deactivate an itinerary
-      description: Deactivating an itinerary is possibly irreversible if the itinerary has bookings. Make sure to warn the user of such a thing.
-        This does not prevent the tour guide who created the itinerary to see it. The admin should also be to see it, but this logic is not handled yet.
-      parameters:
-        - name: itinerary_id
-          in: path
-          description: The itinerary we want to deactivate.
-          required: true
-          schema:
-            type: string
-            format: objectId
-            example: "6700067cce53c3263e1f8e5c"
-      responses:
-        200:
-          description: Itinerary deactivated successfully
-        404:
-          description: Itinerary not found.
-        409:
-          description: The itinerary is already deactivated
-        500:
-          description: Internal server error.
   /api/itinerary/flagItinerary/{itinerary_id}:
     put:
       tags:

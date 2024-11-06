@@ -4,6 +4,9 @@ import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Reuse the 
 import { useAppSelector } from "../../store/hooks";
 import { ProductService } from "../../services/ProductService";
 import { useNavigate } from "react-router-dom";
+import { FileService } from "../../services/FileService";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   name: string;
@@ -24,8 +27,22 @@ const AddNewProduct: React.FC = () => {
     archive_flag: false,
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
+
+    // Check if the field is Price or Quantity
+    if (name === "price" || name === "quantity") {
+      const numericalValue = parseFloat(value); // Use parseFloat for Price
+
+      // Validate for negative values
+      if (numericalValue < 0) {
+        showToast(`${name} cannot be negative`, ToastTypes.ERROR);
+        setFormData({ ...formData, [name]: "0" }); // Reset to 0 if negative
+        return;
+      }
+    }
+
+    // Update formData based on the input type
     setFormData({
       ...formData,
       [name]: type === "checkbox" ? checked : value,
@@ -46,11 +63,22 @@ const AddNewProduct: React.FC = () => {
       name: formData.name,
       description: formData.description,
       price: formData.price,
-      image: formData.image ? formData.image.toString() : "",
       quantity: formData.quantity,
       archive_flag: formData.archive_flag,
     };
-    if (seller_id) {
+    if (formData.image && seller_id) {
+      const file = await FileService.uploadFile(formData.image);
+      await ProductService.createProduct(seller_id, {
+        name: formData.name,
+        description: formData.description,
+        price: formData.price,
+        image: file.data._id,
+        quantity: formData.quantity,
+        archive_flag: formData.archive_flag,
+      });
+      navigate("/MyProducts");
+    }
+    if (seller_id && !formData.image) {
       await ProductService.createProduct(seller_id, productData);
       navigate("/MyProducts");
     } else {
@@ -102,14 +130,15 @@ const AddNewProduct: React.FC = () => {
 
           <Row>
             <Col>
-              <Form.Group className="form-group" controlId="product-image">
-                <Form.Label>Image</Form.Label>
+              <Form.Group controlId="formFile" className="mb-3">
+                <Form.Label>
+                  <h3>Upload Product Image</h3>
+                </Form.Label>
                 <Form.Control
                   type="file"
-                  name="productImage"
-                  className="custom-form-control"
-                  accept="image/*"
+                  name="logo"
                   onChange={handleFileChange}
+                  accept="image/*"
                 />
               </Form.Group>
             </Col>

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import "./ProfileFormTourist.css";
+import "./Advertiser.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { useAppSelector } from "../../store/hooks";
 import { SellerServices } from "../../services/SellerServices";
 import { FileService } from "../../services/FileService";
 import { isValidObjectId } from "../..//utils/CheckObjectId";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   firstName: string;
@@ -77,7 +79,7 @@ const SellerProfile: React.FC = () => {
   const OnClick = async () => {
     if (formData.logo) {
       const file = await FileService.uploadFile(formData.logo);
-      await SellerServices.updateSellerServices(Seller.email, {
+      const seller = await SellerServices.updateSellerServices(Seller.email, {
         name: formData.firstName + " " + formData.lastName,
         email: formData.email,
         username: formData.username,
@@ -86,8 +88,13 @@ const SellerProfile: React.FC = () => {
         password: formData.password,
         logo: file.data._id,
       });
+      if (seller.status === 200) {
+        showToast("Updated successfully", ToastTypes.SUCCESS);
+      } else {
+        showToast("Error in updating", ToastTypes.ERROR);
+      }
     } else {
-      await SellerServices.updateSellerServices(Seller.email, {
+      const seller = await SellerServices.updateSellerServices(Seller.email, {
         name: formData.firstName + " " + formData.lastName,
         email: formData.email,
         username: formData.username,
@@ -95,6 +102,9 @@ const SellerProfile: React.FC = () => {
         phone_number: formData.mobile,
         password: formData.password,
       });
+      if (seller.status === 200)
+        showToast("Updated successfully", ToastTypes.SUCCESS);
+      else showToast("Error in updating", ToastTypes.ERROR);
     }
   };
 
@@ -115,9 +125,20 @@ const SellerProfile: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.password !== formData.retypePassword) {
-      alert("Passwords don't match!");
+    if (
+      (formData.password && !formData.retypePassword) ||
+      (!formData.password && formData.retypePassword)
+    ) {
+      alert("Please fill out both password fields.");
       return;
+    }
+
+    // If both password fields are filled, validate that they match
+    if (formData.password && formData.retypePassword) {
+      if (formData.password !== formData.retypePassword) {
+        alert("Passwords don't match!");
+        return;
+      }
     }
     // Handle form submission, including the logo file
   };
@@ -221,7 +242,7 @@ const SellerProfile: React.FC = () => {
                 id="password"
                 name="password"
                 disabled={false}
-                required={true}
+                required={false}
                 value={formData.password}
                 onChange={handleChange}
               />
@@ -234,7 +255,7 @@ const SellerProfile: React.FC = () => {
                 id="retypePassword"
                 name="retypePassword"
                 disabled={false}
-                required={true}
+                required={false}
                 value={formData.retypePassword}
                 onChange={handleChange}
               />
@@ -289,13 +310,13 @@ const SellerProfile: React.FC = () => {
             </Col>
           </Row>
 
-          <div className="form-actions">
-            <Button type="submit" className="update-btn" onClick={OnClick}>
-              Update
-            </Button>
-            <Button type="button" className="cancel-btn" onClick={handleCancel}>
+          <div className="d-flex justify-content-center">
+            <button className="update-btn" onClick={OnClick}>
+              Confirm
+            </button>
+            <button className="cancel-btn" onClick={handleCancel}>
               Cancel
-            </Button>
+            </button>
           </div>
         </Form>
       </Container>

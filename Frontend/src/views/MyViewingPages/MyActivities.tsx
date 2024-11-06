@@ -87,6 +87,11 @@ export default function ActivitiesPage() {
     setFilter(newFilter);
   };
 
+  const deleteActivity = async (id: string) => {
+    // Perform the delete action here
+    setActivities(activities.filter((item) => item._id !== id));
+  }
+
   return (
     <Container fluid>
       <Row className="justify-content-center my-4">
@@ -161,7 +166,7 @@ export default function ActivitiesPage() {
                   id={activity._id}
                   Name={activity.name}
                   location={"cairo"}
-                  category={activity.category.type}
+                  category={activity.category ? activity.category.type: ""}
                   tags={activity.tags.map((item: { type: any }) => item.type)}
                   image={""}
                   RatingVal={activity.average_rating}
@@ -174,6 +179,7 @@ export default function ActivitiesPage() {
                     console.log(`${activity.name} booking status changed`)
                   }
                   onClick={() => onActivityClick(activity._id)}
+                  onDelete={() => deleteActivity(activity._id)}
                   isAdvertiser={true}
                 />
               </Col>

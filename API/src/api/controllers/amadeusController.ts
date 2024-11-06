@@ -17,10 +17,10 @@ export default class AmadeusController{
         res.status(flightOffers.status).json(flightOffers);
     }
 
-    public async getHotelOffers(req: any, res: any){
+    public async getHotelsList(req: any, res: any){
         const amadeusService: AmadeusService = Container.get(AmadeusService);
-        const hotelOffers = await amadeusService.getHotelOffersService(req.query);
-        res.status(hotelOffers.status).json(hotelOffers);
+        const hotelsList = await amadeusService.getHotelsListService(req.query);
+        res.status(hotelsList.status).json(hotelsList);
     }
 
 

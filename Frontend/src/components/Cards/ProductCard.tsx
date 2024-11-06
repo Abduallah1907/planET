@@ -14,11 +14,15 @@ import Rating from "../Rating/Rating";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { addProduct } from "../../store/cartSlice";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 
 interface InputData {
   name: string;
-  id?: string;
+  id: string;
   average_rating: number;
   Reviews: number;
   sales: number;
@@ -64,6 +68,7 @@ const ProductCard = ({
 
   // Function to handle edit action
   const navigate = useNavigate();
+  const user = useAppSelector((state) => state.user);
 
   const handleEdit = (product_id: string) => {
     navigate(`/EditProduct/${product_id}`); // Navigate to the EditProduct page
@@ -78,11 +83,20 @@ const ProductCard = ({
     // Perform the delete action here
     console.log(`Product ${id} deleted.`);
     setShowDeleteModal(false); // Close modal after confirming
+    showToast("Product deleted",ToastTypes.SUCCESS);
   };
 
   const cancelDelete = () => {
     setShowDeleteModal(false); // Close modal without action
   };
+  const dispatch=useAppDispatch();
+  const addToCart = (e: any) => {
+    e.stopPropagation();
+    e.preventDefault();
+    showToast("Product added to cart",ToastTypes.SUCCESS);
+    dispatch(addProduct({product:{id,name,price,description,image},quantity:1}));
+  }
+
   return (
     <Card
       className="p-3 shadow-sm"
@@ -124,6 +138,11 @@ const ProductCard = ({
                 Created: {createdAt.toLocaleDateString()} | Updated: {updatedAt.toLocaleDateString()}
               </Card.Text>
             }
+            {user.role==="TOURIST" && (
+            <div className="d-flex justify-content-center">
+            <Button className="w-25 " variant="main-inverse" onClick={addToCart} >Add to Cart</Button>
+            </div>
+            )}
           </Card.Body>
         </Col>
 
@@ -187,10 +206,10 @@ const ProductCard = ({
         </Modal.Header>
         <Modal.Body>Are you sure you want to delete this product?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={cancelDelete}>
+          <Button variant="main" className="border-warning-subtle" onClick={cancelDelete}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={confirmDelete}>
+          <Button variant="main-inverse" onClick={confirmDelete}>
             Confirm
           </Button>
         </Modal.Footer>

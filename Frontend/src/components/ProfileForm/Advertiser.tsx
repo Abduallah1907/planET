@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import "./ProfileFormTourist.css";
+import "./Advertiser.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { AdvertiserService } from "../../services/AdvertiserService";
 import { useAppSelector } from "../../store/hooks";
 import { FileService } from "../../services/FileService";
 import { isValidObjectId } from "../../utils/CheckObjectId";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   firstName: string;
@@ -90,7 +92,7 @@ const Advertiser: React.FC = () => {
   const OnClick = async () => {
     if (formData.logo) {
       const file = await FileService.uploadFile(formData.logo);
-      await AdvertiserService.updateAdvertiser(Advertiser.email, {
+      const Adv = await AdvertiserService.updateAdvertiser(Advertiser.email, {
         name: formData.firstName + " " + formData.lastName,
         username: formData.username,
         newEmail: formData.email,
@@ -102,8 +104,13 @@ const Advertiser: React.FC = () => {
         link_to_website: formData.linktoweb,
         logo: file.data._id,
       });
+      if (Adv.status === 200) {
+        showToast("Updated successfully", ToastTypes.SUCCESS);
+      } else {
+        showToast("Error in updating", ToastTypes.ERROR);
+      }
     } else {
-      await AdvertiserService.updateAdvertiser(Advertiser.email, {
+      const Adv = await AdvertiserService.updateAdvertiser(Advertiser.email, {
         name: formData.firstName + " " + formData.lastName,
         username: formData.username,
         newEmail: formData.email,
@@ -114,6 +121,11 @@ const Advertiser: React.FC = () => {
         company_profile: formData.companyProfile,
         link_to_website: formData.linktoweb,
       });
+      if (Adv.status === 200) {
+        showToast("Updated successfully", ToastTypes.SUCCESS);
+      } else {
+        showToast("Error in updating", ToastTypes.ERROR);
+      }
     }
   };
 
@@ -134,9 +146,21 @@ const Advertiser: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.changePassword !== formData.retypePassword) {
-      alert("Passwords don't match!");
+    // Check if one password field is filled, require both to be filled
+    if (
+      (formData.changePassword && !formData.retypePassword) ||
+      (!formData.changePassword && formData.retypePassword)
+    ) {
+      alert("Please fill out both password fields.");
       return;
+    }
+
+    // If both password fields are filled, validate that they match
+    if (formData.changePassword && formData.retypePassword) {
+      if (formData.changePassword !== formData.retypePassword) {
+        alert("Passwords don't match!");
+        return;
+      }
     }
     // Handle form submission, including the logo file and about text
   };
@@ -243,7 +267,7 @@ const Advertiser: React.FC = () => {
                 id="changePassword"
                 name="changePassword"
                 disabled={false}
-                required={true}
+                required={false}
                 value={formData.changePassword}
                 onChange={handleChange}
               />
@@ -256,7 +280,7 @@ const Advertiser: React.FC = () => {
                 id="retypePassword"
                 name="retypePassword"
                 disabled={false}
-                required={true}
+                required={false}
                 value={formData.retypePassword}
                 onChange={handleChange}
               />
@@ -354,13 +378,13 @@ const Advertiser: React.FC = () => {
 
           {/* New row for 'About' section */}
 
-          <div className="form-actions">
-            <Button type="submit" className="update-btn" onClick={OnClick}>
+          <div className="d-flex justify-content-center">
+            <button className="update-btn" onClick={OnClick}>
               Confirm
-            </Button>
-            <Button type="button" className="cancel-btn" onClick={handleCancel}>
+            </button>
+            <button className="cancel-btn" onClick={handleCancel}>
               Cancel
-            </Button>
+            </button>
           </div>
         </Form>
       </Container>

@@ -35,12 +35,12 @@ export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        setStakeholder(state, action: PayloadAction<Object>){
+        setStakeholder(state, action: PayloadAction<Object>) {
             state.stakeholder_id = action.payload;
         },
         setUser: (state, action: PayloadAction<UserState>) => {
-            const {name, _id, username, role, email, phone_number, status, token, stakeholder_id } = action.payload;
-            state.name=name;
+            const { name, _id, username, role, email, phone_number, status, token, stakeholder_id } = action.payload;
+            state.name = name;
             state._id = _id;
             state.username = username;
             state.role = role;
@@ -57,6 +57,7 @@ export const userSlice = createSlice({
             state.isLoggedIn = true;
         },
 
+
         logout: (state) => {
             state.name = '';
             state._id = '';
@@ -71,10 +72,13 @@ export const userSlice = createSlice({
         setLoginState: (state, action: PayloadAction<boolean>) => {
             state.isLoggedIn = action.payload;
         },
-    }
+        setWalletBalance: (state, action: PayloadAction<number>) => {
+            state.stakeholder_id.wallet = action.payload;
+        }
+    },
 });
 
-export const { setUser, getUser, logout , login,setLoginState, setStakeholder  } = userSlice.actions;
+export const { setUser, getUser, logout, login, setLoginState, setStakeholder, setWalletBalance } = userSlice.actions;
 
 export const userState = (state: RootState) => state.sidebar;
 

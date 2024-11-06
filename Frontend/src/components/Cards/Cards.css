@@ -33,3 +33,100 @@
   padding: 0.5rem 1rem;
   color: rgba(0, 0, 0, 0.5);
 }
+
+.airline-logo{
+  width: 8rem;
+  margin-right: 0.5rem;
+}
+
+.flight-time{
+  font-family: 'Skyscanner Relative', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.5rem;
+}
+
+.flight-airline-iataCode{
+  color: #626971;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5rem;
+}
+
+.flight-duration{
+  color: #626971;
+  font-size: .75rem;
+  font-weight: 400;
+  line-height: 1rem;
+}
+
+.flight-path{
+  background-color: #c1c7cf;
+  border-radius: .5rem;
+  display: block;
+  height: .125rem;
+  line-height: 0;
+  margin: .25rem auto;
+  padding: 0;
+  position: relative;
+  text-align: center;
+  width: 90%;
+}
+
+.flight-transit-stop{
+  zoom: 1;
+  background-color: #e70866;
+  background-image: none;
+  border-radius: .5rem;
+  box-shadow: 0 0 0 .125rem #fff;
+  display: inline-block;
+  height: .375rem;
+  line-height: 0;
+  margin: 0 4%;
+  position: relative;
+  top: -.125rem;
+  width: .375rem;
+}
+
+.flight-stop{
+  color: #e70866;
+  font-weight: normal;
+  white-space: pre;
+}
+
+.flight-direct{
+  color: #0c838a;
+  font-weight: normal;
+  white-space: pre;
+}
+
+@media (max-width: 768px){
+  .flight-pricing{
+    border-top: 0.0625rem solid #c1c7cf;
+  } 
+}
+
+@media (min-width: 768px){
+  .flight-pricing{
+    border-left: 0.0625rem solid #c1c7cf;
+  } 
+}
+
+.flight-base-price{
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.5rem;
+}
+
+.flight-total-price{
+  color: #626971;
+  font-size: .75rem;
+  font-weight: 400;
+  line-height: 1rem;
+}
+
+.bookingCard{
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+  padding: 1rem;
+}

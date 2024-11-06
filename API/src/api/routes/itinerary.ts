@@ -1,8 +1,10 @@
 import { Router } from "express";
 import Container from "typedi";
 import { ItineraryController } from "../controllers/itineraryController";
+import { Request, Response, NextFunction } from "express";
 import authorize from "../middlewares/authorize";
 import UserRoles from "@/types/enums/userRoles";
+import getRoleAndID from "../middlewares/getRole";
 const router = Router();
 // all routers have /api/tourGuide before each router
 
@@ -17,22 +19,23 @@ export default (app: Router) => {
   router.delete("/deleteItinerary/:itinerary_id", authorize([UserRoles.TourGuide]), itineraryController.deleteItinerary);
 
   // activation for itinerary (can only be done by the tourguide)
-  router.put("/activateItinerary/:itinerary_id", itineraryController.activateItinerary);
-  router.put("/deactivateItinerary/:itinerary_id", itineraryController.deactivateItinerary);
+  // this has been moved to updateItinerary
+  // router.put("/activateItinerary/:itinerary_id", itineraryController.activateItinerary);
+  // router.put("/deactivateItinerary/:itinerary_id", itineraryController.deactivateItinerary);
 
   // inappropiate flag for itinerary (can only be done by admin)
   router.put("/flagItinerary/:itinerary_id", itineraryController.flagItinerary);
 
   // get all itineraries
   router.get("/getAllItinerariesByTourGuideID/:tour_guide_id", authorize([UserRoles.TourGuide]), itineraryController.getAllItinerariesByTourGuideID);
-  router.get("/getAllItineraries/:page", itineraryController.getAllItineraries);
+  router.get("/getAllItineraries/:page", getRoleAndID, itineraryController.getAllItineraries);
 
-  router.get("/getSortedItineraries", itineraryController.getSortedItineraries);
+  router.get("/getSortedItineraries", getRoleAndID, itineraryController.getSortedItineraries);
 
-  router.get("/getSearchItinerary", itineraryController.getSearchItinerary);
+  router.get("/getSearchItinerary", getRoleAndID, itineraryController.getSearchItinerary);
 
-  router.get("/getUpcomingItineraries", itineraryController.getUpcomingItineraries);
+  router.get("/getUpcomingItineraries", getRoleAndID, itineraryController.getUpcomingItineraries);
 
-  router.get("/getFilteredItineraries", itineraryController.getFilteredItineraries);
-  router.get("/getFilterComponents", itineraryController.getFilterComponents);
+  router.get("/getFilteredItineraries", getRoleAndID, itineraryController.getFilteredItineraries);
+  router.get("/getFilterComponents", getRoleAndID, itineraryController.getFilterComponents);
 };

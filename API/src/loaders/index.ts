@@ -137,6 +137,10 @@ export default async ({ expressApp }: { expressApp: Application }) => {
     name: "otpModel",
     model: require("../models/OTP").default,
   };
+  const cartModel = {
+    name: "cartModel",
+    model: require("../types/Cart").default,
+  };
 
   const { gfs, upload } = await gridfsLoader({ mongoConnection });
   Logger.info("✌️ GridFS loaded");
@@ -167,6 +171,7 @@ export default async ({ expressApp }: { expressApp: Application }) => {
       tagModel,
       historical_tagModel,
       otpModel,
+      cartModel,
     ],
     gfs,
     upload,

@@ -1,11 +1,13 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
 import sidebarSlice from './sidebarSlice'
 import  userSlice  from './userSlice'
+import cartSlice from './cartSlice'
 
 const store = configureStore({
   reducer: {
     sidebar: sidebarSlice,
-    user: userSlice
+    user: userSlice,
+    cart: cartSlice,
   },
 })
 

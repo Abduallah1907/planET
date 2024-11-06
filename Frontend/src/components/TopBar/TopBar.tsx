@@ -1,5 +1,5 @@
 import React from "react";
-import { Navbar, Button, Dropdown, Container, Nav, Row, Col } from "react-bootstrap";
+import { Navbar, Button, Dropdown, Container, Nav, Row, Col, OverlayTrigger, Tooltip } from "react-bootstrap";
 import "./topbar.css";
 import Logo from "../../assets/LogoNoBackground.svg";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import DeutschFlag from "../../assets/Deutsch.webp";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "../../AppContext";
 import { MdHelpOutline } from "react-icons/md";
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaShoppingCart } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { toggleSidebar } from "../../store/sidebarSlice";
 import Avatar from "../Avatar/Avatar";
@@ -66,6 +66,30 @@ const TopBar: React.FC = () => {
   const User = useAppSelector((state) => state.user);
   const IsLoggedIn = User.isLoggedIn // Assuming you have an auth slice in your Redux store
 
+  function getBadgeColor(badge: any): string | string {
+    switch (badge) {  
+      case "1":
+        return 'badge-bronze';
+      case "2":
+        return "badge-silver";
+      case "3":
+        return "badge-gold";
+      default:
+        return "badge-bronze";  
+      }
+    }
+    const getBadgeText = (level: string) => {
+      switch (level) {
+        case "1":
+          return "Bronze Level";
+        case "2":
+          return "Silver Level";
+        case "3":
+          return "Gold Level";
+        default:
+          return "Bronze";
+      }
+    };
   return (
     <Navbar expand="lg" className="top-bar" variant="dark">
       <Container fluid>
@@ -174,33 +198,45 @@ const TopBar: React.FC = () => {
             <Button
               variant=""
               onClick={handleHelp}
-              className="btn-help btn-margin"
+              className="btn-help btn-margin me-1"
             >
               <MdHelpOutline />
             </Button>
 
             {IsLoggedIn ? (
+              <>
+              <Button
+                variant=""
+                onClick={() => navigate("/Cart")}
+                className="btn-help btn-margin me-3"
+              >
+                <FaShoppingCart />
+              </Button>
               <Row>
-                <Col className="pe-0 d-flex flex-column justify-content-center">
-                  <Avatar/>
-                </Col>
-                <Col>
+                  <Col className="pe-0 d-flex flex-column justify-content-center">
+                    <Avatar />
+                  </Col>
+                  <Col>
 
-                  <Row>
-                    <h5 className="text-white m-0">{User.username}</h5>
-                  </Row>
+                    <Row>
+                      <h5 className="text-white m-0">{User.username}</h5>
+                    </Row>
 
                   {User.role === "TOURIST" ? (
                     <Row>
-                      <SlBadge />
+                      <OverlayTrigger placement="top" overlay={<Tooltip>{getBadgeText(User.stakeholder_id.badge)}</Tooltip>}>
+                        <span>
+                        <SlBadge className={getBadgeColor(User.stakeholder_id.badge) }/>
+                        </span>
+                      </OverlayTrigger>
                     </Row>
 
-                  ) : (null)}
-                </Col>
+                    ) : (null)}
+                  </Col>
 
 
 
-              </Row>
+                </Row></>
             ) : (
               <>
                 <Button variant="" className="btn-text" onClick={handleJoinUs}>

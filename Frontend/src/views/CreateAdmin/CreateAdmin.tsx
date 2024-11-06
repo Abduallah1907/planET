@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import "../CreateAdmin/CreateAdmin.css";
 import AdminFormGroup from "../../components/FormGroup/FormGroup";
 import Logo from "../assets/person-circle.svg";
-import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import { Container, Row, Col, Button, Form, Modal } from "react-bootstrap";
 import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
 import { AdminService } from "../../services/AdminService";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface NationalityOption {
   value: string;
@@ -18,18 +20,21 @@ interface FormData {
   fname: string;
   lname: string;
   email: string;
-  phone: string;
+  phone_number: string;
   password: string;
   retypePassword: string;
   username: string;
 }
 
 const CreateAdmin: React.FC = () => {
+  const [showModal, setShowModal] = useState(false);
+  const handleShowModal = () => setShowModal(true); // <-- New handler to show modal
+  const handleCloseModal = () => setShowModal(false);
   const [formData, setFormData] = useState<FormData>({
     fname: "",
     lname: "",
     email: "",
-    phone: "",
+    phone_number: "",
     password: "",
     retypePassword: "",
     username: "",
@@ -53,11 +58,12 @@ const CreateAdmin: React.FC = () => {
     const data = {
       email: formData.email,
       name: formData.fname + " " + formData.lname,
-      phone: formData.phone,
+      phone_number: formData.phone_number,
       username: formData.username,
       password: formData.password,
     };
     await AdminService.createAdmin(data);
+    showToast("Admin created successfully", ToastTypes.SUCCESS);
   };
 
   const handleCancel = () => {
@@ -65,7 +71,7 @@ const CreateAdmin: React.FC = () => {
       fname: "",
       lname: "",
       email: "",
-      phone: "",
+      phone_number: "",
       password: "",
       retypePassword: "",
       username: "",
@@ -146,11 +152,11 @@ const CreateAdmin: React.FC = () => {
                 label="Phone Number"
                 type="tel"
                 placeholder="Enter your phone number"
-                id="phone"
-                name="phone"
+                id="phone_number"
+                name="phone_number"
                 disabled={false}
                 required={true}
-                value={formData.phone}
+                value={formData.phone_number}
                 onChange={handleChange}
               />
             </Col>
@@ -184,24 +190,22 @@ const CreateAdmin: React.FC = () => {
               />
             </Col>
           </Row>
-          <Row>
-            <Col xs={6}>
-              <Form.Check
-                type="checkbox"
-                id="checkbox1"
-                label="Remember me"
-                name="terms"
-                onChange={handleChange}
-              />
-              <Form.Check
-                type="checkbox"
-                id="checkbox2"
-                label="I agree to all terms and privacy policy"
-                name="newsletter"
-                onChange={handleChange}
-              />
-            </Col>
-          </Row>
+          <div key="default-checkbox1" className="mb-4">
+            <Form.Check
+              type="checkbox"
+              label={
+                <span>
+                  I agree to all the{" "}
+                  <a href="#" onClick={handleShowModal} className="terms-link">
+                    {" "}
+                    {/* <-- Updated to open modal */}
+                    Terms & Conditions
+                  </a>{" "}
+                </span>
+              }
+              required
+            />
+          </div>
 
           <div className="form-actions">
             <Button type="submit" variant="main-inverse">
@@ -209,6 +213,45 @@ const CreateAdmin: React.FC = () => {
             </Button>
           </div>
         </Form>
+        {/* Terms and Conditions Modal */}
+        <Modal show={showModal} onHide={handleCloseModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Terms & Conditions</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <h5>Terms & Conditions</h5>
+            <p>
+              By using this service, you agree to the following terms and
+              conditions:
+            </p>
+            <ul>
+              <li>You must be at least 18 years old to use this service.</li>
+              <li>
+                All information provided by you must be accurate and complete.
+              </li>
+              <li>
+                We reserve the right to modify or terminate the service for any
+                reason.
+              </li>
+              <li>
+                You are responsible for maintaining the confidentiality of your
+                account.
+              </li>
+              <li>
+                Any violation of these terms may result in termination of your
+                account.
+              </li>
+            </ul>
+            <p>
+              For more detailed information, please contact our support team.
+            </p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="main" onClick={handleCloseModal}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </Container>
     </div>
   );

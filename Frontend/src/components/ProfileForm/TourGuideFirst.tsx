@@ -1,9 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Button, Form, Table } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Form,
+  Table,
+  Modal,
+} from "react-bootstrap";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import { useAppSelector } from "../../store/hooks";
 import { TourGuideServices } from "../../services/TourGuideServices";
 import { FileService } from "../../services/FileService";
+import { FaTrashAlt } from "react-icons/fa";
+import "./Advertiser.css";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface WorkExperience {
   id?: string; // ID from the backend
@@ -27,9 +39,16 @@ const TourGuideFirst: React.FC = () => {
     previousWork: [],
     photo: null,
   });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [workToDeleteIndex, setWorkToDeleteIndex] = useState<number | null>(
+    null
+  );
 
   const [createdWork, setCreatedWork] = useState<WorkExperience[]>([]);
-
+  // Added state for modal visibility
+  const [showModal, setShowModal] = useState(false);
+  const handleShowModal = () => setShowModal(true); // <-- New handler to show modal
+  const handleCloseModal = () => setShowModal(false); // <-- New handler to close modal // <-- New state for modal
   useEffect(() => {
     setFormData({
       yearsOfExperience: "",
@@ -119,7 +138,7 @@ const TourGuideFirst: React.FC = () => {
   const OnClick = async () => {
     if (formData.photo) {
       const file = await FileService.uploadFile(formData.photo);
-      await TourGuideServices.updateTourGuide(TourGuideFirst.email, {
+      const TG = await TourGuideServices.updateTourGuide(TourGuideFirst.email, {
         years_of_experience: formData.yearsOfExperience,
         createdPreviousWork: createdWork.map((work) => ({
           id: work.id, // Send the ID to the backend
@@ -132,20 +151,31 @@ const TourGuideFirst: React.FC = () => {
         updatedPreviousWork: [],
         photo: file.data._id,
       });
+      if (TG.status === 200) {
+        showToast("Updated successfully", ToastTypes.SUCCESS);
+      } else {
+        showToast("Error in updating", ToastTypes.ERROR);
+      }
     } else {
-      await TourGuideServices.updateTourGuide(TourGuideFirst.email, {
-        years_of_experience: formData.yearsOfExperience,
-        photo: formData.photo,
-        createdPreviousWork: createdWork.map((work) => ({
-          id: work.id, // Send the ID to the backend
-          title: work.title,
-          place: work.place,
-          from: work.from,
-          to: work.to,
-        })),
+      const TG2 = await TourGuideServices.updateTourGuide(
+        TourGuideFirst.email,
+        {
+          years_of_experience: formData.yearsOfExperience,
+          photo: formData.photo,
+          createdPreviousWork: createdWork.map((work) => ({
+            id: work.id, // Send the ID to the backend
+            title: work.title,
+            place: work.place,
+            from: work.from,
+            to: work.to,
+          })),
 
-        updatedPreviousWork: [],
-      });
+          updatedPreviousWork: [],
+        }
+      );
+      if (TG2.status === 200)
+        showToast("Updated successfully", ToastTypes.SUCCESS);
+      else showToast("Error in updating", ToastTypes.ERROR);
     }
   };
 
@@ -156,6 +186,23 @@ const TourGuideFirst: React.FC = () => {
       photo: null,
     });
     setCreatedWork([]);
+  };
+  const handleDeleteWork = (index: number) => {
+    setWorkToDeleteIndex(index);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteWork = () => {
+    if (workToDeleteIndex !== null) {
+      handleRemoveWork(workToDeleteIndex); // Call your existing remove function
+    }
+    setShowDeleteModal(false);
+    setWorkToDeleteIndex(null);
+  };
+
+  const cancelDeleteWork = () => {
+    setShowDeleteModal(false);
+    setWorkToDeleteIndex(null);
   };
 
   return (
@@ -248,32 +295,105 @@ const TourGuideFirst: React.FC = () => {
                       />
                     </td>
                     <td>
-                      <Button
-                        variant="danger"
-                        onClick={() => handleRemoveWork(index)}
-                      >
-                        Delete
+                      <Button variant="main-inverse" className="mt-2">
+                        <FaTrashAlt onClick={() => handleDeleteWork(index)}>
+                          Delete
+                        </FaTrashAlt>
                       </Button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </Table>
-            <Button onClick={handleAddWork} variant="success">
+            <button className="update-btn" onClick={handleAddWork}>
               + Add Work Experience
-            </Button>
+            </button>
           </Col>
         </Row>
+        {/* Terms and Conditions Checkbox */}
+        <div key="default-checkbox1" className="mb-4">
+          <Form.Check
+            type="checkbox"
+            label={
+              <span>
+                I agree to all the{" "}
+                <a href="#" onClick={handleShowModal} className="terms-link">
+                  {" "}
+                  {/* <-- Updated to open modal */}
+                  Terms & Conditions
+                </a>{" "}
+              </span>
+            }
+            required
+          />
+        </div>
 
-        <div className="form-actions">
-          <Button type="submit" className="update-btn" onClick={OnClick}>
-            Update
-          </Button>
-          <Button type="button" className="cancel-btn" onClick={handleCancel}>
+        <div className="d-flex justify-content-center">
+          <button className="update-btn" onClick={OnClick}>
+            Confirm
+          </button>
+          <button className="cancel-btn" onClick={handleCancel}>
             Cancel
-          </Button>
+          </button>
         </div>
       </Form>
+      {/* Terms and Conditions Modal */}
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Terms & Conditions</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h5>Terms & Conditions</h5>
+          <p>
+            By using this service, you agree to the following terms and
+            conditions:
+          </p>
+          <ul>
+            <li>You must be at least 18 years old to use this service.</li>
+            <li>
+              All information provided by you must be accurate and complete.
+            </li>
+            <li>
+              We reserve the right to modify or terminate the service for any
+              reason.
+            </li>
+            <li>
+              You are responsible for maintaining the confidentiality of your
+              account.
+            </li>
+            <li>
+              Any violation of these terms may result in termination of your
+              account.
+            </li>
+          </ul>
+          <p>For more detailed information, please contact our support team.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showDeleteModal} onHide={cancelDeleteWork} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Are you sure you want to delete this work experience?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="main"
+            className="border-warning-subtle"
+            onClick={cancelDeleteWork}
+          >
+            Cancel
+          </Button>
+          <Button variant="main-inverse" onClick={confirmDeleteWork}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

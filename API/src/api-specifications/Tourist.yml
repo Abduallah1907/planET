@@ -398,6 +398,9 @@ paths:
                 itinerary_id:
                   type: string
                   description: ID of the itinerary
+                time_to_attend:
+                  type: string
+                  description: Time chosen to attend the itinerary  
       responses:
         200:
           description: Itinerary booked successfully
@@ -742,3 +745,211 @@ paths:
           description: Bad request
         500:
           description: Internal server error
+  /api/tourist/getPastActivityBookings/{email}:
+    get:
+      tags:
+        - Tourist
+      summary: Get past activity bookings
+      description: Get past activity bookings for a tourist
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        201:
+          description: Past activity bookings retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+  /api/tourist/getUpcomingActivityBookings/{email}:
+    get:
+      tags:
+        - Tourist
+      summary: Get upcoming activity bookings
+      description: Get upcoming activity bookings for a tourist
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        201:
+          description: Upcoming activity bookings retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+  /api/tourist/getPastItineraryBookings/{email}:
+    get:
+      tags:
+        - Tourist
+      summary: Get past itinerary bookings
+      description: Get past itinerary bookings for a tourist
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        201:
+          description: Past itinerary bookings retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+
+  /api/tourist/getUpcomingItineraryBookings/{email}:
+    get:
+      tags:
+        - Tourist
+      summary: Get upcoming itinerary bookings
+      description: Get upcoming itinerary bookings for a tourist
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        201:
+          description: Upcoming itinerary bookings retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+  /api/tourist/getPastHistoricalLocationBookings/{email}:
+    get:
+      tags:
+        - Tourist
+      summary: Get past historical location bookings
+      description: Get past historical location bookings for a tourist
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        201:
+          description: Past historical location bookings retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+  /api/tourist/getUpcomingHistoricalLocationBookings/{email}:
+    get:
+      tags:
+        - Tourist
+      summary: Get upcoming historical location bookings
+      description: Get upcoming historical location bookings for a tourist
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        201:
+          description: Upcoming historical location bookings retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+  /api/tourist/getMyTourGuides/{tourist_id}:
+    get:
+      tags:
+        - Tourist
+      summary: Get my tour guides
+      description: Get my tour guides for a tourist
+      parameters:
+        - in: path
+          name: tourist_id
+          required: true
+          description: Tourist id
+          schema:
+            type: string
+      responses:
+        200:
+          description: Tour guides retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+  /api/tourist/createOrder:
+    post:
+      tags:
+        - Tourist
+      summary: Create order cart
+      description: Create an order cart for a tourist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tourist_id:
+                  type: string
+                  description: ID of the tourist
+                cart:
+                  type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          product_id:
+                            type: string
+                            description: ID of the product
+                          quantity:
+                            type: number
+                            description: Quantity of the product
+                      description: List of items in cart (product_id,quantity)
+                    cost:
+                      type: number
+                      description: Total cost of the cart
+                cost:
+                  type: number
+                  description: Total cost of the cart
+                payment_type:
+                  type: string
+                  description: Payment type
+      responses:
+        200:
+          description: Order cart created successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+  /api/tourist/getPastOrders/{email}:
+    get:
+      tags:
+        - Tourist
+      summary: Get past orders
+      description: Get past orders for a tourist
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        200:
+          description: Past orders retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error        

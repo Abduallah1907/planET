@@ -6,6 +6,8 @@ import Rating from "../../components/Rating/Rating";
 import { ActivityService } from "../../services/ActivityService";
 import { IActivity } from "../../types/IActivity";
 import { use } from "i18next";
+import { useNavigate } from 'react-router-dom';
+
 
 
 interface ActivityCardProps {
@@ -36,7 +38,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
   const [activityData, setActivityData] = useState<IActivity | null>(null);
   const [showAdvertiserModal, setShowAdvertiserModal] = useState(false);
   const shareLink = activityData ? `${window.location.origin}/activity/${activityData._id}` : '';
-
+  const navigate = useNavigate();
+  
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shareLink);
     alert('Link copied to clipboard!');
@@ -77,10 +80,13 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
   const confirmReserve = () => {
     setShowModal(false);
     if (activityData && activityData.booking_flag) {
-      alert("Activity reserved successfully!");
+      
+      handleBookNow();
+
     } else {
       alert("Activity is not available for reservation!");
     }
+
   };
 
   const getActivityById = async (id: string) => {
@@ -99,6 +105,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
   const handleCloseAdvertiserModal = () => {
     setShowAdvertiserModal(false);
   };
+  const handleBookNow = () => {
+    navigate(`/bookActivity/${activityData?._id}`);
+  }
   return (
     <Container className="activity-card-container mt-5">
       <div className="activity-card">
@@ -161,7 +170,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
             >
               {activityData?.advertiser_id.user_id.name}
             </p>
-            <p className="Category">{activityData?.category.type}</p>
+            <p className="Category">{activityData?.category? activityData?.category.type: ""}</p>
             <p className="date">
               {activityData?.date
                 ? new Date(activityData.date).toLocaleDateString()
@@ -206,10 +215,10 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
+          <Button variant="main" className="border-warning-subtle" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={confirmReserve}>
+          <Button variant="main-inverse" onClick={confirmReserve}>
             Confirm
           </Button>
         </Modal.Footer>
