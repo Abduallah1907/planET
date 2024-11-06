@@ -350,14 +350,12 @@ export default class ActivityService {
       }
     }
 
-    // const datePartsFormatted = inputDate.split('/'); // Split by '/'
-    // const formattedDate = ${datePartsFormatted[2]}-${datePartsFormatted[1]}-${datePartsFormatted[0]};
     if (filters.date) {
       if (filters.date.start !== undefined) {
         const startDate = filters.date.start; // The input date is in day/month/year format
         const dashedStartDate = startDate.split("/").join("-");
 
-        console.log("START DATE", dashedStartDate);
+        // console.log("START DATE", dashedStartDate);
 
         matchStage.date = {
           ...matchStage.date,
@@ -368,7 +366,7 @@ export default class ActivityService {
         const endDate = filters.date.end; // The input date is in day/month/year format
         const dashedEndDate = endDate.split("/").join("-");
 
-        console.log("END DATE", dashedEndDate);
+        // console.log("END DATE", dashedEndDate);
 
         matchStage.date = {
           ...matchStage.date,
