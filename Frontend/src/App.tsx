@@ -89,7 +89,7 @@ const App: React.FC = () => {
   const email = useAppSelector((state) => state.user.email);
 
   if (!isLoginComplete) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   return (
@@ -121,16 +121,22 @@ const App: React.FC = () => {
 
         <Route path="/Activity" element={<Activities />} />
 
-
         <Route path="/Activity/:id" element={<ActivityDetails />} />
-        <Route path="/bookActivity/:id" element={< BookingActivity email={email} />} />
-        <Route path="/bookItinerary/:id" element={< BookingItinerary />} />
-        <Route path="/MyBookings/upcoming" element={< MyBookings />} />
-        <Route path="/MyBookings/past" element={< MyBookings />} />
-        <Route path="/MyItineraryBookings/upcoming" element={<MyItineraryBookings/>} />
-        <Route path="/MyItineraryBookings/past" element={<MyItineraryBookings/>} />
-
-
+        <Route
+          path="/bookActivity/:id"
+          element={<BookingActivity email={email} />}
+        />
+        <Route path="/bookItinerary/:id" element={<BookingItinerary />} />
+        <Route path="/MyBookings/upcoming" element={<MyBookings />} />
+        <Route path="/MyBookings/past" element={<MyBookings />} />
+        <Route
+          path="/MyItineraryBookings/upcoming"
+          element={<MyItineraryBookings />}
+        />
+        <Route
+          path="/MyItineraryBookings/past"
+          element={<MyItineraryBookings />}
+        />
 
         <Route path="/Itinerary" element={<Itinerary />} />
         <Route path="/Historical" element={<HistoricalPlaces />} />

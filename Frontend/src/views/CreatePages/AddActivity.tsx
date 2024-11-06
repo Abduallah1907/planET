@@ -10,11 +10,10 @@ import CategoryService from "../../services/CategoryService";
 import { AdminService } from "../../services/AdminService";
 import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
-
-
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { APIProvider, Map } from "@vis.gl/react-google-maps";
 
 // Other interface and component definitions...
-
 
 interface FormData {
   name: string;
@@ -39,7 +38,6 @@ interface Category {
   type: string;
 }
 
-
 const AdvertiserCreate: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -60,6 +58,11 @@ const AdvertiserCreate: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [showMapModal, setShowMapModal] = useState(false); // State to manage modal visibility
 
+  const [center, setCenter] = React.useState({
+    lat: 29.98732507495249,
+    lng: 31.435660077332482,
+  });
+  console.log(process.env);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -72,7 +75,10 @@ const AdvertiserCreate: React.FC = () => {
       const updatedValue = type === "checkbox" ? checked : value;
 
       // Ensure special_discount and price do not accept negative values
-      if ((name === "special_discount" || name === "price") && Number(updatedValue) < 0) {
+      if (
+        (name === "special_discount" || name === "price") &&
+        Number(updatedValue) < 0
+      ) {
         showToast("Value cannot be negative", ToastTypes.ERROR);
         setFormData({
           ...formData,
@@ -87,7 +93,6 @@ const AdvertiserCreate: React.FC = () => {
     }
   };
 
-
   const handleAddLocation = () => {
     setShowMapModal(true); // Show the modal
   };
@@ -99,13 +104,13 @@ const AdvertiserCreate: React.FC = () => {
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue) {
       const tag = inputValue.trim();
-      if (tag && !tags.some(t => t.type === tag)) {
+      if (tag && !tags.some((t) => t.type === tag)) {
         alert("Invalid tag");
         setInputValue("");
         return;
       }
-      const foundTag = tags.find(t => t.type === tag);
-      if (foundTag && !selectedTags.some(t => t._id === foundTag._id)) {
+      const foundTag = tags.find((t) => t.type === tag);
+      if (foundTag && !selectedTags.some((t) => t._id === foundTag._id)) {
         setSelectedTags((prev) => [...prev, foundTag]);
         setInputValue("");
       }
@@ -121,8 +126,8 @@ const AdvertiserCreate: React.FC = () => {
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    const foundTag = tags.find(t => t.type === suggestion);
-    if (foundTag && !selectedTags.some(t => t._id === foundTag._id)) {
+    const foundTag = tags.find((t) => t.type === suggestion);
+    if (foundTag && !selectedTags.some((t) => t._id === foundTag._id)) {
       setSelectedTags((prev) => [...prev, foundTag]);
       setSuggestions((prev) => prev.filter((s) => s !== suggestion));
       setInputValue("");
@@ -135,7 +140,9 @@ const AdvertiserCreate: React.FC = () => {
         tag.type.toLowerCase().includes(inputValue.slice(1).toLowerCase())
       );
       const selectedTagIds = new Set(selectedTags.map((tag) => tag._id));
-      const filteredSuggestions = filteredTags.filter((tag) => !selectedTagIds.has(tag._id));
+      const filteredSuggestions = filteredTags.filter(
+        (tag) => !selectedTagIds.has(tag._id)
+      );
       setSuggestions(filteredSuggestions.map((tag) => tag.type));
     } else {
       setSuggestions([]);
@@ -150,7 +157,7 @@ const AdvertiserCreate: React.FC = () => {
           _id: category._id,
           type: category.type,
         };
-      })
+      });
       setCategories(categoryData); // Assuming the response has 'data' containing the categories
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -160,7 +167,7 @@ const AdvertiserCreate: React.FC = () => {
   const getTags = async (page: number) => {
     const tagsData = await AdminService.getTags(page); // Assuming page 1 as the default
     setTags(tagsData.data);
-  }
+  };
 
   useEffect(() => {
     getTags(1);
@@ -362,7 +369,11 @@ const AdvertiserCreate: React.FC = () => {
           </Row>
 
           <Row>
-            <Button variant="main-inverse" className="mt-2 m-auto w-25" onClick={handleAddLocation}>
+            <Button
+              variant="main-inverse"
+              className="mt-2 m-auto w-25"
+              onClick={handleAddLocation}
+            >
               Add Location
             </Button>
             {/* Modal for Location */}
@@ -372,16 +383,24 @@ const AdvertiserCreate: React.FC = () => {
               </Modal.Header>
               <Modal.Body>
                 <div className="ratio ratio-1x1">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3455.7252495085836!2d31.435660077332482!3d29.98732507495249!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14583cb2bfafbe73%3A0x6e7220116094726d!2sGerman%20University%20in%20Cairo%20(GUC)!5e0!3m2!1sen!2seg!4v1728233137915!5m2!1sen!2seg"
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  ></iframe>
+                  <APIProvider apiKey={process.env.GOOGLE_MAPS_API_KEY || ""}>
+                    <Map
+                      style={{ width: "500px", height: "500px" }}
+                      defaultCenter={center}
+                      center={center}
+                      defaultZoom={3}
+                      gestureHandling={"greedy"}
+                      disableDefaultUI={true}
+                    />
+                  </APIProvider>
                 </div>
               </Modal.Body>
               <Modal.Footer>
-                <Button variant="main" className="border-warning-subtle" onClick={handleCloseMapModal}>
+                <Button
+                  variant="main"
+                  className="border-warning-subtle"
+                  onClick={handleCloseMapModal}
+                >
                   Close
                 </Button>
                 <Button variant="main-inverse" onClick={handleCloseMapModal}>
@@ -389,7 +408,6 @@ const AdvertiserCreate: React.FC = () => {
                 </Button>
               </Modal.Footer>
             </Modal>
-
           </Row>
           <Row>
             <Col>
@@ -406,7 +424,7 @@ const AdvertiserCreate: React.FC = () => {
           </Row>
           <Row>
             <div className="form-actions">
-              <Button type="submit" variant="main-inverse" >
+              <Button type="submit" variant="main-inverse">
                 Create Activity
               </Button>
             </div>
