@@ -6,6 +6,8 @@ import { Button, Col, Nav, Row } from "react-bootstrap";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import './mybookings.css';
 import { set } from "react-datepicker/dist/date_utils";
+import showToast from "../utils/showToast";
+import { ToastTypes } from "../utils/toastTypes";
 
 const MyBookings: React.FC = () => {
     const Tourist = useAppSelector((state) => state.user);
@@ -57,7 +59,7 @@ const MyBookings: React.FC = () => {
     };
     const cancelTicket = async (tourist_id: string, ticket_id: string) => {
         if (!ticket_id) {
-            console.error('Error cancelling ticket: No ticket ID found');
+            showToast( 'Error cancelling ticket: No ticket ID found',ToastTypes.ERROR);
             return;
         }
         try {
@@ -65,11 +67,13 @@ const MyBookings: React.FC = () => {
             console.log('Ticket cancellation response:', response);
             if (response && response.data) {
                 fetchBookings('upcoming');
+
             } else {
                 setError('Error cancelling ticket: No response data');
             }
+            showToast('Ticket cancelled successfully',ToastTypes.SUCCESS);
         } catch (error: any) {
-            console.error('Error cancelling ticket:', error);
+            showToast('Error cancelling ticket: ${error.message || Unknown error}',ToastTypes.ERROR);
             setError(`Error cancelling ticket: ${error.message || 'Unknown error'}`);
         }
     };

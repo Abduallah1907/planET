@@ -126,5 +126,14 @@
     color: #ffffff; /* Default color */
   }
 
+  .badge-bronze,
+    .badge-silver,
+    .badge-gold,
+    .badge-default {
+        font-weight: bold;
+        position: absolute;
+        margin-left: 1.2rem;
+    }
+
 
 

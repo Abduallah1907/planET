@@ -10,6 +10,9 @@ import { setWalletBalance as setWalletBalanceAction } from '../store/userSlice';
 import { ItineraryService } from '../services/ItineraryService';
 // Import Visa and MasterCard icons
 import { FaCcVisa, FaCcMastercard } from 'react-icons/fa';
+import 'react-toastify/dist/ReactToastify.css';
+import showToast from '../utils/showToast';
+import { ToastTypes } from '../utils/toastTypes';
 
 
 const BookingItinerary: React.FC = () => {
@@ -38,12 +41,12 @@ const BookingItinerary: React.FC = () => {
   });
   const navigate = useNavigate();
   const [walletBalance, setWalletBalanceState] = useState<number>(0);
-  
+
   const getItineraryById = async (id: string) => {
     const itinerary = await ItineraryService.getItineraryById(id);
     setItineraryData(itinerary.data);
   };
-  
+
   useEffect(() => {
     if (id) {
       getItineraryById(id);
@@ -104,29 +107,29 @@ const BookingItinerary: React.FC = () => {
   };
 
   const dispatch = useAppDispatch();
-  
+
   const handleConfirmPayment = async () => {
     if (paymentMethod === 'wallet') {
       if (itineraryData && itineraryData.price !== undefined && walletBalance < itineraryData.price) {
-        alert('Insufficient balance in your wallet');
+        showToast('Insufficient balance in wallet', ToastTypes.ERROR);
         return;
       }
       try {
         if (id && time_to_attend) {
-          await TouristService.bookItinerary(email, id,time_to_attend);
+          await TouristService.bookItinerary(email, id, time_to_attend);
         } else {
           console.error('Itinerary ID is undefined');
-          alert('An error occurred while booking itinerary');
+          showToast('Itinerary ID is undefined', ToastTypes.ERROR);
         }
         const newBalance = walletBalance - (itineraryData && itineraryData.price ? itineraryData.price : 0);
         setWalletBalanceState(newBalance);
         dispatch(setWalletBalanceAction(newBalance));
-        alert('Itinerary booked successfully');
+        showToast('Itinerary booked successfully', ToastTypes.SUCCESS);
         console.log(Tourist._id);
         navigate('/tourist/Profile');
       } catch (error) {
         console.error('Error booking itinerary:', error);
-        alert('An error occurred while booking itinerary');
+        showToast('Error booking itinerary', ToastTypes.ERROR);
       }
     }
   };
