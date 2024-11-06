@@ -90,7 +90,7 @@ const Comment: React.FC<CommentProps> = ({
             <div className="d-flex justify-content-center">
               <Button
                 style={{ backgroundColor: '#d76f30', borderColor: '#d76f30' }}
-                type="submit" className="button" 
+                type="submit" className="button" variant="main-inverse"
               >
                 Submit
               </Button>

@@ -16,6 +16,8 @@ import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { addProduct } from "../../store/cartSlice";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 
 interface InputData {
@@ -81,6 +83,7 @@ const ProductCard = ({
     // Perform the delete action here
     console.log(`Product ${id} deleted.`);
     setShowDeleteModal(false); // Close modal after confirming
+    showToast("Product deleted",ToastTypes.SUCCESS);
   };
 
   const cancelDelete = () => {
@@ -90,6 +93,7 @@ const ProductCard = ({
   const addToCart = (e: any) => {
     e.stopPropagation();
     e.preventDefault();
+    showToast("Product added to cart",ToastTypes.SUCCESS);
     dispatch(addProduct({product:{id,name,price,description,image},quantity:1}));
   }
 
@@ -202,10 +206,10 @@ const ProductCard = ({
         </Modal.Header>
         <Modal.Body>Are you sure you want to delete this product?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={cancelDelete}>
+          <Button variant="main" className="border-warning-subtle" onClick={cancelDelete}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={confirmDelete}>
+          <Button variant="main-inverse" onClick={confirmDelete}>
             Confirm
           </Button>
         </Modal.Footer>

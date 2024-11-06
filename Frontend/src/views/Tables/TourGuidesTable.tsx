@@ -195,7 +195,7 @@ const TourGuidesTable = () => {
           <p>Are you sure you want to delete this user?</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
+          <Button variant="main-inverse" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
         </Modal.Footer>
@@ -228,7 +228,7 @@ const TourGuidesTable = () => {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDocModal(false)}>
+          <Button variant="main-inverse" onClick={() => setShowDocModal(false)}>
             Close
           </Button>
         </Modal.Footer>
@@ -244,7 +244,7 @@ const TourGuidesTable = () => {
         <Modal.Footer>
           <Button
             type="button"
-            variant="secondary"
+            variant="main-inverse"
             className="mt-3 m1-2"
             onClick={handleCloseRate}
           >
