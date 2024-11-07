@@ -57,7 +57,7 @@ class AdminService {
 
   public static getComplaints = async () => {
     try {
-      const response = await axiosInstance.get(`/admin/getComplaints/1`);
+      const response = await axiosInstance.get(`/admin/getComplaints`);
       console.log("Service: ", response.data);
       return response.data;
     } catch (error) {

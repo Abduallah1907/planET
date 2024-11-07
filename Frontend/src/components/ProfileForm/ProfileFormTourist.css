@@ -99,6 +99,26 @@ h2.my-profile-heading {
   }
   .exchange-icon{
     color: var(--main-color);
-    font-size: 1.5rem;
-    margin-top: 0; /* Remove top margin */
-    margin-right: 5px; /* Add a small right margin */  }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    z-index: 1;
+    background-color: white;
+    border: 0.15rem solid var(--main-color);
+    transition: transform .4s;
+    padding: 2px;
+    cursor: pointer;
+    margin-left: 9.0rem;
+  }
+
+  .exchange-icon:hover,
+.exchange-icon:focus,
+.exchange-icon:active,
+.exchange-icon:active:focus {
+    background-color: #e0e4e9 !important;
+    border: 0.15rem solid var(--main-color) !important;
+}

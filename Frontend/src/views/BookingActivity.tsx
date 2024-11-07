@@ -5,9 +5,14 @@ import { FaWallet, FaCreditCard, FaCcVisa, FaCcMastercard } from 'react-icons/fa
 import { ActivityService } from '../services/ActivityService';
 import { IActivity } from '../types/IActivity';
 import './bookingPage.css';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { TouristService } from '../services/TouristService';
 import { setWalletBalance as setWalletBalanceAction } from '../store/userSlice';
+import showToast from '../utils/showToast';
+import { ToastTypes } from '../utils/toastTypes';
 
 interface BookingPageProps {
   email: string;
@@ -107,7 +112,7 @@ const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
   const handleConfirmPayment = async () => {
     if (paymentMethod === 'wallet') {
       if (activityData && activityData.price !== undefined && walletBalance < activityData.price) {
-        alert('Insufficient balance in your wallet');
+        showToast('Insufficient balance in wallet',ToastTypes.ERROR);
         return;
       }
       try {
@@ -115,16 +120,16 @@ const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
           await TouristService.bookActivity(email, id);
         } else {
           console.error('Activity ID is undefined');
-          alert('An error occurred while booking activity');
+          showToast('An error occurred while booking activity',ToastTypes.ERROR);
         }
         const newBalance = walletBalance - (activityData && activityData.price ? activityData.price : 0);
         setWalletBalanceState(newBalance);
         dispatch(setWalletBalanceAction(newBalance));
-        alert('Activity booked successfully');
+        showToast('Activity booked successfully',ToastTypes.SUCCESS);
         navigate('/tourist/Profile');
       } catch (error) {
         console.error('Error booking activity:', error);
-        alert('An error occurred while booking activity');
+        showToast('An error occurred while booking activity',ToastTypes.ERROR);
       }
     }
   };

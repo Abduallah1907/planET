@@ -61,7 +61,7 @@ export default (app: Router) => {
   router.put("/updateAdmin/:email", authorize([]), adminController.updateAdmin);
 
   // COMPLAINTS
-  router.get("/getComplaints/:page", adminController.getComplaints);
+  router.get("/getComplaints", adminController.getComplaints);
   router.get("/getSortComplaintByDate/:page", adminController.getSortComplaintByDate);
   router.get("/getFilterComplaintsByStatus/:page", adminController.getFilteredComplaintsByStatus);
   router.get("/getComplaintByID/:complaint_id", adminController.getComplaintByID);

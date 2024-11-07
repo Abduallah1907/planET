@@ -30,7 +30,7 @@ const showToast = (message: string, type: ToastTypes) => {
   // Automatically close the toast after 3 seconds
   setTimeout(() => {
     handleClose();
-  }, 3000);
+  }, 5000);
 };
 
 export default showToast;

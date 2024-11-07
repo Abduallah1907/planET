@@ -183,10 +183,10 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleDetailsModal}>
+          <Button variant="main" className="border-warning-subtle" onClick={handleDetailsModal}>
             Close
           </Button>
-          <Button variant="primary" onClick={confirmReserve}>
+          <Button variant="main-inverse" onClick={confirmReserve}>
             Confirm
           </Button>
         </Modal.Footer>
@@ -207,7 +207,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleTourGuideModal}>
+          <Button variant="main-inverse" onClick={handleTourGuideModal}>
             Close
           </Button>
         </Modal.Footer>
@@ -229,7 +229,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
           </ul>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleTimelineModal}>
+          <Button variant="main-inverse" onClick={handleTimelineModal}>
             Close
           </Button>
         </Modal.Footer>
@@ -254,7 +254,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
           </ul>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleDatesModal}>
+          <Button variant="main-inverse" onClick={handleDatesModal}>
             Close
           </Button>
         </Modal.Footer>

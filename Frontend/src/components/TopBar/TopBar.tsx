@@ -1,5 +1,5 @@
 import React from "react";
-import { Navbar, Button, Dropdown, Container, Nav, Row, Col } from "react-bootstrap";
+import { Navbar, Button, Dropdown, Container, Nav, Row, Col, OverlayTrigger, Tooltip } from "react-bootstrap";
 import "./topbar.css";
 import Logo from "../../assets/LogoNoBackground.svg";
 import { useNavigate } from "react-router-dom";
@@ -78,7 +78,18 @@ const TopBar: React.FC = () => {
         return "badge-bronze";  
       }
     }
-
+    const getBadgeText = (level: string) => {
+      switch (level) {
+        case "1":
+          return "Bronze Level";
+        case "2":
+          return "Silver Level";
+        case "3":
+          return "Gold Level";
+        default:
+          return "Bronze";
+      }
+    };
   return (
     <Navbar expand="lg" className="top-bar" variant="dark">
       <Container fluid>
@@ -213,7 +224,11 @@ const TopBar: React.FC = () => {
 
                   {User.role === "TOURIST" ? (
                     <Row>
-                      <SlBadge className={getBadgeColor(User.stakeholder_id.badge) }/>
+                      <OverlayTrigger placement="top" overlay={<Tooltip>{getBadgeText(User.stakeholder_id.badge)}</Tooltip>}>
+                        <span>
+                        <SlBadge className={getBadgeColor(User.stakeholder_id.badge) }/>
+                        </span>
+                      </OverlayTrigger>
                     </Row>
 
                     ) : (null)}
