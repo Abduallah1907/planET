@@ -17,7 +17,7 @@ paths:
             schema:
               type: object
               properties:
-                name:
+                type:
                   type: string
                   example: "New Category"
       responses:
