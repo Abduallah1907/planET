@@ -83,11 +83,7 @@ const ChangePasswordForm: React.FC = () => {
             </Col>
           </Row>
 
-          <Button
-            type="submit"
-            variant="main-inverse"
-            className="mt-4"
-          >
+          <Button type="submit" variant="main-inverse" className="mt-4">
             Update Profile
           </Button>
           <Button

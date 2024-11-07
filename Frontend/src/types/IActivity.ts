@@ -26,6 +26,7 @@ export interface IActivity  {
   reviews_count?: number;
   createdAt?: Date;
   updatedAt?: Date;
+  image?: Object;
 }
 
 export interface IActivityDTO {
