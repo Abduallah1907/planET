@@ -10,6 +10,8 @@ import ButtonWide from "../ButtonWide/ButtonWide";
 import AuthService from "../../services/authService";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface NationalityOption {
   value: string;
@@ -85,6 +87,12 @@ export default function TouristForm() {
     >
   ) => {
     const { name, value } = e.target;
+    if (name === "mobile") {
+      // Use a regular expression to allow only numbers
+      if (/[^0-9]/.test(value)) {
+        return; // Prevent updating the state if non-numeric characters are entered
+      }
+    }
     setRegData({ ...regData, [name]: value });
   };
 
@@ -96,9 +104,10 @@ export default function TouristForm() {
       return;
     }
     if (!validateMobileNumber(mobileNumber)) {
-      console.error("Invalid mobile number");
+      showToast("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
       return;
     }
+
     const formData = {
       name: regData.firstName + " " + regData.lastName,
       username: regData.username,
@@ -227,6 +236,7 @@ export default function TouristForm() {
             value={regData.mobile}
             onChange={handleChange}
             name={"mobile"}
+            pattern="^[0-9]{11}$"
           />
         </Col>
         <Col>
