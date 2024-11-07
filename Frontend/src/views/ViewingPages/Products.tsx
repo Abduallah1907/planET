@@ -88,9 +88,7 @@ export default function ProductsPage() {
     getFilterComponents();
   }, []);
 
-  const onProductClick = (id: string) => {
-    navigate(`/product/${id}`);
-  };
+  
 
   const onFilterChange = (newFilter: { [key: string]: any }) => {
     setFilter(newFilter);
@@ -188,7 +186,7 @@ export default function ProductsPage() {
                   onChange={() =>
                     console.log(`${product.name} booking status changed`)
                   }
-                  onClick={() => onProductClick(product._id)}
+              
                   isSeller={false}
                   isAdmin={false}
                   

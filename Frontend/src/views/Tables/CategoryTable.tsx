@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal, Form, Container } from 'react-bootstrap';
 import CategoryService from '../../services/CategoryService';
+import { FaTrashAlt } from 'react-icons/fa';
 
 const CategoryTable: React.FC = () => {
     const [categories, setCategories] = useState([]);
@@ -82,7 +83,9 @@ const CategoryTable: React.FC = () => {
 
     return (
         <Container className='mt-3'>
-            <h1>Category Table</h1>
+            <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
+                Categories
+          </h1>
             <Button variant="main-inverse" onClick={handleShowCreateModal}>Create Category</Button>
             <Table striped bordered hover className='mt-3'>
                 <thead>
@@ -98,8 +101,11 @@ const CategoryTable: React.FC = () => {
                             <td>{category._id}</td>
                             <td>{category.type}</td>
                             <td>
-                                <Button variant="warning" onClick={() => handleShowUpdateModal(category)}>Update</Button>{' '}
-                                <Button variant="danger" onClick={() => handleDelete(category._id)}>Delete</Button>
+                                <Button variant="main-inverse" onClick={() => handleShowUpdateModal(category)}>Update</Button>{' '}
+                                <Button variant="main-inverse">
+                                <FaTrashAlt onClick={() => handleDelete(category._id)}>
+                                </FaTrashAlt>
+                                </Button>
                             </td>
                         </tr>
                     ))}
@@ -125,10 +131,10 @@ const CategoryTable: React.FC = () => {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseUpdateModal}>
+                    <Button variant="main" className="border-warning-subtle" onClick={handleCloseUpdateModal}>
                         Close
                     </Button>
-                    <Button variant="success" onClick={handleSaveUpdateChanges}>
+                    <Button variant="main-inverse" onClick={handleSaveUpdateChanges}>
                         Save Changes
                     </Button>
                 </Modal.Footer>
@@ -153,11 +159,11 @@ const CategoryTable: React.FC = () => {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseCreateModal}>
+                    <Button variant="main" className="border-warning-subtle" onClick={handleCloseCreateModal}>
                         Close
                     </Button>
-                    <Button variant="success" onClick={handleSaveCreateChanges}>
-                        Save Changes
+                    <Button variant="main-inverse" onClick={handleSaveCreateChanges}>
+                        Create
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -165,16 +171,16 @@ const CategoryTable: React.FC = () => {
             {/* Delete Confirmation Modal */}
             <Modal show={showDeleteModal} onHide={cancelDelete} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Delete Product</Modal.Title>
+                    <Modal.Title>Delete Category</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     Are you sure you want to delete this Category?
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={cancelDelete}>
+                    <Button variant="main" className="border-warning-subtle" onClick={cancelDelete}>
                         Cancel
                     </Button>
-                    <Button variant="danger" onClick={confirmDelete}>
+                    <Button variant="main-inverse" onClick={confirmDelete}>
                         Confirm
                     </Button>
                 </Modal.Footer>

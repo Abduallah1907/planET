@@ -215,10 +215,10 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
+          <Button variant="main" className="border-warning-subtle" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={confirmReserve}>
+          <Button variant="main-inverse" onClick={confirmReserve}>
             Confirm
           </Button>
         </Modal.Footer>

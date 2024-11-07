@@ -361,13 +361,12 @@ export default class AdminService {
   }
 
   // COMPLAINTS API
-  public async getComplaintsService(page: number): Promise<response> {
+  public async getComplaintsService(): Promise<response> {
     const complaints: IComplaint[] = await this.complaintModel
       .find({})
-      .populate({ path: "tourist_id", populate: { path: "user_id", select: "name" }, select: "tourist_id" })
-      .limit(10)
-      .skip((page - 1) * 10);
-    console.log(complaints[0].tourist_id);
+      .populate({ path: "tourist_id", populate: { path: "user_id", select: "name" }, select: "tourist_id" });
+    // .limit(10)
+    // .skip((page - 1) * 10);
     const complaintsOutput: IComplaintAdminViewDTO[] = complaints.map((complaint) => ({
       date: complaint.date,
       status: complaint.status,

@@ -1067,7 +1067,7 @@ export default class TouristService {
     //go to order and check if the tourist has ordered the product
     const order = await this.orderModel.findOne({
       tourist_id: new Types.ObjectId(tourist_id),
-      products: { $elemMatch: { $eq: new Types.ObjectId(product_id) } },
+      "products.items": { $elemMatch: { product_id: new Types.ObjectId(product_id) } },
       status: "Delivered",
     });
     if (order instanceof Error)

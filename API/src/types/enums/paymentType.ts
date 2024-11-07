@@ -1,6 +1,7 @@
 enum PaymentType {
     CreditCard = "CreditCard",
-    Cash = "Cash"
+    Cash = "Cash",
+    Wallet = "Wallet" 
 }
 
 export default PaymentType;

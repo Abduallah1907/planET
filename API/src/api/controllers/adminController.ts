@@ -127,10 +127,10 @@ export class AdminController {
   }
 
   public async getComplaints(req: Request, res: Response): Promise<void> {
-    const { page } = req.params;
-    const pageNum: number = parseInt(page);
+    // const { page } = req.params;
+    // const pageNum: number = parseInt(page);
     const adminService: AdminService = Container.get(AdminService);
-    const complaints = await adminService.getComplaintsService(pageNum);
+    const complaints = await adminService.getComplaintsService();
     res.status(complaints.status).json(complaints);
   }
 

@@ -106,6 +106,7 @@ const ComplaintForm: React.FC = () => {
             <Button
               type="submit"
               className="button"
+              variant="main-inverse"
               style={{ backgroundColor: "#d76f30", borderColor: "#d76f30" }}
             >
               Submit
@@ -124,6 +125,7 @@ const ComplaintForm: React.FC = () => {
           <Button
             type="submit"
             className="button"
+            variant="main-inverse"
             style={{ backgroundColor: "#d76f30", borderColor: "#d76f30" }}
             onClick={handleCloseModal}
           >
