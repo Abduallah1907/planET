@@ -6,8 +6,6 @@ import "./StakeholderForm.css";
 import AuthService from "../../services/authService";
 import { FileService } from "../../services/FileService";
 import { useNavigate } from "react-router-dom";
-import showToast from "../../utils/showToast";
-import { ToastTypes } from "../../utils/toastTypes";
 
 interface StakeData {
   firstName: string;
@@ -63,6 +61,7 @@ export default function StakeholderForm() {
 
     if (StakeData.password !== StakeData.confirmPassword) {
       alert("Passwords don't match!");
+      //Make it toast
       return;
     }
 
@@ -88,7 +87,6 @@ export default function StakeholderForm() {
         await AuthService.registerTourGuide(updatedStakeData);
       }
       navigate("/login");
-      showToast("Account created successfully", ToastTypes.SUCCESS);
     } catch (error) {
       console.error("Registration failed: ", error);
     }

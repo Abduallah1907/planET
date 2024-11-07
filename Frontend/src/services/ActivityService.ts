@@ -1,9 +1,11 @@
 import axiosInstance from "../utils/axiosInstance";
+import showToast from "../../src/utils/showToast";
 
 class ActivityService {
   public static getAllActivities = async () => {
     try {
       const response = await axiosInstance.get("/activity/getAllActivities");
+      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -14,6 +16,8 @@ class ActivityService {
       const response = await axiosInstance.get(
         `/activity/getActivityByID/${id}`
       );
+      showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -25,11 +29,13 @@ class ActivityService {
       const response = await axiosInstance.get(
         `/activity/getActivitiesByAdvertiserID/${id}`
       );
+      showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
     }
-  }
+  };
 
   public static getFilteredActivites = async (filter: any) => {
     try {
@@ -37,6 +43,8 @@ class ActivityService {
         "/activity/getFilteredActivities",
         { params: filter }
       );
+      showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -48,6 +56,8 @@ class ActivityService {
       const response = await axiosInstance.get(
         "/activity/getFilterComponents/"
       );
+      showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -60,6 +70,8 @@ class ActivityService {
         `/activity/addActivity`,
         productData
       );
+      showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -75,6 +87,8 @@ class ActivityService {
         `/activity/updateActivity/${activityId}`,
         updatedData
       );
+      showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -86,6 +100,8 @@ class ActivityService {
       const response = await axiosInstance.delete(
         `/activity/deleteActivity/${activityId}`
       );
+      showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -94,11 +110,13 @@ class ActivityService {
   public static flagInappropriate = async (id: string) => {
     try {
       const response = await axiosInstance.put(`/activity/flagActivity/${id}`);
+      showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
     }
-  }
+  };
 }
 
 export { ActivityService };

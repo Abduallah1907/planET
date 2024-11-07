@@ -7,7 +7,6 @@ import { AdvertiserService } from "../../services/AdvertiserService";
 import { useAppSelector } from "../../store/hooks";
 import { FileService } from "../../services/FileService";
 import { isValidObjectId } from "../../utils/CheckObjectId";
-import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
@@ -104,11 +103,6 @@ const Advertiser: React.FC = () => {
         link_to_website: formData.linktoweb,
         logo: file.data._id,
       });
-      if (Adv.status === 200) {
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      } else {
-        showToast("Error in updating", ToastTypes.ERROR);
-      }
     } else {
       const Adv = await AdvertiserService.updateAdvertiser(Advertiser.email, {
         name: formData.firstName + " " + formData.lastName,
@@ -121,11 +115,6 @@ const Advertiser: React.FC = () => {
         company_profile: formData.companyProfile,
         link_to_website: formData.linktoweb,
       });
-      if (Adv.status === 200) {
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      } else {
-        showToast("Error in updating", ToastTypes.ERROR);
-      }
     }
   };
 

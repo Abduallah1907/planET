@@ -464,13 +464,11 @@ export default class ItineraryService {
       if (filters.date.start) {
         const startDate = filters.date.start; // The input date is in day/month/year format
         dashedStartDate = startDate.split("/").join("-");
-        // console.log("START DATE", dashedStartDate);
       }
       let dashedEndDate = "";
       if (filters.date.end) {
         const endDate = filters.date.end;
         dashedEndDate = endDate.split("/").join("-");
-        // console.log("END DATE", dashedEndDate);
       }
       if (filters.date.start !== undefined && filters.date.end !== undefined) {
         matchStage.available_dates = {
@@ -516,7 +514,6 @@ export default class ItineraryService {
         },
       },
     ];
-    // console.log("AggregationPipeline: ", JSON.stringify(aggregationPipeline));
 
     if (filters.preferences) {
       aggregationPipeline.push({

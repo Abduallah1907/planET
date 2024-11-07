@@ -69,21 +69,24 @@ const HistoricalPlaceForm: React.FC = () => {
   };
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-  
+
     // Check if the input is for a price field
-    if (name === "nativePrice" || name === "foreignPrice" || name === "studentPrice") {
+    if (
+      name === "nativePrice" ||
+      name === "foreignPrice" ||
+      name === "studentPrice"
+    ) {
       const numericValue = parseFloat(value);
       if (numericValue < 0) {
-        showToast("Price cannot be negative", ToastTypes.ERROR);
+        // showToast("Price cannot be negative", ToastTypes.ERROR);//Show toast message not API
         setFormData({ ...formData, [name]: 0 });
         // Ignore negative values, you might also want to show a warning here
-        return; 
+        return;
       }
     }
-  
+
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
-  
 
   const Governer = useAppSelector((state) => state.user);
 
@@ -133,7 +136,7 @@ const HistoricalPlaceForm: React.FC = () => {
 
   const handleAddTag = () => {
     if (selectedTags.length === tags.length) {
-      showToast("All tags have been added", ToastTypes.ERROR);
+      // showToast("All tags have been added", ToastTypes.ERROR);//Show toast message not API
       return;
     }
     setSelectedTags([...selectedTags, { id: "", value: "" }]);

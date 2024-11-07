@@ -25,7 +25,6 @@ export default class ActivityService {
 
   public async getAllActivitiesService(role: string) {
     const activityCriteria: any = {};
-    console.log("Role: " + role);
     if (role !== UserRoles.Admin) {
       activityCriteria.inappropriate_flag = false;
       activityCriteria.active_flag = true;
@@ -355,8 +354,6 @@ export default class ActivityService {
         const startDate = filters.date.start; // The input date is in day/month/year format
         const dashedStartDate = startDate.split("/").join("-");
 
-        // console.log("START DATE", dashedStartDate);
-
         matchStage.date = {
           ...matchStage.date,
           $gte: new Date(dashedStartDate),
@@ -365,8 +362,6 @@ export default class ActivityService {
       if (filters.date.end !== undefined) {
         const endDate = filters.date.end; // The input date is in day/month/year format
         const dashedEndDate = endDate.split("/").join("-");
-
-        // console.log("END DATE", dashedEndDate);
 
         matchStage.date = {
           ...matchStage.date,
@@ -436,7 +431,6 @@ export default class ActivityService {
         $match: matchStage,
       },
     ];
-    // console.log("AggregationPipeline: ", JSON.stringify(aggregationPipeline));
     // Add conditional filters
     if (filters.category || filters.preferences) {
       aggregationPipeline.push({

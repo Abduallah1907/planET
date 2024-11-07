@@ -6,8 +6,6 @@ import { Container, Row, Col, Button, Form, Modal } from "react-bootstrap";
 import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
 import { AdminService } from "../../services/AdminService";
-import showToast from "../../utils/showToast";
-import { ToastTypes } from "../../utils/toastTypes";
 
 interface NationalityOption {
   value: string;
@@ -63,7 +61,6 @@ const CreateAdmin: React.FC = () => {
       password: formData.password,
     };
     await AdminService.createAdmin(data);
-    showToast("Admin created successfully", ToastTypes.SUCCESS);
   };
 
   const handleCancel = () => {

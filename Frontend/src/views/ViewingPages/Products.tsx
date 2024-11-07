@@ -88,8 +88,6 @@ export default function ProductsPage() {
     getFilterComponents();
   }, []);
 
-  
-
   const onFilterChange = (newFilter: { [key: string]: any }) => {
     setFilter(newFilter);
   };
@@ -183,13 +181,8 @@ export default function ProductsPage() {
                   }
                   image={product.image}
                   isActiveArchive={product.archieve_flag}
-                  onChange={() =>
-                    console.log(`${product.name} booking status changed`)
-                  }
-              
                   isSeller={false}
                   isAdmin={false}
-                  
                 />
               </Col>
             ))}

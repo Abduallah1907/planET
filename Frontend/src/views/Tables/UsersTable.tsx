@@ -124,7 +124,6 @@ const UsersTable = () => {
             const blob = await FileService.downloadFile(docId);
             // Create a Blob URL if it's a Blob
             const fileUrl = URL.createObjectURL(blob);
-            console.log("File URL for docId:", docId, "is", fileUrl);
             return fileUrl;
           })
         );
@@ -145,7 +144,6 @@ const UsersTable = () => {
     if (email) {
       try {
         const response = await UserService.acceptUser(email);
-        console.log(response.data); // Handle the successful response
         setShowDocModal(false); // Close the modal after action
         getUsers(page); // Refresh the users list
       } catch (error) {
@@ -158,7 +156,6 @@ const UsersTable = () => {
     if (email) {
       try {
         const response = await UserService.rejectUser(email);
-        console.log(response.data); // Handle the successful response
         setShowDocModal(false); // Close the modal after action
         getUsers(page); // Refresh the users list
       } catch (error) {
@@ -190,7 +187,9 @@ const UsersTable = () => {
               <tr
                 key={user._id}
                 className={
-                  user.status === UserStatus.APPROVED ? "active-row" : "closed-row"
+                  user.status === UserStatus.APPROVED
+                    ? "active-row"
+                    : "closed-row"
                 }
               >
                 <td>{user.email}</td>
@@ -198,7 +197,13 @@ const UsersTable = () => {
                 <td>{user.role}</td>
                 <td>
                   <Badge
-                    bg={user.status === UserStatus.APPROVED ? "success" : (user.status === UserStatus.REJECTED ? "danger" : "warning")}
+                    bg={
+                      user.status === UserStatus.APPROVED
+                        ? "success"
+                        : user.status === UserStatus.REJECTED
+                        ? "danger"
+                        : "warning"
+                    }
                     className="mt-2 custom-status-badge rounded-4 text-center"
                   >
                     {user.status}
@@ -206,16 +211,18 @@ const UsersTable = () => {
                 </td>
                 <td>
                   <Button variant="main-inverse" className="mt-2">
-                  <FaTrashAlt
-                    onClick={() => handleDelete(user.email)}
-                  >
-                    Delete
-                  </FaTrashAlt>
+                    <FaTrashAlt onClick={() => handleDelete(user.email)}>
+                      Delete
+                    </FaTrashAlt>
                   </Button>
                   {user.status === UserStatus.WAITING_FOR_APPROVAL && (
-                  <Button variant="main-inverse" className="mt-2" onClick={() => handleView(user)}>
-                    View Doc
-                  </Button>
+                    <Button
+                      variant="main-inverse"
+                      className="mt-2"
+                      onClick={() => handleView(user)}
+                    >
+                      View Doc
+                    </Button>
                   )}
                 </td>
               </tr>
@@ -248,7 +255,11 @@ const UsersTable = () => {
           <p>Are you sure you want to delete this user?</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="main" className="border-warning-subtle" onClick={() => setShowModal(false)}>
+          <Button
+            variant="main"
+            className="border-warning-subtle"
+            onClick={() => setShowModal(false)}
+          >
             Cancel
           </Button>
           <Button variant="main-inverse" onClick={confirmDelete}>

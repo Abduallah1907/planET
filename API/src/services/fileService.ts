@@ -9,7 +9,6 @@ import { createWriteStream } from "fs";
 
 @Service()
 export class FileService {
-
   // Method to upload a single file
   public async uploadFile(req: any, res: any) {
     if (!req.files) {
@@ -58,10 +57,6 @@ export class FileService {
 
   // Method to upload multiple files
   uploadMultipleFiles(req: any, res: any) {
-    console.log("Headers in service:", req.headers);
-    console.log("Body in service:", req.body);
-    console.log("Files in service:", req.files); // Check req.files for multiple uploads
-
     if (!req.files || !(req.files as any[]).length) {
       return res.status(400).json({ message: "No files uploaded" });
     }
@@ -125,51 +120,52 @@ export class FileService {
 
   async downloadFileById(req: any, res: any) {
     const { id } = req.params;
-  
+
     // Validate the ObjectId
     if (!ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid file ID" });
     }
-  
+
     try {
       const gfs = Container.get<GridFSBucket>("gridfsInstance");
-  
+
       const files = await gfs.find({ _id: new ObjectId(id) }).toArray();
       if (!files || files.length === 0) {
         return res.status(404).json({ message: "File not found" });
       }
       const file = files[0];
-  
+
       // Create a download stream for the file
       const downloadStream = gfs.openDownloadStream(new ObjectId(id));
-  
+
       // Handle errors during streaming
       downloadStream.on("error", (error) => {
         return res
           .status(404)
           .json({ message: "File not found", error: error.message });
       });
-  
+
       // Set the response headers
       res.setHeader("Content-Type", file.contentType);
       res.setHeader(
         "Content-Disposition",
         `attachment; filename="${file.filename}"`
       );
-  
+
       // Pipe the download stream to the response
       downloadStream.pipe(res);
-  
+
       // Handle the end of the stream
       downloadStream.on("end", () => {
         res.end();
       });
-  
     } catch (error) {
       return res
         .status(500)
-        .json({ message: "Internal Server Error", error: (error as Error).message });
+        .json({
+          message: "Internal Server Error",
+          error: (error as Error).message,
+        });
     }
   }
-  
 }

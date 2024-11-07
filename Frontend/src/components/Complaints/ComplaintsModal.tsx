@@ -44,7 +44,6 @@ export default function ComplaintsModal(props: any) {
   const handleReplySubmit = async () => {
     try {
       await AdminService.replyComplaint(complaint.complaint_id, reply);
-      console.log("Reply Submitted");
       setReply("");
     } catch (error) {
       console.error("Error submitting reply:", error);

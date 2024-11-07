@@ -62,7 +62,6 @@ const AdvertiserCreate: React.FC = () => {
     lat: 29.98732507495249,
     lng: 31.435660077332482,
   });
-  console.log(process.env);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -79,7 +78,7 @@ const AdvertiserCreate: React.FC = () => {
         (name === "special_discount" || name === "price") &&
         Number(updatedValue) < 0
       ) {
-        showToast("Value cannot be negative", ToastTypes.ERROR);
+        // showToast("Value cannot be negative", ToastTypes.ERROR);//Show toast for message no API
         setFormData({
           ...formData,
           [name]: 0,
@@ -193,7 +192,6 @@ const AdvertiserCreate: React.FC = () => {
     };
     if (AdvertiserId) {
       await ActivityService.createActivity(productData);
-      showToast("Activity created successfully", ToastTypes.SUCCESS);
       navigate("/MyActivities");
     } else {
       console.error("Advertiser Id is undefined");

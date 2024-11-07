@@ -29,7 +29,7 @@ const TourGuidesTable = () => {
   const [documentUrls, setDocumentUrls] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showRateModal, setShowRateModal] = useState(false);
-  const [selectedEmail, setSelectedEmail] = useState('');
+  const [selectedEmail, setSelectedEmail] = useState("");
 
   const getTourGuides = async () => {
     try {
@@ -39,7 +39,6 @@ const TourGuidesTable = () => {
 
       if (response && response.data) {
         if (response.data.length === 0) {
-          console.log("No tour guides found for this tourist.");
           setViewableUsers([]);
           setTotalUsers(0);
         } else {
@@ -75,29 +74,34 @@ const TourGuidesTable = () => {
 
   useEffect(() => {
     if (tourist && tourist._id) {
-      console.log("Tourist ID:", tourist._id);
       getTourGuides();
     }
   }, [tourist]);
 
   const updateViewableUsers = () => {
     const usersForPage = users.get(page) || [];
-    console.log("Users for current page:", usersForPage);
     setViewableUsers(usersForPage);
   };
-  const handleCommentSubmit = async (sentData: { comment: string; rating: number }) => {
-    const data = { tour_guide_email: selectedEmail, comment: sentData.comment, rating: sentData.rating };
-    await TouristService.rateAndCommentTourGuide(tourist.stakeholder_id._id, data);
+  const handleCommentSubmit = async (sentData: {
+    comment: string;
+    rating: number;
+  }) => {
+    const data = {
+      tour_guide_email: selectedEmail,
+      comment: sentData.comment,
+      rating: sentData.rating,
+    };
+    await TouristService.rateAndCommentTourGuide(
+      tourist.stakeholder_id._id,
+      data
+    );
   };
 
   useEffect(() => {
     updateViewableUsers();
   }, [users, page]);
 
-
-
   const totalPages = Math.ceil(totalUsers / usersPerPage);
-  console.log("Total Pages:", totalPages);
 
   const handleRate = (email: string) => {
     setShowRateModal(true);
@@ -239,7 +243,7 @@ const TourGuidesTable = () => {
         centered
       >
         <Modal.Body>
-          <Comment onSubmit={handleCommentSubmit}/>
+          <Comment onSubmit={handleCommentSubmit} />
         </Modal.Body>
         <Modal.Footer>
           <Button

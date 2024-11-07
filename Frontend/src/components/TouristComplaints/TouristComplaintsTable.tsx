@@ -88,7 +88,6 @@ export default function TouristComplaintsTable() {
 
   const getComplaintsData = async () => {
     const ComplaintsData = await TouristService.viewMyComplaints(TouristId);
-    console.log(ComplaintsData.data);
     setComplaints(ComplaintsData.data);
   };
 

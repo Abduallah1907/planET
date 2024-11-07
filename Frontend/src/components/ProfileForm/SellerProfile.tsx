@@ -88,11 +88,8 @@ const SellerProfile: React.FC = () => {
         password: formData.password,
         logo: file.data._id,
       });
-      if (seller.status === 200) {
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      } else {
-        showToast("Error in updating", ToastTypes.ERROR);
-      }
+      showToast(seller);
+      //Should i add a toast for the file upload?
     } else {
       const seller = await SellerServices.updateSellerServices(Seller.email, {
         name: formData.firstName + " " + formData.lastName,
@@ -102,9 +99,7 @@ const SellerProfile: React.FC = () => {
         phone_number: formData.mobile,
         password: formData.password,
       });
-      if (seller.status === 200)
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      else showToast("Error in updating", ToastTypes.ERROR);
+      showToast(seller);
     }
   };
 

@@ -98,11 +98,7 @@ const ProfileForm: React.FC = () => {
       job: formData.profession,
       nation: formData.nationality,
     });
-    if (Tourist1.status === 200) {
-      showToast("Updated successfully", ToastTypes.SUCCESS);
-    } else {
-      showToast("Error in updating", ToastTypes.ERROR);
-    }
+    showToast(Tourist1);
   };
   const handleCancel = () => {
     setFormData({

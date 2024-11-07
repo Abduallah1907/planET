@@ -140,7 +140,7 @@ const ProfileFormGuide: React.FC = () => {
     if (name === "yearsOfExperience") {
       const numericalValue = parseInt(value);
       if (numericalValue < 0) {
-        showToast("Years of Experience cannot be negative", ToastTypes.ERROR);
+        // showToast("Years of Experience cannot be negative", ToastTypes.ERROR);
         setFormData({ ...formData, [name]: "0" });
         return;
       }
@@ -222,11 +222,8 @@ const ProfileFormGuide: React.FC = () => {
         updatedPreviousWork: editedWork,
         deletedPreviousWork: deletedWork,
       });
-      if (TourG.status === 200) {
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      } else {
-        showToast("Error in updating", ToastTypes.ERROR);
-      }
+      showToast(TourG);
+      //Should i also showToast for the file upload?
     } else {
       const TourG = await TourGuideServices.updateTourGuide(TourGuide.email, {
         name: `${formData.firstName} ${formData.lastName}`,
@@ -239,11 +236,7 @@ const ProfileFormGuide: React.FC = () => {
         updatedPreviousWork: editedWork,
         deletedPreviousWork: deletedWork,
       });
-      if (TourG.status === 200) {
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      } else {
-        showToast("Error in updating", ToastTypes.ERROR);
-      }
+      showToast(TourG);
     }
   };
 
@@ -254,6 +247,7 @@ const ProfileFormGuide: React.FC = () => {
       (!formData.changePassword && formData.retypePassword)
     ) {
       alert("Please fill out both password fields.");
+      //Show toast here not alert
       return;
     }
 
@@ -261,6 +255,8 @@ const ProfileFormGuide: React.FC = () => {
     if (formData.changePassword && formData.retypePassword) {
       if (formData.changePassword !== formData.retypePassword) {
         alert("Passwords don't match!");
+        //Show toast here not alert
+
         return;
       }
     }

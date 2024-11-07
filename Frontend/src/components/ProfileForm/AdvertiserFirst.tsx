@@ -60,11 +60,8 @@ const AdvertiserFirst: React.FC = () => {
           logo: file.data._id,
         }
       );
-      if (adv.status === 200) {
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      } else {
-        showToast("Error in updating", ToastTypes.ERROR);
-      }
+      showToast(adv);
+      //Must i also showToast for the file upload?
     } else {
       const adv2 = await AdvertiserService.updateAdvertiser(
         AdvertiserFirst.email,
@@ -75,11 +72,7 @@ const AdvertiserFirst: React.FC = () => {
           company_profile: formData.companyProfile,
         }
       );
-      if (adv2.status === 200) {
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      } else {
-        showToast("Error in updating", ToastTypes.ERROR);
-      }
+      showToast(adv2);
     }
   };
 

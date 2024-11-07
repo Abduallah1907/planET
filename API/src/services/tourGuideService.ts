@@ -371,7 +371,6 @@ export default class TourGuideService {
     const bookedItineraries = await this.ticketModel.find({
       booking_id: { $in: tourGuideUpcomingItineraries },
     });
-    console.log(bookedItineraries);
     if (bookedItineraries.length !== 0)
       throw new BadRequestError(
         "There are still upcoming itineraries that are booked. Cannot delete until these itineraries are fufilled"
@@ -388,7 +387,6 @@ export default class TourGuideService {
         await itinerary.save();
       });
     }
-    console.log(tourGuideItineraries);
 
     const deletedTourGuide = await this.tourGuideModel.findByIdAndDelete(
       tourGuideData._id

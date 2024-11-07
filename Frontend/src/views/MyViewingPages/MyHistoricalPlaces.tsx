@@ -178,9 +178,6 @@ export default function HistoricalLocationsPage() {
                   OpeningDays={location.opening_days
                     .map((day) => day.slice(0, 3))
                     .join(", ")}
-                  onChange={() =>
-                    console.log(`${location.name} booking status changed`)
-                  }
                   onClick={() => onHistoricalClick(location._id)}
                   onDelete={() => deleteHistorical(location._id)}
                 />

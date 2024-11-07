@@ -1,4 +1,5 @@
 import axiosInstance from "../utils/axiosInstance";
+import showToast from "../../src/utils/showToast";
 
 class AuthService {
   public static async login(usernameOrEmail: string, password: string) {
@@ -12,6 +13,7 @@ class AuthService {
       const response = await axiosInstance.get("/users/loginUser", {
         params: data,
       });
+      showToast(response.data);
       return response.data;
     } catch (error: any) {
       throw new Error(error.response.data.message || "Login failed");
@@ -29,8 +31,8 @@ class AuthService {
         password,
         email,
       });
-      const { user } = response.data;
-      return user;
+      showToast(response.data);
+      return response.data; //Changed from const {user}=response.data to response.data
     } catch (error) {
       throw new Error("Registration failed");
     }
@@ -42,16 +44,10 @@ class AuthService {
         "/tourist/createTourist",
         regData
       );
+      showToast(response.data);
       return response.data;
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        console.error("API Error: ", error.response.data);
-        throw new Error(
-          error.response.data.message || "Tourist registration failed"
-        );
-      } else {
-        throw new Error("Tourist registration failed");
-      }
+      throw new Error("Tourist registration failed");
     }
   }
 
@@ -61,16 +57,10 @@ class AuthService {
         "/seller/createSeller",
         StakeData
       );
+      showToast(response.data);
       return response.data;
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        console.error("API Error: ", error.response.data);
-        throw new Error(
-          error.response.data.message || "Seller registration failed"
-        );
-      } else {
-        throw new Error("Seller registration failed");
-      }
+      throw new Error("Seller registration failed");
     }
   }
 
@@ -80,16 +70,10 @@ class AuthService {
         "/advertiser/createAdvertiserMain",
         StakeData
       );
+      showToast(response.data);
       return response.data;
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        console.error("API Error: ", error.response.data);
-        throw new Error(
-          error.response.data.message || "Advertiser registration failed"
-        );
-      } else {
-        throw new Error("Advertiser registration failed");
-      }
+      throw new Error("Advertiser registration failed");
     }
   }
 
@@ -99,21 +83,16 @@ class AuthService {
         "/tourGuide/createProfile",
         StakeData
       );
+      showToast(response.data);
       return response.data;
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        console.error("API Error: ", error.response.data);
-        throw new Error(
-          error.response.data.message || "Seller registration failed"
-        );
-      } else {
-        throw new Error("Seller registration failed");
-      }
+      throw new Error("Seller registration failed");
     }
   }
   public static async requestOTP(email: string) {
     try {
       const response = await axiosInstance.get(`/users/requestOTP/${email}`);
+      showToast(response.data);
       return response.data;
     } catch (error: any) {
       throw error;
@@ -125,18 +104,27 @@ class AuthService {
       const response = await axiosInstance.get(
         `/users/verifyOTP/${email}/${otp}`
       );
+      showToast(response.data);
       return response.data;
     } catch (error: any) {
       throw error;
     }
   }
 
-  public static async resetPassword(email: string, password: string, otp: string) {
+  public static async resetPassword(
+    email: string,
+    password: string,
+    otp: string
+  ) {
     try {
-      const response = await axiosInstance.post(`/users/resetPassword/${email}`, {
-        password,
-        otp,
-      });
+      const response = await axiosInstance.post(
+        `/users/resetPassword/${email}`,
+        {
+          password,
+          otp,
+        }
+      );
+      showToast(response.data);
       return response.data;
     } catch (error: any) {
       throw error;

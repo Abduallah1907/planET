@@ -11,8 +11,6 @@ import { ActivityService } from "../../services/ActivityService";
 import languages from "../../utils/languageOptions.json";
 import { useNavigate, useParams } from "react-router-dom";
 import SlotsModal from "../../components/SlotsModals"; // Import SlotModal component
-import showToast from "../../utils/showToast";
-import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   name?: string;
@@ -116,10 +114,11 @@ const ItineraryForm: React.FC = () => {
   };
 
   const handleActiveChange = (e: ChangeEvent<HTMLInputElement>) => {
-    alert("itinerary cannot be deactivated unless there are no bookings so this may fail");
+    alert(
+      "itinerary cannot be deactivated unless there are no bookings so this may fail"
+    );
     setFormData({ ...formData, active_flag: e.target.checked });
-  }
-
+  };
 
   const handleActivityChange = (index: number, value: string) => {
     const newActivities = [...choosenActivities];
@@ -287,7 +286,6 @@ const ItineraryForm: React.FC = () => {
     if (itinerary_id) {
       await ItineraryService.updateItinerary(itinerary_id, itineraryData);
       navigate("/MyItineraries");
-      showToast("Itinerary updated successfully", ToastTypes.SUCCESS);
     } else {
       console.error("Itinerary ID is undefined");
     }

@@ -156,7 +156,7 @@ export default function ActivitiesPage() {
                   id={activity._id}
                   Name={activity.name}
                   location={"cairo"}
-                  category={activity.category ? activity.category.type: ""} // Category is an object
+                  category={activity.category ? activity.category.type : ""} // Category is an object
                   tags={activity.tags.map((item: { type: any }) => item.type)}
                   image={""}
                   RatingVal={activity.average_rating}
@@ -165,9 +165,6 @@ export default function ActivitiesPage() {
                   Date_Time={new Date(activity.date)}
                   isActive={activity.active_flag}
                   isBooked={activity.booking_flag}
-                  onChange={() =>
-                    console.log(`${activity.name} booking status changed`)
-                  }
                   onClick={() => onActivityClick(activity._id)}
                   isAdvertiser={false}
                 />
