@@ -4,6 +4,7 @@ import { FaBookmark, FaRegBookmark } from 'react-icons/fa';
 import Rating from '../../components/Rating/Rating';
 import './historicalcard.css'
 import { HistoricalService } from '../../services/HistoricalService';
+import { useAppSelector } from '../../store/hooks';
 
 
 interface ILocalHistoricalLocationTourist {
@@ -51,6 +52,7 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
       alert("This is not available for reservation!");
     }
   };
+  const user = useAppSelector((state) => state.user);
 
   const getHistoricalLocationById = async (id: string) => {
     const historicalLocation =
@@ -131,11 +133,13 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
             </p>
             <p className="price"> Price: {localHistoricalData?.price}</p>
 
+            {user.role==="TOURIST"  && (
             <div className="d-flex justify-content-center">
-              <button className="reserve-button" onClick={handleReserve}>
+            <button className="reserve-button" onClick={handleReserve}>
                 Reserve
               </button>
             </div>
+            )}
           </div>
         </div>
       </div>

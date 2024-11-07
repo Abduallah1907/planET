@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal, Form, Container } from 'react-bootstrap';
 import HistoricalTagService from '../../services/HistoricalTagService';
+import { FaTrashAlt } from 'react-icons/fa';
 
 const HistoricalTagsTable: React.FC = () => {
     const [tags, setTags] = useState([]);
@@ -133,8 +134,14 @@ const HistoricalTagsTable: React.FC = () => {
                             <td>{tag.name}</td>
                             <td>{tag.values.join(",")}</td>
                             <td>
-                                <Button variant="warning" onClick={() => handleShowUpdateModal(tag)}>Update</Button>{' '}
-                                <Button variant="danger" onClick={() => handleDelete(tag._id)}>Delete</Button>
+                                <Button variant="main-inverse" onClick={() => handleShowUpdateModal(tag)}>Update</Button>{' '}
+                                <Button variant="main-inverse" >
+                                <FaTrashAlt
+                                    onClick={() => handleDelete(tag._id)}
+                                >
+                                Delete
+                                </FaTrashAlt>
+                                </Button>
                             </td>
                         </tr>
                     ))}
@@ -168,18 +175,24 @@ const HistoricalTagsTable: React.FC = () => {
                                         onChange={(e) => handleValueChange(index, e.target.value)}
                                         className='me-2 custom-form-control'
                                     />
-                                    <Button variant="danger" onClick={() => handleRemoveValue(index)} className="ml-2">Remove</Button>
+                                <Button variant="main-inverse" >
+                                <FaTrashAlt
+                                    onClick={() => handleRemoveValue(index)}
+                                >
+                                Remove
+                                </FaTrashAlt>
+                                </Button>
                                 </div>
                             ))}
-                            <Button variant="success" onClick={handleAddValue}>Add Value</Button>
+                            <Button variant="main-inverse" className='ms-1' onClick={handleAddValue}>Add Value</Button>
                         </Form.Group>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseUpdateModal}>
+                    <Button variant="main" className="border-warning-subtle" onClick={handleCloseUpdateModal}>
                         Close
                     </Button>
-                    <Button variant="success" onClick={handleSaveUpdateChanges}>
+                    <Button variant="main-inverse" onClick={handleSaveUpdateChanges}>
                         Save Changes
                     </Button>
                 </Modal.Footer>
@@ -211,18 +224,24 @@ const HistoricalTagsTable: React.FC = () => {
                                         onChange={(e) => handleNewTagValueChange(index, e.target.value)}
                                         className='me-2 custom-form-control'
                                     />
-                                    <Button variant="danger" onClick={() => handleRemoveNewTagValue(index)} className="ml-2">Remove</Button>
+                                <Button variant="main-inverse" >
+                                <FaTrashAlt
+                                    onClick={() => handleRemoveNewTagValue(index)}
+                                >
+                                Remove
+                                </FaTrashAlt>
+                                </Button>
                                 </div>
                             ))}
-                            <Button variant="success" onClick={handleAddNewTagValue}>Add Value</Button>
+                            <Button variant="main-inverse" className='ms-1' onClick={handleAddNewTagValue}>Add Value</Button>
                         </Form.Group>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseCreateModal}>
+                    <Button variant="main" className="border-warning-subtle" onClick={handleCloseCreateModal}>
                         Close
                     </Button>
-                    <Button variant="success" onClick={handleSaveCreateChanges}>
+                    <Button variant="main-inverse" onClick={handleSaveCreateChanges}>
                         Save Changes
                     </Button>
                 </Modal.Footer>
@@ -237,10 +256,10 @@ const HistoricalTagsTable: React.FC = () => {
                     Are you sure you want to delete this Tag?
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={cancelDelete}>
+                    <Button variant="main" className="border-warning-subtle" onClick={cancelDelete}>
                         Cancel
                     </Button>
-                    <Button variant="danger" onClick={confirmDelete}>
+                    <Button variant="main-inverse" onClick={confirmDelete}>
                         Confirm
                     </Button>
                 </Modal.Footer>
