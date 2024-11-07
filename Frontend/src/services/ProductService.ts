@@ -6,7 +6,6 @@ class ProductService {
   public static getAllProducts = async () => {
     try {
       const response = await axiosInstance.get("/product/getAllProducts");
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -18,7 +17,6 @@ class ProductService {
       const response = await axiosInstance.get(
         `/product/getProductsBySellerId/${seller_id}`
       );
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -30,7 +28,6 @@ class ProductService {
       const response = await axiosInstance.get(
         `/product/getProductByName/${name}`
       );
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -42,7 +39,6 @@ class ProductService {
       const response = await axiosInstance.get("/product/getFilteredProducts", {
         params: filter,
       });
-      showToast(response.data);
 
       return response.data;
     } catch (error) {
@@ -52,7 +48,6 @@ class ProductService {
   public static getFilterComponents = async () => {
     try {
       const response = await axiosInstance.get("/product/getFilterComponents/");
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -65,7 +60,7 @@ class ProductService {
         `/product/createProduct/${seller_id}`,
         productData
       );
-      showToast(response.data);
+      if (response.status === 200) showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -77,7 +72,7 @@ class ProductService {
         `/product/UpdateProduct/${product_id}`,
         productData
       );
-      showToast(response.data);
+      if (response.status === 200) showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -87,7 +82,6 @@ class ProductService {
   public static getProductById = async (id: string) => {
     try {
       const response = await axiosInstance.get(`/product/getProductByID/${id}`);
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;

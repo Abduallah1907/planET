@@ -7,7 +7,6 @@ class HistoricalTagService {
       const response = await axiosInstance.get(
         "/historical_tag/getAllHistorical_tag"
       );
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw new Error("Error fetching tags");
@@ -20,7 +19,7 @@ class HistoricalTagService {
         "/historical_tag/createHistorical_tag",
         tag
       );
-      showToast(response.data);
+      if (response.status === 201) showToast(response.data);
       return response.data;
     } catch (error) {
       throw new Error("Error creating tags");
@@ -33,7 +32,7 @@ class HistoricalTagService {
         `/historical_tag/updateHistorical_tag/${id}`,
         tag
       );
-      showToast(response.data);
+      if (response.status === 200) showToast(response.data);
       return response.data;
     } catch (error) {
       throw new Error("Error updating tags");
@@ -45,7 +44,7 @@ class HistoricalTagService {
       const response = await axiosInstance.delete(
         "/historical_tag/deleteHistorical_tag/" + id
       );
-      showToast(response.data);
+      if (response.status === 200) showToast(response.data);
     } catch (error) {
       throw new Error("Error deleting tags");
     }

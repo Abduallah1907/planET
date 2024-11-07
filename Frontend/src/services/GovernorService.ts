@@ -10,7 +10,9 @@ class GovernorService {
         `/users/updateGovernor/${email}`,
         Gdata
       );
-      showToast(response.data);
+      if (response.status === 200) {
+        showToast(response.data);
+      }
       return response.data;
     } catch (error) {
       throw error;

@@ -6,7 +6,6 @@ class TouristService {
   public static getTouristByemail = async (email: string) => {
     try {
       const response = await axiosInstance.get(`/tourist/getTourist/${email}`);
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -22,7 +21,9 @@ class TouristService {
         `/tourist/updateTourist/${email}`,
         advertiserData
       );
-      showToast(response.data);
+      if (response.status === 200) {
+        showToast(response.data);
+      }
       return response.data;
     } catch (error) {
       throw error;
@@ -35,7 +36,9 @@ class TouristService {
         `/tourist/rateAndCommentActivity/${id}`,
         data
       );
-      showToast(response.data);
+      if (response.status === 201) {
+        showToast(response.data);
+      }
       return response.data;
     } catch (error) {
       throw error;
@@ -48,7 +51,9 @@ class TouristService {
         `/tourist/rateAndCommentItinerary/${id}`,
         data
       );
-      showToast(response.data);
+      if (response.status === 201) {
+        showToast(response.data);
+      }
       return response.data;
     } catch (error) {
       throw error;
@@ -61,7 +66,9 @@ class TouristService {
         `/tourist/rateAndCommentTourGuide/${id}`,
         data
       );
-      showToast(response.data);
+      if (response.status === 201) {
+        showToast(response.data);
+      }
       return response.data;
     } catch (error) {
       throw error;
@@ -74,7 +81,9 @@ class TouristService {
         email,
         points,
       });
-      showToast(response.data);
+      if (response.status === 200) {
+        showToast(response.data);
+      }
       return response.data;
     } catch (error) {
       throw error;
@@ -87,7 +96,9 @@ class TouristService {
         `/tourist/fileComplaint/${id}`,
         data
       );
-      showToast(response.data);
+      if (response.status === 201) {
+        showToast(response.data);
+      }
 
       return response.data;
     } catch (error) {
@@ -100,7 +111,6 @@ class TouristService {
       const response = await axiosInstance.get(`/tourist/checkActivity/${id}`, {
         params: { activity_id },
       });
-      showToast(response.data);
 
       return response.data;
     } catch (error) {
@@ -114,7 +124,6 @@ class TouristService {
         `/tourist/checkItinerary/${id}`,
         { params: { itinerary_id } }
       );
-      showToast(response.data);
 
       return response.data;
     } catch (error) {
@@ -130,7 +139,6 @@ class TouristService {
         `/tourist/checkTourGuide/${id}`,
         { params: { tour_guide_email } }
       );
-      showToast(response.data);
 
       return response.data;
     } catch (error) {
@@ -141,7 +149,6 @@ class TouristService {
   public static viewMyComplaints = async (id: string) => {
     try {
       const response = await axiosInstance.get(`/tourist/viewComplaints/${id}`);
-      showToast(response.data);
 
       return response.data;
     } catch (error) {
@@ -155,7 +162,9 @@ class TouristService {
         email,
         activity_id,
       });
-      showToast(response.data);
+      if (response.status === 201) {
+        showToast(response.data);
+      }
 
       return response.data;
     } catch (error) {
@@ -173,6 +182,9 @@ class TouristService {
         itinerary_id,
         time_to_attend,
       });
+      if (response.status === 201) {
+        showToast(response.data);
+      }
       showToast(response.data);
 
       return response.data;
@@ -186,7 +198,9 @@ class TouristService {
       const response = await axiosInstance.delete(
         `/tourist/deleteTouristAccountRequest/${email}`
       );
-      showToast(response.data);
+      if (response.status === 200) {
+        showToast(response.data);
+      }
 
       return response.data;
     } catch (error) {
@@ -198,7 +212,6 @@ class TouristService {
       const response = await axiosInstance.get(
         `/tourist/getUpcomingActivityBookings/${email}`
       );
-      showToast(response.data);
 
       return response.data;
     } catch (error) {
@@ -210,7 +223,6 @@ class TouristService {
       const response = await axiosInstance.get(
         `/tourist/getPastActivityBookings/${email}`
       );
-      showToast(response.data);
 
       return response.data;
     } catch (error) {
@@ -222,7 +234,6 @@ class TouristService {
       const response = await axiosInstance.get(
         `/tourist/getUpcomingItineraryBookings/${email}`
       );
-      showToast(response.data);
 
       return response.data;
     } catch (error) {
@@ -234,7 +245,6 @@ class TouristService {
       const response = await axiosInstance.get(
         `/tourist/getPastItineraryBookings/${email}`
       );
-      showToast(response.data);
 
       return response.data;
     } catch (error) {
@@ -250,6 +260,9 @@ class TouristService {
       const response = await axiosInstance.put(
         `/tourist/cancelTicket/${tourist_id}?ticket_id=${ticket_id}`
       );
+      if (response.status === 200) {
+        showToast(response.data);
+      }
       showToast(response.data);
 
       return response.data;
@@ -262,7 +275,6 @@ class TouristService {
       const response = await axiosInstance.get(
         `/tourist/getMyTourGuides/${tourist_id}`
       );
-      showToast(response.data);
 
       return response.data;
     } catch (error) {
@@ -276,7 +288,9 @@ class TouristService {
         `/tourist/createOrder/`,
         orderData
       );
-      showToast(response.data);
+      if (response.status === 201) {
+        showToast(response.data);
+      }
 
       return response.data;
     } catch (error) {
@@ -288,7 +302,6 @@ class TouristService {
       const response = await axiosInstance.get(
         `/tourist/getPastOrders/${email}`
       );
-      showToast(response.data);
 
       return response.data;
     } catch (error) {
@@ -306,7 +319,9 @@ class TouristService {
         `/tourist/rateAndCommentProduct/${tourist_id}`,
         { product_id, comment, rating }
       );
-      showToast(response.data);
+      if (response.status === 201) {
+        showToast(response.data);
+      }
 
       return response.data;
     } catch (error) {

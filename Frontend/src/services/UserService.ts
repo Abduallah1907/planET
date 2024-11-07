@@ -7,7 +7,6 @@ class UserService {
       const response = await axiosInstance.get(`/users/getDocumentsRequired`, {
         params: { user_id, role },
       });
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -17,7 +16,7 @@ class UserService {
   public static acceptUser = async (email: string) => {
     try {
       const response = await axiosInstance.put(`/admin/acceptUser/${email}`);
-      showToast(response.data);
+      if (response.status === 200) showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -27,7 +26,7 @@ class UserService {
   public static rejectUser = async (email: string) => {
     try {
       const response = await axiosInstance.put(`/admin/rejectUser/${email}`);
-      showToast(response.data);
+      if (response.status === 200) showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;

@@ -7,7 +7,6 @@ class ItineraryService {
       const response = await axiosInstance.get(
         `/itinerary/getAllItineraries/${page}`
       );
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -19,7 +18,6 @@ class ItineraryService {
       const response = await axiosInstance.get(
         `/itinerary/getAllItinerariesByTourGuideID/${id}`
       );
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -31,7 +29,6 @@ class ItineraryService {
       const response = await axiosInstance.get(
         `/itinerary/getItineraryByID/${id}`
       );
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -42,7 +39,6 @@ class ItineraryService {
       const response = await axiosInstance.get(
         "/itinerary/getFilterComponents"
       );
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -54,7 +50,7 @@ class ItineraryService {
         `/itinerary/updateItinerary/${id}`,
         itineraryBody
       );
-      showToast(response.data);
+      if (response.status === 200) showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -64,7 +60,6 @@ class ItineraryService {
   public static getSearchItinerary = async () => {
     try {
       const response = await axiosInstance.get("/itinerary/getSearchItinerary");
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -76,7 +71,6 @@ class ItineraryService {
       const response = await axiosInstance.get(
         "/itinerary/getUpcomingItineraries"
       );
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -89,7 +83,6 @@ class ItineraryService {
         "/itinerary/getFilteredItineraries",
         { params: filter }
       );
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -101,7 +94,6 @@ class ItineraryService {
       const response = await axiosInstance.get(
         "/itinerary/getSortedItineraries"
       );
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -114,7 +106,7 @@ class ItineraryService {
         "/itinerary/createItinerary",
         itineraryBody
       );
-      showToast(response.data);
+      if (response.status === 201) showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -126,7 +118,7 @@ class ItineraryService {
       const response = await axiosInstance.delete(
         `/itinerary/deleteItinerary/${id}`
       );
-      showToast(response.data);
+      if (response.status === 200) showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -138,7 +130,7 @@ class ItineraryService {
       const response = await axiosInstance.put(
         `/itinerary/flagItinerary/${id}`
       );
-      showToast(response.data);
+      if (response.status === 200) showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;

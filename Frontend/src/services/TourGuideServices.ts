@@ -8,7 +8,6 @@ class TourGuideServices {
       const response = await axiosInstance.get(
         `/tourGuide/getProfile/${email}`
       );
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -24,7 +23,9 @@ class TourGuideServices {
         `/tourGuide/updateProfile/${email}`,
         TourGuideData
       );
-      showToast(response.data);
+      if (response.status === 200) {
+        showToast(response.data);
+      }
       return response.data;
     } catch (error) {
       throw error;
@@ -35,7 +36,9 @@ class TourGuideServices {
       const response = await axiosInstance.delete(
         `/tourGuide/deleteTourGuideAccountRequest/${email}`
       );
-      showToast(response.data);
+      if (response.status === 200) {
+        showToast(response.data);
+      }
       return response.data;
     } catch (error) {
       throw error;

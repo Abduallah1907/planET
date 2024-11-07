@@ -14,7 +14,6 @@ class AmadeusService {
     const response = await axiosInstance.get("/amadeus/flightOffers", {
       params: data,
     });
-    showToast(response.data);
     return response.data;
   }
 }

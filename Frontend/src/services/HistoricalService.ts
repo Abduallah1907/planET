@@ -13,7 +13,6 @@ class HistoricalService {
           params: { historical_location_id: historical_location_id },
         }
       );
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -30,7 +29,6 @@ class HistoricalService {
           params: { historical_location_id: historical_location_id },
         }
       );
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -46,7 +44,6 @@ class HistoricalService {
         "/historical_location/getAllHistorical_locations",
         { params: { nation, job } }
       );
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -60,7 +57,6 @@ class HistoricalService {
       const response = await axiosInstance.get(
         `/historical_location/getHistorical_locationsByGovernerID/${governer_id}`
       );
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -73,7 +69,6 @@ class HistoricalService {
         "/historical_location/getFilteredHistorical_locations",
         { params: filter }
       );
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -86,7 +81,7 @@ class HistoricalService {
         "/historical_location/createHistorical_location",
         formData
       );
-      showToast(response.data);
+      if (response.status === 201) showToast(response.data);
       return response.data;
     } catch (err) {
       throw err;
@@ -98,10 +93,9 @@ class HistoricalService {
       const response = await axiosInstance.get(
         "/historical_location/getFilterComponents"
       );
-      showToast(response.data);
       return response.data;
     } catch (error: any) {
-      throw new Error("Historical Location failed");
+      throw error;
     }
   };
 
@@ -111,16 +105,10 @@ class HistoricalService {
         `/historical_location/updateHistorical_location/${id}`, // Use PUT for updates and include the location ID
         formData
       );
+      if (response.status === 200) showToast(response.data);
       return response.data;
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        console.error("API Error: ", error.response.data);
-        throw new Error(
-          error.response.data.message || "Editing Historical Location failed"
-        );
-      } else {
-        throw new Error("Editing Historical Location failed");
-      }
+      throw error;
     }
   }
 
@@ -129,16 +117,10 @@ class HistoricalService {
       const response = await axiosInstance.delete(
         `/historical_location/deleteHistorical_location/${id}` // Use PUT for updates and include the location ID
       );
+      if (response.status === 200) showToast(response.data);
       return response.data;
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        console.error("API Error: ", error.response.data);
-        throw new Error(
-          error.response.data.message || "Deleting Historical Location failed"
-        );
-      } else {
-        throw new Error("Deleting Historical Location failed");
-      }
+      throw error;
     }
   }
 

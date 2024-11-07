@@ -13,7 +13,6 @@ class AuthService {
       const response = await axiosInstance.get("/users/loginUser", {
         params: data,
       });
-      showToast(response.data);
       return response.data;
     } catch (error: any) {
       throw new Error(error.response.data.message || "Login failed");
@@ -31,7 +30,7 @@ class AuthService {
         password,
         email,
       });
-      showToast(response.data);
+      if (response.status === 201) showToast(response.data);
       return response.data; //Changed from const {user}=response.data to response.data
     } catch (error) {
       throw new Error("Registration failed");
@@ -44,7 +43,7 @@ class AuthService {
         "/tourist/createTourist",
         regData
       );
-      showToast(response.data);
+      if (response.status === 201) showToast(response.data);
       return response.data;
     } catch (error: any) {
       throw new Error("Tourist registration failed");
@@ -57,7 +56,7 @@ class AuthService {
         "/seller/createSeller",
         StakeData
       );
-      showToast(response.data);
+      if (response.status === 201) showToast(response.data);
       return response.data;
     } catch (error: any) {
       throw new Error("Seller registration failed");
@@ -70,7 +69,7 @@ class AuthService {
         "/advertiser/createAdvertiserMain",
         StakeData
       );
-      showToast(response.data);
+      if (response.status === 201) showToast(response.data);
       return response.data;
     } catch (error: any) {
       throw new Error("Advertiser registration failed");
@@ -83,7 +82,7 @@ class AuthService {
         "/tourGuide/createProfile",
         StakeData
       );
-      showToast(response.data);
+      if (response.status === 201) showToast(response.data);
       return response.data;
     } catch (error: any) {
       throw new Error("Seller registration failed");
@@ -92,7 +91,6 @@ class AuthService {
   public static async requestOTP(email: string) {
     try {
       const response = await axiosInstance.get(`/users/requestOTP/${email}`);
-      showToast(response.data);
       return response.data;
     } catch (error: any) {
       throw error;
@@ -104,7 +102,6 @@ class AuthService {
       const response = await axiosInstance.get(
         `/users/verifyOTP/${email}/${otp}`
       );
-      showToast(response.data);
       return response.data;
     } catch (error: any) {
       throw error;
@@ -124,7 +121,7 @@ class AuthService {
           otp,
         }
       );
-      showToast(response.data);
+      if (response.status === 200) showToast(response.data);
       return response.data;
     } catch (error: any) {
       throw error;

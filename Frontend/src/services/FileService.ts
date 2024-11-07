@@ -11,7 +11,6 @@ class FileService {
           "Content-Type": "multipart/form-data",
         },
       });
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -22,7 +21,6 @@ class FileService {
       const response = await axiosInstance.get(`/file/download/${id}`, {
         responseType: "blob", // Ensure response is treated as a blob
       });
-      showToast(response.data);
       return response.data; // Return the blob data
     } catch (error) {
       throw error;

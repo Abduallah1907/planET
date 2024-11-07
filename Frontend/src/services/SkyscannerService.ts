@@ -8,7 +8,6 @@ class SkyscannerService {
         keyword: query,
       },
     });
-    showToast(repsonse.data);
     return repsonse.data;
   }
 }

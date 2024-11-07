@@ -6,7 +6,6 @@ class SellerServices {
   public static getSellerServicesByemail = async (email: string) => {
     try {
       const response = await axiosInstance.get(`/seller/getSeller/${email}`);
-      showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -22,7 +21,9 @@ class SellerServices {
         `/seller/updateSeller/${email}`,
         SellerData
       );
-      showToast(response.data);
+      if (response.status === 200) {
+        showToast(response.data);
+      }
       return response.data;
     } catch (error) {
       throw error;
@@ -33,7 +34,9 @@ class SellerServices {
       const response = await axiosInstance.delete(
         `/seller/deleteSellerAccountRequest/${email}`
       );
-      showToast(response.data);
+      if (response.status === 200) {
+        showToast(response.data);
+      }
       return response.data;
     } catch (error) {
       throw error;
