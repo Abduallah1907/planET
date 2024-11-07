@@ -232,7 +232,7 @@ export default class TourGuideService {
     let finalUpdatedPreviousWork: ObjectId[] = [];
 
     const checkApproveedUser = await this.userModel.findOne({
-      emaiL: email,
+      email: email,
       role: UserRoles.TourGuide,
       status: UserStatus.APPROVED,
     });
