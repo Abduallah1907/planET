@@ -1,10 +1,14 @@
 import axiosInstance from "../utils/axiosInstance";
+import showToast from "../../src/utils/showToast";
 
 class AdminService {
   // Function to delete user account
   public static deleteUser = async (email: any) => {
     try {
       const response = await axiosInstance.delete(`/admin/deleteUser/${email}`);
+      if (response.status === 200) {
+        showToast(response.data);
+      }
       return response.data;
     } catch (error) {
       throw error;
@@ -13,6 +17,7 @@ class AdminService {
   public static getUsers = async (page: number) => {
     try {
       const response = await axiosInstance.get(`/admin/getUsers/${page}`);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -21,6 +26,8 @@ class AdminService {
   public static createAdmin = async (data: any) => {
     try {
       const response = await axiosInstance.post(`/admin/createAdmin/`, data);
+
+      if (response.status === 201) showToast(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -30,6 +37,8 @@ class AdminService {
   public static createGovernor = async (data: any) => {
     try {
       const response = await axiosInstance.post(`/admin/createGovernor/`, data);
+      if (response.status === 201) showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -38,6 +47,7 @@ class AdminService {
   public static getTags = async (page: number) => {
     try {
       const response = await axiosInstance.get(`/admin/getTags/${page}`);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -49,6 +59,8 @@ class AdminService {
         `/admin/updateAdmin/${email}`,
         AdminData
       );
+      if (response.status === 200) showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -58,7 +70,7 @@ class AdminService {
   public static getComplaints = async () => {
     try {
       const response = await axiosInstance.get(`/admin/getComplaints`);
-      console.log("Service: ", response.data);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -70,6 +82,8 @@ class AdminService {
       const response = await axiosInstance.put(
         `/admin/markComplaintResolved/${id}`
       );
+      if (response.status === 200) showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -81,6 +95,8 @@ class AdminService {
       const response = await axiosInstance.put(
         `/admin/markComplaintPending/${id}`
       );
+      if (response.status === 200) showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -92,6 +108,8 @@ class AdminService {
       const response = await axiosInstance.put(`/admin/replyComplaint/${id}`, {
         reply,
       });
+      if (response.status === 200) showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;

@@ -35,7 +35,7 @@ const EditProduct: React.FC = () => {
 
       // Validate for negative values
       if (numericalValue < 0) {
-        showToast(`${name} cannot be negative`, ToastTypes.ERROR);
+        // showToast(`${name} cannot be negative`, ToastTypes.ERROR);//Sow error message not API
         setFormData({ ...formData, [name]: "0" }); // Reset to 0 if negative
         return;
       }
@@ -43,9 +43,8 @@ const EditProduct: React.FC = () => {
 
     setFormData({
       ...formData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     });
-
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -87,7 +86,6 @@ const EditProduct: React.FC = () => {
     };
     if (product_id) {
       await ProductService.EditProduct(product_id, productData);
-      showToast("Product updated successfully", ToastTypes.SUCCESS);
       navigate("/MyProducts");
     } else {
       console.error("Product ID is undefined");

@@ -104,7 +104,7 @@ export default class SellerService {
     const checkApprovedUser = await this.userModel.findOne({
       email: searchEmail,
       role: UserRoles.Seller,
-      approved: UserStatus.APPROVED,
+      status: UserStatus.APPROVED,
     });
     if (!checkApprovedUser) {
       throw new ForbiddenError(

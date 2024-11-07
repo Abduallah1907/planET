@@ -196,9 +196,6 @@ export default function ActivitiesPage() {
                   Date_Time={new Date(activity.date)}
                   isActive={activity.active_flag}
                   isBooked={activity.booking_flag}
-                  onChange={() =>
-                    console.log(`${activity.name} booking status changed`)
-                  }
                   onClick={() => onActivityClick(activity._id)}
                   onDelete={() => deleteActivity(activity._id)}
                   isAdvertiser={true}

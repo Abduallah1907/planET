@@ -3,7 +3,11 @@ import UserRoles from "@/types/enums/userRoles";
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
-export function getRoleAndID(req: Request, res: Response, next: NextFunction): void {
+export function getRoleAndID(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
   // pray this works pls
   if (!config.jwtSecret) {
     res.status(500).send("Server error: JWT secret is not defined");
@@ -22,7 +26,6 @@ export function getRoleAndID(req: Request, res: Response, next: NextFunction): v
       userId = decoded.id;
     });
 
-  // console.log(userId + " - role: ", userRole + "- stakeid" + stakeHolderId);
   req.body.user_id = userId;
   req.body.stakeholder_id = stakeHolderId;
   req.body.role = userRole;

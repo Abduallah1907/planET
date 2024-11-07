@@ -5,8 +5,6 @@ import { Container, Button, Form, Modal } from "react-bootstrap"; // Import Moda
 import { TouristService } from "../../services/TouristService";
 import { useParams } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
-import showToast from "../../utils/showToast";
-import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   title: string;
@@ -55,7 +53,6 @@ const ComplaintForm: React.FC = () => {
   const handleCloseModal = () => {
     setShowModal(false);
     handleCancel();
-    showToast("file complaint submitted scussefully", ToastTypes.SUCCESS);
   };
 
   return (

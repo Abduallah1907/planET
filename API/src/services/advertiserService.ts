@@ -170,7 +170,7 @@ export default class AdvertiserService {
     const checkApprovedUser = await this.userModel.findOne({
       email: email,
       role: UserRoles.Advertiser,
-      approved: UserStatus.APPROVED,
+      status: UserStatus.APPROVED,
     });
     if (!checkApprovedUser) {
       throw new ForbiddenError(

@@ -59,11 +59,7 @@ const SellerFirstProfile: React.FC = () => {
           logo: file.data._id,
         }
       );
-      if (seller.status === 200) {
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      } else {
-        showToast("Error in updating", ToastTypes.ERROR);
-      }
+      showToast(seller);
     } else {
       const seller2 = await SellerServices.updateSellerServices(
         SellerFirst.email,
@@ -71,9 +67,7 @@ const SellerFirstProfile: React.FC = () => {
           description: formData.description,
         }
       );
-      if (seller2.status === 200)
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      else showToast("Error in updating", ToastTypes.ERROR);
+      showToast(seller2);
     }
   };
 

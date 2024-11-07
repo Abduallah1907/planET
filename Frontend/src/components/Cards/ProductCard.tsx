@@ -19,7 +19,6 @@ import { addProduct } from "../../store/cartSlice";
 import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
 
-
 interface InputData {
   name: string;
   id: string;
@@ -59,12 +58,12 @@ const ProductCard = ({
 }: InputData) => {
   // Determine if the product is active or archived
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } =
+    useAppContext();
 
   const convertedPrice = useMemo(() => {
     return getConvertedCurrencyWithSymbol(price, baseCurrency, currency);
   }, [price, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
-
 
   // Function to handle edit action
   const navigate = useNavigate();
@@ -73,7 +72,6 @@ const ProductCard = ({
   const handleEdit = (product_id: string) => {
     navigate(`/EditProduct/${product_id}`); // Navigate to the EditProduct page
   };
-  
 
   const handleDelete = () => {
     setShowDeleteModal(true);
@@ -81,21 +79,25 @@ const ProductCard = ({
 
   const confirmDelete = () => {
     // Perform the delete action here
-    console.log(`Product ${id} deleted.`);
     setShowDeleteModal(false); // Close modal after confirming
-    showToast("Product deleted",ToastTypes.SUCCESS);
+    // showToast("Product deleted",ToastTypes.SUCCESS);
   };
 
   const cancelDelete = () => {
     setShowDeleteModal(false); // Close modal without action
   };
-  const dispatch=useAppDispatch();
+  const dispatch = useAppDispatch();
   const addToCart = (e: any) => {
     e.stopPropagation();
     e.preventDefault();
-    showToast("Product added to cart",ToastTypes.SUCCESS);
-    dispatch(addProduct({product:{id,name,price,description,image},quantity:1}));
-  }
+    // showToast("Product added to cart",ToastTypes.SUCCESS);
+    dispatch(
+      addProduct({
+        product: { id, name, price, description, image },
+        quantity: 1,
+      })
+    );
+  };
 
   return (
     <Card
@@ -104,7 +106,11 @@ const ProductCard = ({
     >
       <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
         {/* Image Section */}
-        <Col md={2} className="p-0 d-flex align-items-stretch" onClick={onClick}>
+        <Col
+          md={2}
+          className="p-0 d-flex align-items-stretch"
+          onClick={onClick}
+        >
           <Image
             src={image || "https://via.placeholder.com/250x250"}
             rounded
@@ -114,12 +120,19 @@ const ProductCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={(isSeller || isAdmin) ? 6 : 7} className="d-flex align-items-stretch" onClick={onClick}>
+        <Col
+          md={isSeller || isAdmin ? 6 : 7}
+          className="d-flex align-items-stretch"
+          onClick={onClick}
+        >
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
                 {/* Product Name */}
-                <Card.Title className="mb-0" style={{ fontWeight: "bold", marginRight: "10px" }}>
+                <Card.Title
+                  className="mb-0"
+                  style={{ fontWeight: "bold", marginRight: "10px" }}
+                >
                   {name}
                 </Card.Title>
               </div>
@@ -133,21 +146,32 @@ const ProductCard = ({
               </Card.Text>
             </div>
             {/* Created and Updated Date */}
-            {(isSeller || isAdmin) &&
+            {(isSeller || isAdmin) && (
               <Card.Text className="text-muted">
-                Created: {createdAt.toLocaleDateString()} | Updated: {updatedAt.toLocaleDateString()}
+                Created: {createdAt.toLocaleDateString()} | Updated:{" "}
+                {updatedAt.toLocaleDateString()}
               </Card.Text>
-            }
-            {user.role==="TOURIST" && (
-            <div className="d-flex justify-content-center">
-            <Button className="w-25 " variant="main-inverse" onClick={addToCart} >Add to Cart</Button>
-            </div>
+            )}
+            {user.role === "TOURIST" && (
+              <div className="d-flex justify-content-center">
+                <Button
+                  className="w-25 "
+                  variant="main-inverse"
+                  onClick={addToCart}
+                >
+                  Add to Cart
+                </Button>
+              </div>
             )}
           </Card.Body>
         </Col>
 
         {/* Rating, Reviews, Price Section */}
-        <Col md={3} className="d-flex flex-column justify-content-between align-items-end" onClick={onClick}>
+        <Col
+          md={3}
+          className="d-flex flex-column justify-content-between align-items-end"
+          onClick={onClick}
+        >
           {/* Rating and Reviews */}
           <div className="d-flex align-items-center justify-content-end mb-1">
             {/* Rating Stars */}
@@ -170,7 +194,7 @@ const ProductCard = ({
             <h4 style={{ fontWeight: "bold" }}>{convertedPrice}</h4>
 
             {/* Show Active/Archive button if the user is the seller */}
-            {(isSeller || isAdmin) ? (
+            {isSeller || isAdmin ? (
               <Badge
                 bg={!isActiveArchive ? "active" : "inactive"}
                 className="mt-2 custom-status-badge rounded-4 text-center"
@@ -182,7 +206,7 @@ const ProductCard = ({
             ) : null}
           </div>
         </Col>
-        {(isSeller || isAdmin) ? (
+        {isSeller || isAdmin ? (
           <Col md={1} className="d-flex align-items-baseline">
             <DropdownButton
               align="end"
@@ -206,7 +230,11 @@ const ProductCard = ({
         </Modal.Header>
         <Modal.Body>Are you sure you want to delete this product?</Modal.Body>
         <Modal.Footer>
-          <Button variant="main" className="border-warning-subtle" onClick={cancelDelete}>
+          <Button
+            variant="main"
+            className="border-warning-subtle"
+            onClick={cancelDelete}
+          >
             Cancel
           </Button>
           <Button variant="main-inverse" onClick={confirmDelete}>

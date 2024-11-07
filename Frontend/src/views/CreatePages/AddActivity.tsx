@@ -10,7 +10,10 @@ import CategoryService from "../../services/CategoryService";
 import { AdminService } from "../../services/AdminService";
 import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import { FileService } from "../../services/FileService";
+import showToastMessage from "../../utils/showToastMessage";
 
 // Other interface and component definitions...
 
@@ -59,6 +62,11 @@ const AdvertiserCreate: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [showMapModal, setShowMapModal] = useState(false); // State to manage modal visibility
 
+  const [center, setCenter] = React.useState({
+    lat: 29.98732507495249,
+    lng: 31.435660077332482,
+  });
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     if (name === "booking") {
@@ -74,7 +82,7 @@ const AdvertiserCreate: React.FC = () => {
         (name === "special_discount" || name === "price") &&
         Number(updatedValue) < 0
       ) {
-        showToast("Value cannot be negative", ToastTypes.ERROR);
+        showToastMessage("Value cannot be negative", ToastTypes.ERROR);
         setFormData({
           ...formData,
           [name]: 0,
@@ -187,35 +195,42 @@ const AdvertiserCreate: React.FC = () => {
       booking_flag: formData.booking, // Correctly assigning booking_flag
       advertiser_id: AdvertiserId,
     };
-    if (formData.image && AdvertiserId) {
-      const file = await FileService.uploadFile(formData.image);
-      const productDataI = {
-        name: formData.name,
-        date: formData.date,
-        time: formData.time,
-        category: formData.category,
-        location: { longitude: 100, latitude: 100 },
-        price: formData.price,
-        tags: selectedTags.map((tag) => tag._id),
-        special_discount: formData.special_discount,
-        active_flag: formData.active_flag,
-        advertiser_id: AdvertiserId,
-        booking_flag: formData.booking,
-        image: file.data._id,
-      };
-      await ActivityService.createActivity(productDataI);
-      showToast("Activity created successfully", ToastTypes.SUCCESS);
+    if (AdvertiserId) {
+      await ActivityService.createActivity(productData);
       navigate("/MyActivities");
     } else {
-      if (AdvertiserId) {
-        await ActivityService.createActivity(productData);
-        showToast("Activity created successfully", ToastTypes.SUCCESS);
+      console.error("Advertiser Id is undefined");
+      if (formData.image && AdvertiserId) {
+        const file = await FileService.uploadFile(formData.image);
+        const productDataI = {
+          name: formData.name,
+          date: formData.date,
+          time: formData.time,
+          category: formData.category,
+          location: { longitude: 100, latitude: 100 },
+          price: formData.price,
+          tags: selectedTags.map((tag) => tag._id),
+          special_discount: formData.special_discount,
+          active_flag: formData.active_flag,
+          advertiser_id: AdvertiserId,
+          booking_flag: formData.booking,
+          image: file.data._id,
+        };
+        await ActivityService.createActivity(productDataI);
+        showToastMessage("Activity created successfully", ToastTypes.SUCCESS);
         navigate("/MyActivities");
       } else {
-        console.error("Advertiser Id is undefined");
+        if (AdvertiserId) {
+          await ActivityService.createActivity(productData);
+          showToastMessage("Activity created successfully", ToastTypes.SUCCESS);
+          navigate("/MyActivities");
+        } else {
+          console.error("Advertiser Id is undefined");
+        }
       }
-    }
-  };
+    };
+  }
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFormData({ ...formData, image: e.target.files[0] });
@@ -420,12 +435,16 @@ const AdvertiserCreate: React.FC = () => {
               </Modal.Header>
               <Modal.Body>
                 <div className="ratio ratio-1x1">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3455.7252495085836!2d31.435660077332482!3d29.98732507495249!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14583cb2bfafbe73%3A0x6e7220116094726d!2sGerman%20University%20in%20Cairo%20(GUC)!5e0!3m2!1sen!2seg!4v1728233137915!5m2!1sen!2seg"
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  ></iframe>
+                  <APIProvider apiKey={process.env.GOOGLE_MAPS_API_KEY || ""}>
+                    <Map
+                      style={{ width: "500px", height: "500px" }}
+                      defaultCenter={center}
+                      center={center}
+                      defaultZoom={3}
+                      gestureHandling={"greedy"}
+                      disableDefaultUI={true}
+                    />
+                  </APIProvider>
                 </div>
               </Modal.Body>
               <Modal.Footer>

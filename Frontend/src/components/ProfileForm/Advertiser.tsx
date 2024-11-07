@@ -7,8 +7,8 @@ import { AdvertiserService } from "../../services/AdvertiserService";
 import { useAppSelector } from "../../store/hooks";
 import { FileService } from "../../services/FileService";
 import { isValidObjectId } from "../../utils/CheckObjectId";
-import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
+import showToastMessage from "../../utils/showToastMessage";
 
 interface FormData {
   firstName: string;
@@ -95,12 +95,12 @@ const Advertiser: React.FC = () => {
       (formData.changePassword && !formData.retypePassword) ||
       (!formData.changePassword && formData.retypePassword)
     ) {
-      showToast("Please fill out both password fields.", ToastTypes.ERROR);
+      showToastMessage("Please fill out both password fields.", ToastTypes.ERROR);
       return;
     }
     // Phone number validation for length
     if (formData.mobile.length !== 11) {
-      showToast("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      showToastMessage("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
       return;
     }
 
@@ -108,7 +108,7 @@ const Advertiser: React.FC = () => {
       formData.changePassword &&
       formData.changePassword !== formData.retypePassword
     ) {
-      showToast("Passwords do not match", ToastTypes.ERROR);
+      showToastMessage("Passwords do not match", ToastTypes.ERROR);
       return;
     }
 
@@ -143,9 +143,9 @@ const Advertiser: React.FC = () => {
 
     // Show success or error toast based on response
     if (Adv.status === 200) {
-      showToast("Updated successfully", ToastTypes.SUCCESS);
+      showToastMessage("Updated successfully", ToastTypes.SUCCESS);
     } else {
-      showToast("Error in updating", ToastTypes.ERROR);
+      showToastMessage("Error in updating", ToastTypes.ERROR);
     }
   };
 
@@ -181,7 +181,7 @@ const Advertiser: React.FC = () => {
       (formData.changePassword && !formData.retypePassword) ||
       (!formData.changePassword && formData.retypePassword)
     ) {
-      showToast("Please fill out both password fields.", ToastTypes.ERROR);
+      showToastMessage("Please fill out both password fields.", ToastTypes.ERROR);
       return;
     }
   };

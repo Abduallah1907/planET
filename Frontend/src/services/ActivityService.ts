@@ -1,4 +1,5 @@
 import axiosInstance from "../utils/axiosInstance";
+import showToast from "../../src/utils/showToast";
 
 class ActivityService {
   public static getAllActivities = async () => {
@@ -14,6 +15,7 @@ class ActivityService {
       const response = await axiosInstance.get(
         `/activity/getActivityByID/${id}`
       );
+
       return response.data;
     } catch (error) {
       throw error;
@@ -25,11 +27,12 @@ class ActivityService {
       const response = await axiosInstance.get(
         `/activity/getActivitiesByAdvertiserID/${id}`
       );
+
       return response.data;
     } catch (error) {
       throw error;
     }
-  }
+  };
 
   public static getFilteredActivites = async (filter: any) => {
     try {
@@ -37,6 +40,7 @@ class ActivityService {
         "/activity/getFilteredActivities",
         { params: filter }
       );
+
       return response.data;
     } catch (error) {
       throw error;
@@ -48,6 +52,7 @@ class ActivityService {
       const response = await axiosInstance.get(
         "/activity/getFilterComponents/"
       );
+
       return response.data;
     } catch (error) {
       throw error;
@@ -60,6 +65,8 @@ class ActivityService {
         `/activity/addActivity`,
         productData
       );
+      if (response.status === 201) showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -75,6 +82,8 @@ class ActivityService {
         `/activity/updateActivity/${activityId}`,
         updatedData
       );
+      if (response.status === 200) showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -86,6 +95,8 @@ class ActivityService {
       const response = await axiosInstance.delete(
         `/activity/deleteActivity/${activityId}`
       );
+      if (response.status === 200) showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -94,11 +105,13 @@ class ActivityService {
   public static flagInappropriate = async (id: string) => {
     try {
       const response = await axiosInstance.put(`/activity/flagActivity/${id}`);
+      if (response.status === 200) showToast(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
     }
-  }
+  };
 }
 
 export { ActivityService };

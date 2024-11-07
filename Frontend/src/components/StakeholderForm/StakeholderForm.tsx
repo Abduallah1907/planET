@@ -6,7 +6,7 @@ import "./StakeholderForm.css";
 import AuthService from "../../services/authService";
 import { FileService } from "../../services/FileService";
 import { useNavigate } from "react-router-dom";
-import showToast from "../../utils/showToast";
+import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
 
 interface StakeData {
@@ -73,18 +73,19 @@ export default function StakeholderForm() {
     e.preventDefault();
     const mobileNumber = StakeData.phone_number;
     if (mobileNumber && mobileNumber.length !== 11) {
-      showToast("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      showToastMessage("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
       return;
     }
 
     // Validate the mobile number format (additional checks can be added here)
     if (mobileNumber && !validateMobileNumber(mobileNumber)) {
-      showToast("Invalid mobile number format.", ToastTypes.ERROR);
+      showToastMessage("Invalid mobile number format.", ToastTypes.ERROR);
       return;
     }
 
     if (StakeData.password !== StakeData.confirmPassword) {
       alert("Passwords don't match!");
+      //Make it toast
       return;
     }
 
@@ -110,7 +111,6 @@ export default function StakeholderForm() {
         await AuthService.registerTourGuide(updatedStakeData);
       }
       navigate("/login");
-      showToast("Account created successfully", ToastTypes.SUCCESS);
     } catch (error) {
       console.error("Registration failed: ", error);
     }

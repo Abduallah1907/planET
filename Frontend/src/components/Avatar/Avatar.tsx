@@ -1,7 +1,7 @@
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
-import React, { useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Button, Dropdown, Image, Modal } from "react-bootstrap";
+import { Button, Dropdown, DropdownItem, Image } from "react-bootstrap";
 import "./avatar.css";
 import { setLoginState } from "../../store/userSlice";
 import {
@@ -13,6 +13,7 @@ import { TouristService } from "../../services/TouristService";
 import { AdvertiserService } from "../../services/AdvertiserService";
 import { SellerServices } from "../../services/SellerServices";
 import { TourGuideServices } from "../../services/TourGuideServices";
+import showToast from "@/utils/showToast";
 
 const Avatar: React.FC = () => {
   const user = useAppSelector((state) => state.user);
@@ -20,59 +21,41 @@ const Avatar: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    dispatch(setLoginState(false));
-    dispatch(disableSidebar());
-    dispatch(closeSidebar());
-    dispatch(setNavItems([]));
-    navigate("/");
-  };
-
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-  const handleDeleteRequest = () => {
-    setShowDeleteModal(true); // Open the delete confirmation modal
-  };
-
-  const handleDelete = async () => {
-    try {
-      // Attempt to delete the account based on user role
-      switch (user.role) {
-        case "TOURIST":
-          await TouristService.deleteTourist(user.email);
-          break;
-        case "ADVERTISER":
-          await AdvertiserService.deleteAdvertiser(user.email);
-          break;
-        case "SELLER":
-          await SellerServices.deleteSellerServices(user.email);
-          break;
-        case "TOUR_GUIDE":
-          await TourGuideServices.deleteTourGuide(user.email);
-          break;
-        default:
-          throw new Error("Unknown role");
-      }
-
-      // Clear user data and navigate only if deletion was successful
+    if (window.confirm("Are you sure you want to logout?")) {
       localStorage.removeItem("user");
       dispatch(setLoginState(false));
       dispatch(disableSidebar());
       dispatch(closeSidebar());
       dispatch(setNavItems([]));
       navigate("/");
-    } catch (error) {
-      console.error("Account deletion failed:", error);
-      // Optionally display a toast notification for error handling
-    } finally {
-      setShowDeleteModal(false); // Close the modal after deletion attempt
     }
   };
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete your account?")) {
+      let response;
+      switch (user.role) {
+        case "TOURIST":
+          response = await TouristService.deleteTourist(user.email);
+          break;
+        case "ADVERTISER":
+          response = await AdvertiserService.deleteAdvertiser(user.email);
+          break;
+        case "SELLER":
+          response = await SellerServices.deleteSellerServices(user.email);
+          break;
+        case "TOUR_GUIDE":
+          response = await TourGuideServices.deleteTourGuide(user.email);
+          break;
+      }
 
-  const cancelDelete = () => {
-    setShowDeleteModal(false); // Close modal without any action
+      localStorage.removeItem("user");
+      dispatch(setLoginState(false));
+      dispatch(disableSidebar());
+      dispatch(closeSidebar());
+      dispatch(setNavItems([]));
+      navigate("/");
+    }
   };
-
   return (
     <Dropdown drop="down" align="end" className="px-2">
       <Dropdown.Toggle
@@ -92,20 +75,16 @@ const Avatar: React.FC = () => {
         <Dropdown.Item as={Link} to={`/${user.role.toLowerCase()}/Profile`}>
           Profile
         </Dropdown.Item>
-        {(user.role === "TOURIST" ||
-          user.role === "TOUR_GUIDE" ||
-          user.role === "ADVERTISER" ||
-          user.role === "SELLER") && (
+        {user.role == "TOURIST" ||
+        user.role == "TOUR_GUIDE" ||
+        user.role == "ADVERTISER" ||
+        user.role == "SELLER" ? (
           <Dropdown.Item>
-            <Button
-              variant="danger"
-              onClick={handleDeleteRequest}
-              className="w-100"
-            >
+            <Button variant="danger" onClick={handleDelete} className="w-100">
               Delete Account
             </Button>
           </Dropdown.Item>
-        )}
+        ) : null}
         <Dropdown.Divider />
         <Dropdown.Item>
           <Button variant="danger" onClick={handleLogout} className="w-100">
@@ -113,22 +92,6 @@ const Avatar: React.FC = () => {
           </Button>
         </Dropdown.Item>
       </Dropdown.Menu>
-
-      {/* Delete Confirmation Modal */}
-      <Modal show={showDeleteModal} onHide={cancelDelete} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Delete Account</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you want to delete your account?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={cancelDelete}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            Confirm
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </Dropdown>
   );
 };

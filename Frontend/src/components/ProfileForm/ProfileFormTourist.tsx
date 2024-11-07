@@ -12,6 +12,7 @@ import { setStakeholder } from "../../store/userSlice";
 import { useAppContext } from "../../AppContext";
 import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
+import showToastMessage from "../../utils/showToastMessage";
 
 interface NationalityOption {
   value: string;
@@ -69,7 +70,7 @@ const ProfileForm: React.FC = () => {
       (formData.password && !formData.retypePassword) ||
       (!formData.password && formData.retypePassword)
     ) {
-      showToast("Please fill out both password fields.", ToastTypes.ERROR);
+      showToastMessage("Please fill out both password fields.", ToastTypes.ERROR);
       return;
     }
   };
@@ -92,11 +93,11 @@ const ProfileForm: React.FC = () => {
   const OnClick = async () => {
     // Check if passwords are both filled and match
     if (formData.password && formData.password !== formData.retypePassword) {
-      showToast("Passwords do not match", ToastTypes.ERROR);
+      showToastMessage("Passwords do not match", ToastTypes.ERROR);
       return; // Exit if passwords don't match
     }
     if (formData.mobile.length !== 11) {
-      showToast("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      showToastMessage("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
       return;
     }
 
@@ -121,9 +122,9 @@ const ProfileForm: React.FC = () => {
 
     // Display toast based on the update response
     if (Tourist1.status === 200) {
-      showToast("Updated successfully", ToastTypes.SUCCESS);
+      showToastMessage("Updated successfully", ToastTypes.SUCCESS);
     } else {
-      showToast("Error in updating", ToastTypes.ERROR);
+      showToastMessage("Error in updating", ToastTypes.ERROR);
     }
   };
 

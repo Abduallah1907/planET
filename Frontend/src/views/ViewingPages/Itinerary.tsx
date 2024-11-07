@@ -14,7 +14,7 @@ export default function ItinerariesPage() {
   const [itineraries, setItineraries] = useState<IItinerary[]>([]);
   const [filtercomponent, setfilterComponents] = useState({});
   const [sortBy, setSortBy] = useState("topPicks"); // State for sort by selection
-  const [filter,setFilter] = React.useState({});
+  const [filter, setFilter] = React.useState({});
 
   const getFilterComponents = async () => {
     const filterData = await ItineraryService.getFilterComponents();
@@ -30,16 +30,17 @@ export default function ItinerariesPage() {
         Array.isArray(value) ? [key, value.join(",")] : [key, value]
       )
     );
-    const ItinerariesData = await ItineraryService.getFilteredItineraries(modifiedFilter);
+    const ItinerariesData = await ItineraryService.getFilteredItineraries(
+      modifiedFilter
+    );
     setItineraries(ItinerariesData.data);
-  }
+  };
 
   const handleApplyFilters = () => {
     getFilteredItineraries();
-  }
+  };
   useEffect(() => {
-    
-     getItinerary();
+    getItinerary();
     getFilterComponents();
   }, []);
 
@@ -50,9 +51,9 @@ export default function ItinerariesPage() {
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value);
   };
-  const onFilterChange = (newFilter: {[key: string]: any;}) => {
+  const onFilterChange = (newFilter: { [key: string]: any }) => {
     setFilter(newFilter);
-  }
+  };
 
   // Function to sort activities based on selected criteria
   const sortedItineraries = [...itineraries].sort((a, b) => {
@@ -72,18 +73,20 @@ export default function ItinerariesPage() {
     }
   });
 
-  const filteredItineraries= sortedItineraries.filter((itinerary) =>
+  const filteredItineraries = sortedItineraries.filter((itinerary) =>
     itinerary.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  const onItineraryClick = (id : string) => {
+  const onItineraryClick = (id: string) => {
     navigate(`/ItineraryDetails/${id}`);
-  }
+  };
 
   return (
     <Container fluid>
       <Row className="justify-content-center my-4">
         <Col md={6} className="text-center">
-          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>Explore Itineraries</h1>
+          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
+            Explore Itineraries
+          </h1>
         </Col>
       </Row>
 
@@ -117,9 +120,17 @@ export default function ItinerariesPage() {
       </Row>
 
       <Row>
-      <Col md={3} className="border-bottom pb-2 d-flex flex-column align-items-md-center">
-          <Button variant="main-inverse" onClick={handleApplyFilters}>Apply Filters</Button>
-          <FilterBy filterOptions={filtercomponent} onFilterChange={onFilterChange}/>
+        <Col
+          md={3}
+          className="border-bottom pb-2 d-flex flex-column align-items-md-center"
+        >
+          <Button variant="main-inverse" onClick={handleApplyFilters}>
+            Apply Filters
+          </Button>
+          <FilterBy
+            filterOptions={filtercomponent}
+            onFilterChange={onFilterChange}
+          />
         </Col>
 
         <Col md={9} className="p-3">
@@ -138,7 +149,9 @@ export default function ItinerariesPage() {
 
             {/* Display Itinerary Cards */}
             {filteredItineraries.map((itinerary, index) => (
-              <Col key={index} xs={12} className="mb-4 ps-0"> {/* Full-width stacking */}
+              <Col key={index} xs={12} className="mb-4 ps-0">
+                {" "}
+                {/* Full-width stacking */}
                 <ItineraryCard
                   id={itinerary._id}
                   name={itinerary.name}
@@ -157,11 +170,9 @@ export default function ItinerariesPage() {
                   isActive={itinerary.active_flag}
                   tags={itinerary.tags}
                   isTourGuide={false}
-                  onChange={() => console.log(`${itinerary.locations} booking status changed`)}
                   onClick={() => onItineraryClick(itinerary._id)}
                   onFlag={() => getItinerary()}
-                  />
-                 
+                />
               </Col>
             ))}
           </Row>
@@ -170,4 +181,3 @@ export default function ItinerariesPage() {
     </Container>
   );
 }
-

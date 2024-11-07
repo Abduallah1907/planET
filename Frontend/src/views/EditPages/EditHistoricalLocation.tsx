@@ -55,7 +55,7 @@ const HistoricalPlaceForm: React.FC = () => {
     active_flag: true,
   });
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -95,13 +95,13 @@ const HistoricalPlaceForm: React.FC = () => {
         student_price: formData.studentPrice,
         tags: tagsMap,
         active_flag: formData.active_flag,
-      }
+      };
       if (historical_location_id) {
         await HistoricalService.editHistoricalLocation(
           historical_location_id,
           reqData
         );
-        navigate('/MyHistoricalLocations')
+        navigate("/MyHistoricalLocations");
       } else {
         console.error("Historical location ID is undefined");
       }
@@ -141,8 +141,13 @@ const HistoricalPlaceForm: React.FC = () => {
         foreignPrice: locationData.foreign_price,
         studentPrice: locationData.student_price,
         active_flag: locationData.active_flag,
-      })
-      setSelectedTags(Object.entries(locationData.tags).map(([key, value]) => ({ id: key, value: value as string })));
+      });
+      setSelectedTags(
+        Object.entries(locationData.tags).map(([key, value]) => ({
+          id: key,
+          value: value as string,
+        }))
+      );
     } else {
       console.error("Historical location ID is undefined");
     }
@@ -158,7 +163,7 @@ const HistoricalPlaceForm: React.FC = () => {
 
   const handleAddTag = () => {
     if (selectedTags.length === tags.length) {
-      showToast("All tags have been added", ToastTypes.ERROR);
+      // showToast("All tags have been added", ToastTypes.ERROR);//Show error message not API
       return;
     }
     setSelectedTags([...selectedTags, { id: "", value: "" }]);

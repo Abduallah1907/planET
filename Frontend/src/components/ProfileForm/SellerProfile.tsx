@@ -9,6 +9,7 @@ import { FileService } from "../../services/FileService";
 import { isValidObjectId } from "../..//utils/CheckObjectId";
 import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
+import showToastMessage from "../../utils/showToastMessage";
 
 interface FormData {
   firstName: string;
@@ -76,49 +77,6 @@ const SellerProfile: React.FC = () => {
     getSellerData();
   }, [Seller]);
 
-  const OnClick = async () => {
-    if (formData.password && formData.password !== formData.retypePassword) {
-      showToast("Passwords do not match", ToastTypes.ERROR);
-      return; // Exit if passwords don't match
-    }
-    if (formData.mobile.length !== 11) {
-      showToast("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
-      return;
-    }
-
-    // Create the initial update data without the password field
-    const updateData: any = {
-      name: formData.firstName + " " + formData.lastName,
-      email: formData.email,
-      username: formData.username,
-      description: formData.description,
-      phone_number: formData.mobile,
-    };
-
-    // Include password in update data only if both password fields are filled and match
-    if (formData.password) {
-      updateData.password = formData.password;
-    }
-
-    // If a logo is uploaded, handle the file upload and include its ID in update data
-    if (formData.logo) {
-      const file = await FileService.uploadFile(formData.logo);
-      updateData.logo = file.data._id;
-    }
-
-    // Send the update request with the constructed updateData object
-    const seller = await SellerServices.updateSellerServices(
-      Seller.email,
-      updateData
-    );
-
-    if (seller.status === 200) {
-      showToast("Updated successfully", ToastTypes.SUCCESS);
-    } else {
-      showToast("Error in updating", ToastTypes.ERROR);
-    }
-  };
-
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -140,20 +98,45 @@ const SellerProfile: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (
       (formData.password && !formData.retypePassword) ||
       (!formData.password && formData.retypePassword)
     ) {
-      showToast("Please fill out both password fields.", ToastTypes.ERROR);
+      showToastMessage("Please fill out both password fields.", ToastTypes.ERROR);
       return;
     }
 
-    // If both password fields are filled, validate that they match
-
-    // Continue with form submission logic if validation passes
+    if (formData.mobile.length !== 11) {
+      showToastMessage("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      return;
+    }
+    if (formData.logo) {
+      const file = await FileService.uploadFile(formData.logo);
+      const seller = await SellerServices.updateSellerServices(Seller.email, {
+        name: formData.firstName + " " + formData.lastName,
+        email: formData.email,
+        username: formData.username,
+        description: formData.description,
+        phone_number: formData.mobile,
+        password: formData.password,
+        logo: file.data._id,
+      });
+      showToast(seller);
+      //Should i add a toast for the file upload?
+    } else {
+      const seller = await SellerServices.updateSellerServices(Seller.email, {
+        name: formData.firstName + " " + formData.lastName,
+        email: formData.email,
+        username: formData.username,
+        description: formData.description,
+        phone_number: formData.mobile,
+        password: formData.password,
+      });
+      showToast(seller);
+    }
   };
 
   const handleCancel = () => {
@@ -325,7 +308,7 @@ const SellerProfile: React.FC = () => {
           </Row>
 
           <div className="d-flex justify-content-center">
-            <button className="update-btn" onClick={OnClick}>
+            <button className="update-btn">
               Confirm
             </button>
             <button className="cancel-btn" onClick={handleCancel}>

@@ -139,8 +139,7 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({ onSubmit }) => {
     const getLocations = async (keyword: string) => {
         try {
             const response = await SkyscannerService.searchLocations(keyword);
-            const data = response.data;
-            return data;
+            return response;
         } catch (error) {
             console.error(error);
         }

@@ -1067,7 +1067,9 @@ export default class TouristService {
     //go to order and check if the tourist has ordered the product
     const order = await this.orderModel.findOne({
       tourist_id: new Types.ObjectId(tourist_id),
-      "products.items": { $elemMatch: { product_id: new Types.ObjectId(product_id) } },
+      "products.items": {
+        $elemMatch: { product_id: new Types.ObjectId(product_id) },
+      },
       status: "Delivered",
     });
     if (order instanceof Error)
@@ -1118,7 +1120,6 @@ export default class TouristService {
     if (!Types.ObjectId.isValid(ticket_id)) {
       throw new BadRequestError("Invalid ticket id ");
     }
-    console.log(ticket_id)
     const ticket = await this.ticketModel.findById(ticket_id);
     if (ticket instanceof Error)
       throw new InternalServerError("Internal server error");
@@ -1254,7 +1255,6 @@ export default class TouristService {
       tourist_id: tourist_id,
       type: TicketType.Activity,
       time_to_attend: { $lt: Date.now() },
-      cancelled: false,
     });
 
     if (tickets instanceof Error) {
@@ -1329,7 +1329,6 @@ export default class TouristService {
       tourist_id: tourist_id,
       type: TicketType.Activity,
       time_to_attend: { $gte: Date.now() },
-      cancelled: false,
     });
 
     if (tickets instanceof Error) {
@@ -1411,7 +1410,6 @@ export default class TouristService {
       tourist_id: tourist_id,
       type: TicketType.Itinerary,
       time_to_attend: { $lt: Date.now() },
-      cancelled: false,
     });
 
     if (tickets instanceof Error) {
@@ -1486,7 +1484,6 @@ export default class TouristService {
       tourist_id: tourist_id,
       type: TicketType.Itinerary,
       time_to_attend: { $gte: Date.now() },
-      cancelled: false,
     });
 
     if (tickets instanceof Error) {

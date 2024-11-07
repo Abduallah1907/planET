@@ -70,8 +70,11 @@ const AdvertiserCreate: React.FC = () => {
       const updatedValue = type === "checkbox" ? checked : value;
 
       // Ensure special_discount and price do not accept negative values
-      if ((name === "special_discount" || name === "price") && Number(updatedValue) < 0) {
-        showToast("Value cannot be negative", ToastTypes.ERROR);
+      if (
+        (name === "special_discount" || name === "price") &&
+        Number(updatedValue) < 0
+      ) {
+        // showToast("Value cannot be negative", ToastTypes.ERROR);//Show error message not API
         setFormData({
           ...formData,
           [name]: 0,
@@ -88,13 +91,13 @@ const AdvertiserCreate: React.FC = () => {
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue) {
       const tag = inputValue.trim();
-      if (tag && !tags.some(t => t.type === tag)) {
+      if (tag && !tags.some((t) => t.type === tag)) {
         alert("Invalid tag");
         setInputValue("");
         return;
       }
-      const foundTag = tags.find(t => t.type === tag);
-      if (foundTag && !selectedTags.some(t => t._id === foundTag._id)) {
+      const foundTag = tags.find((t) => t.type === tag);
+      if (foundTag && !selectedTags.some((t) => t._id === foundTag._id)) {
         setSelectedTags((prev) => [...prev, foundTag]);
         setInputValue("");
       }
@@ -110,8 +113,8 @@ const AdvertiserCreate: React.FC = () => {
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    const foundTag = tags.find(t => t.type === suggestion);
-    if (foundTag && !selectedTags.some(t => t._id === foundTag._id)) {
+    const foundTag = tags.find((t) => t.type === suggestion);
+    if (foundTag && !selectedTags.some((t) => t._id === foundTag._id)) {
       setSelectedTags((prev) => [...prev, foundTag]);
       setSuggestions((prev) => prev.filter((s) => s !== suggestion));
       setInputValue("");
@@ -124,7 +127,9 @@ const AdvertiserCreate: React.FC = () => {
         tag.type.toLowerCase().includes(inputValue.slice(1).toLowerCase())
       );
       const selectedTagIds = new Set(selectedTags.map((tag) => tag._id));
-      const filteredSuggestions = filteredTags.filter((tag) => !selectedTagIds.has(tag._id));
+      const filteredSuggestions = filteredTags.filter(
+        (tag) => !selectedTagIds.has(tag._id)
+      );
       setSuggestions(filteredSuggestions.map((tag) => tag.type));
     } else {
       setSuggestions([]);
@@ -134,7 +139,7 @@ const AdvertiserCreate: React.FC = () => {
   const getTags = async (page: number) => {
     const tagsData = await AdminService.getTags(page); // Assuming page 1 as the default
     setTags(tagsData.data);
-  }
+  };
 
   const getActivity = async () => {
     try {
@@ -169,7 +174,7 @@ const AdvertiserCreate: React.FC = () => {
           _id: category._id,
           type: category.type,
         };
-      })
+      });
       setCategories(categoryData); // Assuming the response has 'data' containing the categories
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -199,7 +204,6 @@ const AdvertiserCreate: React.FC = () => {
     };
     if (activity_id) {
       await ActivityService.updateActivity(activity_id, productData);
-      showToast("Activity updated successfully", ToastTypes.SUCCESS);
       navigate("/MyActivities");
     } else {
       console.error("Advertiser Id is undefined");
@@ -374,7 +378,11 @@ const AdvertiserCreate: React.FC = () => {
             </Col>
           </Row>
           <Row>
-            <Button variant="main-inverse" className="mt-2 m-auto w-25" onClick={handleAddLocation}>
+            <Button
+              variant="main-inverse"
+              className="mt-2 m-auto w-25"
+              onClick={handleAddLocation}
+            >
               Edit Location
             </Button>
             {/* Modal for Location */}
@@ -393,7 +401,11 @@ const AdvertiserCreate: React.FC = () => {
                 </div>
               </Modal.Body>
               <Modal.Footer>
-                <Button variant="main" className="border-warning-subtle" onClick={handleCloseMapModal}>
+                <Button
+                  variant="main"
+                  className="border-warning-subtle"
+                  onClick={handleCloseMapModal}
+                >
                   Close
                 </Button>
                 <Button variant="main-inverse" onClick={handleCloseMapModal}>
@@ -401,9 +413,8 @@ const AdvertiserCreate: React.FC = () => {
                 </Button>
               </Modal.Footer>
             </Modal>
-
           </Row>
-         
+
           <Row>
             <Row>
               <Col>

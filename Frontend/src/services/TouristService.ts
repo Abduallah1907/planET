@@ -1,5 +1,6 @@
 import axiosInstance from "../utils/axiosInstance";
 import axios from "axios";
+import showToast from "../../src/utils/showToast";
 
 class TouristService {
   public static getTouristByemail = async (email: string) => {
@@ -20,6 +21,9 @@ class TouristService {
         `/tourist/updateTourist/${email}`,
         advertiserData
       );
+      if (response.status === 200) {
+        showToast(response.data);
+      }
       return response.data;
     } catch (error) {
       throw error;
@@ -32,6 +36,9 @@ class TouristService {
         `/tourist/rateAndCommentActivity/${id}`,
         data
       );
+      if (response.status === 201) {
+        showToast(response.data);
+      }
       return response.data;
     } catch (error) {
       throw error;
@@ -44,6 +51,9 @@ class TouristService {
         `/tourist/rateAndCommentItinerary/${id}`,
         data
       );
+      if (response.status === 201) {
+        showToast(response.data);
+      }
       return response.data;
     } catch (error) {
       throw error;
@@ -56,6 +66,9 @@ class TouristService {
         `/tourist/rateAndCommentTourGuide/${id}`,
         data
       );
+      if (response.status === 201) {
+        showToast(response.data);
+      }
       return response.data;
     } catch (error) {
       throw error;
@@ -64,7 +77,13 @@ class TouristService {
 
   public static redeemPoints = async (email: string, points: number) => {
     try {
-      const response = await axiosInstance.put(`/tourist/redeemPoints/`, { email, points });
+      const response = await axiosInstance.put(`/tourist/redeemPoints/`, {
+        email,
+        points,
+      });
+      if (response.status === 200) {
+        showToast(response.data);
+      }
       return response.data;
     } catch (error) {
       throw error;
@@ -77,6 +96,10 @@ class TouristService {
         `/tourist/fileComplaint/${id}`,
         data
       );
+      if (response.status === 201) {
+        showToast(response.data);
+      }
+
       return response.data;
     } catch (error) {
       throw error;
@@ -85,9 +108,10 @@ class TouristService {
 
   public static checkActivity = async (id: string, activity_id: string) => {
     try {
-      const response = await axiosInstance.get(
-        `/tourist/checkActivity/${id}`, { params: { activity_id } }
-      );
+      const response = await axiosInstance.get(`/tourist/checkActivity/${id}`, {
+        params: { activity_id },
+      });
+
       return response.data;
     } catch (error) {
       throw error;
@@ -97,8 +121,10 @@ class TouristService {
   public static checkItinerary = async (id: string, itinerary_id: string) => {
     try {
       const response = await axiosInstance.get(
-        `/tourist/checkItinerary/${id}`, { params: { itinerary_id } }
+        `/tourist/checkItinerary/${id}`,
+        { params: { itinerary_id } }
       );
+
       return response.data;
     } catch (error) {
       throw error;
@@ -110,8 +136,10 @@ class TouristService {
   ) => {
     try {
       const response = await axiosInstance.get(
-        `/tourist/checkTourGuide/${id}`, { params: { tour_guide_email } }
+        `/tourist/checkTourGuide/${id}`,
+        { params: { tour_guide_email } }
       );
+
       return response.data;
     } catch (error) {
       throw error;
@@ -121,7 +149,7 @@ class TouristService {
   public static viewMyComplaints = async (id: string) => {
     try {
       const response = await axiosInstance.get(`/tourist/viewComplaints/${id}`);
-      console.log(response.data);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -130,114 +158,177 @@ class TouristService {
 
   public static bookActivity = async (email: string, activity_id: string) => {
     try {
-      const response = await axiosInstance.post(`/tourist/bookActivity`, { email, activity_id });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  };
-  public static bookItinerary = async (email: string, itinerary_id: string, time_to_attend: string) => {
-    try {
-      const response = await axiosInstance.post(`/tourist/bookItinerary`, { email, itinerary_id, time_to_attend });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  };
+      const response = await axiosInstance.post(`/tourist/bookActivity`, {
+        email,
+        activity_id,
+      });
+      if (response.status === 201) {
+        showToast(response.data);
+      }
 
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+  public static bookItinerary = async (
+    email: string,
+    itinerary_id: string,
+    time_to_attend: string
+  ) => {
+    try {
+      const response = await axiosInstance.post(`/tourist/bookItinerary`, {
+        email,
+        itinerary_id,
+        time_to_attend,
+      });
+      if (response.status === 201) {
+        showToast(response.data);
+      }
+      showToast(response.data);
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
 
   public static deleteTourist = async (email: string) => {
     try {
-        const response = await axiosInstance.delete(
-            `/tourist/deleteTouristAccountRequest/${email}`
-        );
+      const response = await axiosInstance.delete(
+        `/tourist/deleteTouristAccountRequest/${email}`
+      );
+      if (response.status === 200) {
+        showToast(response.data);
+      }
 
-        // Check if the response status indicates success
-        if (response.status !== 200 && response.status !== 204) {
-            throw response; // Rethrow the response directly without a custom error message
-        }
-
-        return response.data;
+      return response.data;
     } catch (error) {
         // Rethrow the error to let the calling code handle it with the toast
         throw error;
     }
-}
-
+  };
   public static getUpcomingActivityBookings = async (email: string) => {
     try {
-      const response = await axiosInstance.get(`/tourist/getUpcomingActivityBookings/${email}`);
+      const response = await axiosInstance.get(
+        `/tourist/getUpcomingActivityBookings/${email}`
+      );
+
       return response.data;
     } catch (error) {
       throw error;
     }
-  }
+  };
   public static getPastActivityBookings = async (email: string) => {
     try {
-      const response = await axiosInstance.get(`/tourist/getPastActivityBookings/${email}`);
+      const response = await axiosInstance.get(
+        `/tourist/getPastActivityBookings/${email}`
+      );
+
       return response.data;
     } catch (error) {
       throw error;
     }
-  }
+  };
   public static getUpcomingItineraryBookings = async (email: string) => {
     try {
-      const response = await axiosInstance.get(`/tourist/getUpcomingItineraryBookings/${email}`);
+      const response = await axiosInstance.get(
+        `/tourist/getUpcomingItineraryBookings/${email}`
+      );
+
       return response.data;
     } catch (error) {
       throw error;
     }
-  }
+  };
   public static getPastItineraryBookings = async (email: string) => {
     try {
-      const response = await axiosInstance.get(`/tourist/getPastItineraryBookings/${email}`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  }
+      const response = await axiosInstance.get(
+        `/tourist/getPastItineraryBookings/${email}`
+      );
 
-  public static cancelTicket = async (tourist_id: string, ticket_id: string) => {
-    try {
-      const response = await axiosInstance.put(`/tourist/cancelTicket/${tourist_id}?ticket_id=${ticket_id}`);
       return response.data;
     } catch (error) {
       throw error;
     }
-  }
+  };
+
+  public static cancelTicket = async (
+    tourist_id: string,
+    ticket_id: string
+  ) => {
+    try {
+      const response = await axiosInstance.put(
+        `/tourist/cancelTicket/${tourist_id}?ticket_id=${ticket_id}`
+      );
+      if (response.status === 200) {
+        showToast(response.data);
+      }
+      showToast(response.data);
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
   public static getMyTourGuides = async (tourist_id: string) => {
     try {
-      const response = await axiosInstance.get(`/tourist/getMyTourGuides/${tourist_id}`);
+      const response = await axiosInstance.get(
+        `/tourist/getMyTourGuides/${tourist_id}`
+      );
+
       return response.data;
     } catch (error) {
       throw error;
     }
-  }
+  };
 
   public static createOrder = async (orderData: any) => {
     try {
-      const response = await axiosInstance.post(`/tourist/createOrder/`, orderData);
+      const response = await axiosInstance.post(
+        `/tourist/createOrder/`,
+        orderData
+      );
+      if (response.status === 201) {
+        showToast(response.data);
+      }
+
       return response.data;
     } catch (error) {
       throw error;
     }
-  }
+  };
   public static getPastOrders = async (email: string) => {
     try {
-      const response = await axiosInstance.get(`/tourist/getPastOrders/${email}`);
+      const response = await axiosInstance.get(
+        `/tourist/getPastOrders/${email}`
+      );
+
       return response.data;
     } catch (error) {
       throw error;
     }
-  }
-  public static rateAndCommentProduct = async (tourist_id: string,product_id: string, comment: string, rating: number) => {
+  };
+  public static rateAndCommentProduct = async (
+    tourist_id: string,
+    product_id: string,
+    comment: string,
+    rating: number
+  ) => {
     try {
-      const response = await axiosInstance.post(`/tourist/rateAndCommentProduct/${tourist_id}`, {product_id, comment, rating });
+      const response = await axiosInstance.post(
+        `/tourist/rateAndCommentProduct/${tourist_id}`,
+        { product_id, comment, rating }
+      );
+      if (response.status === 201) {
+        showToast(response.data);
+      }
+
       return response.data;
     } catch (error) {
       throw error;
     }
-  }
+  };
 }
 
 export { TouristService };

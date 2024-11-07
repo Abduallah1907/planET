@@ -9,9 +9,8 @@ import jobOptionsData from "../../utils/jobOptions.json";
 import ButtonWide from "../ButtonWide/ButtonWide";
 import AuthService from "../../services/authService";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
+import showToastMessage from "../../utils/showToastMessage";
 
 interface NationalityOption {
   value: string;
@@ -104,7 +103,7 @@ export default function TouristForm() {
       return;
     }
     if (!validateMobileNumber(mobileNumber)) {
-      showToast("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      showToastMessage("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
       return;
     }
 

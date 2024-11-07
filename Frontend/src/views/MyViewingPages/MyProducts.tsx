@@ -198,9 +198,6 @@ export default function ProductsPage() {
                   }
                   image={product.image}
                   isActiveArchive={product.archieve_flag}
-                  onChange={() =>
-                    console.log(`${product.name} booking status changed`)
-                  }
                   isSeller={true}
                   isAdmin={true}
                 />

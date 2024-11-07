@@ -3,8 +3,6 @@ import CustomFormGroup from "../../components/FormGroup/FormGroup";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { useAppSelector } from "../../store/hooks";
 import { AdminService } from "../../services/AdminService";
-import showToast from "../../utils/showToast";
-import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   changePassword: string;
@@ -40,7 +38,6 @@ const ChangePasswordForm: React.FC = () => {
     const response = await AdminService.changePass(Admin.email, {
       password: formData.changePassword,
     });
-    showToast(response.message, ToastTypes.SUCCESS);
   };
 
   const handleCancel = () => {

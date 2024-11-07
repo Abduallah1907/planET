@@ -29,7 +29,6 @@ export class UserController {
   public async forgetPassword(req: any, res: any) {
     const userService: UserService = Container.get(UserService);
     const { email } = req.params;
-    console.log("Email controller", email);
     const user = await userService.forgetPasswordService(email);
     res.status(user.status).json(user);
   }
