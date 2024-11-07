@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal, Form, Container } from 'react-bootstrap';
 import TagService from '../../services/TagService';
+import { FaTrashAlt } from 'react-icons/fa';
 
 const TagsTable: React.FC = () => {
     const [tags, setTags] = useState([]);
@@ -98,8 +99,14 @@ const TagsTable: React.FC = () => {
                             <td>{tag._id}</td>
                             <td>{tag.type}</td>
                             <td>
-                                <Button variant="warning" onClick={() => handleShowUpdateModal(tag)}>Update</Button>{' '}
-                                <Button variant="danger" onClick={() => handleDelete(tag.type)}>Delete</Button>
+                                <Button variant="main-inverse" onClick={() => handleShowUpdateModal(tag)}>Update</Button>{' '}
+                                <Button variant="main-inverse" >
+                                <FaTrashAlt
+                                     onClick={() => handleDelete(tag.type)}
+                                >
+                                Delete
+                                </FaTrashAlt>
+                                </Button>
                             </td>
                         </tr>
                     ))}
@@ -125,10 +132,10 @@ const TagsTable: React.FC = () => {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseUpdateModal}>
+                    <Button variant="main" className="border-warning-subtle" onClick={handleCloseUpdateModal}>
                         Close
                     </Button>
-                    <Button variant="success" onClick={handleSaveUpdateChanges}>
+                    <Button variant="main-inverse" onClick={handleSaveUpdateChanges}>
                         Save Changes
                     </Button>
                 </Modal.Footer>
@@ -153,10 +160,10 @@ const TagsTable: React.FC = () => {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseCreateModal}>
+                    <Button variant="main" className="border-warning-subtle" onClick={handleCloseCreateModal}>
                         Close
                     </Button>
-                    <Button variant="success" onClick={handleSaveCreateChanges}>
+                    <Button variant="main-inverse" onClick={handleSaveCreateChanges}>
                         Save Changes
                     </Button>
                 </Modal.Footer>
@@ -171,10 +178,10 @@ const TagsTable: React.FC = () => {
                     Are you sure you want to delete this Tag?
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={cancelDelete}>
+                    <Button variant="main" className="border-warning-subtle" onClick={cancelDelete}>
                         Cancel
                     </Button>
-                    <Button variant="danger" onClick={confirmDelete}>
+                    <Button variant="main-inverse" onClick={confirmDelete}>
                         Confirm
                     </Button>
                 </Modal.Footer>

@@ -271,14 +271,15 @@ const UsersTable = () => {
             Documents for {selectedUser}
             <div className="mt-2">
               <Button
-                variant="success"
+                variant="main-inverse"
                 className="me-2"
                 onClick={() => handleAccept(selectedUser)}
               >
                 Accept
               </Button>
               <Button
-                variant="danger"
+                 variant="main" 
+                 className="border-warning-subtle"
                 onClick={() => handleReject(selectedUser)}
               >
                 Reject
