@@ -77,34 +77,45 @@ const SellerProfile: React.FC = () => {
   }, [Seller]);
 
   const OnClick = async () => {
+    if (formData.password && formData.password !== formData.retypePassword) {
+      showToast("Passwords do not match", ToastTypes.ERROR);
+      return; // Exit if passwords don't match
+    }
+    if (formData.mobile.length !== 11) {
+      showToast("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      return;
+    }
+
+    // Create the initial update data without the password field
+    const updateData: any = {
+      name: formData.firstName + " " + formData.lastName,
+      email: formData.email,
+      username: formData.username,
+      description: formData.description,
+      phone_number: formData.mobile,
+    };
+
+    // Include password in update data only if both password fields are filled and match
+    if (formData.password) {
+      updateData.password = formData.password;
+    }
+
+    // If a logo is uploaded, handle the file upload and include its ID in update data
     if (formData.logo) {
       const file = await FileService.uploadFile(formData.logo);
-      const seller = await SellerServices.updateSellerServices(Seller.email, {
-        name: formData.firstName + " " + formData.lastName,
-        email: formData.email,
-        username: formData.username,
-        description: formData.description,
-        phone_number: formData.mobile,
-        password: formData.password,
-        logo: file.data._id,
-      });
-      if (seller.status === 200) {
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      } else {
-        showToast("Error in updating", ToastTypes.ERROR);
-      }
+      updateData.logo = file.data._id;
+    }
+
+    // Send the update request with the constructed updateData object
+    const seller = await SellerServices.updateSellerServices(
+      Seller.email,
+      updateData
+    );
+
+    if (seller.status === 200) {
+      showToast("Updated successfully", ToastTypes.SUCCESS);
     } else {
-      const seller = await SellerServices.updateSellerServices(Seller.email, {
-        name: formData.firstName + " " + formData.lastName,
-        email: formData.email,
-        username: formData.username,
-        description: formData.description,
-        phone_number: formData.mobile,
-        password: formData.password,
-      });
-      if (seller.status === 200)
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      else showToast("Error in updating", ToastTypes.ERROR);
+      showToast("Error in updating", ToastTypes.ERROR);
     }
   };
 
@@ -114,6 +125,12 @@ const SellerProfile: React.FC = () => {
     >
   ) => {
     const { name, value } = e.target;
+    if (name === "mobile") {
+      // Use a regular expression to allow only numbers
+      if (/[^0-9]/.test(value)) {
+        return; // Prevent updating the state if non-numeric characters are entered
+      }
+    }
     setFormData({ ...formData, [name]: value });
   };
 
@@ -125,22 +142,18 @@ const SellerProfile: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (
       (formData.password && !formData.retypePassword) ||
       (!formData.password && formData.retypePassword)
     ) {
-      alert("Please fill out both password fields.");
+      showToast("Please fill out both password fields.", ToastTypes.ERROR);
       return;
     }
 
     // If both password fields are filled, validate that they match
-    if (formData.password && formData.retypePassword) {
-      if (formData.password !== formData.retypePassword) {
-        alert("Passwords don't match!");
-        return;
-      }
-    }
-    // Handle form submission, including the logo file
+
+    // Continue with form submission logic if validation passes
   };
 
   const handleCancel = () => {
@@ -236,7 +249,7 @@ const SellerProfile: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="Chnage your password"
+                label="change your password"
                 type="password"
                 placeholder="Change your password"
                 id="password"
@@ -289,6 +302,7 @@ const SellerProfile: React.FC = () => {
                 required={true}
                 value={formData.mobile} // Correctly referencing description
                 onChange={handleChange}
+                pattern="^[0-9]{11}$"
               />
             </Col>
           </Row>

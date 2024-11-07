@@ -25,12 +25,22 @@ class TourGuideServices {
   };
   public static deleteTourGuide = async (email: string) => {
     try {
-      const response = await axiosInstance.delete(`/tourGuide/deleteTourGuideAccountRequest/${email}`);
-      return response.data;
+        const response = await axiosInstance.delete(
+            `/tourGuide/deleteTourGuideAccountRequest/${email}`
+        );
+
+        // Check if the response status indicates success
+        if (response.status !== 200 && response.status !== 204) {
+            throw response; // Rethrow the response directly for centralized error handling
+        }
+
+        return response.data;
     } catch (error) {
-      throw error;
+        // Rethrow the error to let the calling function handle it with the toast
+        throw error;
     }
-  }
+}
+
 
   
 }

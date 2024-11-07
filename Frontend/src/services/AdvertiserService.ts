@@ -32,13 +32,22 @@ class AdvertiserService {
 
   public static deleteAdvertiser = async (email: string) => {
     try {
-      const response = await axiosInstance.delete(
-        `/advertiser/deleteAdvertiserAccountRequest/${email}`);
-      return response.data;
+        const response = await axiosInstance.delete(
+            `/advertiser/deleteAdvertiserAccountRequest/${email}`
+        );
+
+        // Check if the response status indicates success
+        if (response.status !== 200 && response.status !== 204) {
+            throw response; // Rethrow the response directly without a custom error message
+        }
+
+        return response.data;
     } catch (error) {
-      throw error;
+        // Rethrow the error to let the calling code handle it
+        throw error;
     }
-  }
+}
+
 }
 
 export { AdvertiserService };

@@ -16,6 +16,8 @@ interface InputData {
   accept?: string;
   multiple?: boolean;
   options?: string[];
+  min?: string;
+  pattern?: string;
 }
 
 function CustomFormGroup({
@@ -31,6 +33,8 @@ function CustomFormGroup({
   accept,
   multiple,
   options,
+  min,
+  pattern,
 }: InputData) {
   return (
     <Form.Group className="form-group" id={id}>
@@ -43,6 +47,8 @@ function CustomFormGroup({
           onChange={onChange}
           name={name}
           value={value}
+          min={min}
+          pattern={pattern}
           className={
             disabled
               ? "disabled-input custom-form-control"

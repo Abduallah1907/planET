@@ -145,6 +145,12 @@ const ProfileFormGuide: React.FC = () => {
         return;
       }
     }
+    if (name === "mobile") {
+      // Use a regular expression to allow only numbers
+      if (/[^0-9]/.test(value)) {
+        return; // Prevent updating the state if non-numeric characters are entered
+      }
+    }
     setFormData({ ...formData, [name]: value });
   };
 
@@ -208,63 +214,75 @@ const ProfileFormGuide: React.FC = () => {
     setCreatedWork((prev) => prev.filter((_, i) => i !== index));
   };
   const OnClick = async () => {
+    // Password validation
+    if (
+      (formData.changePassword && !formData.retypePassword) ||
+      (!formData.changePassword && formData.retypePassword)
+    ) {
+      showToast("Please fill out both password fields.", ToastTypes.ERROR);
+      return;
+    }
+    if (formData.mobile.length !== 11) {
+      showToast("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      return;
+    }
+
+    if (
+      formData.changePassword &&
+      formData.changePassword !== formData.retypePassword
+    ) {
+      showToast("Passwords do not match", ToastTypes.ERROR);
+      return;
+    }
+
+    // Create the update data object without the password field initially
+    const updateData: any = {
+      name: `${formData.firstName} ${formData.lastName}`,
+      newEmail: formData.email,
+      phone_number: formData.mobile,
+      years_of_experience: formData.yearsOfExperience,
+      createdPreviousWork: createdWork,
+      updatedPreviousWork: editedWork,
+      deletedPreviousWork: deletedWork,
+    };
+
+    // Add password if it has been validated
+    if (formData.changePassword) {
+      updateData.password = formData.changePassword;
+    }
+
+    // If a logo file is present, upload it and add the logo ID to the update data
     if (formData.logo) {
       const file = await FileService.uploadFile(formData.logo);
-      const TourG = await TourGuideServices.updateTourGuide(TourGuide.email, {
-        name: `${formData.firstName} ${formData.lastName}`,
-        newEmail: formData.email,
-        phone_number: formData.mobile,
-        logo: file.data._id,
-        years_of_experience: formData.yearsOfExperience,
-        password: formData.changePassword,
 
-        createdPreviousWork: createdWork,
-        updatedPreviousWork: editedWork,
-        deletedPreviousWork: deletedWork,
-      });
-      if (TourG.status === 200) {
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      } else {
-        showToast("Error in updating", ToastTypes.ERROR);
-      }
+      updateData.logo = file.data._id;
+    }
+
+    // Send the update request with the constructed updateData object
+    const TourG = await TourGuideServices.updateTourGuide(
+      TourGuide.email,
+      updateData
+    );
+
+    // Show success or error toast based on response
+    if (TourG.status === 200) {
+      showToast("Updated successfully", ToastTypes.SUCCESS);
     } else {
-      const TourG = await TourGuideServices.updateTourGuide(TourGuide.email, {
-        name: `${formData.firstName} ${formData.lastName}`,
-        newEmail: formData.email,
-        phone_number: formData.mobile,
-        years_of_experience: formData.yearsOfExperience,
-        password: formData.changePassword,
-
-        createdPreviousWork: createdWork,
-        updatedPreviousWork: editedWork,
-        deletedPreviousWork: deletedWork,
-      });
-      if (TourG.status === 200) {
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      } else {
-        showToast("Error in updating", ToastTypes.ERROR);
-      }
+      showToast("Error in updating", ToastTypes.ERROR);
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Password validation as part of form submission
     if (
       (formData.changePassword && !formData.retypePassword) ||
       (!formData.changePassword && formData.retypePassword)
     ) {
-      alert("Please fill out both password fields.");
+      showToast("Please fill out both password fields.", ToastTypes.ERROR);
       return;
     }
-
-    // If both password fields are filled, validate that they match
-    if (formData.changePassword && formData.retypePassword) {
-      if (formData.changePassword !== formData.retypePassword) {
-        alert("Passwords don't match!");
-        return;
-      }
-    }
-    // Handle form submission, including the logo file and about text
   };
 
   const handleCancel = () => {
@@ -419,6 +437,7 @@ const ProfileFormGuide: React.FC = () => {
                 value={formData.mobile}
                 onChange={handleChange}
                 disabled={false}
+                pattern="^[0-9]{11}$"
               />
             </Col>
           </Row>

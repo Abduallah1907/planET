@@ -45,6 +45,12 @@ export default function StakeholderForm() {
     >
   ) => {
     const { name, value } = e.target;
+    if (name === "phone_number") {
+      // Use a regular expression to allow only numbers
+      if (/[^0-9]/.test(value)) {
+        return; // Prevent updating the state if non-numeric characters are entered
+      }
+    }
     setStakeData({ ...StakeData, [name]: value });
   };
 
@@ -57,9 +63,25 @@ export default function StakeholderForm() {
       }));
     }
   };
+  function validateMobileNumber(mobileNumber: string): boolean {
+    const mobileNumberRegex =
+      /^\+?\d{1,3}[-\s.]?\(?\d{1,3}\)?[-\s.]?\d{1,4}[-\s.]?\d{1,9}$/;
+    return mobileNumberRegex.test(mobileNumber);
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const mobileNumber = StakeData.phone_number;
+    if (mobileNumber && mobileNumber.length !== 11) {
+      showToast("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      return;
+    }
+
+    // Validate the mobile number format (additional checks can be added here)
+    if (mobileNumber && !validateMobileNumber(mobileNumber)) {
+      showToast("Invalid mobile number format.", ToastTypes.ERROR);
+      return;
+    }
 
     if (StakeData.password !== StakeData.confirmPassword) {
       alert("Passwords don't match!");
@@ -223,6 +245,7 @@ export default function StakeholderForm() {
             value={StakeData.phone_number}
             onChange={handleChange}
             name={"phone_number"}
+            pattern="^[0-9]{11}$"
           />
         </Col>
       </Row>
