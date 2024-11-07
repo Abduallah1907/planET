@@ -488,9 +488,6 @@ export default class AdminService {
         populate: { path: "user_id", select: "name" },
         select: "tourist_id",
       })
-      .limit(10)
-      .skip((page - 1) * 10);
-    console.log(complaints[0].tourist_id);
     const complaintsOutput: IComplaintAdminViewDTO[] = complaints.map(
       (complaint) => ({
         date: complaint.date,
