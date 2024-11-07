@@ -90,42 +90,57 @@ const Advertiser: React.FC = () => {
   }, [Advertiser]);
 
   const OnClick = async () => {
+    // Password validation
+    if (
+      (formData.changePassword && !formData.retypePassword) ||
+      (!formData.changePassword && formData.retypePassword)
+    ) {
+      showToast("Please fill out both password fields.", ToastTypes.ERROR);
+      return;
+    }
+
+    if (
+      formData.changePassword &&
+      formData.changePassword !== formData.retypePassword
+    ) {
+      showToast("Passwords do not match", ToastTypes.ERROR);
+      return;
+    }
+
+    // Construct the initial update data
+    const updateData: any = {
+      name: `${formData.firstName} ${formData.lastName}`,
+      username: formData.username,
+      newEmail: formData.email,
+      phone_number: formData.mobile,
+      about: formData.about,
+      hotline: formData.hotline,
+      company_profile: formData.companyProfile,
+      link_to_website: formData.linktoweb,
+    };
+
+    // Add password if it passed validation
+    if (formData.changePassword) {
+      updateData.password = formData.changePassword;
+    }
+
+    // Handle logo upload if logo exists
     if (formData.logo) {
       const file = await FileService.uploadFile(formData.logo);
-      const Adv = await AdvertiserService.updateAdvertiser(Advertiser.email, {
-        name: formData.firstName + " " + formData.lastName,
-        username: formData.username,
-        newEmail: formData.email,
-        password: formData.changePassword,
-        phone_number: formData.mobile,
-        about: formData.about,
-        hotline: formData.hotline,
-        company_profile: formData.companyProfile,
-        link_to_website: formData.linktoweb,
-        logo: file.data._id,
-      });
-      if (Adv.status === 200) {
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      } else {
-        showToast("Error in updating", ToastTypes.ERROR);
-      }
+      updateData.logo = file.data._id;
+    }
+
+    // Send the update request with the constructed updateData object
+    const Adv = await AdvertiserService.updateAdvertiser(
+      Advertiser.email,
+      updateData
+    );
+
+    // Show success or error toast based on response
+    if (Adv.status === 200) {
+      showToast("Updated successfully", ToastTypes.SUCCESS);
     } else {
-      const Adv = await AdvertiserService.updateAdvertiser(Advertiser.email, {
-        name: formData.firstName + " " + formData.lastName,
-        username: formData.username,
-        newEmail: formData.email,
-        password: formData.changePassword,
-        phone_number: formData.mobile,
-        about: formData.about,
-        hotline: formData.hotline,
-        company_profile: formData.companyProfile,
-        link_to_website: formData.linktoweb,
-      });
-      if (Adv.status === 200) {
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      } else {
-        showToast("Error in updating", ToastTypes.ERROR);
-      }
+      showToast("Error in updating", ToastTypes.ERROR);
     }
   };
 
@@ -146,23 +161,15 @@ const Advertiser: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Check if one password field is filled, require both to be filled
+
+    // Password validation as part of form submission
     if (
       (formData.changePassword && !formData.retypePassword) ||
       (!formData.changePassword && formData.retypePassword)
     ) {
-      alert("Please fill out both password fields.");
+      showToast("Please fill out both password fields.", ToastTypes.ERROR);
       return;
     }
-
-    // If both password fields are filled, validate that they match
-    if (formData.changePassword && formData.retypePassword) {
-      if (formData.changePassword !== formData.retypePassword) {
-        alert("Passwords don't match!");
-        return;
-      }
-    }
-    // Handle form submission, including the logo file and about text
   };
 
   const handleCancel = () => {

@@ -58,21 +58,18 @@ const ProfileForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (
       (formData.password && !formData.retypePassword) ||
       (!formData.password && formData.retypePassword)
     ) {
-      alert("Please fill out both password fields.");
+      showToast("Please fill out both password fields.", ToastTypes.ERROR);
       return;
     }
 
     // If both password fields are filled, validate that they match
-    if (formData.password && formData.retypePassword) {
-      if (formData.password !== formData.retypePassword) {
-        alert("Passwords don't match!");
-        return;
-      }
-    }
+
+    // Continue with form submission logic if validation passes
   };
   const Tourist = useAppSelector((state: { user: any }) => state.user);
 
@@ -91,19 +88,39 @@ const ProfileForm: React.FC = () => {
     });
   }, [Tourist]); // Dependency array to rerun this effect when Tourist data changes
   const OnClick = async () => {
-    const Tourist1 = await TouristService.updateTourist(Tourist.email, {
+    // Check if passwords are both filled and match
+    if (formData.password && formData.password !== formData.retypePassword) {
+      showToast("Passwords do not match", ToastTypes.ERROR);
+      return; // Exit if passwords don't match
+    }
+
+    // Construct update data
+    const updateData: any = {
       name: formData.firstName + " " + formData.lastName,
       newEmail: formData.email,
-      password: formData.password,
       job: formData.profession,
       nation: formData.nationality,
-    });
+    };
+
+    // Only add password to update data if it's filled and matches
+    if (formData.password) {
+      updateData.password = formData.password;
+    }
+
+    // Send the update request with the constructed updateData object
+    const Tourist1 = await TouristService.updateTourist(
+      Tourist.email,
+      updateData
+    );
+
+    // Display toast based on the update response
     if (Tourist1.status === 200) {
       showToast("Updated successfully", ToastTypes.SUCCESS);
     } else {
       showToast("Error in updating", ToastTypes.ERROR);
     }
   };
+
   const handleCancel = () => {
     setFormData({
       firstName: "",
