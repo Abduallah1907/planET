@@ -70,7 +70,7 @@ import MyBookings from "./views/MyActivityBookings";
 import MyItineraryBookings from "./views/MyItineraryBookings";
 import TourGuidesTable from "./views/Tables/TourGuidesTable";
 import RecentOrders from "./views/RecentOrders";
-import ProductPayemnt from "./views/ProductPayemnt";
+import ProductPayemnt from "./views/BookingPages/ProductPayemnt";
 import FlightBooking from "./views/BookingPages/FlightBooking";
 
 const App: React.FC = () => {

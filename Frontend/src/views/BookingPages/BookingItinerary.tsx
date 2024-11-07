@@ -10,9 +10,8 @@ import { setWalletBalance as setWalletBalanceAction } from '../../store/userSlic
 import { ItineraryService } from '../../services/ItineraryService';
 // Import Visa and MasterCard icons
 import { FaCcVisa, FaCcMastercard } from 'react-icons/fa';
-import 'react-toastify/dist/ReactToastify.css';
-import showToast from '../utils/showToast';
-import { ToastTypes } from '../utils/toastTypes';
+import showToast from '../../utils/showToast';
+import { ToastTypes } from '../../utils/toastTypes';
 
 
 const BookingItinerary: React.FC = () => {

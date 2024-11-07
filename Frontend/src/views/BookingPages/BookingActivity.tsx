@@ -5,11 +5,11 @@ import { FaWallet, FaCreditCard, FaCcVisa, FaCcMastercard } from 'react-icons/fa
 import { ActivityService } from '../../services/ActivityService';
 import { IActivity } from '../../types/IActivity';
 import './bookingPage.css';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { TouristService } from '../services/TouristService';
-import { setWalletBalance as setWalletBalanceAction } from '../store/userSlice';
-import showToast from '../utils/showToast';
-import { ToastTypes } from '../utils/toastTypes';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { TouristService } from '../../services/TouristService';
+import { setWalletBalance as setWalletBalanceAction } from '../../store/userSlice';
+import showToast from '../../utils/showToast';
+import { ToastTypes } from '../../utils/toastTypes';
 
 interface BookingPageProps {
   email: string;

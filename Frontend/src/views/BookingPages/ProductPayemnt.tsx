@@ -3,12 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Button, Form, Card, Table } from 'react-bootstrap';
 import { FaWallet, FaCreditCard, FaCcVisa, FaCcMastercard } from 'react-icons/fa';
 import './bookingPage.css';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { TouristService } from '../services/TouristService';
-import { setWalletBalance as setWalletBalanceAction } from '../store/userSlice';
-import showToast from '../utils/showToast';
-import { ToastTypes } from '../utils/toastTypes';
-import { clearCart } from '../store/cartSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { TouristService } from '../../services/TouristService';
+import { setWalletBalance as setWalletBalanceAction } from '../../store/userSlice';
+import showToast from '../../utils/showToast';
+import { ToastTypes } from '../../utils/toastTypes';
+import { clearCart } from '../../store/cartSlice';
 
 
 const ProductPayemnt: React.FC = () => {

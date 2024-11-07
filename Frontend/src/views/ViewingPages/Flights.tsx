@@ -13,7 +13,6 @@ export default function FlightsPage() {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { currency } = useAppContext();
-    const [searchQuery, setSearchQuery] = useState("");
     const [filtercomponent, setFilterComponents] = useState({
         Price: {
             type: "slider",
@@ -21,20 +20,11 @@ export default function FlightsPage() {
             max: 0
         }
     });
-    const [sortBy, setSortBy] = useState("topPicks"); // State for sort by selection
     const [filter, setFilter] = useState({
         Price: `${filtercomponent.Price.min}-${filtercomponent.Price.max}`
     });
     const [flights, setFlights] = useState([]);
     const [filteredFlights, setFilteredFlights] = useState<any[]>([]);
-
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value);
-    };
-
-    const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSortBy(e.target.value);
-    };
 
     const handleFilterChange = (filterData: { [key: string]: any }) => {
         setFilter({
@@ -43,15 +33,11 @@ export default function FlightsPage() {
         });
     };
 
-    const handleFilterSubmit = () => {
-        setFilter(filter);
-    };
-
     const handleSearchSubmit = async (data: object) => {
         try {
             data = { ...data, currencyCode: currency };
             const flightData = await AmadeusService.searchFlights(data);
-            if (flightData.status == 500) {
+            if (flightData.status === 500) {
                 throw new Error("Internal Server Error");
             }
             if (flightData.data && Array.isArray(flightData.data)) { // Verify response is an array
