@@ -372,7 +372,11 @@ export default class AdminService {
   }
 
   public async acceptUserService(email: string): Promise<any> {
-    const user = await this.userModel.findOne({ email: email });
+    const user = await this.userModel.findOneAndUpdate(
+      { email: email },
+      { status: UserStatus.APPROVED },
+      { new: true }
+    );
 
     if (user instanceof Error)
       throw new InternalServerError("Internal server error");
@@ -409,19 +413,21 @@ export default class AdminService {
   }
 
   public async rejectUserService(email: string): Promise<any> {
-    const user = await this.userModel.findOne({ email: email });
-
-    if (!user) throw new NotFoundError("User not found");
-
+    const user = await this.userModel.findOneAndUpdate(
+      { email: email },
+      { status: UserStatus.REJECTED },
+      { new: true }
+    );
     if (user instanceof Error)
       throw new InternalServerError("Internal server error");
 
-    if (user.status !== UserStatus.WAITING_FOR_APPROVAL) {
+    if (!user) throw new NotFoundError("User not found");
+
+    if (user.status != UserStatus.WAITING_FOR_APPROVAL) {
       throw new BadRequestError(
         "User must be waiting for approval to be accepted"
       );
     }
-
     if (
       user.role !== UserRoles.Seller &&
       user.role !== UserRoles.TourGuide &&
@@ -481,9 +487,10 @@ export default class AdminService {
         path: "tourist_id",
         populate: { path: "user_id", select: "name" },
         select: "tourist_id",
-      });
-    // .limit(10)
-    // .skip((page - 1) * 10);
+      })
+      .limit(10)
+      .skip((page - 1) * 10);
+    console.log(complaints[0].tourist_id);
     const complaintsOutput: IComplaintAdminViewDTO[] = complaints.map(
       (complaint) => ({
         date: complaint.date,
@@ -495,7 +502,7 @@ export default class AdminService {
         reply: complaint.reply,
       })
     );
-    return new response(true, complaintsOutput, "Complaints", 200);
+    return new response(true, complaintsOutput, "Complaints are fetched", 200);
   }
 
   public async getComplaintByIDService(
@@ -520,7 +527,7 @@ export default class AdminService {
       reply: complaint.reply,
     };
 
-    return new response(true, complaintOutput, "Complaint", 200);
+    return new response(true, complaintOutput, "Complaint is fetched", 200);
   }
 
   public async markComplaintResolvedService(

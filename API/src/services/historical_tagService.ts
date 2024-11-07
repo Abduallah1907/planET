@@ -61,7 +61,7 @@ export default class Historical_tagService {
     if (Historical_tag == null) {
       throw new NotFoundError("No Historical_tag Found");
     }
-    return new response(true, Historical_tag, "Tag is fetched", 200);
+    return new response(true, Historical_tag, "Historical_tag is fetched", 200);
   };
   // Update a historical tag
   public updateHistorical_tagService = async (
@@ -78,7 +78,7 @@ export default class Historical_tagService {
       throw new InternalServerError("Internal server error");
     }
     if (Historical_tag_check == null) {
-      throw new NotFoundError("Historical Location not found");
+      throw new NotFoundError("Historical Tag not found");
     }
 
     const Historical_tag = await this.historical_tagModel.findByIdAndUpdate(
@@ -92,7 +92,12 @@ export default class Historical_tagService {
     if (Historical_tag == null) {
       throw new NotFoundError("No Historical_tag Found");
     }
-    return new response(true, Historical_tag, "Tag has been updated", 200);
+    return new response(
+      true,
+      Historical_tag,
+      "Historical_tag has been updated",
+      200
+    );
   };
   // Delete a historical tag
   public deleteHistorical_tagService = async (id: string) => {
@@ -107,7 +112,7 @@ export default class Historical_tagService {
       throw new InternalServerError("Internal server error");
     }
     if (Historical_tag_check == null) {
-      throw new NotFoundError("Historical Location not found");
+      throw new NotFoundError("Historical_tag not found");
     }
     const historical_location = await this.historical_locationsModel.updateMany(
       { [`tags.${id}`]: { $exists: true } }, // Search for documents containing the tag in the 'tags' field
@@ -127,6 +132,6 @@ export default class Historical_tagService {
       throw new NotFoundError("No Historical_tag Found");
     }
 
-    return new response(true, null, "Tag has been deleted", 200);
+    return new response(true, null, "Historical_tag has been deleted", 200);
   };
 }

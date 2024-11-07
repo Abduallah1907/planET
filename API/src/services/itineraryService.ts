@@ -438,7 +438,7 @@ export default class ItineraryService {
       return new response(
         true,
         itineraries,
-        "All itineraries are fetched no filter applied",
+        "All itineraries are fetched with no filter applied",
         200
       );
     }

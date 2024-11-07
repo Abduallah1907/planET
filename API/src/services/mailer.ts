@@ -40,8 +40,11 @@ export default class MailerService {
   }
 
   public async SendPasswordReminderEmail(user: Partial<IUser>) {
-    if (!user.email || !user.password) {
-      throw new Error("Email or password not provided");
+    if (!user.email) {
+      throw new Error("Email not provided");
+    }
+    if (!user.password) {
+      throw new Error("Password not provided");
     }
 
     // Dehash the password
@@ -62,11 +65,13 @@ export default class MailerService {
       return { delivered: 0, status: "error" };
     }
   }
-
 
   public async SendPasswordOTPEmail(user: Partial<IUser>) {
-    if (!user.email || !user.password) {
-      throw new Error("Email or password not provided");
+    if (!user.email) {
+      throw new Error("Email not provided");
+    }
+    if (!user.password) {
+      throw new Error("Password not provided");
     }
 
     // Dehash the password
@@ -88,7 +93,7 @@ export default class MailerService {
     }
   }
 
-  public async sendOTPMail(email: string,otp: string) {
+  public async sendOTPMail(email: string, otp: string) {
     const data = {
       from: config.emails.user,
       to: [email],
@@ -102,7 +107,5 @@ export default class MailerService {
     } catch (e) {
       return { delivered: 0, status: "error" };
     }
-    
   }
-
 }
