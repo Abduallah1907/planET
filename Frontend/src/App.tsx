@@ -3,6 +3,8 @@ import CreateAdmin from "./views/CreateAdmin/CreateAdmin";
 import TopBar from "./components/TopBar/TopBar";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css'; // theme css file
 import "./App.css";
 import CreateGoverner from "./views/CreateGoverner/CreateGovernor";
 import BookingLayout from "./views/ViewingPages/Activities";
@@ -62,11 +64,12 @@ import ComplaintsTable from "./components/Complaints/ComplaintsTable";
 import MyComplaints from "./components/TouristComplaints/MyComplaints";
 import Cart from "./views/Cart";
 
-import BookingActivity from "./views/BookingActivity";
-import BookingItinerary from "./views/BookingItinerary";
+import BookingActivity from "./views/BookingPages/BookingActivity";
+import BookingItinerary from "./views/BookingPages/BookingItinerary";
 import MyBookings from "./views/MyActivityBookings";
 import MyItineraryBookings from "./views/MyItineraryBookings";
 import TourGuidesTable from "./views/Tables/TourGuidesTable";
+import FlightBooking from "./views/BookingPages/FlightBooking";
 
 const App: React.FC = () => {
   const [isLoginComplete, setIsLoginComplete] = useState(false);
@@ -134,6 +137,7 @@ const App: React.FC = () => {
         <Route path="/Historical" element={<HistoricalPlaces />} />
         <Route path="/Products" element={<Products />} />
         <Route path="/Flights" element={<FlightsPage />} />
+        <Route path="/Flights/booking" element={<FlightBooking />} />
 
         <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />

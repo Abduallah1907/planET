@@ -1,0 +1,139 @@
+.flight-booking-container .card-header {
+    background-color: transparent;
+    font-family: 'Skyscanner Relative', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+    color: #404756;
+}
+
+.flight-booking-container .card,
+.flight-booking-container .price-summary .card-header {
+    border-color: #f1f2f3;
+}
+
+.flight-booking-container .price-summary .travel-price {
+    padding: 0.75rem 0;
+}
+
+.flight-booking-container .price-summary .btn-pricing {
+    background-color: transparent;
+    padding: 0;
+}
+
+.flight-booking-container .price-summary .btn-pricing .arrow-icon {
+    transition: all 0.3s;
+}
+
+.flight-booking-container .price-summary .btn-pricing .flip {
+    transform: rotate(180deg);
+}
+
+.flight-booking-container .price-summary .btn-pricing span {
+    font-family: 'Skyscanner Relative', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #404756;
+}
+
+.flight-booking-container .price-summary .pricing-data {
+    font-size: 1rem !important;
+    line-height: 1.5rem;
+    font-weight: normal;
+    color: #9B9FA6;
+}
+
+.flight-booking-container .price-summary .pricing-data .price {
+    color: #404756;
+    font-size: 1rem !important;
+}
+
+.flight-booking-container .price-summary .travel-price:not(:last-of-type) {
+    border-bottom: 1px solid #f1f2f3;
+}
+
+.flight-booking-container .price-summary .total-price .row .col:first-of-type span {
+    font-family: 'Skyscanner Relative', sans-serif;
+    font-weight: normal;
+    font-size: 0.75rem;
+    color: #404756;
+    line-height: 1rem !important;
+}
+
+.flight-booking-container .price-summary .total-price .row .col:last-of-type span {
+    font-family: 'Skyscanner Relative', sans-serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #404756;
+}
+
+.flight-booking-container .flight-card {
+    border-radius: 0.25rem !important;
+    border: 1px solid #f1f2f3;
+}
+
+.flight-booking-container .flight-card .flight-pricing {
+    border-color: #f1f2f3;
+}
+
+.flight-booking-container .flight-card, .flight-booking-container .passenger-details{
+    color: #404756;
+}
+.flight-booking-container .passenger-details .num-tickets {
+    font-size: small;
+    font-weight: normal;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flight-booking-container .passenger-details .booking-info{
+    font-size: 0.8rem;
+}
+
+.flight-booking-container .passenger-details .traveler-details .passenger-info-header span{
+    font-size: 0.8rem;
+}
+
+.flight-booking-container .passenger-details .traveler-details .passenger-info-header span:last-of-type{
+    font-weight: normal;
+}
+
+.flight-booking-container .passenger-details .traveler-details .gender-selector{
+    margin-top: 8px;
+    margin-bottom: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.175);
+    border-radius: 0.25rem;
+    height: 2.5rem;
+}
+
+.flight-booking-container .passenger-details .traveler-details .gender-selector .btn{
+    border-radius: 0;
+    border: none;
+    font-size: 0.8rem;
+    background-color: transparent;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    color: rgb(170 174 178 / 1);
+    font-weight: normal;
+}
+
+.flight-booking-container .passenger-details .traveler-details .gender-selector .btn:hover{
+    background-color: #f1f2f3;
+    color: #404756;
+}
+
+.flight-booking-container .passenger-details .traveler-details .gender-selector .btn.active{
+    background-color: #f1f2f3;
+    font-weight: bold;
+    color: #404756;
+}
+
+.flight-booking-container .passenger-details .traveler-details .gender-selector .btn:first-child{
+    border-radius: 4px 0 0 4px;
+    border-right: 1px solid rgba(0, 0, 0, 0.175);
+}
+
+.flight-booking-container .passenger-details .traveler-details .gender-selector .btn:last-child{
+    border-radius: 0 4px 4px 0;
+}

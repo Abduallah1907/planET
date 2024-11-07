@@ -1,26 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Button, Form, Card } from 'react-bootstrap';
-import { FaWallet, FaCreditCard } from 'react-icons/fa';
-import { IItinerary } from '../types/IItinerary';
+import { FaWallet, FaCreditCard, FaCcVisa, FaCcMastercard } from 'react-icons/fa';
+import { ActivityService } from '../../services/ActivityService';
+import { IActivity } from '../../types/IActivity';
 import './bookingPage.css';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { TouristService } from '../services/TouristService';
-import { setWalletBalance as setWalletBalanceAction } from '../store/userSlice';
-import { ItineraryService } from '../services/ItineraryService';
-// Import Visa and MasterCard icons
-import { FaCcVisa, FaCcMastercard } from 'react-icons/fa';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { TouristService } from '../../services/TouristService';
+import { setWalletBalance as setWalletBalanceAction } from '../../store/userSlice';
 
+interface BookingPageProps {
+  email: string;
+}
 
-const BookingItinerary: React.FC = () => {
+const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
   const { id } = useParams<{ id: string }>();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const time_to_attend = searchParams.get("time_to_attend");
-  const [itineraryData, setItineraryData] = useState<IItinerary | null>(null);
+  const [activityData, setActivityData] = useState<IActivity | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<string>('wallet');
   const [cardType, setCardType] = useState<string | null>(null);
   const Tourist = useAppSelector((state) => state.user);
-  const email = Tourist.email;
 
   const [cardDetails, setCardDetails] = useState({
     cardNumber: '',
@@ -38,15 +36,15 @@ const BookingItinerary: React.FC = () => {
   });
   const navigate = useNavigate();
   const [walletBalance, setWalletBalanceState] = useState<number>(0);
-  
-  const getItineraryById = async (id: string) => {
-    const itinerary = await ItineraryService.getItineraryById(id);
-    setItineraryData(itinerary.data);
+
+  const getActivityById = async (id: string) => {
+    const activity = await ActivityService.getActivityById(id);
+    setActivityData(activity.data);
   };
-  
+
   useEffect(() => {
     if (id) {
-      getItineraryById(id);
+      getActivityById(id);
     }
   }, [id]);
 
@@ -74,6 +72,7 @@ const BookingItinerary: React.FC = () => {
       ...prevDetails,
       [name]: value,
     }));
+
     setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: value ? '' : `Please enter your ${name}`,
@@ -104,29 +103,28 @@ const BookingItinerary: React.FC = () => {
   };
 
   const dispatch = useAppDispatch();
-  
+
   const handleConfirmPayment = async () => {
     if (paymentMethod === 'wallet') {
-      if (itineraryData && itineraryData.price !== undefined && walletBalance < itineraryData.price) {
+      if (activityData && activityData.price !== undefined && walletBalance < activityData.price) {
         alert('Insufficient balance in your wallet');
         return;
       }
       try {
-        if (id && time_to_attend) {
-          await TouristService.bookItinerary(email, id,time_to_attend);
+        if (id) {
+          await TouristService.bookActivity(email, id);
         } else {
-          console.error('Itinerary ID is undefined');
-          alert('An error occurred while booking itinerary');
+          console.error('Activity ID is undefined');
+          alert('An error occurred while booking activity');
         }
-        const newBalance = walletBalance - (itineraryData && itineraryData.price ? itineraryData.price : 0);
+        const newBalance = walletBalance - (activityData && activityData.price ? activityData.price : 0);
         setWalletBalanceState(newBalance);
         dispatch(setWalletBalanceAction(newBalance));
-        alert('Itinerary booked successfully');
-        console.log(Tourist._id);
+        alert('Activity booked successfully');
         navigate('/tourist/Profile');
       } catch (error) {
-        console.error('Error booking itinerary:', error);
-        alert('An error occurred while booking itinerary');
+        console.error('Error booking activity:', error);
+        alert('An error occurred while booking activity');
       }
     }
   };
@@ -135,12 +133,12 @@ const BookingItinerary: React.FC = () => {
     <Container>
       <Row className="justify-content-center mt-5">
         <Col sm={12} md={8} lg={6}>
-          {itineraryData ? (
+          {activityData ? (
             <>
               <Card className="mb-4">
                 <Card.Body>
-                  <Card.Title className="text-center">{itineraryData.name}</Card.Title>
-                  <Card.Text>Price: ${itineraryData.price}</Card.Text>
+                  <Card.Title className="text-center">{activityData.name}</Card.Title>
+                  <Card.Text>Price: ${activityData.price}</Card.Text>
                 </Card.Body>
               </Card>
               <h3 className="text-center mb-4">Choose Payment Method</h3>
@@ -241,7 +239,7 @@ const BookingItinerary: React.FC = () => {
               </Form>
             </>
           ) : (
-            <p>Loading Itinerary details...</p>
+            <p>Loading activity details...</p>
           )}
         </Col>
       </Row>
@@ -249,4 +247,4 @@ const BookingItinerary: React.FC = () => {
   );
 };
 
-export default BookingItinerary;
+export default BookingActivity;

@@ -15,6 +15,16 @@ class AmadeusService {
         return response.data;
     }
 
+    public static async getFlightPrice(data: object) {
+        const response = await axiosInstance.post('/amadeus/flightPrice', data);
+        return response.data;
+    }
+
+    public static async bookFlight(data: object) {
+        const response = await axiosInstance.post('/amadeus/bookFlight', data);
+        return response.data;
+    }
+
 }
 
 export default AmadeusService;

@@ -327,6 +327,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FlightOffersOutput"
+  /api/amadeus/flightPrice:
+    post:
+      tags:
+        - Amadeus
+      summary: Get accurate real time price for flight
+      description: Get accurate real time price for flight
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FlightOffersOutput"
+      responses:
+        "200":
+          description: Flight price
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlightOffersOutput"
+  /api/amadeus/bookFlight:
+    post:
+      tags:
+        - Amadeus
+      summary: Book a flight
+      description: Book a flight
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FlightOffersOutput"
+      responses:
+        "200":
+          description: Flight booking
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlightOffersOutput"
   /api/amadeus/hotelsList:
     get:
       tags:
@@ -385,6 +423,104 @@ paths:
             type: string
             enum: [BEDBANK, DIRECTCHAIN, ALL]
           description: The score of the hotels
+      responses:
+        "200":
+          description: Hotel offers search result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HotelOffersOutput"
+  /api/amadeus/hotelOffers:
+    get:
+      tags:
+        - Amadeus
+      summary: Search for hotel offers
+      description: Search for hotel offers
+      parameters:
+        - name: cityCode
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The IATA code of the city
+        - name: chainCodes
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Array of hotel chain codes. Each code is a string consisted of 2 capital alphabetic characters.
+        - name: amenities
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            enum: [SWIMMING_POOL, SPA, FITNESS_CENTER, AIR_CONDITIONING, RESTAURANT, PARKING, PETS_ALLOWED, AIRPORT_SHUTTLE, BUSINESS_CENTER, DISABLED_FACILITIES, WIFI, MEETING_ROOMS, NO_KID_ALLOWED, TENNIS, GOLF, KITCHEN, ANIMAL_WATCHING, BABY_SITTING, BEACH, CASINO, JACUZZI, SAUNA, SOLARIUM, MASSAGE, VALET_PARKING, BAR, LOUNGE, KIDS_WELCOME, NO_PORN_FILMS, MINIBAR, TELEVISION, WI-FI_IN_ROOM, ROOM_SERVICE, GUARDED_PARKG, SERV_SPEC_MENU]
+          description: "List of amenities.\nAvailable values : SWIMMING_POOL, SPA, FITNESS_CENTER, AIR_CONDITIONING, RESTAURANT, PARKING, PETS_ALLOWED, AIRPORT_SHUTTLE, BUSINESS_CENTER, DISABLED_FACILITIES, WIFI, MEETING_ROOMS, NO_KID_ALLOWED, TENNIS, GOLF, KITCHEN, ANIMAL_WATCHING, BABY-SITTING, BEACH, CASINO, JACUZZI, SAUNA, SOLARIUM, MASSAGE, VALET_PARKING, BAR or LOUNGE, KIDS_WELCOME, NO_PORN_FILMS, MINIBAR, TELEVISION, WI-FI_IN_ROOM, ROOM_SERVICE, GUARDED_PARKG, SERV_SPEC_MENU"
+        - name: ratings
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            enum: [1, 2, 3, 4, 5]
+          description: The ratings of the hotels
+        - name: adults
+          in: query
+          schema:
+            type: number
+          required: false
+          description: Number of adults
+        - name : checkInDate
+          in: query
+          schema:
+            type: string
+            format: date
+          required: false
+          description: Check-in date
+        - name : checkOutDate
+          in: query
+          schema:
+            type: string
+            format: date
+          required: false
+          description: Check-out date
+        - name: priceRange
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Price range
+        - name: currencyCode
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Currency
+        - name: paymentPolicy
+          in: query
+          schema:
+            type: string
+            enum: [GUARANTEE, DEPOSIT, NONE]
+          required: false
+          description: Payment policy
+        - name: boardType
+          in: query
+          schema:
+            type: string
+            enum: [ROOM_ONLY, BREAKFAST, HALF_BOARD, FULL_BOARD, ALL_INCLUSIVE]
+          required: false
+          description: Board type
+        - name: lang
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Language
       responses:
         "200":
           description: Hotel offers search result

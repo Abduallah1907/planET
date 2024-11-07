@@ -1,7 +1,8 @@
 import React from "react";
 import "./FilterBy.css";
-import { Col, Form, Row } from "react-bootstrap";
+import { Col, Container, Form, Row } from "react-bootstrap";
 import MultiRangeSlider from "../MultiSelectRange/MultiSliderRange";
+import { format } from "date-fns";
 
 interface filterData {
   [key: string]: any;
@@ -89,12 +90,12 @@ const FilterBy: React.FC<FilterByProps> = ({
           const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             const { name, value } = e.target;
             let updatedFilter = { ...filter, [name]: value };
-            const fromDate = updatedFilter.fromDate || "";
-            const toDate = updatedFilter.toDate || "";
+            const fromDate = updatedFilter.fromDate ? format(new Date(updatedFilter.fromDate), "yyyy/MM/dd") : "";
+            const toDate = updatedFilter.toDate ? format(new Date(updatedFilter.toDate), "yyyy/MM/dd") : "";
             let dateRange = "";
 
             if (fromDate && toDate) {
-              dateRange = `${fromDate} ${toDate}`;
+              dateRange = `${fromDate}-${toDate}`;
             } else if (fromDate) {
               dateRange = fromDate;
             } else if (toDate) {
@@ -143,14 +144,16 @@ const FilterBy: React.FC<FilterByProps> = ({
   };
 
   return (
-    <Row className="m-3">
-      <Col className="filterby">
-        <Row className="border-bottom py-2">
-          <span>Filter By:</span>
-        </Row>
-        {renderFilterFields()}
-      </Col>
-    </Row>
+    <Container fluid className="m-3">
+      <Row>
+        <Col className="filterby">
+          <Row className="border-bottom py-2">
+            <span>Filter By:</span>
+          </Row>
+          {renderFilterFields()}
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
