@@ -81,6 +81,10 @@ const SellerProfile: React.FC = () => {
       showToast("Passwords do not match", ToastTypes.ERROR);
       return; // Exit if passwords don't match
     }
+    if (formData.mobile.length !== 11) {
+      showToast("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      return;
+    }
 
     // Create the initial update data without the password field
     const updateData: any = {
@@ -121,6 +125,12 @@ const SellerProfile: React.FC = () => {
     >
   ) => {
     const { name, value } = e.target;
+    if (name === "mobile") {
+      // Use a regular expression to allow only numbers
+      if (/[^0-9]/.test(value)) {
+        return; // Prevent updating the state if non-numeric characters are entered
+      }
+    }
     setFormData({ ...formData, [name]: value });
   };
 
@@ -292,6 +302,7 @@ const SellerProfile: React.FC = () => {
                 required={true}
                 value={formData.mobile} // Correctly referencing description
                 onChange={handleChange}
+                pattern="^[0-9]{11}$"
               />
             </Col>
           </Row>

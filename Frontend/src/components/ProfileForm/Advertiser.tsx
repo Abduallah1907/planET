@@ -98,6 +98,11 @@ const Advertiser: React.FC = () => {
       showToast("Please fill out both password fields.", ToastTypes.ERROR);
       return;
     }
+    // Phone number validation for length
+    if (formData.mobile.length !== 11) {
+      showToast("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      return;
+    }
 
     if (
       formData.changePassword &&
@@ -150,6 +155,15 @@ const Advertiser: React.FC = () => {
     >
   ) => {
     const { name, value } = e.target;
+
+    // Restrict the mobile field to numbers only
+    if (name === "mobile") {
+      // Use a regular expression to allow only numbers
+      if (/[^0-9]/.test(value)) {
+        return; // Prevent updating the state if non-numeric characters are entered
+      }
+    }
+
     setFormData({ ...formData, [name]: value });
   };
 
@@ -311,14 +325,16 @@ const Advertiser: React.FC = () => {
             <Col>
               <CustomFormGroup
                 label="Mobile Number:"
-                type="text"
+                type="tel"
                 placeholder="Enter your mobile number"
                 id="mobile"
                 name="mobile"
                 disabled={false}
                 required={true}
-                value={formData.mobile} // Correctly referencing description
+                value={formData.mobile}
                 onChange={handleChange}
+                pattern="^[0-9]{11}$" // Only 11 digits
+                // Ensures exactly 11 digits
               />
             </Col>
           </Row>

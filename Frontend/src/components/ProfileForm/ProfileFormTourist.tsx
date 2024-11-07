@@ -53,6 +53,12 @@ const ProfileForm: React.FC = () => {
     >
   ) => {
     const { name, value } = e.target;
+    if (name === "mobile") {
+      // Use a regular expression to allow only numbers
+      if (/[^0-9]/.test(value)) {
+        return; // Prevent updating the state if non-numeric characters are entered
+      }
+    }
     setFormData({ ...formData, [name]: value });
   };
 
@@ -66,10 +72,6 @@ const ProfileForm: React.FC = () => {
       showToast("Please fill out both password fields.", ToastTypes.ERROR);
       return;
     }
-
-    // If both password fields are filled, validate that they match
-
-    // Continue with form submission logic if validation passes
   };
   const Tourist = useAppSelector((state: { user: any }) => state.user);
 
@@ -92,6 +94,10 @@ const ProfileForm: React.FC = () => {
     if (formData.password && formData.password !== formData.retypePassword) {
       showToast("Passwords do not match", ToastTypes.ERROR);
       return; // Exit if passwords don't match
+    }
+    if (formData.mobile.length !== 11) {
+      showToast("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      return;
     }
 
     // Construct update data
@@ -359,6 +365,7 @@ const ProfileForm: React.FC = () => {
                 required={true}
                 value={formData.mobile}
                 onChange={handleChange}
+                pattern="^[0-9]{11}$"
               />
             </Col>
             <Col>

@@ -184,6 +184,7 @@ const AdvertiserCreate: React.FC = () => {
       tags: selectedTags.map((tag) => tag._id),
       special_discount: formData.special_discount,
       active_flag: formData.active_flag,
+      booking_flag: formData.booking, // Correctly assigning booking_flag
       advertiser_id: AdvertiserId,
     };
     if (formData.image && AdvertiserId) {
@@ -199,6 +200,7 @@ const AdvertiserCreate: React.FC = () => {
         special_discount: formData.special_discount,
         active_flag: formData.active_flag,
         advertiser_id: AdvertiserId,
+        booking_flag: formData.booking,
         image: file.data._id,
       };
       await ActivityService.createActivity(productDataI);

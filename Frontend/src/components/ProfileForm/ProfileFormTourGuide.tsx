@@ -145,6 +145,12 @@ const ProfileFormGuide: React.FC = () => {
         return;
       }
     }
+    if (name === "mobile") {
+      // Use a regular expression to allow only numbers
+      if (/[^0-9]/.test(value)) {
+        return; // Prevent updating the state if non-numeric characters are entered
+      }
+    }
     setFormData({ ...formData, [name]: value });
   };
 
@@ -216,6 +222,10 @@ const ProfileFormGuide: React.FC = () => {
       showToast("Please fill out both password fields.", ToastTypes.ERROR);
       return;
     }
+    if (formData.mobile.length !== 11) {
+      showToast("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      return;
+    }
 
     if (
       formData.changePassword &&
@@ -244,6 +254,7 @@ const ProfileFormGuide: React.FC = () => {
     // If a logo file is present, upload it and add the logo ID to the update data
     if (formData.logo) {
       const file = await FileService.uploadFile(formData.logo);
+
       updateData.logo = file.data._id;
     }
 
@@ -426,6 +437,7 @@ const ProfileFormGuide: React.FC = () => {
                 value={formData.mobile}
                 onChange={handleChange}
                 disabled={false}
+                pattern="^[0-9]{11}$"
               />
             </Col>
           </Row>

@@ -9,6 +9,7 @@ import jobOptionsData from "../../utils/jobOptions.json";
 import ButtonWide from "../ButtonWide/ButtonWide";
 import AuthService from "../../services/authService";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface NationalityOption {
   value: string;
@@ -37,6 +38,26 @@ interface RegData {
 }
 
 export default function TouristForm() {
+  const [dobError, setDobError] = useState<string>("");
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedDate = new Date(e.target.value);
+    const today = new Date();
+    const age = today.getFullYear() - selectedDate.getFullYear();
+    const month = today.getMonth() - selectedDate.getMonth();
+    const isUnder18 = age < 18 || (age === 18 && month < 0);
+
+    if (isUnder18) {
+      setDobError("You must be at least 18 years old to register.");
+
+      // Reset the date field to the default value (optional)
+      setRegData({ ...regData, date_of_birth: "" });
+    } else {
+      setDobError("");
+      setRegData({ ...regData, date_of_birth: e.target.value });
+    }
+  };
+
   const [regData, setRegData] = useState<RegData>({
     firstName: "",
     lastName: "",
@@ -217,9 +238,10 @@ export default function TouristForm() {
             disabled={false}
             required={true}
             value={regData.date_of_birth}
-            onChange={handleChange}
+            onChange={handleDateChange}
             name={"date_of_birth"}
           />
+          {dobError && <div className="error-message">{dobError}</div>}
         </Col>
       </Row>
       <Row>
