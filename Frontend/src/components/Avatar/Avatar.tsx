@@ -75,6 +75,14 @@ const Avatar: React.FC = () => {
         <Dropdown.Item as={Link} to={`/${user.role.toLowerCase()}/Profile`}>
           Profile
         </Dropdown.Item>
+        
+        <Dropdown.Divider />
+        <Dropdown.Item>
+          <Button variant="danger" onClick={handleLogout} className="w-100">
+            Logout
+          </Button>
+        </Dropdown.Item>
+        <Dropdown.Divider />
         {user.role == "TOURIST" ||
         user.role == "TOUR_GUIDE" ||
         user.role == "ADVERTISER" ||
@@ -85,12 +93,6 @@ const Avatar: React.FC = () => {
             </Button>
           </Dropdown.Item>
         ) : null}
-        <Dropdown.Divider />
-        <Dropdown.Item>
-          <Button variant="danger" onClick={handleLogout} className="w-100">
-            Logout
-          </Button>
-        </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
   );

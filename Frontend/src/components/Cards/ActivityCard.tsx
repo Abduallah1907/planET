@@ -12,7 +12,7 @@ import {
 import "./Cards.css";
 import Rating from "../Rating/Rating";
 import { useNavigate } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { act, useMemo, useState } from "react";
 import { useAppContext } from "../../AppContext";
 import { useAppSelector } from "../../store/hooks";
 import { ActivityService } from "../../services/ActivityService";
@@ -105,6 +105,10 @@ const CustomActivityCard = ({
     setShowDeleteModal(false); // Close modal without action
   };
 
+  const date = Date_Time.toLocaleDateString();
+  const time = Date_Time.toLocaleTimeString();
+
+
   return (
     <Card
       className="p-3 shadow-sm"
@@ -167,8 +171,8 @@ const CustomActivityCard = ({
               {/* Category and Date/Time */}
               <Card.Text className="text-muted">Category: {category}</Card.Text>
               <Card.Text className="text-muted">
-                {Date_Time.toLocaleDateString()} <br />
-                {Date_Time.toLocaleTimeString()}
+                {date} <br />
+               {time}
               </Card.Text>
             </div>
           </Card.Body>
