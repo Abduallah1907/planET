@@ -116,7 +116,7 @@ const ItineraryForm: React.FC = () => {
     if (name === "price") {
       const numericValue = parseInt(value);
       if (numericValue < 0) {
-        showToast("Price cannot be negative", ToastTypes.ERROR);
+        // showToast("Price cannot be negative", ToastTypes.ERROR);// Show toast message not API
         setFormData({ ...formData, [name]: 0 });
         return;
       }
@@ -265,7 +265,6 @@ const ItineraryForm: React.FC = () => {
     };
     await ItineraryService.createItinerary(itineraryData);
     navigate("/MyItineraries");
-    showToast("Itinerary created successfully", ToastTypes.SUCCESS);
   };
 
   return (

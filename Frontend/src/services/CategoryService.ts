@@ -1,9 +1,11 @@
 import axiosInstance from "../utils/axiosInstance";
+import showToast from "../../src/utils/showToast";
 
 class CategoryService {
   public static async getAll() {
     try {
       const response = await axiosInstance.get("/category/getAllCategories");
+
       return response.data;
     } catch (error) {
       throw new Error("Error fetching categories");
@@ -16,6 +18,7 @@ class CategoryService {
         "/category/createCategory",
         category
       );
+      if (response.status === 201) showToast(response.data);
       return response.data;
     } catch (error) {
       throw new Error("Error creating category");
@@ -28,6 +31,7 @@ class CategoryService {
         `/category/updateCategory/${id}`,
         category
       );
+      if (response.status === 200) showToast(response.data);
       return response.data;
     } catch (error) {
       throw new Error("Error updating category");
@@ -39,6 +43,7 @@ class CategoryService {
       const response = await axiosInstance.delete(
         `/category/deleteCategory/${id}`
       );
+      if (response.status === 200) showToast(response.data);
       return response.data;
     } catch (error) {
       throw new Error("Error deleting category");

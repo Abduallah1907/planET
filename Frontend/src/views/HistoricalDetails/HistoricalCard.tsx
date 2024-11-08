@@ -4,6 +4,7 @@ import { FaBookmark, FaRegBookmark } from 'react-icons/fa';
 import Rating from '../../components/Rating/Rating';
 import './historicalcard.css'
 import { HistoricalService } from '../../services/HistoricalService';
+import { useAppSelector } from '../../store/hooks';
 
 
 interface ILocalHistoricalLocationTourist {
@@ -51,6 +52,7 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
       alert("This is not available for reservation!");
     }
   };
+  const user = useAppSelector((state) => state.user);
 
   const getHistoricalLocationById = async (id: string) => {
     const historicalLocation =
@@ -131,11 +133,13 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
             </p>
             <p className="price"> Price: {localHistoricalData?.price}</p>
 
+            {user.role==="TOURIST"  && (
             <div className="d-flex justify-content-center">
-              <button className="reserve-button" onClick={handleReserve}>
+            <button className="reserve-button" onClick={handleReserve}>
                 Reserve
               </button>
             </div>
+            )}
           </div>
         </div>
       </div>
@@ -162,10 +166,10 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
+          <Button variant="main" className="border-warning-subtle" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={confirmReserve}>
+          <Button variant="main-inverse" onClick={confirmReserve}>
             Confirm
           </Button>
         </Modal.Footer>
@@ -193,7 +197,7 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
           {/* Add more advertiser details here */}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseAdvertiserModal}>
+          <Button variant="main-inverse" onClick={handleCloseAdvertiserModal}>
             Close
           </Button>
         </Modal.Footer>

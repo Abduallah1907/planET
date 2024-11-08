@@ -85,7 +85,7 @@ useEffect(() => {
           setMinVal(value);
           event.target.value = value.toString();
         }}
-        className={classnames("thumb thumb--zindex-3", {
+        className={classnames("thumb thumb--zindex-3 mt-1", {
           "thumb--zindex-5": minVal > max - 100
         })}
       />
@@ -100,7 +100,7 @@ useEffect(() => {
           setMaxVal(value);
           event.target.value = value.toString();
         }}
-        className="thumb thumb--zindex-4"
+        className="thumb thumb--zindex-4 mt-1"
       />
 
       <div className="slider">

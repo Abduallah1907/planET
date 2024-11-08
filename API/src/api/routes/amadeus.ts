@@ -11,6 +11,12 @@ export default (app: Router) => {
 
     router.get("/flightOffers", amadeusController.getFlightOffers);
 
+    router.post("/flightPrice", amadeusController.getFlightPrice);
+
+    router.post("/bookFlight", amadeusController.bookFlight);
+
     router.get("/hotelsList", amadeusController.getHotelsList);
+
+    router.get("/hotelOffers", amadeusController.getHotelOffers);
 
 };

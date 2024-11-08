@@ -2,24 +2,33 @@ import React from "react";
 import { Row, Col, Card, Button } from "react-bootstrap";
 import CartCard from "../components/Cards/CartCard";
 import { useAppSelector } from "../store/hooks";
-
+import { use } from "i18next";
+import { useNavigate } from "react-router-dom";
 
 interface Product {
   id: any;
-    name: string;
-    price: number;
-    description: string;
-    image: any;
+  name: string;
+  price: number;
+  description: string;
+  image: any;
 }
 interface CartItem {
   product: Product;
   quantity: number;
 }
-
 const CartPage: React.FC = () => {
   // Dummy data for two cart items
-  const cart = useAppSelector((state)=>state.cart)
+  const cart = useAppSelector((state) => state.cart)
   const cartItems: CartItem[] = cart.products;
+
+  /*const handleConfirmOrder = () => {
+    cartItems.forEach((item) => {
+      dispatch(RecentOrders(item)); // Move items to recent orders
+    });
+    // Clear cart after confirming order
+    dispatch(clearCart());
+  };? */
+  const navigate = useNavigate();
 
   return (
     <div className="cart-page p-3">
@@ -42,7 +51,7 @@ const CartPage: React.FC = () => {
               price={item.product.price}
               description={item.product.description}
               quantity={item.quantity}
-              image={item.product.image}            />
+              image={item.product.image} />
           ))}
         </Col>
 
@@ -52,7 +61,7 @@ const CartPage: React.FC = () => {
             <Card.Body>
               <h5>Your Subtotal</h5>
               <h4 className="my-3">${cart.total.toFixed(2)}</h4>
-              <Button variant="main-inverse" className="w-100 mb-4">Confirm Order</Button>
+              <Button variant="main-inverse" className="w-100 mb-4" onClick={()=>navigate("/ProductPayment")}>Confirm Order </Button>
             </Card.Body>
           </Card>
         </Col>

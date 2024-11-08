@@ -7,9 +7,7 @@ import { BiSort } from "react-icons/bi";
 
 import { FaSearch } from "react-icons/fa";
 import { HistoricalService } from "../../services/HistoricalService";
-import {
-  IHistorical_location_tourist,
-} from "../../types/IHistoricalLocation";
+import { IHistorical_location_tourist } from "../../types/IHistoricalLocation";
 import { useNavigate } from "react-router-dom";
 
 export default function HistoricalLocationsPage() {
@@ -166,9 +164,6 @@ export default function HistoricalLocationsPage() {
                     Description={location.description}
                     isActive={location.active_flag}
                     tags={location.tags ? Object.values(location.tags) : []}
-                    onChange={() =>
-                      console.log(`${location.name} booking status changed`)
-                    }
                     Price={location.price}
                     isGoverner={false}
                     OpeningHourFrom={location.opening_hours_from}

@@ -4,6 +4,8 @@ import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Reuse the 
 import "../CreateAdmin/CreateAdmin.css"; // Reuse the existing CSS
 import { ProductService } from "../../services/ProductService";
 import { useNavigate, useParams } from "react-router-dom";
+import showToast from "../../utils/showToast";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   name: string;
@@ -28,9 +30,20 @@ const EditProduct: React.FC = () => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
+    if (name === "price" || name === "quantity") {
+      const numericalValue = parseFloat(value); // Use parseFloat for Price
+
+      // Validate for negative values
+      if (numericalValue < 0) {
+        // showToast(`${name} cannot be negative`, ToastTypes.ERROR);//Sow error message not API
+        setFormData({ ...formData, [name]: "0" }); // Reset to 0 if negative
+        return;
+      }
+    }
+
     setFormData({
       ...formData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 

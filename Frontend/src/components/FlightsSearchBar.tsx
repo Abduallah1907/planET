@@ -18,6 +18,9 @@ import { FaExchangeAlt, FaMapPin } from "react-icons/fa";
 import { IoMdAirplane, IoMdClose } from "react-icons/io";
 import { IoFlag } from "react-icons/io5";
 import SkyscannerService from "../services/SkyscannerService";
+import { Calendar, DateRange, Range } from "react-date-range";
+import DatePicker from "react-datepicker";
+import { format } from "date-fns";
 
 interface Location {
     Type: string
@@ -45,11 +48,11 @@ interface Location {
     Highlighting: number[][];
 }
 
-interface FlightSearchBarProps{
+interface FlightSearchBarProps {
     onSubmit?: (data: object) => void;
 }
 
-const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({onSubmit}) => {
+const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({ onSubmit }) => {
     const { t } = useTranslation();
     const directionButtons = ["oneWay", "roundTrip"]
     const [flightDirection, setFlightDirection] = useState(0);
@@ -70,7 +73,9 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({onSubmit}) => {
 
     const [isRotated, setIsRotated] = useState(false);
     const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
+    const [isMediumScreen, setIsMediumScreen] = useState(window.innerWidth < 992);
     const [departureDate, returnDate] = dateRange;
+    const [datePickerOpen, setDatePickerOpen] = useState<boolean>(false);
 
     const [adults, setAdults] = useState<number>(1);
     const [children, setChildren] = useState<number>(0);
@@ -92,10 +97,12 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({onSubmit}) => {
     const toDestinationRef = useRef<HTMLInputElement>(null);
     const departureDateRef = useRef<HTMLInputElement>(null);
     const returnDateRef = useRef<HTMLInputElement>(null);
+    const datePickerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const handleResize = () => {
             setIsSmallScreen(window.innerWidth < 768);
+            setIsMediumScreen(window.innerWidth < 992);
         };
 
         window.addEventListener('resize', handleResize);
@@ -132,8 +139,7 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({onSubmit}) => {
     const getLocations = async (keyword: string) => {
         try {
             const response = await SkyscannerService.searchLocations(keyword);
-            const data = response.data;
-            return data;
+            return response;
         } catch (error) {
             console.error(error);
         }
@@ -212,6 +218,13 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({onSubmit}) => {
                 !toDropdownRef.current.contains(event.target as Node)
             ) {
                 setToDropdownOpen(false);
+            }
+            if (
+                datePickerRef.current &&
+                !datePickerRef.current.contains(event.target as Node)
+
+            ) {
+                setDatePickerOpen(false);
             }
         };
 
@@ -328,7 +341,7 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({onSubmit}) => {
         }
         if (!toDestination) {
             toDestinationRef.current?.focus();
-            if(toDestinations.length > 0){
+            if (toDestinations.length > 0) {
                 setToDropdownOpen(true);
             }
             return;
@@ -360,6 +373,16 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({onSubmit}) => {
     const isOneWay = directionButtons[flightDirection] === "oneWay";
     const isRoundTrip = directionButtons[flightDirection] === "roundTrip";
 
+    // date state
+    const [range, setRange] = useState<Range[]>([
+        {
+            startDate: departureDate ? new Date(departureDate) : new Date(),
+            endDate: returnDate ? new Date(returnDate) : new Date(),
+            key: 'selection',
+            color: "#d76f30"
+        }
+    ])
+
     return (
         <Form className="flights-search-container" onSubmit={handleDone}>
             <Row className={`option-selector mb-2`}>
@@ -381,11 +404,12 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({onSubmit}) => {
                 </div>
             </Row>
             <Row className="form-controls-row">
-                <Col lg={2} md={2} sm={12} xs={12} className="col d-flex">
+                <Col lg={2} md={3} sm={12} xs={12} className="col d-flex">
                     <Form.Group ref={fromDropdownRef} className="w-100">
                         <Form.Label>From</Form.Label>
                         <Form.Control
                             ref={fromDestinationRef}
+                            type="text"
                             style={{ border: 'none' }}
                             placeholder={t('country_city_airport')}
                             aria-label={t('country_city_airport')}
@@ -428,7 +452,7 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({onSubmit}) => {
                         </Button>
                     </div>
                 </Col>
-                <Col lg={2} md={2} sm={12} xs={12} className="col py-0">
+                <Col lg={2} md={3} sm={12} xs={12} className="col py-0">
                     <div className="swap-button-container">
                         <button
                             type="button"
@@ -446,6 +470,7 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({onSubmit}) => {
                             <Form.Label>To</Form.Label>
                             <Form.Control
                                 ref={toDestinationRef}
+                                type="text"
                                 style={{ border: 'none' }}
                                 placeholder={t('country_city_airport')}
                                 aria-label={t('country_city_airport')}
@@ -487,32 +512,24 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({onSubmit}) => {
                         </div>
                     </div>
                 </Col>
-                {isSmallScreen ? (
-                    <Col sm={6} xs={6} className="col">
+                {isMediumScreen ? (
+                    <Col xs={6} sm={6} md={3} className="col">
                         <FormGroup>
-                            <Form.Label>Depart</Form.Label>
+                            <Form.Label>{isRoundTrip ? "Dates" : "Depart"}</Form.Label>
                             <Form.Control
                                 ref={departureDateRef}
-                                type="date"
+                                type="text"
                                 min={todayDate}
-                                value={departureDate ? departureDate : ''}
+                                value={
+                                    (isRoundTrip && departureDate && returnDate) ?
+                                    `${format(new Date(departureDate), 'dd MMM') ?? ''} - ${format(new Date(returnDate), 'dd MMM') ?? ''}` :
+                                    (departureDate ? format(new Date(departureDate), 'dd MMM') : '')
+                                }
+                                placeholder={isRoundTrip ? "Choose Dates" : "Add date"}
+                                onClick={() => setDatePickerOpen(true)}
                                 onChange={(e) => handleDateChange([e.target.value, returnDate])}
                                 required
                             />
-                            {isRoundTrip && (
-                                <>
-                                    <hr />
-                                    <Form.Label className="mt-3">Return</Form.Label>
-                                    <Form.Control
-                                        ref={returnDateRef}
-                                        type="date"
-                                        min={todayDate}
-                                        value={returnDate ? returnDate : ''}
-                                        onChange={(e) => handleDateChange([departureDate, e.target.value])}
-                                        required
-                                    />
-                                </>
-                            )}
                         </FormGroup>
                     </Col>
                 ) : (
@@ -522,10 +539,12 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({onSubmit}) => {
                                 <Form.Label>Depart</Form.Label>
                                 <Form.Control
                                     ref={departureDateRef}
-                                    type="date"
+                                    type="text"
                                     min={todayDate}
                                     value={departureDate ? departureDate : ''}
+                                    onClick={() => setDatePickerOpen(true)}
                                     onChange={(e) => handleDateChange([e.target.value, returnDate])}
+                                    placeholder="dd/mm/yyyy"
                                     required
                                 />
                             </FormGroup>
@@ -541,10 +560,12 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({onSubmit}) => {
                                 ) : (
                                     <Form.Control
                                         ref={returnDateRef}
-                                        type="date"
+                                        type="text"
                                         min={todayDate}
                                         value={returnDate ? returnDate : ''}
+                                        onClick={() => setDatePickerOpen(true)}
                                         onChange={(e) => handleDateChange([departureDate, e.target.value])}
+                                        placeholder="dd/mm/yyyy"
                                         required
                                     />
                                 )}
@@ -720,12 +741,45 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({onSubmit}) => {
                         </DropdownButton>
                     </FormGroup>
                 </Col>
-                <Col md sm={12} className="submit-btn col">
+                <Col lg md={12} sm={12} className="submit-btn col">
                     <Button variant="custom" type="submit" className="h-100">
                         {t("search")}
                     </Button>
                 </Col>
             </Row >
+            <div ref={datePickerRef}>
+                {datePickerOpen && (
+                    isRoundTrip ? (
+                        <DateRange
+                            ranges={range}
+                            minDate={new Date()}
+                            moveRangeOnFirstSelection={false}
+                            onChange={(item) => {
+                                const startDate = item.selection.startDate ? new Date(item.selection.startDate.getTime() - item.selection.startDate.getTimezoneOffset() * 60000) : null;
+                                const endDate = item.selection.endDate ? new Date(item.selection.endDate.getTime() - item.selection.endDate.getTimezoneOffset() * 60000) : null;
+                                setRange([item.selection]);
+                                if (startDate && endDate) {
+                                    handleDateChange([startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]]);
+                                }
+                            }}
+                            months={2}
+                            direction="horizontal"
+                            className="calendarElement date-range"
+                        />
+                    ) : (
+                        <Calendar
+                            minDate={new Date()}
+                            className="calendarElement"
+                            color="#d76f30"
+                            date={departureDate ? new Date(departureDate) : new Date()}
+                            onChange={(item) => {
+                                const localDate = new Date(item.getTime() - item.getTimezoneOffset() * 60000);
+                                handleDateChange([localDate.toISOString().split('T')[0], null]);
+                                setRange([{ startDate: localDate, endDate: localDate, key: 'selection', color: "#d76f30" }]);
+                            }} />
+                    )
+                )}
+            </div>
             <Row>
                 <FormGroup className="flight-direct-check">
                     <Form.Check

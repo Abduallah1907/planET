@@ -14,7 +14,6 @@ import { TourGuideServices } from "../../services/TourGuideServices";
 import { FileService } from "../../services/FileService";
 import { FaTrashAlt } from "react-icons/fa";
 import "./Advertiser.css";
-import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
 
 interface WorkExperience {
@@ -151,11 +150,7 @@ const TourGuideFirst: React.FC = () => {
         updatedPreviousWork: [],
         photo: file.data._id,
       });
-      if (TG.status === 200) {
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      } else {
-        showToast("Error in updating", ToastTypes.ERROR);
-      }
+      //Should i add a toast for the file upload?
     } else {
       const TG2 = await TourGuideServices.updateTourGuide(
         TourGuideFirst.email,
@@ -173,9 +168,6 @@ const TourGuideFirst: React.FC = () => {
           updatedPreviousWork: [],
         }
       );
-      if (TG2.status === 200)
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      else showToast("Error in updating", ToastTypes.ERROR);
     }
   };
 

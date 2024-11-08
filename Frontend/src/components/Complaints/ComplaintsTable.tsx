@@ -7,7 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Button } from "react-bootstrap";
+import { Badge, Button } from "react-bootstrap";
 import { AdminService } from "../../services/AdminService";
 import { IComplaint } from "../../types/IComplaint";
 import ComplaintsModal from "./ComplaintsModal";
@@ -87,7 +87,6 @@ export default function ComplaintsTable() {
 
   const getComplaintsData = async () => {
     const ComplaintsData = await AdminService.getComplaints();
-    // console.log(ComplaintsData.data);
     setComplaints(ComplaintsData.data);
   };
 
@@ -154,49 +153,54 @@ export default function ComplaintsTable() {
                 >
                   {headCell.label}
                 </TableSortLabel>
+                {headCell.label === "Status" && (
+                  <>
+                    <FilterListIcon
+                      style={{ marginRight: "4px", cursor: "pointer" }}
+                      onClick={(event) =>
+                        handleMenuClick(
+                          event as unknown as React.MouseEvent<HTMLElement>
+                        )
+                      } // Cast the event
+                      aria-label="Filter" // Optional for accessibility
+                    />
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl)}
+                      onClose={handleMenuClose}
+                    >
+                      <MenuItem
+                        onClick={() => {
+                          setFilterStatus("Pending");
+                          setPage(0);
+                          handleMenuClose();
+                        }}
+                      >
+                        Show Pending
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          setFilterStatus("Resolved");
+                          setPage(0);
+                          handleMenuClose();
+                        }}
+                      >
+                        Show Resolved
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          setFilterStatus(null);
+                          setPage(0);
+                          handleMenuClose();
+                        }}
+                      >
+                        Show All
+                      </MenuItem>
+                    </Menu>
+                  </>
+                )}
               </TableCell>
             ))}
-            <TableCell align="center">
-              <FilterListIcon
-                style={{ marginRight: "4px", cursor: "pointer" }}
-                onClick={(event) =>
-                  handleMenuClick(
-                    event as unknown as React.MouseEvent<HTMLElement>
-                  )
-                } // Cast the event
-                aria-label="Filter" // Optional for accessibility
-              />
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleMenuClose}
-              >
-                <MenuItem
-                  onClick={() => {
-                    setFilterStatus("Pending");
-                    handleMenuClose();
-                  }}
-                >
-                  Show Pending
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    setFilterStatus("Resolved");
-                    handleMenuClose();
-                  }}
-                >
-                  Show Resolved
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    setFilterStatus(null);
-                    handleMenuClose();
-                  }}
-                >
-                  Show All
-                </MenuItem>
-              </Menu>
-            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -219,7 +223,14 @@ export default function ComplaintsTable() {
               <TableCell align="center">
                 {new Date(complaint.date).toLocaleDateString()}
               </TableCell>
-              <TableCell align="center">{complaint.status}</TableCell>
+              <TableCell align="center">
+                <Badge
+                  bg={complaint.status === "Pending" ? "inactive" : "active"}
+                  className={"custom-status-badge rounded-4 text-center"}
+                >
+                  {complaint.status}
+                </Badge>
+              </TableCell>
               <TableCell align="center">
                 <Button
                   variant="main-inverse"
@@ -244,7 +255,7 @@ export default function ComplaintsTable() {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={complaints.length}
+        count={filteredComplaints.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={(event, newPage) => setPage(newPage)}

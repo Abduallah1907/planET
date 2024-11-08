@@ -1,4 +1,5 @@
 import axiosInstance from "../utils/axiosInstance";
+import showToast from "../../src/utils/showToast";
 
 class AuthService {
   public static async login(usernameOrEmail: string, password: string) {
@@ -29,8 +30,8 @@ class AuthService {
         password,
         email,
       });
-      const { user } = response.data;
-      return user;
+      if (response.status === 201) showToast(response.data);
+      return response.data; //Changed from const {user}=response.data to response.data
     } catch (error) {
       throw new Error("Registration failed");
     }
@@ -42,16 +43,10 @@ class AuthService {
         "/tourist/createTourist",
         regData
       );
+      if (response.status === 201) showToast(response.data);
       return response.data;
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        console.error("API Error: ", error.response.data);
-        throw new Error(
-          error.response.data.message || "Tourist registration failed"
-        );
-      } else {
-        throw new Error("Tourist registration failed");
-      }
+      throw new Error("Tourist registration failed");
     }
   }
 
@@ -61,16 +56,10 @@ class AuthService {
         "/seller/createSeller",
         StakeData
       );
+      if (response.status === 201) showToast(response.data);
       return response.data;
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        console.error("API Error: ", error.response.data);
-        throw new Error(
-          error.response.data.message || "Seller registration failed"
-        );
-      } else {
-        throw new Error("Seller registration failed");
-      }
+      throw new Error("Seller registration failed");
     }
   }
 
@@ -80,16 +69,10 @@ class AuthService {
         "/advertiser/createAdvertiserMain",
         StakeData
       );
+      if (response.status === 201) showToast(response.data);
       return response.data;
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        console.error("API Error: ", error.response.data);
-        throw new Error(
-          error.response.data.message || "Advertiser registration failed"
-        );
-      } else {
-        throw new Error("Advertiser registration failed");
-      }
+      throw new Error("Advertiser registration failed");
     }
   }
 
@@ -99,16 +82,10 @@ class AuthService {
         "/tourGuide/createProfile",
         StakeData
       );
+      if (response.status === 201) showToast(response.data);
       return response.data;
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        console.error("API Error: ", error.response.data);
-        throw new Error(
-          error.response.data.message || "Seller registration failed"
-        );
-      } else {
-        throw new Error("Seller registration failed");
-      }
+      throw new Error("Seller registration failed");
     }
   }
   public static async requestOTP(email: string) {
@@ -131,12 +108,20 @@ class AuthService {
     }
   }
 
-  public static async resetPassword(email: string, password: string, otp: string) {
+  public static async resetPassword(
+    email: string,
+    password: string,
+    otp: string
+  ) {
     try {
-      const response = await axiosInstance.post(`/users/resetPassword/${email}`, {
-        password,
-        otp,
-      });
+      const response = await axiosInstance.post(
+        `/users/resetPassword/${email}`,
+        {
+          password,
+          otp,
+        }
+      );
+      if (response.status === 200) showToast(response.data);
       return response.data;
     } catch (error: any) {
       throw error;

@@ -6,6 +6,7 @@ import { MdTimeline } from "react-icons/md";
 import Rating from "../components/Rating/Rating"; // Optional
 import { ItineraryService } from "../services/ItineraryService";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../store/hooks";
 
 interface ItineraryCardProps {
   id: string;
@@ -58,6 +59,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
     date: "2024-10-10",
     time: "10:00 AM",
   });
+  const user = useAppSelector((state) => state.user);
 
   const getItinerary = async () => {
     const itinerary = await ItineraryService.getItineraryById(id);
@@ -90,6 +92,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
   const confirmReserve = () => {
     handleBookNow();
   };
+  
 
   const handleBookNow = () => {
     const formattedDate = `${selectedDateTime.date}T${selectedDateTime.time.substring(0, 5)}:00`;
@@ -152,14 +155,16 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
             </p>
             <p className="price">${itineraryData.price}</p>
 
+            {user.role==="TOURIST"  && (
             <div className="d-flex justify-content-center">
-              <button className="reserve-button" onClick={handleDetailsModal}>
+            <button className="reserve-button" onClick={handleDetailsModal}>
                 Reserve
               </button>
             </div>
+            )}
+            </div>
           </div>
         </div>
-      </div>
 
       {/* Modal for Itinerary Details */}
       <Modal show={showDetailsModal} onHide={handleDetailsModal} centered>
@@ -183,10 +188,10 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleDetailsModal}>
+          <Button variant="main" className="border-warning-subtle" onClick={handleDetailsModal}>
             Close
           </Button>
-          <Button variant="primary" onClick={confirmReserve}>
+          <Button variant="main-inverse" onClick={confirmReserve}>
             Confirm
           </Button>
         </Modal.Footer>
@@ -207,7 +212,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleTourGuideModal}>
+          <Button variant="main-inverse" onClick={handleTourGuideModal}>
             Close
           </Button>
         </Modal.Footer>
@@ -229,7 +234,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
           </ul>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleTimelineModal}>
+          <Button variant="main-inverse" onClick={handleTimelineModal}>
             Close
           </Button>
         </Modal.Footer>
@@ -254,7 +259,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
           </ul>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleDatesModal}>
+          <Button variant="main-inverse" onClick={handleDatesModal}>
             Close
           </Button>
         </Modal.Footer>

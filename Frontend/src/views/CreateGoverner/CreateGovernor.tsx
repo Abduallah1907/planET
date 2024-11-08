@@ -7,8 +7,6 @@ import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adj
 import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon from react-icons
 import { AdminService } from "../../services/AdminService";
 import { useTranslation } from "react-i18next";
-import showToast from "../../utils/showToast";
-import { ToastTypes } from "../../utils/toastTypes";
 
 interface NationalityOption {
   value: string;
@@ -68,7 +66,6 @@ const CreateGoverner: React.FC = () => {
       nation: formData.nationality,
     };
     await AdminService.createGovernor(data);
-    showToast("Governor created successfully", ToastTypes.SUCCESS);
   };
 
   const handleCancel = () => {

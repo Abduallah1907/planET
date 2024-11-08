@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { Form, Button, Container, Row, Col, Card } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Card } from "react-bootstrap";
 import Rating from "./Rating/Rating";
-import './Rating/Rating.css';
+import "./Rating/Rating.css";
 
 interface CommentProps {
-  defaultName?: string; 
-  defaultRating?: number; 
-  defaultComment?: string; 
-  formTitle?: string; 
+  defaultName?: string;
+  defaultRating?: number;
+  defaultComment?: string;
+  formTitle?: string;
   onSubmit?: (data: { rating: number; comment: string }) => void;
 }
 
@@ -34,13 +34,11 @@ const Comment: React.FC<CommentProps> = ({
     e.preventDefault();
     if (rating && comment) {
       setSubmitted(true);
-      console.log("Submitted rating:", rating);
-      console.log("Submitted comment:", comment);
 
       if (onSubmit) {
         onSubmit({
-            rating, comment,
-            
+          rating,
+          comment,
         });
       }
     }
@@ -62,12 +60,16 @@ const Comment: React.FC<CommentProps> = ({
             <Row className="align-items-center mb-3">
               <Col xs={12} className="d-flex justify-content-end">
                 <div className="rating-wrapper">
-                  <Rating rating={rating} totalStars={5} onChange={handleRatingChange} />
+                  <Rating
+                    rating={rating}
+                    totalStars={5}
+                    onChange={handleRatingChange}
+                  />
                 </div>
               </Col>
             </Row>
 
-           <h2>{defaultName}</h2>
+            <h2>{defaultName}</h2>
 
             <Form.Group controlId="comment" className="mb-3">
               <Form.Label htmlFor="inputComment">Comment</Form.Label>
@@ -80,17 +82,19 @@ const Comment: React.FC<CommentProps> = ({
                 onChange={handleCommentChange}
                 required
                 style={{
-                  borderColor: '#d76f30', // Match button background color
-                  borderWidth: '2px',
-                  borderStyle: 'solid',
+                  borderColor: "#d76f30", // Match button background color
+                  borderWidth: "2px",
+                  borderStyle: "solid",
                 }}
               />
             </Form.Group>
 
             <div className="d-flex justify-content-center">
               <Button
-                style={{ backgroundColor: '#d76f30', borderColor: '#d76f30' }}
-                type="submit" className="button" 
+                style={{ backgroundColor: "#d76f30", borderColor: "#d76f30" }}
+                type="submit"
+                className="button"
+                variant="main-inverse"
               >
                 Submit
               </Button>

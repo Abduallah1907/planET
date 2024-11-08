@@ -5,19 +5,15 @@ import { Col, Row, Container, Form, InputGroup, Button } from "react-bootstrap";
 import { BiSort } from "react-icons/bi";
 import { FaSearch } from "react-icons/fa";
 import { IProduct } from "../../types/IProduct";
-import { useNavigate } from "react-router-dom";
 import { ProductService } from "../../services/ProductService";
 import { FileService } from "../../services/FileService";
-import { useAppSelector } from "../../store/hooks";
 
 export default function ProductsPage() {
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [products, setProducts] = React.useState<IProduct[]>([]);
   const [filtercomponent, setfilterComponents] = React.useState({});
   const [sortBy, setSortBy] = useState("topPicks");
   const [filter, setFilter] = React.useState({});
-  const Seller = useAppSelector((state) => state.user);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -87,10 +83,6 @@ export default function ProductsPage() {
     getProducts();
     getFilterComponents();
   }, []);
-
-  const onProductClick = (id: string) => {
-    navigate(`/product/${id}`);
-  };
 
   const onFilterChange = (newFilter: { [key: string]: any }) => {
     setFilter(newFilter);
@@ -185,13 +177,8 @@ export default function ProductsPage() {
                   }
                   image={product.image}
                   isActiveArchive={product.archieve_flag}
-                  onChange={() =>
-                    console.log(`${product.name} booking status changed`)
-                  }
-                  onClick={() => onProductClick(product._id)}
                   isSeller={false}
                   isAdmin={false}
-                  
                 />
               </Col>
             ))}

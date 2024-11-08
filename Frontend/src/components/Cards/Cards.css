@@ -34,33 +34,40 @@
   color: rgba(0, 0, 0, 0.5);
 }
 
-.airline-logo{
+.airline-logo {
   width: 8rem;
   margin-right: 0.5rem;
 }
 
-.flight-time{
+@media (min-width: 768px) and (max-width: 992px) {
+  .airline-logo {
+    width: 6rem;
+  }
+
+}
+
+.flight-time {
   font-family: 'Skyscanner Relative', sans-serif;
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.5rem;
 }
 
-.flight-airline-iataCode{
+.flight-airline-iataCode {
   color: #626971;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5rem;
 }
 
-.flight-duration{
+.flight-duration {
   color: #626971;
   font-size: .75rem;
   font-weight: 400;
   line-height: 1rem;
 }
 
-.flight-path{
+.flight-path {
   background-color: #c1c7cf;
   border-radius: .5rem;
   display: block;
@@ -73,7 +80,7 @@
   width: 90%;
 }
 
-.flight-transit-stop{
+.flight-transit-stop {
   zoom: 1;
   background-color: #e70866;
   background-image: none;
@@ -88,45 +95,91 @@
   width: .375rem;
 }
 
-.flight-stop{
+.flight-stop {
   color: #e70866;
   font-weight: normal;
   white-space: pre;
 }
 
-.flight-direct{
+.flight-direct {
   color: #0c838a;
   font-weight: normal;
   white-space: pre;
 }
 
-@media (max-width: 768px){
-  .flight-pricing{
+@media (max-width: 768px) {
+  .flight-pricing {
     border-top: 0.0625rem solid #c1c7cf;
-  } 
+  }
 }
 
-@media (min-width: 768px){
-  .flight-pricing{
+@media (min-width: 768px) {
+  .flight-pricing {
     border-left: 0.0625rem solid #c1c7cf;
-  } 
+  }
 }
 
-.flight-base-price{
+.flight-base-price {
   font-size: 1.25rem;
   font-weight: 400;
   line-height: 1.5rem;
 }
 
-.flight-total-price{
+.flight-total-price {
   color: #626971;
   font-size: .75rem;
   font-weight: 400;
   line-height: 1rem;
 }
 
-.bookingCard{
+.bookingCard {
   border-radius: 0.5rem;
   margin: 1rem 0;
   padding: 1rem;
 }
+
+.baggage-info span {
+  font-weight: normal;
+  font-size: 1rem;
+}
+
+.baggage-info .bag-icon {
+  background-color: var(--main-color);
+  color: white;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  text-align: center;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid white;
+}
+
+.baggage-info .bag-icon:last-of-type{
+  margin-left: -3px;
+}
+
+.baggage-info .bag-icon span {
+  position: absolute;
+  color: var(--main-color);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  font-weight: bold;
+  margin-top: 3px;
+  font-size: 0.75rem;
+}
+
+.amenity-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f1f2f3;
+  color: #404756;
+}
+

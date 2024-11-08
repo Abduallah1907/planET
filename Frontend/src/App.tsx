@@ -3,6 +3,8 @@ import CreateAdmin from "./views/CreateAdmin/CreateAdmin";
 import TopBar from "./components/TopBar/TopBar";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css'; // theme css file
 import "./App.css";
 import CreateGoverner from "./views/CreateGoverner/CreateGovernor";
 import BookingLayout from "./views/ViewingPages/Activities";
@@ -62,11 +64,14 @@ import ComplaintsTable from "./components/Complaints/ComplaintsTable";
 import MyComplaints from "./components/TouristComplaints/MyComplaints";
 import Cart from "./views/Cart";
 
-import BookingActivity from "./views/BookingActivity";
-import BookingItinerary from "./views/BookingItinerary";
+import BookingActivity from "./views/BookingPages/BookingActivity";
+import BookingItinerary from "./views/BookingPages/BookingItinerary";
 import MyBookings from "./views/MyActivityBookings";
 import MyItineraryBookings from "./views/MyItineraryBookings";
 import TourGuidesTable from "./views/Tables/TourGuidesTable";
+import RecentOrders from "./views/RecentOrders";
+import ProductPayemnt from "./views/BookingPages/ProductPayemnt";
+import FlightBooking from "./views/BookingPages/FlightBooking";
 
 const App: React.FC = () => {
   const [isLoginComplete, setIsLoginComplete] = useState(false);
@@ -87,7 +92,7 @@ const App: React.FC = () => {
   const email = useAppSelector((state) => state.user.email);
 
   if (!isLoginComplete) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   return (
@@ -119,21 +124,28 @@ const App: React.FC = () => {
 
         <Route path="/Activity" element={<Activities />} />
 
-
         <Route path="/Activity/:id" element={<ActivityDetails />} />
-        <Route path="/bookActivity/:id" element={< BookingActivity email={email} />} />
-        <Route path="/bookItinerary/:id" element={< BookingItinerary />} />
-        <Route path="/MyBookings/upcoming" element={< MyBookings />} />
-        <Route path="/MyBookings/past" element={< MyBookings />} />
-        <Route path="/MyItineraryBookings/upcoming" element={<MyItineraryBookings/>} />
-        <Route path="/MyItineraryBookings/past" element={<MyItineraryBookings/>} />
-
-
+        <Route
+          path="/bookActivity/:id"
+          element={<BookingActivity email={email} />}
+        />
+        <Route path="/bookItinerary/:id" element={<BookingItinerary />} />
+        <Route path="/MyBookings/upcoming" element={<MyBookings />} />
+        <Route path="/MyBookings/past" element={<MyBookings />} />
+        <Route
+          path="/MyItineraryBookings/upcoming"
+          element={<MyItineraryBookings />}
+        />
+        <Route
+          path="/MyItineraryBookings/past"
+          element={<MyItineraryBookings />}
+        />
 
         <Route path="/Itinerary" element={<Itinerary />} />
         <Route path="/Historical" element={<HistoricalPlaces />} />
         <Route path="/Products" element={<Products />} />
         <Route path="/Flights" element={<FlightsPage />} />
+        <Route path="/Flights/booking" element={<FlightBooking />} />
 
         <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
@@ -189,6 +201,8 @@ const App: React.FC = () => {
         <Route path="/Complaints" element={<AllComplaints />} />
         <Route path="/MyComplaints" element={<MyComplaints />} />
         <Route path="/Cart" element={<Cart />} />
+        <Route path="/ProductPayment" element={<ProductPayemnt />} />
+        <Route path="/RecentOrders" element={<RecentOrders />} />
       </Routes>
     </AppProvider>
   );

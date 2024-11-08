@@ -10,11 +10,12 @@ import CategoryService from "../../services/CategoryService";
 import { AdminService } from "../../services/AdminService";
 import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
-
-
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { APIProvider, Map } from "@vis.gl/react-google-maps";
+import { FileService } from "../../services/FileService";
+import showToastMessage from "../../utils/showToastMessage";
 
 // Other interface and component definitions...
-
 
 interface FormData {
   name: string;
@@ -27,6 +28,7 @@ interface FormData {
   active_flag: boolean;
   booking: boolean;
   category: string;
+  image: File | null;
 }
 
 interface Tag {
@@ -38,7 +40,6 @@ interface Category {
   _id: string;
   type: string;
 }
-
 
 const AdvertiserCreate: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -52,6 +53,7 @@ const AdvertiserCreate: React.FC = () => {
     active_flag: true,
     booking: true,
     category: "",
+    image: null,
   });
   const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
@@ -60,6 +62,10 @@ const AdvertiserCreate: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [showMapModal, setShowMapModal] = useState(false); // State to manage modal visibility
 
+  const [center, setCenter] = React.useState({
+    lat: 29.98732507495249,
+    lng: 31.435660077332482,
+  });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -72,8 +78,11 @@ const AdvertiserCreate: React.FC = () => {
       const updatedValue = type === "checkbox" ? checked : value;
 
       // Ensure special_discount and price do not accept negative values
-      if ((name === "special_discount" || name === "price") && Number(updatedValue) < 0) {
-        showToast("Value cannot be negative", ToastTypes.ERROR);
+      if (
+        (name === "special_discount" || name === "price") &&
+        Number(updatedValue) < 0
+      ) {
+        showToastMessage("Value cannot be negative", ToastTypes.ERROR);
         setFormData({
           ...formData,
           [name]: 0,
@@ -87,7 +96,6 @@ const AdvertiserCreate: React.FC = () => {
     }
   };
 
-
   const handleAddLocation = () => {
     setShowMapModal(true); // Show the modal
   };
@@ -99,13 +107,13 @@ const AdvertiserCreate: React.FC = () => {
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue) {
       const tag = inputValue.trim();
-      if (tag && !tags.some(t => t.type === tag)) {
+      if (tag && !tags.some((t) => t.type === tag)) {
         alert("Invalid tag");
         setInputValue("");
         return;
       }
-      const foundTag = tags.find(t => t.type === tag);
-      if (foundTag && !selectedTags.some(t => t._id === foundTag._id)) {
+      const foundTag = tags.find((t) => t.type === tag);
+      if (foundTag && !selectedTags.some((t) => t._id === foundTag._id)) {
         setSelectedTags((prev) => [...prev, foundTag]);
         setInputValue("");
       }
@@ -121,8 +129,8 @@ const AdvertiserCreate: React.FC = () => {
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    const foundTag = tags.find(t => t.type === suggestion);
-    if (foundTag && !selectedTags.some(t => t._id === foundTag._id)) {
+    const foundTag = tags.find((t) => t.type === suggestion);
+    if (foundTag && !selectedTags.some((t) => t._id === foundTag._id)) {
       setSelectedTags((prev) => [...prev, foundTag]);
       setSuggestions((prev) => prev.filter((s) => s !== suggestion));
       setInputValue("");
@@ -135,7 +143,9 @@ const AdvertiserCreate: React.FC = () => {
         tag.type.toLowerCase().includes(inputValue.slice(1).toLowerCase())
       );
       const selectedTagIds = new Set(selectedTags.map((tag) => tag._id));
-      const filteredSuggestions = filteredTags.filter((tag) => !selectedTagIds.has(tag._id));
+      const filteredSuggestions = filteredTags.filter(
+        (tag) => !selectedTagIds.has(tag._id)
+      );
       setSuggestions(filteredSuggestions.map((tag) => tag.type));
     } else {
       setSuggestions([]);
@@ -150,7 +160,7 @@ const AdvertiserCreate: React.FC = () => {
           _id: category._id,
           type: category.type,
         };
-      })
+      });
       setCategories(categoryData); // Assuming the response has 'data' containing the categories
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -160,7 +170,7 @@ const AdvertiserCreate: React.FC = () => {
   const getTags = async (page: number) => {
     const tagsData = await AdminService.getTags(page); // Assuming page 1 as the default
     setTags(tagsData.data);
-  }
+  };
 
   useEffect(() => {
     getTags(1);
@@ -182,14 +192,48 @@ const AdvertiserCreate: React.FC = () => {
       tags: selectedTags.map((tag) => tag._id),
       special_discount: formData.special_discount,
       active_flag: formData.active_flag,
+      booking_flag: formData.booking, // Correctly assigning booking_flag
       advertiser_id: AdvertiserId,
     };
     if (AdvertiserId) {
       await ActivityService.createActivity(productData);
-      showToast("Activity created successfully", ToastTypes.SUCCESS);
       navigate("/MyActivities");
     } else {
       console.error("Advertiser Id is undefined");
+      if (formData.image && AdvertiserId) {
+        const file = await FileService.uploadFile(formData.image);
+        const productDataI = {
+          name: formData.name,
+          date: formData.date,
+          time: formData.time,
+          category: formData.category,
+          location: { longitude: 100, latitude: 100 },
+          price: formData.price,
+          tags: selectedTags.map((tag) => tag._id),
+          special_discount: formData.special_discount,
+          active_flag: formData.active_flag,
+          advertiser_id: AdvertiserId,
+          booking_flag: formData.booking,
+          image: file.data._id,
+        };
+        await ActivityService.createActivity(productDataI);
+        showToastMessage("Activity created successfully", ToastTypes.SUCCESS);
+        navigate("/MyActivities");
+      } else {
+        if (AdvertiserId) {
+          await ActivityService.createActivity(productData);
+          showToastMessage("Activity created successfully", ToastTypes.SUCCESS);
+          navigate("/MyActivities");
+        } else {
+          console.error("Advertiser Id is undefined");
+        }
+      }
+    };
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFormData({ ...formData, image: e.target.files[0] });
     }
   };
 
@@ -360,9 +404,28 @@ const AdvertiserCreate: React.FC = () => {
               </Form.Group>
             </Col>
           </Row>
+          <Row>
+            <Col>
+              <Form.Group controlId="formFile" className="mb-3">
+                <Form.Label>
+                  <h3>Upload Image Activity</h3>
+                </Form.Label>
+                <Form.Control
+                  type="file"
+                  name="image"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
           <Row>
-            <Button variant="main-inverse" className="mt-2 m-auto w-25" onClick={handleAddLocation}>
+            <Button
+              variant="main-inverse"
+              className="mt-2 m-auto w-25"
+              onClick={handleAddLocation}
+            >
               Add Location
             </Button>
             {/* Modal for Location */}
@@ -372,16 +435,24 @@ const AdvertiserCreate: React.FC = () => {
               </Modal.Header>
               <Modal.Body>
                 <div className="ratio ratio-1x1">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3455.7252495085836!2d31.435660077332482!3d29.98732507495249!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14583cb2bfafbe73%3A0x6e7220116094726d!2sGerman%20University%20in%20Cairo%20(GUC)!5e0!3m2!1sen!2seg!4v1728233137915!5m2!1sen!2seg"
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  ></iframe>
+                  <APIProvider apiKey={process.env.GOOGLE_MAPS_API_KEY || ""}>
+                    <Map
+                      style={{ width: "500px", height: "500px" }}
+                      defaultCenter={center}
+                      center={center}
+                      defaultZoom={3}
+                      gestureHandling={"greedy"}
+                      disableDefaultUI={true}
+                    />
+                  </APIProvider>
                 </div>
               </Modal.Body>
               <Modal.Footer>
-                <Button variant="main" className="border-warning-subtle" onClick={handleCloseMapModal}>
+                <Button
+                  variant="main"
+                  className="border-warning-subtle"
+                  onClick={handleCloseMapModal}
+                >
                   Close
                 </Button>
                 <Button variant="main-inverse" onClick={handleCloseMapModal}>
@@ -389,7 +460,6 @@ const AdvertiserCreate: React.FC = () => {
                 </Button>
               </Modal.Footer>
             </Modal>
-
           </Row>
           <Row>
             <Col>
@@ -406,7 +476,7 @@ const AdvertiserCreate: React.FC = () => {
           </Row>
           <Row>
             <div className="form-actions">
-              <Button type="submit" variant="main-inverse" >
+              <Button type="submit" variant="main-inverse">
                 Create Activity
               </Button>
             </div>

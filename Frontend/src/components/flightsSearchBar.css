@@ -49,6 +49,24 @@
     border: 0.15rem solid var(--main-color) !important;
 }
 
+@media (min-width: 992px) {
+    .flights-search-container .row.form-controls-row .col:last-of-type {
+        margin-right: 0;
+        margin-top: 0 !important;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+    .flights-search-container .row.form-controls-row .col {
+        margin-right: 0 !important;
+    }
+    .flights-search-container .row.form-controls-row .col:not(:nth-last-of-type(1), :nth-last-of-type(2)) {
+        margin-right: 0.25rem;
+       border-right: 0.25rem solid var(--main-color) !important;
+    }
+    
+}
+
 @media (min-width: 768px) {
     .swap-button-container {
         margin-inline-start: -2rem !important;
@@ -87,7 +105,6 @@
     .flights-search-container .row.form-controls-row .col:last-of-type {
         margin-right: 0;
         margin-top: 0 !important;
-        margin-left: 0.5rem;
     }
 }
 
@@ -134,6 +151,10 @@
         outline: none;
     }
 
+    .flights-search-container .submit-btn {
+        width: 100% !important;
+    }
+
     .flights-search-container .btn-custom {
         width: 100%;
         padding: 1rem;
@@ -146,7 +167,8 @@
         cursor: pointer;
     }
 
-    .flights-search-container .btn-custom:hover , .flights-search-container .btn-custom:active {
+    .flights-search-container .btn-custom:hover,
+    .flights-search-container .btn-custom:active {
         border: none;
         background-color: #003366;
         color: white;
@@ -372,7 +394,7 @@
     box-shadow: 0 0 0 0.125rem rgba(215, 111, 48, 0.5);
 }
 
-.flights-search-container .flight-direct-check{
+.flights-search-container .flight-direct-check {
     margin-top: 0.5rem;
     padding: 0;
 }
@@ -387,10 +409,31 @@
     height: 1.25rem;
     border: 0.125rem solid white;
 }
+
 .flights-search-container .flight-direct-check .form-check-label {
     color: white;
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5rem;
     margin-left: 0.5rem;
+}
+
+.flights-search-container .calendarElement {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid #ccc;
+    z-index: 999;
+}
+@media (max-width: 992px) {
+    .flights-search-container .calendarElement {
+        transform: translateX(-50%) translateY(-17.5%);
+    }
+    .flights-search-container .calendarElement.date-range {
+        width: 90%;
+    }
+}
+
+.rdrDayToday .rdrDayNumber span:after {
+    background-color: var(--main-color);
 }

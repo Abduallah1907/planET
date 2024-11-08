@@ -28,8 +28,29 @@ export default function ActivitiesPage() {
   const Advertiser = useAppSelector((state) => state.user);
 
   const getActivities = async () => {
-    const activitiesData = await ActivityService.getActivitiesByAdvertiserId(Advertiser.stakeholder_id._id);
+    const activitiesData = await ActivityService.getActivitiesByAdvertiserId(
+      Advertiser.stakeholder_id._id
+    );
     setActivities(activitiesData.data);
+    // Download images for each activity
+    /* const imagePromises = activitiesData.data.map(
+      async (activity: IActivity) => {
+        if (activity.) {
+          const imageUrl = await ActivityService.downloadActivityImage(
+            activity.imageId
+          );
+          return { id: activity._id, url: imageUrl };
+        }
+        return null;
+      }
+    );
+
+    const imageData = (await Promise.all(imagePromises)).filter(Boolean);
+    const imagesMap = imageData.reduce(
+      (acc, image) => ({ ...acc, [image!.id]: image!.url }),
+      {}
+    );
+    setImageUrls(imagesMap);*/
   };
 
   const getFilteredActivites = async () => {
@@ -90,7 +111,7 @@ export default function ActivitiesPage() {
   const deleteActivity = async (id: string) => {
     // Perform the delete action here
     setActivities(activities.filter((item) => item._id !== id));
-  }
+  };
 
   return (
     <Container fluid>
@@ -166,7 +187,7 @@ export default function ActivitiesPage() {
                   id={activity._id}
                   Name={activity.name}
                   location={"cairo"}
-                  category={activity.category ? activity.category.type: ""}
+                  category={activity.category ? activity.category.type : ""}
                   tags={activity.tags.map((item: { type: any }) => item.type)}
                   image={""}
                   RatingVal={activity.average_rating}
@@ -175,9 +196,6 @@ export default function ActivitiesPage() {
                   Date_Time={new Date(activity.date)}
                   isActive={activity.active_flag}
                   isBooked={activity.booking_flag}
-                  onChange={() =>
-                    console.log(`${activity.name} booking status changed`)
-                  }
                   onClick={() => onActivityClick(activity._id)}
                   onDelete={() => deleteActivity(activity._id)}
                   isAdvertiser={true}

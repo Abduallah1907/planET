@@ -36,7 +36,7 @@ export default class CategoryService {
     if (category instanceof Error)
       throw new InternalServerError("Internal server error");
     if (category == null) throw new NotFoundError("Cannot be created");
-    return new response(true, category, "Created successfuly", 201);
+    return new response(true, category, "Category Created successfuly", 201);
   };
   //get all Categories
   public getAllCategoriesService = async () => {

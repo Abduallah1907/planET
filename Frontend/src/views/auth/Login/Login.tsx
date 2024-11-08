@@ -1,5 +1,13 @@
 import "./Login.css";
-import { Container, Row, Col, Button, Form, Alert } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Form,
+  Alert,
+  Toast,
+} from "react-bootstrap";
 import CustomFormGroup from "../../../components/FormGroup/FormGroup";
 import { ChangeEvent, useEffect, useState } from "react";
 import AuthService from "../../../services/authService";
@@ -10,7 +18,9 @@ import { login, setLoginState, setUser } from "../../../store/userSlice";
 import { useTranslation } from "react-i18next";
 import { Utils } from "../../../utils/utils";
 import path from "path";
-
+import showToast from "../../../utils/showToast";
+import showToastMessage from "../../../utils/showToastMessage";
+import { ToastTypes } from "../../../utils/toastTypes";
 export default function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -45,6 +55,7 @@ export default function Login() {
         userData.usernameOrEmail,
         userData.password
       );
+
       const user = userOutput.data;
 
       const storedUser = {
@@ -53,10 +64,19 @@ export default function Login() {
       };
       localStorage.setItem("user", JSON.stringify(storedUser));
       dispatch(setUser(user));
+      showToast(userOutput);
+
       switch (user.status) {
         case "WAITING_FOR_APPROVAL":
+          showToastMessage(
+            "Your account is waiting for approval",
+            ToastTypes.WARNING
+          );
+          navigate("/login");
+          break;
         case "REJECTED":
-          navigate("/Login");
+          showToastMessage("Your account is rejected", ToastTypes.ERROR);
+          navigate("/login");
           break;
         case "APPROVED":
       }
@@ -67,8 +87,11 @@ export default function Login() {
             setNavItems([
               { path: "/Complaint", label: "File Complaint" },
               { path: "/MyComplaints", label: "My Complaints" },
-              {path: "/MyBookings/upcoming", label: "My Activities"},
-              {path: "/MyItineraryBookings/upcoming", label: "My Itineraries"},
+              { path: "/MyBookings/upcoming", label: "My Activities" },
+              {
+                path: "/MyItineraryBookings/upcoming",
+                label: "My Itineraries",
+              },
               { path: "/TourGuidesTable", label: "View Tour Guides" },
               { path: "/RecentOrders", label: "Recent Orders" },
             ])
@@ -163,6 +186,7 @@ export default function Login() {
           navigate("/");
           break;
       }
+
       dispatch(activateSidebar());
       dispatch(login());
     } catch (err: any) {

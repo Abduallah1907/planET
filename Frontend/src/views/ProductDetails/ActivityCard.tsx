@@ -7,6 +7,7 @@ import { ActivityService } from "../../services/ActivityService";
 import { IActivity } from "../../types/IActivity";
 import { use } from "i18next";
 import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from "../../store/hooks";
 
 
 
@@ -88,7 +89,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
     }
 
   };
-
+  const user = useAppSelector((state) => state.user);
   const getActivityById = async (id: string) => {
     // Fetch activity data by id
     const activity = await ActivityService.getActivityById(id);
@@ -180,12 +181,16 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
             <p className="price">${activityData?.price}</p>
 
             <div className="d-flex justify-content-center">
-              <button className="reserve-button" onClick={handleReserve}>
+            {user.role==="TOURIST" && (
+            <div className="d-flex justify-content-center">
+            <button className="reserve-button" onClick={handleReserve}>
                 Reserve
               </button>
               <Button className="share-button" onClick={handleShare}>
                 <FaShareAlt />
               </Button>
+            </div>
+            )}
             </div>
            
           </div>
@@ -215,10 +220,10 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
+          <Button variant="main" className="border-warning-subtle" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={confirmReserve}>
+          <Button variant="main-inverse" onClick={confirmReserve}>
             Confirm
           </Button>
         </Modal.Footer>

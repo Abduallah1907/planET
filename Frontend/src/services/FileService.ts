@@ -1,5 +1,5 @@
 import axiosInstance from "../utils/axiosInstance";
-
+import showToast from "../../src/utils/showToast";
 class FileService {
   public static uploadFile = async (file: File) => {
     try {
@@ -19,14 +19,13 @@ class FileService {
   public static downloadFile = async (id: string) => {
     try {
       const response = await axiosInstance.get(`/file/download/${id}`, {
-        responseType: 'blob' // Ensure response is treated as a blob
+        responseType: "blob", // Ensure response is treated as a blob
       });
       return response.data; // Return the blob data
     } catch (error) {
       throw error;
     }
   };
-  
 }
 
 export { FileService };

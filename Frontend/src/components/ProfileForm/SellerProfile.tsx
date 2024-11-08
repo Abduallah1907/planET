@@ -9,6 +9,7 @@ import { FileService } from "../../services/FileService";
 import { isValidObjectId } from "../..//utils/CheckObjectId";
 import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
+import showToastMessage from "../../utils/showToastMessage";
 
 interface FormData {
   firstName: string;
@@ -76,7 +77,42 @@ const SellerProfile: React.FC = () => {
     getSellerData();
   }, [Seller]);
 
-  const OnClick = async () => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    if (name === "mobile") {
+      // Use a regular expression to allow only numbers
+      if (/[^0-9]/.test(value)) {
+        return; // Prevent updating the state if non-numeric characters are entered
+      }
+    }
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFormData({ ...formData, logo: e.target.files[0] });
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (
+      (formData.password && !formData.retypePassword) ||
+      (!formData.password && formData.retypePassword)
+    ) {
+      showToastMessage("Please fill out both password fields.", ToastTypes.ERROR);
+      return;
+    }
+
+    if (formData.mobile.length !== 11) {
+      showToastMessage("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      return;
+    }
     if (formData.logo) {
       const file = await FileService.uploadFile(formData.logo);
       const seller = await SellerServices.updateSellerServices(Seller.email, {
@@ -88,11 +124,8 @@ const SellerProfile: React.FC = () => {
         password: formData.password,
         logo: file.data._id,
       });
-      if (seller.status === 200) {
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      } else {
-        showToast("Error in updating", ToastTypes.ERROR);
-      }
+      showToast(seller);
+      //Should i add a toast for the file upload?
     } else {
       const seller = await SellerServices.updateSellerServices(Seller.email, {
         name: formData.firstName + " " + formData.lastName,
@@ -102,45 +135,8 @@ const SellerProfile: React.FC = () => {
         phone_number: formData.mobile,
         password: formData.password,
       });
-      if (seller.status === 200)
-        showToast("Updated successfully", ToastTypes.SUCCESS);
-      else showToast("Error in updating", ToastTypes.ERROR);
+      showToast(seller);
     }
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFormData({ ...formData, logo: e.target.files[0] });
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (
-      (formData.password && !formData.retypePassword) ||
-      (!formData.password && formData.retypePassword)
-    ) {
-      alert("Please fill out both password fields.");
-      return;
-    }
-
-    // If both password fields are filled, validate that they match
-    if (formData.password && formData.retypePassword) {
-      if (formData.password !== formData.retypePassword) {
-        alert("Passwords don't match!");
-        return;
-      }
-    }
-    // Handle form submission, including the logo file
   };
 
   const handleCancel = () => {
@@ -236,7 +232,7 @@ const SellerProfile: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="Chnage your password"
+                label="change your password"
                 type="password"
                 placeholder="Change your password"
                 id="password"
@@ -289,6 +285,7 @@ const SellerProfile: React.FC = () => {
                 required={true}
                 value={formData.mobile} // Correctly referencing description
                 onChange={handleChange}
+                pattern="^[0-9]{11}$"
               />
             </Col>
           </Row>
@@ -311,7 +308,7 @@ const SellerProfile: React.FC = () => {
           </Row>
 
           <div className="d-flex justify-content-center">
-            <button className="update-btn" onClick={OnClick}>
+            <button className="update-btn">
               Confirm
             </button>
             <button className="cancel-btn" onClick={handleCancel}>

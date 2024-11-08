@@ -3,6 +3,7 @@ import axios from "axios";
 import showToast from "./showToast";
 import { ToastTypes } from "./toastTypes";
 import { logout } from "../store/userSlice";
+import showToastMessage from "./showToastMessage";
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:8000/api",
@@ -28,13 +29,14 @@ const dispatch = store.dispatch;
 const redirectToLogin = () => {
   window.location.href = "/login";
   dispatch(logout());
-}
+};
 
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    showToast(error.response.data.message, ToastTypes.ERROR);
-    if(error.response && error.response?.status === 401) {
+    // showToastMessage(error.response.data.message, ToastTypes.ERROR); //make showToast of abdo for messages i want
+    showToast(error.response.data);
+    if (error.response && error.response?.status === 401) {
       redirectToLogin();
     }
     // Return a resolved promise to prevent error propagation

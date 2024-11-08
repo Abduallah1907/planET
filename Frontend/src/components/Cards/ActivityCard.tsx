@@ -16,9 +16,7 @@ import { useMemo, useState } from "react";
 import { useAppContext } from "../../AppContext";
 import { useAppSelector } from "../../store/hooks";
 import { ActivityService } from "../../services/ActivityService";
-import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
-
 
 interface InputData {
   Name: string;
@@ -60,7 +58,8 @@ const CustomActivityCard = ({
 }: InputData) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showFlagModal, setShowFlagModal] = useState(false); // State for flag confirmation modal
-  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } =
+    useAppContext();
 
   const convertedPrice = useMemo(() => {
     return getConvertedCurrencyWithSymbol(Price, baseCurrency, currency);
@@ -68,7 +67,6 @@ const CustomActivityCard = ({
 
   const user = useAppSelector((state) => state.user);
   const isAdmin = user?.role === "ADMIN";
-
 
   // Manage the state for the rating
   const navigate = useNavigate();
@@ -98,8 +96,7 @@ const CustomActivityCard = ({
     // Perform the delete action here
     const deletedActivity = await ActivityService.deleteActivity(id); // Call the deleteActivity function from the service
     setShowDeleteModal(false); // Close modal after confirming
-    if (deletedActivity && deletedActivity.status === 200) {
-      showToast("Activity deleted successfully", ToastTypes.SUCCESS);
+    if (deletedActivity) {
       onDelete && onDelete(); // Call the onDelete function passed as a prop
     }
   };
@@ -215,8 +212,8 @@ const CustomActivityCard = ({
                 {!isActive
                   ? "Inactive"
                   : isBooked
-                    ? "Booking On"
-                    : "Booking Off"}
+                  ? "Booking On"
+                  : "Booking Off"}
               </Badge>
             ) : null}
           </div>
@@ -229,14 +226,18 @@ const CustomActivityCard = ({
               variant="light"
               className="d-flex justify-content-end ms-3 btn-main-inverse"
             >
-              {isAdvertiser ? (<>
-                <Dropdown.Item onClick={() => id && handleEdit(id)}>
-                  Edit
+              {isAdvertiser ? (
+                <>
+                  <Dropdown.Item onClick={() => id && handleEdit(id)}>
+                    Edit
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item>
+                </>
+              ) : (
+                <Dropdown.Item onClick={() => id && handleFlag()}>
+                  Flag Inappropriate
                 </Dropdown.Item>
-                <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item></>
-              ) : <Dropdown.Item onClick={() => id && handleFlag()}>
-                Flag Inappropriate
-              </Dropdown.Item>}
+              )}
             </DropdownButton>
           </Col>
         ) : null}
@@ -249,7 +250,11 @@ const CustomActivityCard = ({
         </Modal.Header>
         <Modal.Body>Are you sure you want to delete this activity?</Modal.Body>
         <Modal.Footer>
-          <Button variant="main" className="border-warning-subtle" onClick={cancelDelete} >
+          <Button
+            variant="main"
+            className="border-warning-subtle"
+            onClick={cancelDelete}
+          >
             Cancel
           </Button>
           <Button variant="main-inverse" onClick={confirmDelete}>
@@ -266,7 +271,11 @@ const CustomActivityCard = ({
           Are you sure you want to flag this Activity as inappropriate?
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="main" className="border-warning-subtle" onClick={cancelFlag}>
+          <Button
+            variant="main"
+            className="border-warning-subtle"
+            onClick={cancelFlag}
+          >
             Cancel
           </Button>
           <Button variant="main-inverse" onClick={confirmFlag}>

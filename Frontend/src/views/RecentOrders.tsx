@@ -1,107 +1,214 @@
+import React, { useEffect, useState } from "react";
 import {
-    Card,
-    Row,
-    Col,
-    Image,
-    Button,
-  } from "react-bootstrap";
-  import "./Cards.css";
-  import { useMemo, useState } from "react";
-  import { useAppContext } from "../AppContext";
-  import { FaTrashAlt, FaTrashRestore } from "react-icons/fa";
-  import { useAppDispatch } from "../store/hooks";
-  import { removeProduct, updateQuantity } from "../store/cartSlice";
-  
-  interface InputData {
-    index: number;
-    name: string;
-    id?: string;
-    quantity: number;
-    price: number;
-    image?: string;
-  }
-  
-  const RecentOrders = ({
-    index,
-    id,
-    name,
-    price,
-    quantity,
-    image,
-  }: InputData) => {
-    const [currentQuantity, setCurrentQuantity] = useState(quantity);
-    const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
-  
-    const convertedPrice = useMemo(() => {
-      return getConvertedCurrencyWithSymbol(price * quantity, baseCurrency, currency);
-    }, [price, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
-  
-    const dispatch = useAppDispatch();
-  
-    const increment = (index: number) => {
-      setCurrentQuantity(currentQuantity + 1);
-      dispatch(updateQuantity({ index, quantity: currentQuantity + 1 }));
-    }
-  
-    const decrement = (index: number) => {
-      if (currentQuantity > 1) {
-        setCurrentQuantity(currentQuantity - 1);
-        dispatch(updateQuantity({ index, quantity: currentQuantity - 1 }));
-      }
-    }
-  
-    const handleRemoveProduct = (index: number) => {
-      dispatch(removeProduct(index));
-    }
-  
-    return (
-      <Card className="p-3 shadow-sm mb-1" style={{ borderRadius: "10px"}}>
-        <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
-          {/* Image Section */}
-          <Col md={0} className="p-0 d-flex align-items-stretch m-auto">
-            <Image
-              src={image || "https://via.placeholder.com/250x250"}
-              rounded
-              alt="Product Image"
-              style={{ objectFit: "cover", height: "75%", width: "75%" }}
-            />
-          </Col>
-  
-          {/* Main Info Section */}
-          <Col md={7} className="d-flex align-items-stretch">
-            <Card.Body className="p-0 d-flex flex-column justify-content-between">
-              <div>
-                <div className="d-flex align-items-center mb-1">
-                  <Card.Title className="mb-0" style={{ fontWeight: "bold", marginRight: "10px" }}>
-                    {name}
-                  </Card.Title>
-                </div>
-              </div>
-            </Card.Body>
-          </Col>
-  
-          {/* Quantity and Remove Button Section */}
-          <Col md={3} className="d-flex flex-column justify-content-between align-items-end">
-            <div className="d-flex align-items-center mb-2">
-              <Button variant="outline-secondary" onClick={() => decrement(index)}>
-                -
-              </Button>
-              <span className="px-3">{currentQuantity}</span>
-              <Button variant="outline-secondary" onClick={() => increment(index)}>
-                +
-              </Button>
-            </div>
-            <h4 style={{ fontWeight: "bold" }}>{convertedPrice}</h4>
-            <Button variant="main-inverse" className="w-20" onClick={() => handleRemoveProduct(index)}>
-              <FaTrashAlt >
-                Remove
-              </FaTrashAlt>
-            </Button>
-          </Col>
-        </Row>
-      </Card>
-    );
+  Container,
+  Row,
+  Col,
+  ListGroup,
+  Modal,
+  Button,
+  Image,
+} from "react-bootstrap";
+import Comment from "../components/Comment"; // Assume you have a Comment component for rating
+import { TouristService } from "../services/TouristService";
+import { useAppSelector } from "../store/hooks";
+
+interface Product {
+  _id: string;
+  seller_id: string;
+  name: string;
+  description: string;
+  image: string;
+  price: number;
+  average_rating: number;
+}
+
+interface CartItem {
+  product_id: Product;
+  quantity: number;
+}
+
+interface Cart {
+  items: CartItem[];
+  cost: number;
+}
+
+interface Order {
+  _id: string;
+  tourist_id: string;
+  products: Cart;
+  date: string;
+  cost: number;
+  status: string;
+  payment_type: string;
+  createdAt: string;
+}
+
+const RecentOrders: React.FC = () => {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [showProductModal, setShowProductModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const Tourist = useAppSelector((state) => state.user);
+
+  const getPastOrders = async (email: string) => {
+    const orders = await TouristService.getPastOrders(email);
+    return orders;
   };
-  
-  export default RecentOrders;
-  
+
+  const handleOpenOrder = (order: Order) => {
+    setSelectedOrder(order);
+    setShowProductModal(true);
+  };
+
+  const handleOpenRateModal = (product: Product) => {
+    setSelectedProduct(product);
+  };
+
+  const handleCommentSubmit = async (sentData: {
+    comment: string;
+    rating: number;
+  }) => {
+    if (selectedProduct) {
+      await TouristService.rateAndCommentProduct(
+        Tourist.stakeholder_id._id,
+        selectedProduct._id,
+        sentData.comment,
+        sentData.rating
+      );
+    }
+    setShowProductModal(false);
+    setSelectedProduct(null);
+  };
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      const orders = await getPastOrders(Tourist.email);
+      setOrders(orders.data);
+    };
+    fetchOrders();
+  }, [Tourist.email]);
+
+  return (
+    <Container className="profile-form-container">
+      <Row className="align-items-center mb-4">
+        <Col xs={12} className="text-center">
+          <h2 className="my-profile-heading">Recent Orders</h2>
+        </Col>
+      </Row>
+      <Row className="justify-content-center">
+        <Col xs={12} md={8} lg={6} style={{ maxWidth: "800px" }}>
+          <ListGroup
+            className="order-list"
+            style={{ width: "100%", margin: "0 auto" }}
+          >
+            {orders.map((order) => (
+              <ListGroup.Item
+                key={order._id}
+                action
+                onClick={() => handleOpenOrder(order)}
+                className="mb-2"
+              >
+                <div className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>Order #{order._id}</strong>
+                    <p>Date: {order.date}</p>
+                    <p>Items: {order.products.items.length}</p>
+                    <p>Total: ${order.cost.toFixed(2)}</p>
+                  </div>
+                </div>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        </Col>
+      </Row>
+
+      {/* Modal to show products in the selected order */}
+      {selectedOrder && (
+        <Modal
+          show={showProductModal}
+          onHide={() => setShowProductModal(false)}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Order #{selectedOrder._id} - Products</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <ListGroup>
+              {selectedOrder.products.items.map((product) => (
+                <ListGroup.Item
+                  key={product.product_id._id}
+                  className="d-flex justify-content-between align-items-center"
+                >
+                  <div className="d-flex align-items-center">
+                    <Image
+                      src={
+                        product.product_id.image || "path/to/placeholder.jpg"
+                      } // Placeholder image path
+                      alt={product.product_id.name}
+                      thumbnail
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        objectFit: "cover",
+                        marginRight: "10px",
+                      }}
+                    />
+                    <div>
+                      <p className="mb-1">
+                        <strong>{product.product_id.name}</strong>
+                      </p>
+                      <p className="mb-1">{product.product_id.description}</p>
+                      <p>${product.product_id.price.toFixed(2)}</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="main-inverse"
+                    onClick={() => handleOpenRateModal(product.product_id)}
+                  >
+                    Rate
+                  </Button>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="main"
+              className="border-warning-subtle"
+              onClick={() => setShowProductModal(false)}
+            >
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
+
+      {/* Modal for rating a specific product */}
+      {selectedProduct && (
+        <Modal
+          show={!!selectedProduct}
+          onHide={() => setSelectedProduct(null)}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Rate {selectedProduct.name}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Comment onSubmit={handleCommentSubmit} />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="main"
+              className="border-warning-subtle"
+              onClick={() => setSelectedProduct(null)}
+            >
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
+    </Container>
+  );
+};
+
+export default RecentOrders;
