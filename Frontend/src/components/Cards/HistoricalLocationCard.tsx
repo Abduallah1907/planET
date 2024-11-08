@@ -237,12 +237,12 @@ export const HistoricalLocationCard = ({
         <Modal.Header closeButton>
           <Modal.Title>Delete Product</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this product?</Modal.Body>
+        <Modal.Body>Are you sure you want to delete this historical location ?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={cancelDelete}>
+          <Button variant="main" className="border-warning-subtle" onClick={cancelDelete}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={confirmDelete}>
+          <Button variant="main-inverse" onClick={confirmDelete}>
             Confirm
           </Button>
         </Modal.Footer>

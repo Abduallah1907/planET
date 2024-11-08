@@ -79,10 +79,10 @@ const SlotModal: React.FC<SlotModalProps> = ({ show, handleClose, handleSave, sl
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
+        <Button variant="main" className="border-warning-subtle" onClick={handleClose}>
           Close
         </Button>
-        <Button variant="success" onClick={saveSlot}>
+        <Button variant="main-inverse" onClick={saveSlot}>
           Save Changes
         </Button>
       </Modal.Footer>
