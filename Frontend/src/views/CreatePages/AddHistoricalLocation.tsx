@@ -3,12 +3,12 @@ import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Reuse the form group component
 import { BiChevronDown } from "react-icons/bi";
 import { HistoricalService } from "../../services/HistoricalService";
-import showToast from "../../utils/showToast";
-import { ToastTypes } from "../../utils/toastTypes";
 import DaysModal from "../../components/DaysModals";
 import { useAppSelector } from "../../store/hooks";
 import { useNavigate } from "react-router-dom";
 import { set } from "react-datepicker/dist/date_utils";
+import { ToastTypes } from "../../utils/toastTypes";
+import showToastMessage from "../../utils/showToastMessage";
 
 interface FormData {
   name: string;
@@ -78,7 +78,7 @@ const HistoricalPlaceForm: React.FC = () => {
     ) {
       const numericValue = parseFloat(value);
       if (numericValue < 0) {
-        // showToast("Price cannot be negative", ToastTypes.ERROR);//Show toast message not API
+        showToastMessage("Price cannot be negative", ToastTypes.ERROR); //Show toast message not API
         setFormData({ ...formData, [name]: 0 });
         // Ignore negative values, you might also want to show a warning here
         return;
@@ -136,7 +136,7 @@ const HistoricalPlaceForm: React.FC = () => {
 
   const handleAddTag = () => {
     if (selectedTags.length === tags.length) {
-      // showToast("All tags have been added", ToastTypes.ERROR);//Show toast message not API
+      showToastMessage("All tags have been added", ToastTypes.ERROR); //Show toast message not API
       return;
     }
     setSelectedTags([...selectedTags, { id: "", value: "" }]);

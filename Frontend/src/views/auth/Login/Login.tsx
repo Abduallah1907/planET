@@ -72,11 +72,9 @@ export default function Login() {
             "Your account is waiting for approval",
             ToastTypes.WARNING
           );
-          navigate("/login");
           break;
         case "REJECTED":
           showToastMessage("Your account is rejected", ToastTypes.ERROR);
-          navigate("/login");
           break;
         case "APPROVED":
       }

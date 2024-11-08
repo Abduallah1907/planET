@@ -2,6 +2,8 @@ import { activateSidebar, setNavItems } from "../store/sidebarSlice";
 import AuthService from "../services/authService";
 import { login, setUser } from "../store/userSlice";
 import CryptoJS from "crypto-js";
+import showToastMessage from "./showToastMessage";
+import { ToastTypes } from "./toastTypes";
 
 export class Utils {
   private static secretKey = "your_secret_key";
@@ -70,8 +72,14 @@ export class Utils {
       dispatch(setUser(user));
       switch (user.status) {
         case "WAITING_FOR_APPROVAL":
+          showToastMessage(
+            "Your account is waiting for approval",
+            ToastTypes.WARNING
+          );
+          break;
+
         case "REJECTED":
-          navigate("/Login");
+          showToastMessage("Your account is rejected", ToastTypes.ERROR);
           break;
         case "APPROVED":
       }
@@ -82,8 +90,11 @@ export class Utils {
             setNavItems([
               { path: "/Complaint", label: "File Complaint" },
               { path: "/MyComplaints", label: "My Complaints" },
-              {path: "/MyBookings/upcoming", label: "My Activities"},
-              {path: "/MyItineraryBookings/upcoming", label: "My Itineraries"},
+              { path: "/MyBookings/upcoming", label: "My Activities" },
+              {
+                path: "/MyItineraryBookings/upcoming",
+                label: "My Itineraries",
+              },
               { path: "/TourGuidesTable", label: "View My Tour Guides" },
               { path: "/RecentOrders", label: "Recent Orders" },
             ])

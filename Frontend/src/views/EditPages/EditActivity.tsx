@@ -7,7 +7,7 @@ import CategoryService from "../../services/CategoryService";
 import { useNavigate, useParams } from "react-router-dom";
 import { ActivityService } from "../../services/ActivityService";
 import { AdminService } from "../../services/AdminService";
-import showToast from "../../utils/showToast";
+import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
@@ -74,7 +74,7 @@ const AdvertiserCreate: React.FC = () => {
         (name === "special_discount" || name === "price") &&
         Number(updatedValue) < 0
       ) {
-        // showToast("Value cannot be negative", ToastTypes.ERROR);//Show error message not API
+        showToastMessage("Value cannot be negative", ToastTypes.ERROR); //Show error message not API
         setFormData({
           ...formData,
           [name]: 0,

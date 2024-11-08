@@ -1255,6 +1255,7 @@ export default class TouristService {
       tourist_id: tourist_id,
       type: TicketType.Activity,
       time_to_attend: { $lt: Date.now() },
+      cancelled: false,
     });
 
     if (tickets instanceof Error) {
@@ -1329,6 +1330,7 @@ export default class TouristService {
       tourist_id: tourist_id,
       type: TicketType.Activity,
       time_to_attend: { $gte: Date.now() },
+      cancelled: false,
     });
 
     if (tickets instanceof Error) {
@@ -1410,6 +1412,7 @@ export default class TouristService {
       tourist_id: tourist_id,
       type: TicketType.Itinerary,
       time_to_attend: { $lt: Date.now() },
+      cancelled: false,
     });
 
     if (tickets instanceof Error) {
@@ -1484,6 +1487,7 @@ export default class TouristService {
       tourist_id: tourist_id,
       type: TicketType.Itinerary,
       time_to_attend: { $gte: Date.now() },
+      cancelled: false,
     });
 
     if (tickets instanceof Error) {

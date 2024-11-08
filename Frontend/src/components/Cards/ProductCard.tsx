@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { addProduct } from "../../store/cartSlice";
-import showToast from "../../utils/showToast";
+import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
 
 interface InputData {
@@ -80,7 +80,7 @@ const ProductCard = ({
   const confirmDelete = () => {
     // Perform the delete action here
     setShowDeleteModal(false); // Close modal after confirming
-    // showToast("Product deleted",ToastTypes.SUCCESS);
+    showToastMessage("Product deleted", ToastTypes.SUCCESS);
   };
 
   const cancelDelete = () => {
@@ -90,7 +90,7 @@ const ProductCard = ({
   const addToCart = (e: any) => {
     e.stopPropagation();
     e.preventDefault();
-    // showToast("Product added to cart",ToastTypes.SUCCESS);
+    showToastMessage("Product added to cart", ToastTypes.SUCCESS);
     dispatch(
       addProduct({
         product: { id, name, price, description, image },

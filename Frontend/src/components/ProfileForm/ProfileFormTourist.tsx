@@ -10,7 +10,6 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { FaExchangeAlt, FaInfoCircle } from "react-icons/fa";
 import { setStakeholder } from "../../store/userSlice";
 import { useAppContext } from "../../AppContext";
-import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
 import showToastMessage from "../../utils/showToastMessage";
 
@@ -70,7 +69,10 @@ const ProfileForm: React.FC = () => {
       (formData.password && !formData.retypePassword) ||
       (!formData.password && formData.retypePassword)
     ) {
-      showToastMessage("Please fill out both password fields.", ToastTypes.ERROR);
+      showToastMessage(
+        "Please fill out both password fields.",
+        ToastTypes.ERROR
+      );
       return;
     }
   };
@@ -97,7 +99,10 @@ const ProfileForm: React.FC = () => {
       return; // Exit if passwords don't match
     }
     if (formData.mobile.length !== 11) {
-      showToastMessage("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      showToastMessage(
+        "Mobile number must be exactly 11 digits.",
+        ToastTypes.ERROR
+      );
       return;
     }
 

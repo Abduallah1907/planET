@@ -142,7 +142,7 @@ export default class ItineraryService {
     return new response(
       true,
       { itinerary_id: updatedItinerary._id },
-      "Itinerary updated!",
+      "Itinerary updated successfully",
       201
     );
   }
@@ -185,7 +185,7 @@ export default class ItineraryService {
     return new response(
       true,
       { itinerary_id: deletedItinerary._id },
-      "Itinerary deleted!",
+      "Itinerary deleted successfully",
       200
     );
   }
@@ -470,23 +470,26 @@ export default class ItineraryService {
         const endDate = filters.date.end;
         dashedEndDate = endDate.split("/").join("-");
       }
+      const filterEndDate = new Date(dashedEndDate);
+      filterEndDate.setDate(filterEndDate.getDate() + 1);
+      const filterStartDate = new Date(dashedStartDate);
       if (filters.date.start !== undefined && filters.date.end !== undefined) {
         matchStage.available_dates = {
           $elemMatch: {
-            $gte: new Date(dashedStartDate),
-            $lte: new Date(dashedEndDate),
+            $gte: filterStartDate,
+            $lte: filterEndDate,
           },
         };
       } else if (filters.date.start !== undefined) {
         matchStage.available_dates = {
           $elemMatch: {
-            $gte: new Date(dashedStartDate),
+            $gte: filterStartDate,
           },
         };
       } else if (filters.date.end !== undefined) {
         matchStage.available_dates = {
           $elemMatch: {
-            $lte: new Date(dashedEndDate),
+            $lte: filterEndDate,
           },
         };
       }
@@ -514,7 +517,6 @@ export default class ItineraryService {
         },
       },
     ];
-
     if (filters.preferences) {
       aggregationPipeline.push({
         $match: {

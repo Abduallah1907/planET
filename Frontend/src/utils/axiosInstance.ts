@@ -1,9 +1,7 @@
 import store from "../store/store"; // Import your store
 import axios from "axios";
 import showToast from "./showToast";
-import { ToastTypes } from "./toastTypes";
 import { logout } from "../store/userSlice";
-import showToastMessage from "./showToastMessage";
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:8000/api",
