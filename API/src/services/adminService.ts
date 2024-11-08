@@ -168,7 +168,12 @@ export default class AdminService {
       updatedAt: user.updatedAt,
     };
     if (deletedRole) userOutput = { ...userOutput, ...deletedRole._doc };
-    return new response(true, { ...userOutput }, "User deleted", 200);
+    return new response(
+      true,
+      { ...userOutput },
+      "User deleted sucessfully",
+      200
+    );
   }
 
   public async createGovernorService(
@@ -209,7 +214,7 @@ export default class AdminService {
     return new response(
       true,
       { ...governorOutput, nation: newGovernor.nation },
-      "Governor created",
+      "Governor created successfully",
       201
     );
   }
@@ -252,7 +257,7 @@ export default class AdminService {
     });
     newSeller.save();
 
-    return new response(true, adminOutput, "Admin created", 201);
+    return new response(true, adminOutput, "Admin created successfully", 201);
   }
 
   // CRUD for categories
@@ -261,7 +266,7 @@ export default class AdminService {
     if (category instanceof Error)
       throw new InternalServerError("Internal server error");
 
-    return new response(true, category, "Created new category!", 201);
+    return new response(true, category, "Created category successfully", 201);
   }
 
   public async getCategoriesService(page: number): Promise<any> {
@@ -294,7 +299,12 @@ export default class AdminService {
       throw new InternalServerError("Internal server error");
     if (!updatedCategory) throw new HttpError("Category not found", 404);
 
-    return new response(true, updatedCategory, "Category updated!", 200);
+    return new response(
+      true,
+      updatedCategory,
+      "Category updated successfully",
+      200
+    );
   }
 
   public async deleteCategoryService(type: string): Promise<any> {
@@ -306,7 +316,12 @@ export default class AdminService {
       throw new InternalServerError("Internal server error");
     if (!deletedCategory) throw new HttpError("Category not found", 404);
 
-    return new response(true, deletedCategory, "Category deleted!", 200);
+    return new response(
+      true,
+      deletedCategory,
+      "Category deleteted successfully",
+      200
+    );
   }
 
   public async createTagService(type: string): Promise<any> {
@@ -314,7 +329,7 @@ export default class AdminService {
     if (tag instanceof Error)
       throw new InternalServerError("Internal server error");
 
-    return new response(true, tag, "Created new tag!", 201);
+    return new response(true, tag, "Created tag successfully", 201);
   }
 
   public async getTagsService(page: number): Promise<any> {
@@ -342,7 +357,7 @@ export default class AdminService {
       throw new InternalServerError("Internal server error");
     if (!updatedTag) throw new HttpError("Tag not found", 404);
 
-    return new response(true, updatedTag, "Tag updated!", 200);
+    return new response(true, updatedTag, "Tag updated successfully", 200);
   }
 
   public async deleteTagService(type: String): Promise<any> {
@@ -368,7 +383,7 @@ export default class AdminService {
       throw new InternalServerError("Internal server error");
     if (!deletedTag) throw new HttpError("Tag not found", 404);
 
-    return new response(true, deletedTag, "Tag deleted!", 200);
+    return new response(true, deletedTag, "Tag deleted successfully", 200);
   }
 
   public async acceptUserService(email: string): Promise<any> {
@@ -487,7 +502,7 @@ export default class AdminService {
         path: "tourist_id",
         populate: { path: "user_id", select: "name" },
         select: "tourist_id",
-      })
+      });
     const complaintsOutput: IComplaintAdminViewDTO[] = complaints.map(
       (complaint) => ({
         date: complaint.date,

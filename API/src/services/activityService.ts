@@ -434,6 +434,7 @@ export default class ActivityService {
       },
     ];
     // Add conditional filters
+    // console.log(JSON.stringify(aggregationPipeline));
     if (filters.category || filters.preferences) {
       aggregationPipeline.push({
         $match: {
