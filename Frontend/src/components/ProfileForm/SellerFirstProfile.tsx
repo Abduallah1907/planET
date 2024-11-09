@@ -6,8 +6,6 @@ import LogoPlaceholder from "../../assets/person-circle.svg";
 import { SellerServices } from "../../services/SellerServices";
 import { useAppSelector } from "../../store/hooks";
 import { FileService } from "../../services/FileService";
-import showToast from "../../utils/showToast";
-import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   description: string;
@@ -59,7 +57,6 @@ const SellerFirstProfile: React.FC = () => {
           logo: file.data._id,
         }
       );
-      showToast(seller);
     } else {
       const seller2 = await SellerServices.updateSellerServices(
         SellerFirst.email,
@@ -67,7 +64,6 @@ const SellerFirstProfile: React.FC = () => {
           description: formData.description,
         }
       );
-      showToast(seller2);
     }
   };
 

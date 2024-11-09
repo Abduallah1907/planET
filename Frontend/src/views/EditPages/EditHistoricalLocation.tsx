@@ -5,7 +5,7 @@ import "../tagsinput.css";
 import { BiChevronDown } from "react-icons/bi";
 import { HistoricalService } from "../../services/HistoricalService";
 import { useNavigate, useParams } from "react-router-dom";
-import showToast from "../../utils/showToast";
+import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
 import DaysModal from "../../components/DaysModals";
 
@@ -163,7 +163,7 @@ const HistoricalPlaceForm: React.FC = () => {
 
   const handleAddTag = () => {
     if (selectedTags.length === tags.length) {
-      // showToast("All tags have been added", ToastTypes.ERROR);//Show error message not API
+      showToastMessage("All tags have been added", ToastTypes.ERROR); //Show error message not API
       return;
     }
     setSelectedTags([...selectedTags, { id: "", value: "" }]);

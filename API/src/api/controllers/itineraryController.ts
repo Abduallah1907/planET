@@ -148,7 +148,7 @@ export class ItineraryController {
     }
     if (date) {
       const [start, end] = date.split("-");
-      filters = { ...filters, date: { start, end: end || start } };
+      filters = { ...filters, date: { start: start, end: end } };
     }
     if (tag) {
       const preferencesList = tag

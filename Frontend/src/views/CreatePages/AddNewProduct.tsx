@@ -5,7 +5,7 @@ import { useAppSelector } from "../../store/hooks";
 import { ProductService } from "../../services/ProductService";
 import { useNavigate } from "react-router-dom";
 import { FileService } from "../../services/FileService";
-import showToast from "../../utils/showToast";
+import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
@@ -36,7 +36,7 @@ const AddNewProduct: React.FC = () => {
 
       // Validate for negative values
       if (numericalValue < 0) {
-        // showToast(`${name} cannot be negative`, ToastTypes.ERROR);//Show error message not API
+        showToastMessage(`${name} cannot be negative`, ToastTypes.ERROR); //Show error message not API
         setFormData({ ...formData, [name]: "0" }); // Reset to 0 if negative
         return;
       }

@@ -7,6 +7,23 @@
     color: #404756;
 }
 
+.flight-booking-container .trip-destination, .flight-booking-container .trip-duration{
+    font-family: 'Skyscanner Relative', sans-serif;
+    font-weight: 600;
+    color: #404756;
+    width: 100%;
+}
+
+.flight-booking-container .trip-destination{
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+}
+
+.flight-booking-container .trip-duration{
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
 .flight-booking-container .card,
 .flight-booking-container .price-summary .card-header {
     border-color: #f1f2f3;
@@ -137,3 +154,27 @@
 .flight-booking-container .passenger-details .traveler-details .gender-selector .btn:last-child{
     border-radius: 0 4px 4px 0;
 }
+
+.flight-booking-container .btn-main-inverse{
+    margin: 0;
+    padding: 0.5rem 1rem;
+    width: 100%;
+}
+
+.flight-booking-container .btn-main-inverse:hover{
+    scale: 1;
+}
+
+@media (min-width:600px) {
+    .flight-booking-container .btn-main-inverse{
+        width: 24rem !important;
+    }
+}
+ @media (min-width: 992px) {
+    .md\:hidden {
+        display: none;
+    }
+    .md\:block {
+        display: block !important;
+    }
+ }

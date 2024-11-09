@@ -172,6 +172,15 @@
   font-size: 0.75rem;
 }
 
+.baggage-info .bag-icon.none {
+  background-color: #f76746;
+}
+
+.baggage-info .bag-icon.none span {
+  margin-right: 0.15rem;
+  font-size: 1.5rem;
+}
+
 .amenity-icon {
   width: 1.5rem;
   height: 1.5rem;
@@ -183,3 +192,8 @@
   color: #404756;
 }
 
+.flight-tooltip{
+  border-radius: 0.375rem;
+  --bs-tooltip-bg: white;
+  --bs-tooltip-color: #404756;
+}

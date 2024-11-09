@@ -88,7 +88,7 @@ export default class UserService {
     let stakeholder_id;
     switch (role) {
       case UserRoles.Admin:
-        
+
       case UserRoles.Seller:
         const seller = await this.sellerModel.findOne({ user_id: user_id });
         if (seller instanceof Error)
@@ -162,7 +162,7 @@ export default class UserService {
     user.first_time_login = false;
     await user.save();
 
-    return new response(true, userOutput, "User found,User logged in", 200);
+    return new response(true, userOutput, "Logged in successfully", 200);
   }
 
   public async forgetPasswordService(email: string) {
