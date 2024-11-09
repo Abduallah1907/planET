@@ -41,7 +41,9 @@ const headCells: readonly HeadCell[] = [
   //   { id: "tourist_name", numeric: false, label: "Name" },
   { id: "title", numeric: false, label: "Title" },
   { id: "body", numeric: false, label: "Body" },
-  { id: "date", numeric: true, label: "Date" },
+  { id: "date", numeric: true, label: "Complaint's Date" },
+  { id: "date", numeric: true, label: "Created At" },
+
   { id: "status", numeric: false, label: "Status" },
   { id: "reply", numeric: false, label: "Reply" },
 ];
@@ -88,6 +90,7 @@ export default function TouristComplaintsTable() {
 
   const getComplaintsData = async () => {
     const ComplaintsData = await TouristService.viewMyComplaints(TouristId);
+    console.log(ComplaintsData.data);
     setComplaints(ComplaintsData.data);
   };
 
@@ -119,6 +122,22 @@ export default function TouristComplaintsTable() {
   const visibleRows = [...filteredComplaints]
     .sort(getComparator(order, orderBy))
     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+  const formatDate = (date: any) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  };
+
+  const formatTime = (date: any) => {
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    return `${hours}:${minutes}:${seconds}`; // Format as HH:mm:ss
+  };
 
   return (
     <TableContainer component={Paper}>
@@ -196,7 +215,10 @@ export default function TouristComplaintsTable() {
               <TableCell align="center">{complaint.title}</TableCell>
               <TableCell align="center">{complaint.body}</TableCell>
               <TableCell align="center">
-                {new Date(complaint.date).toLocaleDateString()}
+                {formatDate(new Date(complaint.date))}
+              </TableCell>
+              <TableCell align="center">
+                {formatTime(new Date(complaint.date))}
               </TableCell>
               <TableCell align="center">
                 <Badge
