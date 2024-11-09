@@ -6,10 +6,9 @@ import Rating from "../../components/Rating/Rating";
 import { ActivityService } from "../../services/ActivityService";
 import { IActivity } from "../../types/IActivity";
 import { use } from "i18next";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
-
-
+import { Utils } from "../../utils/utils";
 
 interface ActivityCardProps {
   id: string;
@@ -38,17 +37,21 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
   const [showModal, setShowModal] = useState(false);
   const [activityData, setActivityData] = useState<IActivity | null>(null);
   const [showAdvertiserModal, setShowAdvertiserModal] = useState(false);
-  const shareLink = activityData ? `${window.location.origin}/activity/${activityData._id}` : '';
+  const shareLink = activityData
+    ? `${window.location.origin}/activity/${activityData._id}`
+    : "";
   const navigate = useNavigate();
-  
+
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shareLink);
-    alert('Link copied to clipboard!');
+    alert("Link copied to clipboard!");
   };
 
   const shareViaEmail = () => {
-    const subject = encodeURIComponent('Check out this activity!');
-    const body = encodeURIComponent(`I found this interesting activity: ${shareLink}`);
+    const subject = encodeURIComponent("Check out this activity!");
+    const body = encodeURIComponent(
+      `I found this interesting activity: ${shareLink}`
+    );
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
 
@@ -56,19 +59,18 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Check out this activity!',
-          text: 'I found this interesting activity:',
+          title: "Check out this activity!",
+          text: "I found this interesting activity:",
           url: shareLink,
         });
       } catch (err) {
-        console.error('Error sharing: ', err);
+        console.error("Error sharing: ", err);
       }
     } else {
       // Fallback for browsers that do not support the Web Share API
       copyToClipboard();
     }
   };
-
 
   const toggleBookmark = () => {
     setIsBookmarked(!isBookmarked);
@@ -81,13 +83,10 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
   const confirmReserve = () => {
     setShowModal(false);
     if (activityData && activityData.booking_flag) {
-      
       handleBookNow();
-
     } else {
       alert("Activity is not available for reservation!");
     }
-
   };
   const user = useAppSelector((state) => state.user);
   const getActivityById = async (id: string) => {
@@ -108,7 +107,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
   };
   const handleBookNow = () => {
     navigate(`/bookActivity/${activityData?._id}`);
-  }
+  };
   return (
     <Container className="activity-card-container mt-5">
       <div className="activity-card">
@@ -138,7 +137,6 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
                     {tag.type}
                   </Badge>
                 ))}
-              
 
               <div className="d-flex align-items-center ms-auto rating-stars">
                 {/* Rating Stars */}
@@ -158,7 +156,6 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
                 </Badge>
               </div>
             </div>
-           
 
             <p
               className="Advertiser"
@@ -171,28 +168,29 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
             >
               {activityData?.advertiser_id.user_id.name}
             </p>
-            <p className="Category">{activityData?.category? activityData?.category.type: ""}</p>
+            <p className="Category">
+              {activityData?.category ? activityData?.category.type : ""}
+            </p>
             <p className="date">
               {activityData?.date
-                ? new Date(activityData.date).toLocaleDateString()
+                ? Utils.formatDateDay(new Date(activityData.date))
                 : "Date not available"}
             </p>
             <p className="time">{activityData?.time}</p>
             <p className="price">${activityData?.price}</p>
 
             <div className="d-flex justify-content-center">
-            {user.role==="TOURIST" && (
-            <div className="d-flex justify-content-center">
-            <button className="reserve-button" onClick={handleReserve}>
-                Reserve
-              </button>
-              <Button className="share-button" onClick={handleShare}>
-                <FaShareAlt />
-              </Button>
+              {user.role === "TOURIST" && (
+                <div className="d-flex justify-content-center">
+                  <button className="reserve-button" onClick={handleReserve}>
+                    Reserve
+                  </button>
+                  <Button className="share-button" onClick={handleShare}>
+                    <FaShareAlt />
+                  </Button>
+                </div>
+              )}
             </div>
-            )}
-            </div>
-           
           </div>
         </div>
       </div>
@@ -220,7 +218,11 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="main" className="border-warning-subtle" onClick={() => setShowModal(false)}>
+          <Button
+            variant="main"
+            className="border-warning-subtle"
+            onClick={() => setShowModal(false)}
+          >
             Cancel
           </Button>
           <Button variant="main-inverse" onClick={confirmReserve}>

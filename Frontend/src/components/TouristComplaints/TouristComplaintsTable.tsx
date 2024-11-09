@@ -17,6 +17,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { Badge } from "react-bootstrap";
+import { Utils } from "../../utils/utils";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -42,7 +43,7 @@ const headCells: readonly HeadCell[] = [
   { id: "title", numeric: false, label: "Title" },
   { id: "body", numeric: false, label: "Body" },
   { id: "date", numeric: true, label: "Complaint's Date" },
-  { id: "createdAt", numeric: true, label: "Created At" },
+  { id: "createdAt", numeric: true, label: "Filed At" },
   { id: "status", numeric: false, label: "Status" },
   { id: "reply", numeric: false, label: "Reply" },
 ];
@@ -122,22 +123,6 @@ export default function TouristComplaintsTable() {
     .sort(getComparator(order, orderBy))
     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-  const formatDate = (date: any) => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  };
-
-  const formatTime = (date: any) => {
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    const seconds = String(date.getSeconds()).padStart(2, "0");
-
-    return `${hours}:${minutes}:${seconds}`; // Format as HH:mm:ss
-  };
-
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -214,10 +199,10 @@ export default function TouristComplaintsTable() {
               <TableCell align="center">{complaint.title}</TableCell>
               <TableCell align="center">{complaint.body}</TableCell>
               <TableCell align="center">
-                {formatDate(new Date(complaint.date))}
+                {Utils.formatDateDay(new Date(complaint.date))}
               </TableCell>
               <TableCell align="center">
-                {formatDate(new Date(complaint.createdAt))}
+                {Utils.formatDateDay(new Date(complaint.createdAt))}
               </TableCell>
               <TableCell align="center">
                 <Badge
