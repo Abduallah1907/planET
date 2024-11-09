@@ -92,7 +92,6 @@ export class Utils {
         case "TOUR_GUIDE":
           dispatch(
             setNavItems([
-              { path: "/TourGuide", label: "Profile" },
               { path: "/TourGuideDashboard", label: "Dashboard" },
               { path: "/AddItinerary", label: "Add Itinerary" },
               { path: "/MyItineraries", label: "My Itineraries" },
@@ -102,7 +101,6 @@ export class Utils {
         case "ADVERTISER":
           dispatch(
             setNavItems([
-              { path: "/Advertiser", label: "Profile" },
               { path: "/AddActivity", label: "Create Activity" },
               { path: "/MyActivities", label: "My Activites" },
             ])
@@ -111,7 +109,6 @@ export class Utils {
         case "SELLER":
           dispatch(
             setNavItems([
-              { path: "/SellerProfile", label: "Profile" },
               { path: "/SellerDashboard", label: "Dashboard" },
               { path: "/AddNewProduct", label: "Add New Product" },
               { path: "/MyProducts", label: "My Products" },
