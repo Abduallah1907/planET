@@ -81,6 +81,7 @@ const ItineraryForm: React.FC = () => {
 
   const [newAvailableDate, setNewAvailableDate] = useState<string>("");
   const [newAvailableTime, setNewAvailableTime] = useState<string>("");
+  const [isClicked, setIsClicked] = useState(false);
 
   const [slots, setSlots] = useState<Slot[]>([]);
   const [showModal, setShowModal] = useState(false);
@@ -145,6 +146,7 @@ const ItineraryForm: React.FC = () => {
 
   const handleAddActivity = () => {
     setChoosenActivities((prev) => [...prev, { _id: "", name: "" }]);
+    setIsClicked(true);
   };
 
   const handleDeleteActivity = (index: number) => {
@@ -164,6 +166,7 @@ const ItineraryForm: React.FC = () => {
 
   const handleAddLanguage = () => {
     setFilteredLanguages((prev) => [...prev, { label: "", value: "" }]);
+    setIsClicked(true);
   };
 
   const handleDeleteLanguage = (index: number) => {
@@ -179,6 +182,7 @@ const ItineraryForm: React.FC = () => {
       index: slots.length,
     });
     setShowModal(true);
+    setIsClicked(true);
   };
 
   const handleEditSlot = (index: number) => {
@@ -384,7 +388,7 @@ const ItineraryForm: React.FC = () => {
                     <Col md="auto">
                       <Button
                         variant="danger"
-                        className="ml-2"
+                        className="ml-2 mt-1"
                         onClick={() => handleDeleteActivity(index)}
                       >
                         Delete
@@ -393,7 +397,7 @@ const ItineraryForm: React.FC = () => {
                   </Row>
                 ))}
                 <Button
-                  className="mt-3"
+                  className={`ms-2 ${isClicked ? "mt-1" : ""}`}
                   variant="main-inverse"
                   onClick={handleAddActivity}
                 >
@@ -419,7 +423,7 @@ const ItineraryForm: React.FC = () => {
                       <Col md="auto">
                         <Button
                           variant="danger"
-                          className="ml-2"
+                          className="ml-2 mt-1"
                           onClick={() => handleDeleteSlot(index)}
                         >
                           Remove
@@ -428,7 +432,8 @@ const ItineraryForm: React.FC = () => {
                     </Row>
                   ))}
                   <Button
-                    className="mt-3"
+                    className={`position-relative ${isClicked ? "ms-2" : "ms-5"}`}
+                    style={{ top: isClicked ? '-12px' : '-45px', marginTop: isClicked ? '1rem' : '0' }}
                     variant="main-inverse"
                     onClick={handleAddSlot}
                   >
@@ -531,7 +536,7 @@ const ItineraryForm: React.FC = () => {
                     <Col md="auto">
                       <Button
                         variant="danger"
-                        className="ml-2"
+                        className="ml-2 mt-1"
                         onClick={() => handleDeleteLanguage(index)}
                       >
                         Delete
@@ -540,8 +545,8 @@ const ItineraryForm: React.FC = () => {
                   </Row>
                 ))}
                 <Button
-                  className="mt-3"
-                  variant="main-inverse"
+                  className={`ms-2 ${isClicked ? "mt-1" : ""}`}
+                  variant="main-inverse" 
                   onClick={handleAddLanguage}
                 >
                   Add Another Language
@@ -573,6 +578,7 @@ const ItineraryForm: React.FC = () => {
                   <Col>
                     <Button
                       variant="main-inverse"
+                      className="mt-1"
                       onClick={handleAddAvailableDate}
                     >
                       Add

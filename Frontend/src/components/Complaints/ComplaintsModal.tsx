@@ -92,20 +92,23 @@ export default function ComplaintsModal(props: any) {
               />
             </Col>
             <Col xs={6} md={4}>
-              <Button
-                type="submit"
-                variant="main-inverse"
-                disabled={!reply}
-                onClick={handleReplySubmit}
-              >
-                Add reply
-              </Button>
+            
+            {complaint.status !== "Resolved" && (
+            <Button
+              type="submit"
+              variant="main-inverse"
+              onClick={handleReplySubmit}
+            >
+              Add reply
+            </Button>
+          )}
             </Col>
           </Row>
         </Container>
       </Modal.Body>
       <Modal.Footer>
         <Button
+          variant="main-inverse"
           onClick={() => {
             handleStatusChange();
             props.onHide();
@@ -113,7 +116,7 @@ export default function ComplaintsModal(props: any) {
         >
           {complaint.status === "Pending" ? "Resolved" : "Mark as Pending"}
         </Button>
-        <Button variant="secondary" onClick={props.onHide}>
+        <Button variant="main" className="border-warning-subtle" onClick={props.onHide}>
           Close
         </Button>
       </Modal.Footer>
