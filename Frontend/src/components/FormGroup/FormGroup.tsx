@@ -10,7 +10,8 @@ interface InputData {
   disabled: boolean;
   required: boolean;
   value?: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
   name: string;
   className?: string;
   accept?: string;
@@ -29,6 +30,7 @@ function CustomFormGroup({
   required,
   value,
   onChange,
+  onClick,
   name,
   accept,
   multiple,
@@ -72,6 +74,7 @@ function CustomFormGroup({
           disabled={disabled}
           required={required}
           onChange={onChange}
+          onClick={onClick}
           name={name}
           className={
             disabled

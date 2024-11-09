@@ -8,6 +8,7 @@ import { ActivityService } from "../../services/ActivityService";
 import { IActivity } from "../../types/IActivity";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
+import { reverseGeoCode } from "../../utils/geoCoder";
 
 export default function ActivitiesPage() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export default function ActivitiesPage() {
   const [filtercomponent, setfilterComponents] = React.useState({});
   const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
   const [filter, setFilter] = React.useState({});
+  const [addresses, setAddresses] = React.useState<{ [key: string]: string }>({});
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -26,6 +28,21 @@ export default function ActivitiesPage() {
   };
 
   const Advertiser = useAppSelector((state) => state.user);
+
+  const getAddresses = async () => {
+    const addressesData = await Promise.all(
+      activities.map(async (activity) =>
+        await reverseGeoCode(activity.location.latitude, activity.location.longitude)
+      )
+    );
+    const addressesMap = Object.fromEntries(
+      addressesData.map((address, index) => [
+        activities[index]._id,
+        (address as any)[2]?.formatted_address.split(",")[0] || "Unknown address",
+      ])
+    );
+    setAddresses(addressesMap);
+  }
 
   const getActivities = async () => {
     const activitiesData = await ActivityService.getActivitiesByAdvertiserId(
@@ -78,6 +95,14 @@ export default function ActivitiesPage() {
     getActivities();
     getFilterComponents();
   }, []);
+
+  
+  useEffect(() => {
+    if (activities.length > 0) {
+      getAddresses();
+    }
+  }, [activities]);
+
   // Function to sort activities based on selected criteria
   const sortedActivities = [...activities].sort((a, b) => {
     switch (sortBy) {
@@ -186,7 +211,8 @@ export default function ActivitiesPage() {
                 <CustomActivityCard
                   id={activity._id}
                   Name={activity.name}
-                  location={"cairo"}
+                  location={addresses[activity._id]}
+                  latLng={{ lat: activity.location.latitude, lng: activity.location.longitude }}
                   category={activity.category ? activity.category.type : ""}
                   tags={activity.tags.map((item: { type: any }) => item.type)}
                   image={""}

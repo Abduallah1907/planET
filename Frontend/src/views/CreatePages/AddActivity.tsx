@@ -9,10 +9,9 @@ import { ActivityService } from "../../services/ActivityService";
 import CategoryService from "../../services/CategoryService";
 import { AdminService } from "../../services/AdminService";
 import { ToastTypes } from "../../utils/toastTypes";
-import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
-import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import { FileService } from "../../services/FileService";
 import showToastMessage from "../../utils/showToastMessage";
+import MapModal from "../../components/MapModal";
 
 // Other interface and component definitions...
 
@@ -181,12 +180,16 @@ const AdvertiserCreate: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const productData = {
+    if (center.lat === 29.98732507495249 && center.lng === 31.435660077332482) {
+      setShowMapModal(true);
+      return;
+    }
+    const activityData = {
       name: formData.name,
       date: formData.date,
       time: formData.time,
       category: formData.category,
-      location: { longitude: 100, latitude: 100 },
+      location: { longitude: center.lng, latitude: center.lat },
       price: formData.price,
       tags: selectedTags.map((tag) => tag._id),
       special_discount: formData.special_discount,
@@ -195,18 +198,18 @@ const AdvertiserCreate: React.FC = () => {
       advertiser_id: AdvertiserId,
     };
     if (AdvertiserId) {
-      await ActivityService.createActivity(productData);
+      await ActivityService.createActivity(activityData);
       navigate("/MyActivities");
     } else {
       console.error("Advertiser Id is undefined");
       if (formData.image && AdvertiserId) {
         const file = await FileService.uploadFile(formData.image);
-        const productDataI = {
+        const activityDataI = {
           name: formData.name,
           date: formData.date,
           time: formData.time,
           category: formData.category,
-          location: { longitude: 100, latitude: 100 },
+          location: { longitude: center.lng, latitude: center.lat },
           price: formData.price,
           tags: selectedTags.map((tag) => tag._id),
           special_discount: formData.special_discount,
@@ -215,12 +218,12 @@ const AdvertiserCreate: React.FC = () => {
           booking_flag: formData.booking,
           image: file.data._id,
         };
-        await ActivityService.createActivity(productDataI);
+        await ActivityService.createActivity(activityDataI);
         showToastMessage("Activity created successfully", ToastTypes.SUCCESS);
         navigate("/MyActivities");
       } else {
         if (AdvertiserId) {
-          await ActivityService.createActivity(productData);
+          await ActivityService.createActivity(activityData);
           showToastMessage("Activity created successfully", ToastTypes.SUCCESS);
           navigate("/MyActivities");
         } else {
@@ -238,7 +241,7 @@ const AdvertiserCreate: React.FC = () => {
 
   return (
     <div className="profile-form-container">
-      <Row className="align-items-center mb-4">
+      <Row className="align-items-center mb-4 w-100">
         <Col xs={7} className="text-left">
           <h2 className="my-profile-heading">Create Activity</h2>
         </Col>
@@ -413,6 +416,7 @@ const AdvertiserCreate: React.FC = () => {
                   type="file"
                   name="image"
                   onChange={handleFileChange}
+                  className="custom-form-control"
                   accept="image/*"
                 />
               </Form.Group>
@@ -428,37 +432,17 @@ const AdvertiserCreate: React.FC = () => {
               Add Location
             </Button>
             {/* Modal for Location */}
-            <Modal show={showMapModal} onHide={handleCloseMapModal}>
-              <Modal.Header closeButton>
-                <Modal.Title>Select Location</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <div className="ratio ratio-1x1">
-                  <APIProvider apiKey={process.env.GOOGLE_MAPS_API_KEY || ""}>
-                    <Map
-                      style={{ width: "500px", height: "500px" }}
-                      defaultCenter={center}
-                      center={center}
-                      defaultZoom={3}
-                      gestureHandling={"greedy"}
-                      disableDefaultUI={true}
-                    />
-                  </APIProvider>
-                </div>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button
-                  variant="main"
-                  className="border-warning-subtle"
-                  onClick={handleCloseMapModal}
-                >
-                  Close
-                </Button>
-                <Button variant="main-inverse" onClick={handleCloseMapModal}>
-                  Save Location
-                </Button>
-              </Modal.Footer>
-            </Modal>
+            <MapModal
+              open={showMapModal}
+              handleClose={handleCloseMapModal}
+              center={center}
+              onMapClick={ 
+                (e) => {
+                  if (e.detail.latLng) {
+                    setCenter({ lat: e.detail.latLng.lat, lng: e.detail.latLng.lng });
+                  }
+                }
+              } />
           </Row>
           <Row>
             <Col>

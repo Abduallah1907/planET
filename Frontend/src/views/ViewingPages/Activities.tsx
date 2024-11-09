@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Col, Row, Container, Form, InputGroup, Button } from "react-bootstrap";
 import FilterBy from "../../components/FilterBy/FilterBy";
 import CustomActivityCard from "../../components/Cards/ActivityCard";
@@ -7,14 +7,17 @@ import { BiSort } from "react-icons/bi";
 import { ActivityService } from "../../services/ActivityService";
 import { IActivity } from "../../types/IActivity";
 import { useNavigate } from "react-router-dom";
+import { reverseGeoCode } from "../../utils/geoCoder";
+import { get } from "http";
 
 export default function ActivitiesPage() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [activities, setActivities] = React.useState<IActivity[]>([]);
-  const [filtercomponent, setfilterComponents] = React.useState({});
-  const [sortBy, setSortBy] = React.useState("topPicks"); // State for sort by selection
-  const [filter, setFilter] = React.useState({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activities, setActivities] = useState<IActivity[]>([]);
+  const [filtercomponent, setfilterComponents] = useState({});
+  const [sortBy, setSortBy] = useState("topPicks"); // State for sort by selection
+  const [filter, setFilter] = useState({});
+  const [addresses, setAddresses] = useState<{ [key: string]: string }>({});
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -23,6 +26,22 @@ export default function ActivitiesPage() {
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value);
   };
+
+  const getAddresses = async () => {
+    const addressesData = await Promise.all(
+      activities.map(async (activity) =>
+        await reverseGeoCode(activity.location.latitude, activity.location.longitude)
+      )
+    );
+    const addressesMap = Object.fromEntries(
+      addressesData.map((address, index) => [
+        activities[index]._id,
+        (address as any)[2]?.formatted_address.split(",")[0] || "Unknown address",
+      ])
+    );
+    setAddresses(addressesMap);
+  }
+
   const getActivities = async () => {
     const activitiesData = await ActivityService.getAllActivities();
     setActivities(activitiesData.data);
@@ -52,6 +71,14 @@ export default function ActivitiesPage() {
     getActivities();
     getFilterComponents();
   }, []);
+
+  
+  useEffect(() => {
+    if (activities.length > 0) {
+      getAddresses();
+    }
+  }, [activities]);
+
   // Function to sort activities based on selected criteria
   const sortedActivities = [...activities].sort((a, b) => {
     switch (sortBy) {
@@ -155,7 +182,8 @@ export default function ActivitiesPage() {
                 <CustomActivityCard
                   id={activity._id}
                   Name={activity.name}
-                  location={"cairo"}
+                  location={addresses[activity._id]} // Location is an object
+                  latLng={{ lat: activity.location.latitude, lng: activity.location.longitude }}
                   category={activity.category ? activity.category.type : ""} // Category is an object
                   tags={activity.tags.map((item: { type: any }) => item.type)}
                   image={""}

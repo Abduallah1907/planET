@@ -21,6 +21,7 @@ import { ToastTypes } from "../../utils/toastTypes";
 interface InputData {
   Name: string;
   location: string;
+  latLng: { lat: number; lng: number };
   category: string;
   tags?: string[];
   id: string;
@@ -42,6 +43,7 @@ const CustomActivityCard = ({
   id,
   Name,
   location,
+  latLng,
   category,
   tags,
   RatingVal,

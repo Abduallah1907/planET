@@ -9,6 +9,7 @@ import { ActivityService } from "../../services/ActivityService";
 import { AdminService } from "../../services/AdminService";
 import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
+import MapModal from "../../components/MapModal";
 
 interface FormData {
   name: string;
@@ -51,6 +52,10 @@ const AdvertiserCreate: React.FC = () => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [showMapModal, setShowMapModal] = useState(false); // State to manage modal visibility
+  const [center, setCenter] = React.useState({
+    lat: 29.98732507495249,
+    lng: 31.435660077332482,
+  });
 
   const handleAddLocation = () => {
     setShowMapModal(true); // Show the modal
@@ -158,6 +163,10 @@ const AdvertiserCreate: React.FC = () => {
           suggestions: "",
         });
         setSelectedTags(activity.tags);
+        setCenter({
+          lat: activity.location.latitude,
+          lng: activity.location.longitude,
+        });
       } else {
         console.error("Activity ID is undefined");
       }
@@ -191,11 +200,11 @@ const AdvertiserCreate: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const productData = {
+    const activityData = {
       name: formData.name,
       date: formData.date,
       time: formData.time,
-      location: { longitude: 100, latitude: 100 },
+      location: { longitude: center.lng, latitude: center.lat },
       price: formData.price,
       tags: selectedTags.map((tag) => tag._id),
       category: formData.category,
@@ -203,7 +212,7 @@ const AdvertiserCreate: React.FC = () => {
       booking_flag: formData.booking,
     };
     if (activity_id) {
-      await ActivityService.updateActivity(activity_id, productData);
+      await ActivityService.updateActivity(activity_id, activityData);
       navigate("/MyActivities");
     } else {
       console.error("Advertiser Id is undefined");
@@ -212,7 +221,7 @@ const AdvertiserCreate: React.FC = () => {
 
   return (
     <div className="profile-form-container">
-      <Row className="align-items-center mb-4">
+      <Row className="align-items-center mb-4 w-100">
         <Col xs={7} className="text-left">
           <h2 className="my-profile-heading">Edit Activity</h2>
         </Col>
@@ -386,33 +395,17 @@ const AdvertiserCreate: React.FC = () => {
               Edit Location
             </Button>
             {/* Modal for Location */}
-            <Modal show={showMapModal} onHide={handleCloseMapModal}>
-              <Modal.Header closeButton>
-                <Modal.Title>Select Location</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <div className="ratio ratio-1x1">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3455.7252495085836!2d31.435660077332482!3d29.98732507495249!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14583cb2bfafbe73%3A0x6e7220116094726d!2sGerman%20University%20in%20Cairo%20(GUC)!5e0!3m2!1sen!2seg!4v1728233137915!5m2!1sen!2seg"
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  ></iframe>
-                </div>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button
-                  variant="main"
-                  className="border-warning-subtle"
-                  onClick={handleCloseMapModal}
-                >
-                  Close
-                </Button>
-                <Button variant="main-inverse" onClick={handleCloseMapModal}>
-                  Save Location
-                </Button>
-              </Modal.Footer>
-            </Modal>
+            <MapModal
+              open={showMapModal}
+              handleClose={handleCloseMapModal}
+              center={center}
+              onMapClick={ 
+                (e) => {
+                  if (e.detail.latLng) {
+                    setCenter({ lat: e.detail.latLng.lat, lng: e.detail.latLng.lng });
+                  }
+                }
+              } />
           </Row>
 
           <Row>

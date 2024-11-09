@@ -14,6 +14,15 @@ import SlotsModal from "../../components/SlotsModals"; // Import SlotModal compo
 import { useAppSelector } from "../../store/hooks";
 import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
+import MapModal from "../../components/MapModal";
+import { reverseGeoCode } from "../../utils/geoCoder";
+import { MapMouseEvent } from "@vis.gl/react-google-maps";
+
+interface Location {
+  lat: number;
+  lng: number;
+  address: string;
+}
 
 interface FormData {
   name?: string;
@@ -65,7 +74,7 @@ const ItineraryForm: React.FC = () => {
   >([]);
 
   const [choosenActivities, setChoosenActivities] = useState<Activity[]>([]);
-  const [locations, setLocations] = useState<string>("");
+  const [locations, setLocations] = useState<Location[]>([]);
   const [availableDates, setAvailableDates] = useState<
     { date: string; time: string }[]
   >([]);
@@ -75,6 +84,8 @@ const ItineraryForm: React.FC = () => {
 
   const [slots, setSlots] = useState<Slot[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [showMapModal, setShowMapModal] = useState(false);
+  const [activeLocation, setActiveLocation] = useState<string | null>(null);
   const [currentSlot, setCurrentSlot] = useState<Slot>();
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -206,6 +217,14 @@ const ItineraryForm: React.FC = () => {
     setAvailableDates((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleAddLocation = () => {
+    setLocations((prev) => [...prev, { lat: 0, lng: 0, address: "" }]);
+  }
+
+  const handleDeleteLocation = (index: number) => {
+    setLocations((prev) => prev.filter((_, i) => i !== index));
+  }
+
   useEffect(() => {
     if (inputValue.startsWith("#")) {
       const filteredTags = tags.filter((tag: Tag) =>
@@ -251,11 +270,12 @@ const ItineraryForm: React.FC = () => {
     const { pickup_loc, drop_off_loc, ...restData } = formData;
     const itineraryData = {
       ...restData,
-      pickup_loc: { latitude: 10, longitude: 10 },
-      drop_off_loc: { latitude: 10, longitude: 10 },
+      pickup_loc: { latitude: pickup_loc?.lat, longitude: pickup_loc?.lng },
+      drop_off_loc: { latitude: drop_off_loc?.lat, longitude: drop_off_loc?.lng },
       activities: choosenActivities.map((activity) => activity._id),
       tags: selectedTags.map((tag) => tag._id),
       languages: filteredLanguages.map((language) => language.value),
+      locations: locations.map((location) => ({ latitude: location.lat, longitude: location.lng })),
       available_dates: availableDates.map(
         (date) => new Date(`${date.date}T${date.time}`)
       ),
@@ -266,9 +286,26 @@ const ItineraryForm: React.FC = () => {
     navigate("/MyItineraries");
   };
 
+  const handleCloseMapModal = () => {
+    setShowMapModal(false);
+  }
+  // Function to update location based on the active field
+  const updateLocation = (location: any) => {
+    if (activeLocation === 'pickup_loc') {
+      setFormData({ ...formData, pickup_loc: location });
+    } else if (activeLocation === 'dropoff_loc') {
+      setFormData({ ...formData, drop_off_loc: location });
+    } else if (activeLocation?.startsWith('location_')) {
+      const index = parseInt(activeLocation.split('_')[1], 10);
+      const newLocations = [...locations];
+      newLocations[index] = location;
+      setLocations(newLocations);
+    }
+  };
+
   return (
     <div className="profile-form-container">
-      <Row className="align-items-center mb-4">
+      <Row className="align-items-center mb-4 w-100">
         <Col xs={7} className="text-left">
           <h2 className="my-profile-heading">Add Itinerary</h2>
         </Col>
@@ -404,18 +441,46 @@ const ItineraryForm: React.FC = () => {
 
           <Row>
             <Col>
-              <AdminFormGroup
-                className="form-group"
-                label="Locations"
-                type="text"
-                placeholder="Enter Locations to be visited"
-                id="locations"
-                required={true}
-                value={locations}
-                onChange={(e) => setLocations(e.target.value)}
-                disabled={false}
-                name={""}
-              />
+              <Form.Group className="form-group" controlId="locations">
+                <Form.Label>Locations</Form.Label>
+                {locations.map((location, index) => (
+                  <Row className="align-items-center">
+                    <Col
+                      key={index}
+                      className="custom-select-container pe-0"
+                    >
+                      <Form.Control
+                        onClick={() => {
+                          setShowMapModal(true)
+                          setActiveLocation(`location_${index}`)
+                        }
+                        }
+                        placeholder="Enter Location"
+                        className="mt-1 custom-form-control"
+                        value={location.address}
+                        required
+                      >
+                      </Form.Control>
+                    </Col>
+                    <Col md="auto">
+                      <Button
+                        variant="danger"
+                        className="ml-2"
+                        onClick={() => handleDeleteLocation(index)}
+                      >
+                        Delete
+                      </Button>
+                    </Col>
+                  </Row>
+                ))}
+                <Button
+                  className="mt-3"
+                  variant="main-inverse"
+                  onClick={handleAddLocation}
+                >
+                  Add Another Location
+                </Button>
+              </Form.Group>
             </Col>
             <Col>
               <AdminFormGroup
@@ -542,9 +607,12 @@ const ItineraryForm: React.FC = () => {
                 id="pickup_loc"
                 required={true}
                 value={
-                  formData.pickup_loc ? formData.pickup_loc.toString() : ""
+                  formData.pickup_loc ? formData.pickup_loc.address : ""
                 }
-                onChange={handleChange}
+                onClick={() => {
+                  setShowMapModal(true)
+                  setActiveLocation("pickup_loc")
+                }}
                 disabled={false}
                 name={"pickup_loc"}
               />
@@ -558,9 +626,12 @@ const ItineraryForm: React.FC = () => {
                 id="dropoff-location"
                 required={true}
                 value={
-                  formData.drop_off_loc ? formData.drop_off_loc.toString() : ""
+                  formData.drop_off_loc ? formData.drop_off_loc.address : ""
                 }
-                onChange={handleChange}
+                onClick={() => {
+                  setShowMapModal(true)
+                  setActiveLocation("dropoff_loc")
+                }}
                 disabled={false}
                 name={"drop_off_loc"}
               />
@@ -653,6 +724,27 @@ const ItineraryForm: React.FC = () => {
         </Form>
       </Container>
 
+      
+      
+      <MapModal
+        open={showMapModal}
+        handleClose={handleCloseMapModal}
+        center={{ lat: 0, lng: 0 }}
+        onMapClick={async (e: MapMouseEvent) => {
+          if (e.detail.latLng) {
+            const address = await reverseGeoCode(e.detail.latLng.lat, e.detail.latLng.lng);
+            if (address && Array.isArray(address) && address[0]) {
+              const location = {
+                lat: e.detail.latLng.lat,
+                lng: e.detail.latLng.lng,
+                address: address[0].formatted_address,
+              };
+              updateLocation(location);
+            }
+          }
+        }
+        }
+      />
       <SlotsModal
         show={showModal}
         handleClose={handleCloseModal}
