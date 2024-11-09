@@ -1,16 +1,19 @@
-
-.bookingTabs .nav-link{
+.bookingTabs .nav-link {
     color: black !important;
     font-size: 15px;
     font-weight: bold;
     margin: 10px;
 }
-.bookingTabs .nav-link.active{
+
+.bookingTabs .nav-link.active {
     color: var(--main-color) !important;
     font-size: 15px;
     font-weight: bold;
     border: var(--main-color) 3px solid;
-
 }
 
-
+.cancelBookingBtn {
+    display: block;
+    margin: 10px auto 0; /* Center within the card */
+    width: 100%; /* Full width of the card */
+}

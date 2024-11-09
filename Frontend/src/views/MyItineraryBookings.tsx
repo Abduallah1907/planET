@@ -2,7 +2,7 @@ import BookingCard from "../components/Cards/BookingCard";
 import { useAppSelector } from "../store/hooks";
 import { TouristService } from "../services/TouristService";
 import { useEffect, useState } from "react";
-import { Button, Col, Nav, Row } from "react-bootstrap";
+import { Button, Col, Modal, Nav, Row } from "react-bootstrap";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import "./mybookings.css";
 
@@ -14,6 +14,8 @@ const MyItineraryBookings: React.FC = () => {
   const [selectedBooking, setSelectedBooking] = useState<number | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null); // Track selected booking for modal
 
   const fetchBookings = async (type: "upcoming" | "past") => {
     setLoading(true);
@@ -27,9 +29,7 @@ const MyItineraryBookings: React.FC = () => {
 
       if (response && response.data) {
         setBookings(response.data);
-      } else {
-        setError(`Error: ${type} bookings data is missing`);
-      }
+      } 
     } catch (error: any) {
       console.error(`Error fetching ${type} bookings:`, error);
       setError(
@@ -57,13 +57,16 @@ const MyItineraryBookings: React.FC = () => {
       const response = await TouristService.cancelTicket(tourist_id, ticket_id);
       if (response && response.data) {
         fetchBookings("upcoming");
-      } else {
-        setError("Error cancelling ticket: No response data");
-      }
+      } 
     } catch (error: any) {
       setError(`Error cancelling ticket: ${error.message || "Unknown error"}`);
     }
   };
+  function handleCancelBooking(bookingId: string) {
+    setSelectedBookingId(bookingId); // Set the bookingId to trigger modal for specific booking
+    setShowModal(true); // Show the modal
+  }
+
   return (
     <div>
       <Nav
@@ -96,15 +99,12 @@ const MyItineraryBookings: React.FC = () => {
                     Price={booking.price}
                     Date_Time={booking.time_to_attend.toLocaleString()}
                   />
-                  {selectedBooking === index && (
+                   {selectedBooking === index && location.pathname === "/MyItineraryBookings/upcoming" && (
                     <Button
+                      className="cancelBookingBtn"
                       variant="danger"
-                      onClick={() =>
-                        cancelTicket(
-                          Tourist.stakeholder_id._id,
-                          booking.ticket_id
-                        )
-                      }
+                      onClick={() => handleCancelBooking(booking.ticket_id)}
+
                     >
                       Cancel Booking
                     </Button>
@@ -113,7 +113,32 @@ const MyItineraryBookings: React.FC = () => {
               </Col>
             ))}
         </Row>
+        
       )}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Cancellation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Are you sure you want to cancel this itinerary?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="main" className="border-warning-subtle"  onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button
+            variant="main-inverse"
+            onClick={() => {
+              if (selectedBookingId) {
+                cancelTicket(Tourist.stakeholder_id._id, selectedBookingId);
+                setShowModal(false);
+              }
+            }}
+          >
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
