@@ -99,6 +99,10 @@ const SellerProfile: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.password && formData.password !== formData.retypePassword) {
+      showToastMessage("Passwords do not match", ToastTypes.ERROR);
+      return; // Exit if passwords don't match
+    }
 
     if (
       (formData.password && !formData.retypePassword) ||
@@ -118,27 +122,34 @@ const SellerProfile: React.FC = () => {
       );
       return;
     }
+    const updateData: any = {
+      name: formData.firstName + " " + formData.lastName,
+      email: formData.email,
+      username: formData.username,
+      description: formData.description,
+      phone_number: formData.mobile,
+    };
+
+    // Include password in update data only if both password fields are filled and match
+    if (formData.password) {
+      updateData.password = formData.password;
+    }
+
+    // If a logo is uploaded, handle the file upload and include its ID in update data
     if (formData.logo) {
       const file = await FileService.uploadFile(formData.logo);
-      const seller = await SellerServices.updateSellerServices(Seller.email, {
-        name: formData.firstName + " " + formData.lastName,
-        email: formData.email,
-        username: formData.username,
-        description: formData.description,
-        phone_number: formData.mobile,
-        password: formData.password,
-        logo: file.data._id,
-      });
-      //Should i add a toast for the file upload?
+      updateData.logo = file.data._id;
+    }
+
+    // Send the update request with the constructed updateData object
+    const seller = await SellerServices.updateSellerServices(
+      Seller.email,
+      updateData
+    );
+    if (seller.status === 200) {
+      showToastMessage("Updated successfully", ToastTypes.SUCCESS);
     } else {
-      const seller = await SellerServices.updateSellerServices(Seller.email, {
-        name: formData.firstName + " " + formData.lastName,
-        email: formData.email,
-        username: formData.username,
-        description: formData.description,
-        phone_number: formData.mobile,
-        password: formData.password,
-      });
+      showToastMessage("Error in updating", ToastTypes.ERROR);
     }
   };
 
