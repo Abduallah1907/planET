@@ -42,8 +42,7 @@ const headCells: readonly HeadCell[] = [
   { id: "title", numeric: false, label: "Title" },
   { id: "body", numeric: false, label: "Body" },
   { id: "date", numeric: true, label: "Complaint's Date" },
-  { id: "date", numeric: true, label: "Created At" },
-
+  { id: "createdAt", numeric: true, label: "Created At" },
   { id: "status", numeric: false, label: "Status" },
   { id: "reply", numeric: false, label: "Reply" },
 ];
@@ -218,7 +217,7 @@ export default function TouristComplaintsTable() {
                 {formatDate(new Date(complaint.date))}
               </TableCell>
               <TableCell align="center">
-                {formatTime(new Date(complaint.date))}
+                {formatDate(new Date(complaint.createdAt))}
               </TableCell>
               <TableCell align="center">
                 <Badge
