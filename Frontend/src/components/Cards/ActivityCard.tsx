@@ -17,6 +17,7 @@ import { useAppContext } from "../../AppContext";
 import { useAppSelector } from "../../store/hooks";
 import { ActivityService } from "../../services/ActivityService";
 import { ToastTypes } from "../../utils/toastTypes";
+import { Utils } from "../../utils/utils";
 
 interface InputData {
   Name: string;
@@ -108,7 +109,6 @@ const CustomActivityCard = ({
   const date = Date_Time.toLocaleDateString();
   const time = Date_Time.toLocaleTimeString();
 
-
   return (
     <Card
       className="p-3 shadow-sm"
@@ -171,8 +171,8 @@ const CustomActivityCard = ({
               {/* Category and Date/Time */}
               <Card.Text className="text-muted">Category: {category}</Card.Text>
               <Card.Text className="text-muted">
-                {date} <br />
-               {time}
+                {Utils.formatDateDay(new Date(date))} <br />
+                {time}
               </Card.Text>
             </div>
           </Card.Body>

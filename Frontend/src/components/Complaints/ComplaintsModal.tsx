@@ -120,7 +120,7 @@ export default function ComplaintsModal(props: any) {
           style={{
             backgroundColor:
               complaint.status === "Pending"
-                ? "rgb(89, 232, 103)" // Red for Pending, Green for Resolved
+                ? "rgb(89, 232, 103)"
                 : "rgb(232, 89, 89)",
             color: "rgba(0, 0, 0, 0.5)",
           }}
