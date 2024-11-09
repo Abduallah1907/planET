@@ -22,6 +22,6 @@ export interface IComplaintTourist {
   body: string;
   reply: string;
   date: Date;
-
+  createdAt: Date;
   status: string;
 }

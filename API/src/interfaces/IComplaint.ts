@@ -25,4 +25,5 @@ export interface IComplaintAdminViewDTO {
   title: string;
   date: Date;
   status: ComplaintStatus;
+  createdAt?: Date;
 }

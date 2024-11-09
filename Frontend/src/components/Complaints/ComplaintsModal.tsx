@@ -69,7 +69,8 @@ export default function ComplaintsModal(props: any) {
           </Row>
           <Row className="pt-2">
             <Col xs={12} md={8}>
-              <strong>Date:</strong> {complaint.date.toString()}
+              <strong>Date:</strong>{" "}
+              {new Date(complaint.date).toLocaleDateString()}
             </Col>
             <Col xs={6} md={4}>
               <strong>Status:</strong> {complaint.status}
