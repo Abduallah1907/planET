@@ -16,15 +16,35 @@
 .hero-section .traveller {
   top: 0;
   right: 0;
-  width: auto;
+  width: 45rem;
   height: auto;
+  margin-top: 5rem !important;
+}
+
+@media (max-width: 992px) {
+  .hero-section .traveller {
+    width: 35rem;
+    margin-top: 9rem !important;
+  }
+  
+}
+
+@media (max-width: 768px) {
+  .hero-section .traveller {
+    display: none;
+  }
+
+  .hero-section .plane {
+    display: none;
+  }
+  
 }
 
 .hero-section .plane {
   top: 30%;
   right: 30%;
   width: 30%;
-  height: 6rem;
+  height: 8rem;
   transform: translateY(-50%);
 }
  .absolute-image {
@@ -66,13 +86,38 @@
 
 
 .hero-subtitle {
-  font-size: 1.5rem;
+  font-size: 1.5rem !important;
   color: var(--main-color);
   margin: 20px 0;
   font-weight: bold;
+  text-transform: uppercase;
 }
 
 img {
   max-width: 100%;
   height: auto;
+}
+
+.hero-section .btn-warning {
+  font-style: italic;
+}
+
+.hero-section .btn-play-demo{
+  background-color: #DF6951;
+  color: white;
+  border: none;
+  font-size: 1.2rem;
+  margin-right: 20px;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  padding-left: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-section .btn-play-demo:hover {
+  background-color: #d3634d;
+  color: white;
 }

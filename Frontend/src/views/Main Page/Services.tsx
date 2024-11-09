@@ -34,11 +34,15 @@ const Services: React.FC = () => {
       <Row>
         {servicesData.map((service, index) => (
           <Col md={3} key={index}>
-            <Card className="card-shadow">
-              <Card.Body className="card-body rounded-4">
+            <Card className={`${index === 1 ? 'card-shadow': ''} py-4 rounded-5`}>
+              <Card.Body className="card-body">
                 <div className="card-icon">{service.icon}</div>
                 <Card.Title>{service.title}</Card.Title>
-                <Card.Text>{service.description}</Card.Text>
+                <Card.Text className='mx-3'>
+                  <Container>
+                    <p>{service.description}</p>
+                  </Container>
+                </Card.Text>
               </Card.Body>
             </Card>
           </Col>

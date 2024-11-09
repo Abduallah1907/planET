@@ -3,13 +3,15 @@ import sidebarSlice from './sidebarSlice'
 import  userSlice  from './userSlice'
 import cartSlice from './cartSlice'
 import flightSlice from './flightSlice'
+import toastsSlice from './toastsSlice'
 
 const store = configureStore({
   reducer: {
     sidebar: sidebarSlice,
     user: userSlice,
     cart: cartSlice,
-    flight: flightSlice
+    flight: flightSlice,
+    toasts: toastsSlice,
   },
 })
 

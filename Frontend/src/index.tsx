@@ -7,6 +7,7 @@ import './i18n';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import store from './store/store';
+import { DispatchProvider } from './dispatchContenxt';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -15,7 +16,9 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <App />
+        <DispatchProvider>
+          <App />
+        </DispatchProvider>
       </BrowserRouter>
     </Provider>
   </React.StrictMode>

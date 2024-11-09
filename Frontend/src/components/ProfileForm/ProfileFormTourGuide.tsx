@@ -18,6 +18,9 @@ import { FileService } from "../../services/FileService";
 import { ToastTypes } from "../../utils/toastTypes";
 import { FaTrashAlt } from "react-icons/fa";
 import showToastMessage from "../../utils/showToastMessage";
+import { Utils } from "../../utils/utils";
+import { useDispatchContext } from "../../dispatchContenxt";
+import { setUser } from "../../store/userSlice";
 
 interface WorkExperience {
   id?: string;
@@ -66,7 +69,7 @@ const ProfileFormGuide: React.FC = () => {
   const TourGuide = useAppSelector((state) => state.user);
   const getTourGuideData = async () => {
     if (
-      TourGuide.stakeholder_id.logo &&
+      TourGuide.stakeholder_id?.logo &&
       isValidObjectId(TourGuide.stakeholder_id.logo)
     ) {
       const file = await FileService.downloadFile(
@@ -216,8 +219,11 @@ const ProfileFormGuide: React.FC = () => {
     setFormData({ ...formData, previousWork: updatedWork });
     setCreatedWork((prev) => prev.filter((_, i) => i !== index));
   };
-  const OnClick = async () => {
-    // Password validation
+
+  const dispatch = useDispatchContext();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (
       (formData.changePassword && !formData.retypePassword) ||
       (!formData.changePassword && formData.retypePassword)
@@ -275,25 +281,33 @@ const ProfileFormGuide: React.FC = () => {
 
     // Show success or error toast based on response
     if (TourG.status === 200) {
-      showToastMessage("Updated successfully", ToastTypes.SUCCESS);
+      // Create a new object with the updated properties
+      const updatedTourGuide = {
+        ...TourGuide,
+        name: updateData.name,
+        email: updateData.newEmail,
+        phone_number: updateData.phone_number,
+        stakeholder_id: {
+          ...TourGuide.stakeholder_id,
+          years_of_experience: updateData.years_of_experience,
+          logo: updateData.logo,
+          previous_work_description: [
+            ...createdWork,
+            ...editedWork,
+          ],
+        },
+      };
+      dispatch(setUser(updatedTourGuide));
     } else {
       showToastMessage("Error in updating", ToastTypes.ERROR);
     }
-  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Password validation as part of form submission
-    if (
-      (formData.changePassword && !formData.retypePassword) ||
-      (!formData.changePassword && formData.retypePassword)
-    ) {
-      showToastMessage(
-        "Please fill out both password fields.",
-        ToastTypes.ERROR
-      );
-      return;
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (user && user.usernameOrEmail && user.password) {
+      const password = Utils.decryptPassword(user.password)
+      if (password !== updateData.password && formData.changePassword) {
+        localStorage.setItem("user", JSON.stringify({usernameOrEmail: user.usernameOrEmail, password: Utils.encryptPassword(updateData.password)}));
+      }
     }
   };
 
@@ -479,6 +493,7 @@ const ProfileFormGuide: React.FC = () => {
                   type="file"
                   name="logo"
                   onChange={handleFileChange}
+                  className="custom-form-control"
                   accept="image/*"
                 />
               </Form.Group>
@@ -558,10 +573,10 @@ const ProfileFormGuide: React.FC = () => {
           </Row>
 
           <div className="d-flex justify-content-center">
-            <Button variant="main-inverse" onClick={OnClick}>
+            <Button type="submit" className="px-5 py-2"  variant="main-inverse">
               Confirm
             </Button>
-            <Button variant="main-border" onClick={handleCancel}>
+            <Button variant="main-border" className="px-5 py-2"  onClick={handleCancel}>
               Cancel
             </Button>
           </div>

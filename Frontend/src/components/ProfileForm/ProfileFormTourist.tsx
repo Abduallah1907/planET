@@ -8,10 +8,12 @@ import { BiChevronDown } from "react-icons/bi"; // Importing a dropdown icon fro
 import { TouristService } from "../../services/TouristService";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { FaExchangeAlt, FaInfoCircle } from "react-icons/fa";
-import { setStakeholder } from "../../store/userSlice";
+import { setStakeholder, setUser } from "../../store/userSlice";
 import { useAppContext } from "../../AppContext";
 import { ToastTypes } from "../../utils/toastTypes";
 import showToastMessage from "../../utils/showToastMessage";
+import { format } from "date-fns";
+import { Utils } from "../../utils/utils";
 
 interface NationalityOption {
   value: string;
@@ -62,7 +64,7 @@ const ProfileForm: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (
@@ -75,24 +77,7 @@ const ProfileForm: React.FC = () => {
       );
       return;
     }
-  };
-  const Tourist = useAppSelector((state: { user: any }) => state.user);
 
-  useEffect(() => {
-    setFormData({
-      firstName: Tourist.name.split(" ")[0],
-      lastName: Tourist.name.split(" ")[1] || "", // Adding a fallback for lastName in case there's no space
-      email: Tourist.email,
-      mobile: Tourist.phone_number,
-      profession: Tourist.stakeholder_id?.job || "", // Optional chaining in case stakeholder_id is undefined
-      password: "",
-      retypePassword: "",
-      username: Tourist.username,
-      nationality: Tourist.stakeholder_id?.nation || "", // Optional chaining
-      dob: Tourist.stakeholder_id?.date_of_birth || "", // Optional chaining
-    });
-  }, [Tourist]); // Dependency array to rerun this effect when Tourist data changes
-  const OnClick = async () => {
     // Check if passwords are both filled and match
     if (formData.password && formData.password !== formData.retypePassword) {
       showToastMessage("Passwords do not match", ToastTypes.ERROR);
@@ -110,6 +95,7 @@ const ProfileForm: React.FC = () => {
     const updateData: any = {
       name: formData.firstName + " " + formData.lastName,
       newEmail: formData.email,
+      phone_number: formData.mobile,
       job: formData.profession,
       nation: formData.nationality,
     };
@@ -127,11 +113,50 @@ const ProfileForm: React.FC = () => {
 
     // Display toast based on the update response
     if (Tourist1.status === 200) {
-      showToastMessage("Updated successfully", ToastTypes.SUCCESS);
+      const updatedTourist = {
+        ...Tourist,
+        email: updateData.newEmail,
+        name: updateData.name,
+        phone_number: updateData.phone_number,
+        stakeholder_id: {
+          ...Tourist.stakeholder_id,
+          job: updateData.job,
+          nation: updateData.nation,
+        },
+      }
+      dispatch(setUser(updatedTourist));
     } else {
       showToastMessage("Error in updating", ToastTypes.ERROR);
     }
+
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (user && user.usernameOrEmail && user.password) {
+      const password = Utils.decryptPassword(user.password)
+      if (password !== updateData.password && formData.password) {
+        localStorage.setItem("user", JSON.stringify({ usernameOrEmail: user.usernameOrEmail, password: Utils.encryptPassword(updateData.password) }));
+      }
+    }
+
   };
+
+
+  const Tourist = useAppSelector((state: { user: any }) => state.user);
+
+  useEffect(() => {
+    setFormData({
+      firstName: Tourist.name.split(" ")[0],
+      lastName: Tourist.name.split(" ")[1] || "", // Adding a fallback for lastName in case there's no space
+      email: Tourist.email,
+      mobile: Tourist.phone_number,
+      profession: Tourist.stakeholder_id?.job || "", // Optional chaining in case stakeholder_id is undefined
+      password: "",
+      retypePassword: "",
+      username: Tourist.username,
+      nationality: Tourist.stakeholder_id?.nation || "", // Optional chaining
+      dob: format(Tourist.stakeholder_id?.date_of_birth.split("T")[0], "dd/MM/yyyy") || "", // Optional chaining
+    });
+  }, [Tourist]); // Dependency array to rerun this effect when Tourist data changes
+
 
   const handleCancel = () => {
     setFormData({
@@ -152,7 +177,7 @@ const ProfileForm: React.FC = () => {
   const [pointsToTransfer, setPointsToTransfer] = useState("");
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [loyaltyPoints, setLoyaltyPoints] = useState(
-    Tourist.stakeholder_id.loyality_points
+    Tourist.stakeholder_id?.loyality_points
   );
 
   const openModal = () => {
@@ -199,106 +224,108 @@ const ProfileForm: React.FC = () => {
 
   return (
     <div className="profile-form-container">
-      <Row className="align-items-center mb-4">
-        <Col xs={7} className="text-left">
-          <h2 className="my-profile-heading">My Profile</h2>
-        </Col>
-        <Col xs={3} className="text-center">
-          <img
-            src={Logo}
-            width="70"
-            height="50"
-            className="align-top logo"
-            alt="Travel Agency logo"
-          />
-        </Col>
-      </Row>
-      <Row className="align-items-center">
-        <div className="wallet-card">
-          <h3>
-            Points
-            <FaInfoCircle
-              style={{ cursor: "pointer", marginLeft: "10px" }}
-              onClick={openModal}
+      <Container>
+        <Row className="align-items-center justify-content-center mb-4 w-100">
+          <Col xs={7} className="text-left">
+            <h2 className="my-profile-heading">My Profile</h2>
+          </Col>
+          <Col xs={3} className="text-center">
+            <img
+              src={Logo}
+              width="70"
+              height="50"
+              className="align-top logo"
+              alt="Travel Agency logo"
             />
-          </h3>{" "}
-          {/* Add the info icon */}
-          <p>{Tourist.stakeholder_id.loyality_points}</p>
-        </div>
-        <Col xs={3} className="text-center ">
-          <FaExchangeAlt
-            className="exchange-icon"
-            style={{ cursor: "pointer" }}
-            onClick={openTransferModal}
-          />
-        </Col>
-        <Modal show={isModalOpen} onHide={closeModal} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>Points Details</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <h5>Earn Points</h5>
-            <p>It's divided into 3 levels</p>
-            <p>Level 1: For every 1 EGP spent, you'll earn 0.5 points</p>
-            <p>Level 2: For every 1 EGP spent, you'll earn 1 point</p>
-            <p>Level 3: For every 1 EGP spent, you'll earn 1.5 points</p>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={closeModal}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        <div className="wallet-card">
-          <h3>Wallet</h3>
-          <p>
-            {currency} {Tourist.stakeholder_id.wallet}
-          </p>
-          <Modal
-            show={isTransferModalOpen}
-            onHide={closeTransferModal}
-            centered
-          >
+          </Col>
+        </Row>
+        <Row className="align-items-center justify-content-center w-100 mt-5 mb-4">
+          <Col xs={12} md={4} className="wallet-card">
+            <h3>
+              Points
+              <FaInfoCircle
+                style={{ cursor: "pointer", marginLeft: "10px" }}
+                onClick={openModal}
+              />
+            </h3>{" "}
+            {/* Add the info icon */}
+            <p>{Tourist.stakeholder_id.loyality_points}</p>
+          </Col>
+          <Col md={3} className="d-flex justify-content-center align-items-center">
+            <FaExchangeAlt
+              className="exchange-icon"
+              style={{ cursor: "pointer" }}
+              onClick={openTransferModal}
+            />
+          </Col>
+          <Modal show={isModalOpen} onHide={closeModal} centered>
             <Modal.Header closeButton>
-              <Modal.Title>Transfer Points</Modal.Title>
+              <Modal.Title>Points Details</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <Form>
-                <Form.Group controlId="formPoints">
-                  <Form.Label>
-                    Enter the number of points to transfer
-                  </Form.Label>
-                  <div>
-                    <Form.Text>
-                      Every 10,000 points is equal to 100 EGP
-                    </Form.Text>
-                  </div>
-                  <div className="d-flex align-items-center">
-                    <Form.Control
-                      type="number"
-                      value={pointsToTransfer}
-                      onChange={handlePointsChange}
-                      placeholder="Enter points"
-                      className="mx-2 custom-form-control"
-                      step="10000"
-                      min="0"
-                    />
-                  </div>
-                </Form.Group>
-              </Form>
+              <h5>Earn Points</h5>
+              <p>It's divided into 3 levels</p>
+              <p>Level 1: For every 1 EGP spent, you'll earn 0.5 points</p>
+              <p>Level 2: For every 1 EGP spent, you'll earn 1 point</p>
+              <p>Level 3: For every 1 EGP spent, you'll earn 1.5 points</p>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={closeTransferModal}>
+              <Button variant="secondary" onClick={closeModal}>
                 Close
-              </Button>
-              <Button variant="main-inverse" onClick={transferPointsToWallet}>
-                Transfer
               </Button>
             </Modal.Footer>
           </Modal>
-        </div>
-      </Row>
+
+          <Col xs={12} md={4} className="wallet-card">
+            <h3>Wallet</h3>
+            <p>
+              {currency} {Tourist.stakeholder_id.wallet}
+            </p>
+            <Modal
+              show={isTransferModalOpen}
+              onHide={closeTransferModal}
+              centered
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Transfer Points</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form>
+                  <Form.Group controlId="formPoints">
+                    <Form.Label>
+                      Enter the number of points to transfer
+                    </Form.Label>
+                    <div>
+                      <Form.Text>
+                        Every 10,000 points is equal to 100 EGP
+                      </Form.Text>
+                    </div>
+                    <div className="d-flex align-items-center">
+                      <Form.Control
+                        type="number"
+                        value={pointsToTransfer}
+                        onChange={handlePointsChange}
+                        placeholder="Enter points"
+                        className="mx-2 custom-form-control"
+                        step="10000"
+                        min="0"
+                      />
+                    </div>
+                  </Form.Group>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={closeTransferModal}>
+                  Close
+                </Button>
+                <Button variant="main-inverse" onClick={transferPointsToWallet}>
+                  Transfer
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          </Col>
+        </Row>
+      </Container>
 
       <Container>
         <Form onSubmit={handleSubmit}>
@@ -416,7 +443,7 @@ const ProfileForm: React.FC = () => {
             </Col>
             <Col>
               <CustomFormGroup
-                label="Date of Birth (MM/DD/YY):"
+                label="Date of Birth (DD/MM/YYYY):"
                 type="text"
                 placeholder="Enter your date of birth"
                 id="dob"
@@ -459,12 +486,12 @@ const ProfileForm: React.FC = () => {
           </Row>
 
           <div className="d-flex justify-content-center">
-            <button className="update-btn" onClick={OnClick}>
+            <Button type="submit" variant="main-inverse" className="px-5 py-2">
               Confirm
-            </button>
-            <button className="cancel-btn" onClick={handleCancel}>
+            </Button>
+            <Button variant="main-border" className="px-5 py-2" onClick={handleCancel}>
               Cancel
-            </button>
+            </Button>
           </div>
         </Form>
       </Container>

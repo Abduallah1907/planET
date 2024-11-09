@@ -92,20 +92,20 @@
 
 @media (max-width: 992px) {
     .navbar-collapse{
-        background-color: #ffffff;
-        border: 2px solid var(--main-color);
+        background-color: var(--main-color);
+        border: 1px solid white;
         z-index: 99;
         border-radius: 1rem;
+        padding: 1rem;
     }
 
     .navbar-collapse .btn{
-        color: var(--main-color) !important;
-        border: 2px solid var(--main-color) !important;
-        margin: 0 !important;
+        color: white !important;
+        margin: 0.1rem !important;
     }
 
     .navbar-collapse .btn-help svg{
-        color: var(--main-color) !important;
+        color: white !important;
     }
 }
 .badge-bronze {

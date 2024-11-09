@@ -56,8 +56,6 @@ export const userSlice = createSlice({
         login: (state) => {
             state.isLoggedIn = true;
         },
-
-
         logout: (state) => {
             state.name = '';
             state._id = '';
@@ -74,7 +72,7 @@ export const userSlice = createSlice({
         },
         setWalletBalance: (state, action: PayloadAction<number>) => {
             state.stakeholder_id.wallet = action.payload;
-        }
+        },
     },
 });
 

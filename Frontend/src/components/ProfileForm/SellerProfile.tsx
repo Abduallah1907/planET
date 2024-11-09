@@ -9,6 +9,9 @@ import { FileService } from "../../services/FileService";
 import { isValidObjectId } from "../..//utils/CheckObjectId";
 import { ToastTypes } from "../../utils/toastTypes";
 import showToastMessage from "../../utils/showToastMessage";
+import { Utils } from "../../utils/utils";
+import { useDispatchContext } from "../../dispatchContenxt";
+import { setUser } from "../../store/userSlice";
 
 interface FormData {
   firstName: string;
@@ -97,6 +100,8 @@ const SellerProfile: React.FC = () => {
     }
   };
 
+  const dispatch = useDispatchContext();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -118,27 +123,44 @@ const SellerProfile: React.FC = () => {
       );
       return;
     }
+    const updateData: any = {
+      name: formData.firstName + " " + formData.lastName,
+      email: formData.email,
+      description: formData.description,
+      phone_number: formData.mobile,
+      password: formData.password,
+    };
+
     if (formData.logo) {
       const file = await FileService.uploadFile(formData.logo);
-      const seller = await SellerServices.updateSellerServices(Seller.email, {
-        name: formData.firstName + " " + formData.lastName,
-        email: formData.email,
-        username: formData.username,
-        description: formData.description,
-        phone_number: formData.mobile,
-        password: formData.password,
-        logo: file.data._id,
-      });
-      //Should i add a toast for the file upload?
+      updateData.logo = file.data._id;
+    }
+
+    const seller = await SellerServices.updateSellerServices(Seller.email, updateData);
+
+    if (seller.status === 200) {
+      const updatedSeller = {
+        ...Seller,
+        name: updateData.name,
+        email: updateData.email,
+        phone_number: updateData.phone_number,
+        stakeholder_id: {
+          ...Seller.stakeholder_id,
+          description: updateData.description,
+          logo: updateData.logo,
+        },
+      }
+      dispatch(setUser(updatedSeller))
     } else {
-      const seller = await SellerServices.updateSellerServices(Seller.email, {
-        name: formData.firstName + " " + formData.lastName,
-        email: formData.email,
-        username: formData.username,
-        description: formData.description,
-        phone_number: formData.mobile,
-        password: formData.password,
-      });
+      showToastMessage("Error in updating", ToastTypes.ERROR);
+    }
+
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (user && user.usernameOrEmail && user.password) {
+      const password = Utils.decryptPassword(user.password)
+      if (password !== updateData.password && formData.password) {
+        localStorage.setItem("user", JSON.stringify({ usernameOrEmail: user.usernameOrEmail, password: Utils.encryptPassword(updateData.password) }));
+      }
     }
   };
 
@@ -158,7 +180,7 @@ const SellerProfile: React.FC = () => {
 
   return (
     <div className="profile-form-container">
-      <Row className="align-items-center mb-4">
+      <Row className="align-items-center mb-4 w-100">
         <Col xs={7} className="text-left">
           <h2 className="my-profile-heading">Welcome Seller!</h2>
         </Col>
@@ -304,6 +326,7 @@ const SellerProfile: React.FC = () => {
                   type="file"
                   name="logo"
                   onChange={handleFileChange}
+                  className="custom-form-control"
                   accept="image/*"
                 />
               </Form.Group>
@@ -311,10 +334,12 @@ const SellerProfile: React.FC = () => {
           </Row>
 
           <div className="d-flex justify-content-center">
-            <button className="update-btn">Confirm</button>
-            <button className="cancel-btn" onClick={handleCancel}>
+            <Button type="submit" variant="main-inverse" className="px-5 py-2">
+              Confirm
+            </Button>
+            <Button variant="main-border" className="px-5 py-2" onClick={handleCancel}>
               Cancel
-            </button>
+            </Button>
           </div>
         </Form>
       </Container>

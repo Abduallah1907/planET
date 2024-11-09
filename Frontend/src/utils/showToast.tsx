@@ -1,8 +1,8 @@
-import { createRoot } from "react-dom/client";
-import React from "react";
-import ToastComponent from "../components/ToastComponent";
 import { ToastTypes } from "./toastTypes";
 import Response from "../../../API/src/types/responses/response";
+import { addToast } from "../store/toastsSlice";
+import { getToastDispatcher } from "./useToastDispatcher";
+
 const showToast = (response: Response) => {
   const { message, status } = response;
   let toastType: ToastTypes = ToastTypes.INFO;
@@ -43,28 +43,9 @@ const showToast = (response: Response) => {
       break;
   }
 
-  const toastRoot = document.createElement("div");
-  toastRoot.style.position = "fixed";
-  toastRoot.style.bottom = "1rem";
-  toastRoot.style.right = "1rem";
-  toastRoot.style.zIndex = "9999";
-  toastRoot.style.width = "300px";
-  document.body.appendChild(toastRoot);
+  const dispatch = getToastDispatcher();
 
-  const root = createRoot(toastRoot);
-
-  const handleClose = () => {
-    root.unmount();
-    document.body.removeChild(toastRoot);
-  };
-
-  root.render(
-    <ToastComponent message={message} onClose={handleClose} type={toastType} />
-  );
-
-  setTimeout(() => {
-    handleClose();
-  }, 5000);
+  dispatch(addToast({ id: Date.now().toString(), message, type: toastType }));
 };
 
 export default showToast;

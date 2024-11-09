@@ -67,7 +67,7 @@ const TopBar: React.FC = () => {
   const IsLoggedIn = User.isLoggedIn // Assuming you have an auth slice in your Redux store
 
   function getBadgeColor(badge: any): string | string {
-    switch (badge) {  
+    switch (badge) {
       case "1":
         return 'badge-bronze';
       case "2":
@@ -75,21 +75,21 @@ const TopBar: React.FC = () => {
       case "3":
         return "badge-gold";
       default:
-        return "badge-bronze";  
-      }
+        return "badge-bronze";
     }
-    const getBadgeText = (level: string) => {
-      switch (level) {
-        case "1":
-          return "Bronze Level";
-        case "2":
-          return "Silver Level";
-        case "3":
-          return "Gold Level";
-        default:
-          return "Bronze";
-      }
-    };
+  }
+  const getBadgeText = (level: string) => {
+    switch (level) {
+      case "1":
+        return "Bronze Level";
+      case "2":
+        return "Silver Level";
+      case "3":
+        return "Gold Level";
+      default:
+        return "Bronze";
+    }
+  };
   return (
     <Navbar expand="lg" className="top-bar" variant="dark">
       <Container fluid>
@@ -205,14 +205,16 @@ const TopBar: React.FC = () => {
 
             {IsLoggedIn ? (
               <>
-              <Button
-                variant=""
-                onClick={() => navigate("/Cart")}
-                className="btn-help btn-margin me-3"
-              >
-                <FaShoppingCart />
-              </Button>
-              <Row>
+                {User.role === "TOURIST" && (
+                  <Button
+                    variant=""
+                    onClick={() => navigate("/Cart")}
+                    className="btn-help btn-margin me-3"
+                  >
+                    <FaShoppingCart />
+                  </Button>
+                )}
+                <Row>
                   <Col className="pe-0 d-flex flex-column justify-content-center">
                     <Avatar />
                   </Col>
@@ -222,14 +224,14 @@ const TopBar: React.FC = () => {
                       <h5 className="text-white m-0">{User.username}</h5>
                     </Row>
 
-                  {User.role === "TOURIST" ? (
-                    <Row>
-                      <OverlayTrigger placement="top" overlay={<Tooltip>{getBadgeText(User.stakeholder_id.badge)}</Tooltip>}>
-                        <span>
-                        <SlBadge className={getBadgeColor(User.stakeholder_id.badge) }/>
-                        </span>
-                      </OverlayTrigger>
-                    </Row>
+                    {User.role === "TOURIST" ? (
+                      <Row>
+                        <OverlayTrigger placement="top" overlay={<Tooltip>{getBadgeText(User.stakeholder_id.badge)}</Tooltip>}>
+                          <span>
+                            <SlBadge className={getBadgeColor(User.stakeholder_id.badge)} />
+                          </span>
+                        </OverlayTrigger>
+                      </Row>
 
                     ) : (null)}
                   </Col>

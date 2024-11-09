@@ -189,7 +189,7 @@ const HistoricalPlaceForm: React.FC = () => {
                 label="Opening Days"
                 type="text"
                 value={formData.openingDays.join(",")}
-                onChange={handleDaysInputClick}
+                onClick={handleDaysInputClick}
                 required
                 placeholder={""}
                 id={"opening_days"}

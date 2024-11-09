@@ -1,3 +1,12 @@
+.ser-container .card {
+  background-color: transparent;
+  border: none;
+}
+
+.ser-container .card .card-body {
+  box-shadow: none;
+}
+
 .ser-container .card-shadow {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   /* Adjust the shadow as needed */
@@ -41,7 +50,7 @@
 }
 
 .services-text {
-  font-size: 2.0rem;
+  font-size: 2.25rem;
   font-weight: 700 !important;
   font-family: Volkhov, serif;
   color: var(--text-secondary-color);
@@ -49,4 +58,31 @@
 
 .ser-container {
   margin-bottom: 50px;
+}
+
+/* Card container styling */
+.ser-container .row .col-md-3:nth-of-type(2) {
+  position: relative; /* Creates a positioning context for the pseudo-element */
+}
+
+/* Card styling */
+.ser-container .row .col-md-3:nth-of-type(2) .card {
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for a subtle 3D effect */
+  background-color: white;
+}
+
+/* Decorative shape styling */
+.ser-container .row .col-md-3:nth-of-type(2)::before {
+  content: '';
+  width: 5rem; /* Adjust width to fit the design */
+  height: 5rem; /* Adjust height to fit the design */
+  background-color: #DF6951; /* Adjust to the color you want */
+  position: absolute;
+  bottom: 0; /* Adjust position to achieve desired offset */
+  left: -1rem; /* Adjust position to achieve desired offset */
+  border-top-left-radius: 1.5rem; /* Rounded corners for the decorative shape */
+  border-bottom-right-radius: 0.5rem; /* Rounded corners for the decorative shape */
+  border-bottom-left-radius: 0;
+  z-index: -1; /* Ensures the shape is behind the card */
 }

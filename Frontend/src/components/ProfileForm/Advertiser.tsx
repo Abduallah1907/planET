@@ -9,6 +9,9 @@ import { FileService } from "../../services/FileService";
 import { isValidObjectId } from "../../utils/CheckObjectId";
 import { ToastTypes } from "../../utils/toastTypes";
 import showToastMessage from "../../utils/showToastMessage";
+import { Utils } from "../../utils/utils";
+import { useDispatchContext } from "../../dispatchContenxt";
+import { setUser } from "../../store/userSlice";
 
 interface FormData {
   firstName: string;
@@ -89,7 +92,34 @@ const Advertiser: React.FC = () => {
     getAdvertiserData();
   }, [Advertiser]);
 
-  const OnClick = async () => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+
+    // Restrict the mobile field to numbers only
+    if (name === "mobile") {
+      // Use a regular expression to allow only numbers
+      if (/[^0-9]/.test(value)) {
+        return; // Prevent updating the state if non-numeric characters are entered
+      }
+    }
+
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFormData({ ...formData, logo: e.target.files[0] });
+    }
+  };
+
+  const dispatch = useDispatchContext();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     // Password validation
     if (
       (formData.changePassword && !formData.retypePassword) ||
@@ -115,7 +145,6 @@ const Advertiser: React.FC = () => {
     // Construct the initial update data
     const updateData: any = {
       name: `${formData.firstName} ${formData.lastName}`,
-      username: formData.username,
       newEmail: formData.email,
       phone_number: formData.mobile,
       about: formData.about,
@@ -143,47 +172,32 @@ const Advertiser: React.FC = () => {
 
     // Show success or error toast based on response
     if (Adv.status === 200) {
-      showToastMessage("Updated successfully", ToastTypes.SUCCESS);
+      const updateAdvertiser = {
+        ...Advertiser,
+        name: updateData.name,
+        email: updateData.newEmail,
+        phone_number: updateData.phone_number,
+        stakeholder_id: {
+          ...Advertiser.stakeholder_id,
+          about: updateData.about,
+          hotline: updateData.hotline,
+          company_profile: updateData.company_profile,
+          link_to_website: updateData.link_to_website,
+        },
+      }
+      dispatch(setUser(updateAdvertiser));
     } else {
       showToastMessage("Error in updating", ToastTypes.ERROR);
     }
-  };
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = e.target;
-
-    // Restrict the mobile field to numbers only
-    if (name === "mobile") {
-      // Use a regular expression to allow only numbers
-      if (/[^0-9]/.test(value)) {
-        return; // Prevent updating the state if non-numeric characters are entered
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (user && user.usernameOrEmail && user.password) {
+      const password = Utils.decryptPassword(user.password)
+      if (password !== updateData.password && formData.changePassword) {
+        localStorage.setItem("user", JSON.stringify({ usernameOrEmail: user.usernameOrEmail, password: Utils.encryptPassword(updateData.password) }));
       }
     }
 
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFormData({ ...formData, logo: e.target.files[0] });
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Password validation as part of form submission
-    if (
-      (formData.changePassword && !formData.retypePassword) ||
-      (!formData.changePassword && formData.retypePassword)
-    ) {
-      showToastMessage("Please fill out both password fields.", ToastTypes.ERROR);
-      return;
-    }
   };
 
   const handleCancel = () => {
@@ -205,7 +219,7 @@ const Advertiser: React.FC = () => {
 
   return (
     <div className="profile-form-container">
-      <Row className="align-items-center mb-4">
+      <Row className="align-items-center mb-4 w-100">
         <Col xs={7} className="text-left">
           <h2 className="my-profile-heading">Hi Advertiser!</h2>
         </Col>
@@ -334,7 +348,7 @@ const Advertiser: React.FC = () => {
                 value={formData.mobile}
                 onChange={handleChange}
                 pattern="^[0-9]{11}$" // Only 11 digits
-                // Ensures exactly 11 digits
+              // Ensures exactly 11 digits
               />
             </Col>
           </Row>
@@ -393,6 +407,7 @@ const Advertiser: React.FC = () => {
                   type="file"
                   name="logo"
                   onChange={handleFileChange}
+                  className="custom-form-control"
                   accept="image/*"
                 />
               </Form.Group>
@@ -402,12 +417,12 @@ const Advertiser: React.FC = () => {
           {/* New row for 'About' section */}
 
           <div className="d-flex justify-content-center">
-            <button className="update-btn" onClick={OnClick}>
+            <Button type="submit" variant="main-inverse" className="px-5 py-2">
               Confirm
-            </button>
-            <button className="cancel-btn" onClick={handleCancel}>
+            </Button>
+            <Button variant="main-border" className="px-5 py-2" onClick={handleCancel}>
               Cancel
-            </button>
+            </Button>
           </div>
         </Form>
       </Container>

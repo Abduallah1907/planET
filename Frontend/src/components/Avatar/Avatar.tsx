@@ -70,27 +70,29 @@ const Avatar: React.FC = () => {
           height="30"
         />
       </Dropdown.Toggle>
-      <Dropdown.Menu className="custom-dropdown-menu">
-        <Dropdown.Item as={Link} to={`/${user.role.toLowerCase()}/Profile`}>
+      <Dropdown.Menu className="custom-dropdown-menu position-absolute">
+        <Dropdown.Item as={Link} to={`/${user.role === "TOUR_GUIDE" ? "TourGuide" : user.role.toLowerCase()}/Profile`}>
           Profile
         </Dropdown.Item>
-        
+
         <Dropdown.Divider />
         <Dropdown.Item>
           <Button variant="danger" onClick={handleLogout} className="w-100">
             Logout
           </Button>
         </Dropdown.Item>
-        <Dropdown.Divider />
         {user.role == "TOURIST" ||
-        user.role == "TOUR_GUIDE" ||
-        user.role == "ADVERTISER" ||
-        user.role == "SELLER" ? (
-          <Dropdown.Item>
-            <Button variant="danger" onClick={handleDelete} className="w-100">
-              Delete Account
-            </Button>
-          </Dropdown.Item>
+          user.role == "TOUR_GUIDE" ||
+          user.role == "ADVERTISER" ||
+          user.role == "SELLER" ? (
+          <>
+            <Dropdown.Divider />
+            <Dropdown.Item>
+              <Button variant="danger" onClick={handleDelete} className="w-100">
+                Delete Account
+              </Button>
+            </Dropdown.Item>
+          </>
         ) : null}
       </Dropdown.Menu>
     </Dropdown>

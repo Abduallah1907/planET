@@ -1,43 +1,69 @@
 import { Utils } from "../utils/utils";
 import { ToastTypes } from "../utils/toastTypes";
-import React from "react";
-import { Toast, ToastContainer } from "react-bootstrap"; // Assuming you're using React-Bootstrap
+import React, { useEffect } from "react";
+import { Toast, ToastContainer } from "react-bootstrap";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { removeToast } from "../store/toastsSlice";
 
-interface ToastComponentProps {
+interface ToastMessage {
+  id: number;
   message: string;
   type: ToastTypes;
-  onClose: () => void;
 }
 
-const ToastComponent: React.FC<ToastComponentProps> = ({
-  message,
-  type,
-  onClose,
-}) => {
-  const bg = (() => {
-    switch (type) {
-      case "success":
-        return "success";
-      case "error":
-        return "danger";
-      case "warning":
-        return "warning";
-      case "info":
-        return "info";
-      default:
-        return "primary";
-    }
-  })();
+
+const ToastComponent: React.FC = () => {
+  const toasts = useAppSelector((state) => state.toasts.toasts);
+  const dispatch = useAppDispatch();
+
+  const onClose = (id: string) => {
+    // Remove the toast with the given ID
+    dispatch(removeToast(id));
+  };
+
+  useEffect(() => {
+    const timers = toasts.map((toast) =>
+      setTimeout(() => {
+        dispatch(removeToast(toast.id));
+      }, 5000)
+    );
+
+    return () => {
+      timers.forEach(clearTimeout);
+    };
+  }, [toasts, dispatch]);
+
   return (
-    <ToastContainer position="bottom-end" className="p-3">
-      <Toast onClose={onClose} show={!!message} bg={bg}>
-        <Toast.Header>
-          <strong className="me-auto">
-            {Utils.capitalizeFirstLetter(type)}
-          </strong>
-        </Toast.Header>
-        <Toast.Body className={"text-white"}>{message}</Toast.Body>
-      </Toast>
+    <ToastContainer position="bottom-end" className="p-3 position-fixed">
+      {toasts.map((toast) => (
+        <Toast
+          key={toast.id}
+          onClose={() => onClose(toast.id)}
+          bg={(() => {
+            switch (toast.type) {
+              case "success":
+                return "success";
+              case "error":
+                return "danger";
+              case "warning":
+                return "warning";
+              case "info":
+                return "info";
+              default:
+                return "primary";
+            }
+          })()}
+          autohide
+          delay={5000}
+        >
+          <Toast.Header>
+            <strong className="me-auto">
+              {Utils.capitalizeFirstLetter(toast.type)}
+            </strong>
+          </Toast.Header>
+          <Toast.Body className="text-white">{toast.message}</Toast.Body>
+        </Toast>
+      ))}
     </ToastContainer>
   );
 };
