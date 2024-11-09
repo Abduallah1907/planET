@@ -81,7 +81,6 @@ const ItineraryForm: React.FC = () => {
 
   const [newAvailableDate, setNewAvailableDate] = useState<string>("");
   const [newAvailableTime, setNewAvailableTime] = useState<string>("");
-  const [isClicked, setIsClicked] = useState(false);
 
   const [slots, setSlots] = useState<Slot[]>([]);
   const [showModal, setShowModal] = useState(false);
@@ -146,7 +145,6 @@ const ItineraryForm: React.FC = () => {
 
   const handleAddActivity = () => {
     setChoosenActivities((prev) => [...prev, { _id: "", name: "" }]);
-    setIsClicked(true);
   };
 
   const handleDeleteActivity = (index: number) => {
@@ -166,7 +164,6 @@ const ItineraryForm: React.FC = () => {
 
   const handleAddLanguage = () => {
     setFilteredLanguages((prev) => [...prev, { label: "", value: "" }]);
-    setIsClicked(true);
   };
 
   const handleDeleteLanguage = (index: number) => {
@@ -182,7 +179,6 @@ const ItineraryForm: React.FC = () => {
       index: slots.length,
     });
     setShowModal(true);
-    setIsClicked(true);
   };
 
   const handleEditSlot = (index: number) => {
@@ -307,6 +303,8 @@ const ItineraryForm: React.FC = () => {
     }
   };
 
+  const selectedLanguages = filteredLanguages.map((language) => language.value);
+  
   return (
     <div className="profile-form-container">
       <Row className="align-items-center mb-4 w-100">
@@ -360,49 +358,51 @@ const ItineraryForm: React.FC = () => {
             <Col>
               <Form.Group className="form-group" controlId="choosenActivities">
                 <Form.Label>Activities</Form.Label>
-                {choosenActivities.map((activity, index) => (
-                  <Row className="align-items-center">
-                    <Col
-                      key={index}
-                      className="choosen-activity custom-select-container pe-0"
-                    >
-                      <Form.Control
-                        as="select"
-                        onChange={(e) =>
-                          handleActivityChange(index, e.target.value)
-                        }
-                        className="mt-1 custom-form-control"
-                        value={activity._id}
-                        required
+                <div>
+                  {choosenActivities.map((activity, index) => (
+                    <Row className="align-items-center">
+                      <Col
+                        key={index}
+                        className="choosen-activity custom-select-container pe-0"
                       >
-                        <option value="">Select Activity</option>
-                        {activities.map((activity) => (
-                          <option key={activity.name} value={activity._id}>
-                            {activity.name}
-                          </option>
-                        ))}
-                      </Form.Control>
-                      <BiChevronDown className="dropdown-icon" />{" "}
-                      {/* Dropdown icon */}
-                    </Col>
-                    <Col md="auto">
-                      <Button
-                        variant="danger"
-                        className="ml-2 mt-1"
-                        onClick={() => handleDeleteActivity(index)}
-                      >
-                        Delete
-                      </Button>
-                    </Col>
-                  </Row>
-                ))}
-                <Button
-                  className={`ms-2 ${isClicked ? "mt-1" : ""}`}
-                  variant="main-inverse"
-                  onClick={handleAddActivity}
-                >
-                  Add Another Activity
-                </Button>
+                        <Form.Control
+                          as="select"
+                          onChange={(e) =>
+                            handleActivityChange(index, e.target.value)
+                          }
+                          className="mt-1 custom-form-control"
+                          value={activity._id}
+                          required
+                        >
+                          <option value="">Select Activity</option>
+                          {activities.map((activity) => (
+                            <option key={activity.name} value={activity._id}>
+                              {activity.name}
+                            </option>
+                          ))}
+                        </Form.Control>
+                        <BiChevronDown className="dropdown-icon" />{" "}
+                        {/* Dropdown icon */}
+                      </Col>
+                      <Col md="auto">
+                        <Button
+                          variant="danger"
+                          className="ml-2 mt-1"
+                          onClick={() => handleDeleteActivity(index)}
+                        >
+                          Delete
+                        </Button>
+                      </Col>
+                    </Row>
+                  ))}
+                  <Button
+                    className="mt-2"
+                    variant="main-inverse"
+                    onClick={handleAddActivity}
+                  >
+                    Add Another Activity
+                  </Button>
+                </div>
               </Form.Group>
             </Col>
             <Col>
@@ -432,8 +432,7 @@ const ItineraryForm: React.FC = () => {
                     </Row>
                   ))}
                   <Button
-                    className={`position-relative ${isClicked ? "ms-2" : "ms-5"}`}
-                    style={{ top: isClicked ? '-12px' : '-45px', marginTop: isClicked ? '1rem' : '0' }}
+                    className="mt-2"
                     variant="main-inverse"
                     onClick={handleAddSlot}
                   >
@@ -448,43 +447,45 @@ const ItineraryForm: React.FC = () => {
             <Col>
               <Form.Group className="form-group" controlId="locations">
                 <Form.Label>Locations</Form.Label>
-                {locations.map((location, index) => (
-                  <Row className="align-items-center">
-                    <Col
-                      key={index}
-                      className="custom-select-container pe-0"
-                    >
-                      <Form.Control
-                        onClick={() => {
-                          setShowMapModal(true)
-                          setActiveLocation(`location_${index}`)
-                        }
-                        }
-                        placeholder="Enter Location"
-                        className="mt-1 custom-form-control"
-                        value={location.address}
-                        required
+                <div>
+                  {locations.map((location, index) => (
+                    <Row className="align-items-center">
+                      <Col
+                        key={index}
+                        className="custom-select-container pe-0"
                       >
-                      </Form.Control>
-                    </Col>
-                    <Col md="auto">
-                      <Button
-                        variant="danger"
-                        className="ml-2"
-                        onClick={() => handleDeleteLocation(index)}
-                      >
-                        Delete
-                      </Button>
-                    </Col>
-                  </Row>
-                ))}
-                <Button
-                  className="mt-3"
-                  variant="main-inverse"
-                  onClick={handleAddLocation}
-                >
-                  Add Another Location
-                </Button>
+                        <Form.Control
+                          onClick={() => {
+                            setShowMapModal(true)
+                            setActiveLocation(`location_${index}`)
+                          }
+                          }
+                          placeholder="Enter Location"
+                          className="mt-1 custom-form-control"
+                          value={location.address}
+                          required
+                        >
+                        </Form.Control>
+                      </Col>
+                      <Col md="auto">
+                        <Button
+                          variant="danger"
+                          className="ml-2"
+                          onClick={() => handleDeleteLocation(index)}
+                        >
+                          Delete
+                        </Button>
+                      </Col>
+                    </Row>
+                  ))}
+                  <Button
+                    className="mt-2"
+                    variant="main-inverse"
+                    onClick={handleAddLocation}
+                  >
+                    Add Another Location
+                  </Button>
+                </div>
               </Form.Group>
             </Col>
             <Col>
@@ -507,50 +508,54 @@ const ItineraryForm: React.FC = () => {
             <Col>
               <Form.Group className="form-group" controlId="choosenActivities">
                 <Form.Label>Languages</Form.Label>
-                {filteredLanguages.map((filteredLanguage, index) => (
-                  <Row className="align-items-center">
-                    <Col
-                      key={index}
-                      className="choosen-activity custom-select-container pe-0"
-                    >
-                      <Form.Control
-                        as="select"
-                        // onChange={(e) => handleLanguageChange(index, e.target.value)}
-                        className="mt-1 custom-form-control"
-                        value={filteredLanguage.value}
-                        onChange={(e) =>
-                          handleLanguageChange(index, e.target.value)
-                        }
-                        required
+                <div>
+                  {filteredLanguages.map((filteredLanguage, index) => (
+                    <Row className="align-items-center">
+                      <Col
+                        key={index}
+                        className="choosen-activity custom-select-container pe-0"
                       >
-                        <option value="">Select Language</option>
-                        {languages.map((language) => (
-                          <option key={language.value} value={language.value}>
-                            {language.label}
-                          </option>
-                        ))}
-                      </Form.Control>
-                      <BiChevronDown className="dropdown-icon" />{" "}
-                      {/* Dropdown icon */}
-                    </Col>
-                    <Col md="auto">
-                      <Button
-                        variant="danger"
-                        className="ml-2 mt-1"
-                        onClick={() => handleDeleteLanguage(index)}
-                      >
-                        Delete
-                      </Button>
-                    </Col>
-                  </Row>
-                ))}
-                <Button
-                  className={`ms-2 ${isClicked ? "mt-1" : ""}`}
-                  variant="main-inverse" 
-                  onClick={handleAddLanguage}
-                >
-                  Add Another Language
-                </Button>
+                        <Form.Control
+                          as="select"
+                          // onChange={(e) => handleLanguageChange(index, e.target.value)}
+                          className="mt-1 custom-form-control"
+                          value={filteredLanguage.value}
+                          onChange={(e) =>
+                            handleLanguageChange(index, e.target.value)
+                          }
+                          required
+                        >
+                          <option value="">Select Language</option>
+                          {languages
+                            .filter((language) => !selectedLanguages.includes(language.value) || language.value === filteredLanguage.value)
+                            .map((language) => (
+                            <option key={language.value} value={language.value}>
+                              {language.label}
+                            </option>
+                          ))}
+                        </Form.Control>
+                        <BiChevronDown className="dropdown-icon" />{" "}
+                        {/* Dropdown icon */}
+                      </Col>
+                      <Col md="auto">
+                        <Button
+                          variant="danger"
+                          className="ml-2 mt-1"
+                          onClick={() => handleDeleteLanguage(index)}
+                        >
+                          Delete
+                        </Button>
+                      </Col>
+                    </Row>
+                  ))}
+                  <Button
+                    className="mt-2"
+                    variant="main-inverse"
+                    onClick={handleAddLanguage}
+                  >
+                    Add Another Language
+                  </Button>
+                </div>
               </Form.Group>
             </Col>
             <Col>
@@ -730,8 +735,8 @@ const ItineraryForm: React.FC = () => {
         </Form>
       </Container>
 
-      
-      
+
+
       <MapModal
         open={showMapModal}
         handleClose={handleCloseMapModal}

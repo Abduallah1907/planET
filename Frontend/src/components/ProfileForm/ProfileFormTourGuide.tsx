@@ -334,7 +334,7 @@ const ProfileFormGuide: React.FC = () => {
 
   return (
     <div className="profile-form-container">
-      <Row className="align-items-center mb-4">
+      <Row className="align-items-center mb-4 w-100">
         <Col xs={7} className="text-left">
           <h2 className="my-profile-heading">Hello Tour Guide</h2>
         </Col>
@@ -551,19 +551,19 @@ const ProfileFormGuide: React.FC = () => {
                   ))}
                 </tbody>
               </Table>
-              <button className="update-btn" onClick={handleAddWork}>
+              <Button variant="main-inverse" onClick={handleAddWork}>
                 Add Work Experience
-              </button>
+              </Button>
             </Col>
           </Row>
 
           <div className="d-flex justify-content-center">
-            <button className="update-btn" onClick={OnClick}>
+            <Button variant="main-inverse" onClick={OnClick}>
               Confirm
-            </button>
-            <button className="cancel-btn" onClick={handleCancel}>
+            </Button>
+            <Button variant="main-border" onClick={handleCancel}>
               Cancel
-            </button>
+            </Button>
           </div>
         </Form>
         <Modal show={showDeleteModal} onHide={cancelDeleteWork} centered>

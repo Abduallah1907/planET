@@ -14,7 +14,6 @@ import { TourGuideServices } from "../../services/TourGuideServices";
 import { FileService } from "../../services/FileService";
 import { FaTrashAlt } from "react-icons/fa";
 import "./Advertiser.css";
-import { ToastTypes } from "../../utils/toastTypes";
 
 interface WorkExperience {
   id?: string; // ID from the backend
