@@ -349,20 +349,12 @@ paths:
           description: Admin not found.
         "400":
           description: Invalid input.
-  /api/admin/getComplaints/{page}:
+  /api/admin/getComplaints:
     get:
       tags:
         - Admin
         - Complaint
-      summary: Given a page number, shows 10 complaints along with their information
-      parameters:
-        - name: page
-          in: path
-          description: Page number to retrieve.
-          required: true
-          schema:
-            type: integer
-            default: 1
+      summary: Shows all complaints in the database
       responses:
         "200":
           description: A array of complaints.
@@ -592,3 +584,7 @@ components:
             - Pending
             - Resolved
           description: The current status of the complaint
+        createdAt: 
+          type: string
+          format: date-time
+          description: The date the complaint was created

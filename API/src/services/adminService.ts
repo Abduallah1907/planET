@@ -512,6 +512,7 @@ export default class AdminService {
         tourist_name: complaint.tourist_id,
         body: complaint.body,
         reply: complaint.reply,
+        createdAt: complaint.createdAt,
       })
     );
     return new response(true, complaintsOutput, "Complaints are fetched", 200);
@@ -537,6 +538,7 @@ export default class AdminService {
       tourist_name: complaint.tourist_id,
       body: complaint.body,
       reply: complaint.reply,
+      createdAt: complaint.createdAt,
     };
 
     return new response(true, complaintOutput, "Complaint is fetched", 200);
@@ -606,6 +608,7 @@ export default class AdminService {
         tourist_name: complaint.tourist_id,
         body: complaint.body,
         reply: complaint.reply,
+        createdAt: complaint.createdAt,
       })
     );
     return new response(true, sortedComplaintsDTO, "Compliants sorted!", 200);
@@ -636,6 +639,7 @@ export default class AdminService {
         tourist_name: complaint.tourist_id,
         body: complaint.body,
         reply: complaint.reply,
+        createdAt: complaint.createdAt,
       }));
 
     return new response(
