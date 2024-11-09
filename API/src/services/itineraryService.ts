@@ -142,8 +142,8 @@ export default class ItineraryService {
     return new response(
       true,
       { itinerary_id: updatedItinerary._id },
-      "Itinerary updated!",
-      201
+      "Itinerary updated successfully",
+      200
     );
   }
   public async deleteItineraryService(itinerary_id: Types.ObjectId) {
@@ -185,7 +185,7 @@ export default class ItineraryService {
     return new response(
       true,
       { itinerary_id: deletedItinerary._id },
-      "Itinerary deleted!",
+      "Itinerary deleted successfully",
       200
     );
   }
@@ -198,8 +198,6 @@ export default class ItineraryService {
       throw new NotFoundError(
         "Itinerary not found! Did you enter the correct itinerary id?"
       );
-    if (itinerary.active_flag === false)
-      throw new ConflictError("The itinerary is already deactived");
 
     itinerary.active_flag = false;
     await itinerary.save();
@@ -207,7 +205,7 @@ export default class ItineraryService {
     return new response(
       true,
       { itinerary_id: itinerary_id },
-      "Itinerary deactivated",
+      "Itinerary deactivated successfully",
       200
     );
   }
@@ -221,15 +219,10 @@ export default class ItineraryService {
         "Itinerary not found! Did you enter the correct itinerary id?"
       );
 
-    if (itinerary.active_flag === true)
-      throw new ConflictError("The itinerary is already active");
-    // we check if there's bookings, since, the excel mentions that "itineraries with bookings can only be deactivated"
-    // need to double check with the ta on this info, but if it is true then the user must be warned with this information too
-
     const itineraryBooked = await this.ticketModel.find({
       booking_id: itinerary_id,
     });
-    if (itineraryBooked)
+    if (itineraryBooked.length > 0)
       throw new BadRequestError(
         "If the itinerary is booked, we cannot activate the itinerary"
       );
@@ -240,7 +233,7 @@ export default class ItineraryService {
     return new response(
       true,
       { itinerary_id: itinerary_id },
-      "Itinerary activated",
+      "Itinerary activated successfully",
       200
     );
   }
@@ -470,23 +463,26 @@ export default class ItineraryService {
         const endDate = filters.date.end;
         dashedEndDate = endDate.split("/").join("-");
       }
+      const filterEndDate = new Date(dashedEndDate);
+      filterEndDate.setDate(filterEndDate.getDate() + 1);
+      const filterStartDate = new Date(dashedStartDate);
       if (filters.date.start !== undefined && filters.date.end !== undefined) {
         matchStage.available_dates = {
           $elemMatch: {
-            $gte: new Date(dashedStartDate),
-            $lte: new Date(dashedEndDate),
+            $gte: filterStartDate,
+            $lte: filterEndDate,
           },
         };
       } else if (filters.date.start !== undefined) {
         matchStage.available_dates = {
           $elemMatch: {
-            $gte: new Date(dashedStartDate),
+            $gte: filterStartDate,
           },
         };
       } else if (filters.date.end !== undefined) {
         matchStage.available_dates = {
           $elemMatch: {
-            $lte: new Date(dashedEndDate),
+            $lte: filterEndDate,
           },
         };
       }
@@ -514,7 +510,6 @@ export default class ItineraryService {
         },
       },
     ];
-
     if (filters.preferences) {
       aggregationPipeline.push({
         $match: {

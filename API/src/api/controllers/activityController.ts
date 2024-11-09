@@ -31,14 +31,19 @@ export class ActivityController {
   public async getActivitiesByAdvertiserID(req: any, res: any) {
     const { advertiserID } = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activity = await activityService.getActivitiesByAdvertiserIDService(advertiserID);
+    const activity = await activityService.getActivitiesByAdvertiserIDService(
+      advertiserID
+    );
     res.status(activity.status).json(activity);
   }
   public async updateActivity(req: any, res: any) {
     const { id } = req.params;
     const activityService: ActivityService = Container.get(ActivityService);
     const activityData = req.body as IActivityDTO;
-    const activity = await activityService.updateActivityService(id, activityData);
+    const activity = await activityService.updateActivityService(
+      id,
+      activityData
+    );
     res.status(activity.status).json(activity);
   }
 
@@ -53,14 +58,20 @@ export class ActivityController {
     const { name, category, tag } = req.query;
     const { role } = req.body;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activities = await activityService.getSearchActivityService(name, category, tag, role);
+    const activities = await activityService.getSearchActivityService(
+      name,
+      category,
+      tag,
+      role
+    );
     res.status(activities.status).json(activities);
   }
 
   public async getUpcomingActivities(req: any, res: any) {
     const activityService: ActivityService = Container.get(ActivityService);
     const { role } = req.body;
-    const upcomingActivities = await activityService.getUpcomingActivitiesService(role);
+    const upcomingActivities =
+      await activityService.getUpcomingActivitiesService(role);
 
     res.status(upcomingActivities.status).json(upcomingActivities);
   }
@@ -89,14 +100,16 @@ export class ActivityController {
       }
     if (date) {
       const [start, end] = date.split("-");
-      filters = { ...filters, date: { start, end: end || start } };
+      filters = { ...filters, date: { start: start, end: end } };
     }
     if (category) {
       const categoryList = category.split(",").map((cat: string) => cat.trim());
       filters = { ...filters, category: categoryList };
     }
     if (tag) {
-      const preferencesList = tag.split(",").map((preference: string) => preference.trim());
+      const preferencesList = tag
+        .split(",")
+        .map((preference: string) => preference.trim());
       filters = { ...filters, preferences: preferencesList };
     }
 
@@ -119,20 +132,29 @@ export class ActivityController {
       }
     }
     if (advertiser_id) filters = { ...filters, advertiser_id: advertiser_id };
-    const activities = await activityService.getFilteredActivitiesService(filters, role);
+    const activities = await activityService.getFilteredActivitiesService(
+      filters,
+      role
+    );
     res.status(activities.status).json(activities);
   }
   public async getSortedActivities(req: any, res: any) {
     const { sort, direction } = req.query;
     const { role } = req.body;
     const activityService: ActivityService = Container.get(ActivityService);
-    const activities = await activityService.getSortedActivitiesService(sort, direction, role);
+    const activities = await activityService.getSortedActivitiesService(
+      sort,
+      direction,
+      role
+    );
     res.status(activities.status).json(activities);
   }
   public async getFilterComponents(req: any, res: any) {
     const { role } = req.body;
     const activityService: ActivityService = Container.get(ActivityService);
-    const filterComponents = await activityService.getFilterComponentsService(role);
+    const filterComponents = await activityService.getFilterComponentsService(
+      role
+    );
     res.status(filterComponents.status).json(filterComponents);
   }
 
@@ -141,7 +163,10 @@ export class ActivityController {
     const activity_idObjectId = new Types.ObjectId(activity_id);
 
     const activityService: ActivityService = Container.get(ActivityService);
-    const updatedActivity = await activityService.flagActivityInappropriateService(activity_idObjectId);
+    const updatedActivity =
+      await activityService.flagActivityInappropriateService(
+        activity_idObjectId
+      );
     res.status(updatedActivity.status).json(updatedActivity);
   }
 }

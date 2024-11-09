@@ -50,6 +50,7 @@ class ItineraryService {
         `/itinerary/updateItinerary/${id}`,
         itineraryBody
       );
+      console.log(response);
       if (response.status === 200) showToast(response.data);
       return response.data;
     } catch (error) {

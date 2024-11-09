@@ -7,8 +7,6 @@ import { useAppSelector } from "../../store/hooks";
 import { AdvertiserService } from "../../services/AdvertiserService";
 
 import { FileService } from "../../services/FileService";
-import showToast from "../../utils/showToast";
-import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   about: string;
@@ -60,8 +58,6 @@ const AdvertiserFirst: React.FC = () => {
           logo: file.data._id,
         }
       );
-      showToast(adv);
-      //Must i also showToast for the file upload?
     } else {
       const adv2 = await AdvertiserService.updateAdvertiser(
         AdvertiserFirst.email,
@@ -72,7 +68,6 @@ const AdvertiserFirst: React.FC = () => {
           company_profile: formData.companyProfile,
         }
       );
-      showToast(adv2);
     }
   };
 

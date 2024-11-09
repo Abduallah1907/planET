@@ -15,7 +15,6 @@ import { useAppSelector } from "../../store/hooks";
 import { TourGuideServices } from "../../services/TourGuideServices";
 import { isValidObjectId } from "../../utils/CheckObjectId";
 import { FileService } from "../../services/FileService";
-import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
 import { FaTrashAlt } from "react-icons/fa";
 import showToastMessage from "../../utils/showToastMessage";
@@ -141,7 +140,10 @@ const ProfileFormGuide: React.FC = () => {
     if (name === "yearsOfExperience") {
       const numericalValue = parseInt(value);
       if (numericalValue < 0) {
-        // showToast("Years of Experience cannot be negative", ToastTypes.ERROR);
+        showToastMessage(
+          "Years of Experience cannot be negative",
+          ToastTypes.ERROR
+        );
         setFormData({ ...formData, [name]: "0" });
         return;
       }
@@ -220,11 +222,17 @@ const ProfileFormGuide: React.FC = () => {
       (formData.changePassword && !formData.retypePassword) ||
       (!formData.changePassword && formData.retypePassword)
     ) {
-      showToastMessage("Please fill out both password fields.", ToastTypes.ERROR);
+      showToastMessage(
+        "Please fill out both password fields.",
+        ToastTypes.ERROR
+      );
       return;
     }
     if (formData.mobile.length !== 11) {
-      showToastMessage("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      showToastMessage(
+        "Mobile number must be exactly 11 digits.",
+        ToastTypes.ERROR
+      );
       return;
     }
 
@@ -281,7 +289,10 @@ const ProfileFormGuide: React.FC = () => {
       (formData.changePassword && !formData.retypePassword) ||
       (!formData.changePassword && formData.retypePassword)
     ) {
-      showToastMessage("Please fill out both password fields.", ToastTypes.ERROR);
+      showToastMessage(
+        "Please fill out both password fields.",
+        ToastTypes.ERROR
+      );
       return;
     }
   };

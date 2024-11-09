@@ -11,6 +11,7 @@ export interface IComplaint {
   body: string;
   reply: string;
   date: Date;
+
   status: string;
 }
 
@@ -21,5 +22,6 @@ export interface IComplaintTourist {
   body: string;
   reply: string;
   date: Date;
+
   status: string;
 }

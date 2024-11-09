@@ -103,7 +103,7 @@ export default class ActivityService {
       throw new InternalServerError("Internal server error");
     if (advertiser == null) throw new NotFoundError("Advertiser not found");
 
-    return new response(true, activity, "Activity", 201);
+    return new response(true, activity, "Activity created successfully", 201);
   }
 
   public async getActivityByIDService(id: string) {
@@ -353,19 +353,21 @@ export default class ActivityService {
       if (filters.date.start !== undefined) {
         const startDate = filters.date.start; // The input date is in day/month/year format
         const dashedStartDate = startDate.split("/").join("-");
-
+        const filterStartDate = new Date(dashedStartDate);
         matchStage.date = {
           ...matchStage.date,
-          $gte: new Date(dashedStartDate),
+          $gte: filterStartDate,
         };
       }
       if (filters.date.end !== undefined) {
         const endDate = filters.date.end; // The input date is in day/month/year format
         const dashedEndDate = endDate.split("/").join("-");
+        const filterEndDate = new Date(dashedEndDate);
+        filterEndDate.setDate(filterEndDate.getDate() + 1);
 
         matchStage.date = {
           ...matchStage.date,
-          $lte: new Date(dashedEndDate),
+          $lte: filterEndDate,
         };
       }
     }
@@ -432,6 +434,7 @@ export default class ActivityService {
       },
     ];
     // Add conditional filters
+    // console.log(JSON.stringify(aggregationPipeline));
     if (filters.category || filters.preferences) {
       aggregationPipeline.push({
         $match: {

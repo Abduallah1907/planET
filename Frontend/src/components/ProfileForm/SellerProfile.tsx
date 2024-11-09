@@ -7,7 +7,6 @@ import { useAppSelector } from "../../store/hooks";
 import { SellerServices } from "../../services/SellerServices";
 import { FileService } from "../../services/FileService";
 import { isValidObjectId } from "../..//utils/CheckObjectId";
-import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
 import showToastMessage from "../../utils/showToastMessage";
 
@@ -105,12 +104,18 @@ const SellerProfile: React.FC = () => {
       (formData.password && !formData.retypePassword) ||
       (!formData.password && formData.retypePassword)
     ) {
-      showToastMessage("Please fill out both password fields.", ToastTypes.ERROR);
+      showToastMessage(
+        "Please fill out both password fields.",
+        ToastTypes.ERROR
+      );
       return;
     }
 
     if (formData.mobile.length !== 11) {
-      showToastMessage("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      showToastMessage(
+        "Mobile number must be exactly 11 digits.",
+        ToastTypes.ERROR
+      );
       return;
     }
     if (formData.logo) {
@@ -124,7 +129,6 @@ const SellerProfile: React.FC = () => {
         password: formData.password,
         logo: file.data._id,
       });
-      showToast(seller);
       //Should i add a toast for the file upload?
     } else {
       const seller = await SellerServices.updateSellerServices(Seller.email, {
@@ -135,7 +139,6 @@ const SellerProfile: React.FC = () => {
         phone_number: formData.mobile,
         password: formData.password,
       });
-      showToast(seller);
     }
   };
 
@@ -308,9 +311,7 @@ const SellerProfile: React.FC = () => {
           </Row>
 
           <div className="d-flex justify-content-center">
-            <button className="update-btn">
-              Confirm
-            </button>
+            <button className="update-btn">Confirm</button>
             <button className="cancel-btn" onClick={handleCancel}>
               Cancel
             </button>
