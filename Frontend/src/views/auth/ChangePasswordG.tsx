@@ -3,6 +3,8 @@ import CustomFormGroup from "../../components/FormGroup/FormGroup";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { useAppSelector } from "../../store/hooks";
 import { GovernorService } from "../../services/GovernorService";
+import showToastMessage from "../../utils/showToastMessage";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   changePassword: string;
@@ -23,11 +25,6 @@ const ChangePasswordG: React.FC = () => {
       retypePassword: "",
     });
   }, [Governor]);
-  const OnClick = async () => {
-    await GovernorService.changePass(Governor.email, {
-      password: formData.changePassword,
-    });
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -36,10 +33,41 @@ const ChangePasswordG: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.changePassword !== formData.retypePassword) {
-      alert("Passwords don't match!");
+    if (
+      formData.changePassword &&
+      formData.changePassword !== formData.retypePassword
+    ) {
+      showToastMessage("Passwords don't match!", ToastTypes.ERROR);
       return;
     }
+    if (
+      (formData.changePassword && !formData.retypePassword) ||
+      (!formData.changePassword && formData.retypePassword)
+    ) {
+      showToastMessage(
+        "Please fill out both password fields.",
+        ToastTypes.ERROR
+      );
+      return;
+    }
+    try {
+      // Call the API to change the password
+      const response = await GovernorService.changePass(Governor.email, {
+        password: formData.changePassword,
+      });
+
+      if (response.status === 200) {
+        showToastMessage("Password changed successfully", ToastTypes.SUCCESS);
+      } else {
+        showToastMessage("Error changing password", ToastTypes.ERROR);
+      }
+    } catch (error) {
+      showToastMessage(
+        "An error occurred while changing password",
+        ToastTypes.ERROR
+      );
+    }
+
     // Handle form submission logic here (e.g., API request)
   };
 

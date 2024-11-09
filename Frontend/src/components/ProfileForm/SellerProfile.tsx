@@ -104,6 +104,10 @@ const SellerProfile: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.password && formData.password !== formData.retypePassword) {
+      showToastMessage("Passwords do not match", ToastTypes.ERROR);
+      return; // Exit if passwords don't match
+    }
 
     if (
       (formData.password && !formData.retypePassword) ||

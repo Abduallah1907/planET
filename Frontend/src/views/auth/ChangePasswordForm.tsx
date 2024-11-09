@@ -3,6 +3,8 @@ import CustomFormGroup from "../../components/FormGroup/FormGroup";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { useAppSelector } from "../../store/hooks";
 import { AdminService } from "../../services/AdminService";
+import showToastMessage from "../../utils/showToastMessage";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   changePassword: string;
@@ -31,13 +33,39 @@ const ChangePasswordForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.changePassword !== formData.retypePassword) {
-      alert("Passwords don't match!");
+    if (
+      formData.changePassword &&
+      formData.changePassword !== formData.retypePassword
+    ) {
+      showToastMessage("Passwords don't match!", ToastTypes.ERROR);
       return;
     }
-    const response = await AdminService.changePass(Admin.email, {
-      password: formData.changePassword,
-    });
+    if (
+      (formData.changePassword && !formData.retypePassword) ||
+      (!formData.changePassword && formData.retypePassword)
+    ) {
+      showToastMessage(
+        "Please fill out both password fields.",
+        ToastTypes.ERROR
+      );
+      return;
+    }
+    try {
+      const response = await AdminService.changePass(Admin.email, {
+        password: formData.changePassword,
+      });
+
+      if (response.status === 200) {
+        showToastMessage("Password changed successfully", ToastTypes.SUCCESS);
+      } else {
+        showToastMessage("Error changing password", ToastTypes.ERROR);
+      }
+    } catch (error) {
+      showToastMessage(
+        "An error occurred while changing password",
+        ToastTypes.ERROR
+      );
+    }
   };
 
   const handleCancel = () => {
