@@ -2,24 +2,26 @@ import BookingCard from "../components/Cards/BookingCard";
 import { useAppSelector } from "../store/hooks";
 import { TouristService } from "../services/TouristService";
 import { useEffect, useState } from "react";
-import { Button, Col, Nav, Row } from "react-bootstrap";
+import { Button, Col, Modal, Nav, Row } from "react-bootstrap";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import "./mybookings.css";
-import { set } from "react-datepicker/dist/date_utils";
 
 const MyBookings: React.FC = () => {
   const Tourist = useAppSelector((state) => state.user);
-  const [bookings, setBookings] = useState<null | any[]>(null); // Set initial state to null
+  const [bookings, setBookings] = useState<null | any[]>(null); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedBooking, setSelectedBooking] = useState<number | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null); // Track selected booking for modal
+
   const location = useLocation();
   const navigate = useNavigate();
 
   const fetchBookings = async (type: "upcoming" | "past") => {
     setLoading(true);
     setError("");
-    setBookings(null); // Reset bookings to null immediately to indicate loading/resetting
+    setBookings(null); 
     try {
       const response =
         type === "upcoming"
@@ -33,9 +35,7 @@ const MyBookings: React.FC = () => {
       }
     } catch (error: any) {
       console.error(`Error fetching ${type} bookings:`, error);
-      setError(
-        `Error fetching ${type} bookings: ${error.message || "Unknown error"}`
-      );
+      setError(`Error fetching ${type} bookings: ${error.message || "Unknown error"}`);
     } finally {
       setLoading(false);
     }
@@ -55,6 +55,7 @@ const MyBookings: React.FC = () => {
       prevSelectedBooking === bookingId ? null : bookingId
     );
   };
+
   const cancelTicket = async (tourist_id: string, ticket_id: string) => {
     try {
       const response = await TouristService.cancelTicket(tourist_id, ticket_id);
@@ -67,6 +68,11 @@ const MyBookings: React.FC = () => {
       setError(`Error cancelling ticket: ${error.message || "Unknown error"}`);
     }
   };
+
+  function handleCancelBooking(bookingId: string) {
+    setSelectedBookingId(bookingId); // Set the bookingId to trigger modal for specific booking
+    setShowModal(true); // Show the modal
+  }
 
   return (
     <div>
@@ -96,15 +102,11 @@ const MyBookings: React.FC = () => {
                   Price={booking.price}
                   Date_Time={booking.time_to_attend.toLocaleString()}
                 />
-                {selectedBooking === index && (
+                {selectedBooking === index && location.pathname === "/MyBookings/upcoming" && (
                   <Button
+                    className="cancelBookingBtn"
                     variant="danger"
-                    onClick={() =>
-                      cancelTicket(
-                        Tourist.stakeholder_id._id,
-                        booking.ticket_id
-                      )
-                    }
+                    onClick={() => handleCancelBooking(booking.ticket_id)}
                   >
                     Cancel Booking
                   </Button>
@@ -113,6 +115,32 @@ const MyBookings: React.FC = () => {
             </Col>
           ))}
       </Row>
+
+      {/* Modal for cancel confirmation */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Cancellation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Are you sure you want to cancel this activity?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="main" className="border-warning-subtle"  onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button
+            variant="main-inverse"
+            onClick={() => {
+              if (selectedBookingId) {
+                cancelTicket(Tourist.stakeholder_id._id, selectedBookingId);
+                setShowModal(false);
+              }
+            }}
+          >
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
