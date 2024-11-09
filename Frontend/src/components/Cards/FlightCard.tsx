@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { PiBagSimpleFill } from 'react-icons/pi';
 import './Cards.css';
-import { Card, Row, Col, Button } from 'react-bootstrap';
+import { Card, Row, Col, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import airlinesData from '../../airlines.json';
 import { useAppContext } from '../../AppContext';
 import { BsFillSuitcase2Fill } from 'react-icons/bs';
@@ -65,6 +65,10 @@ const FlightCard: React.FC<FlightCardProps> = ({ flightData, onClick, bookButton
         onClick && onClick();
     }
 
+    const includedCheckedBags: {quantity?: number, weight?: string} = flightData.travelerPricings[0].fareDetailsBySegment[0].includedCheckedBags;
+
+    const numOfCheckInBags = includedCheckedBags.quantity ?? 1;
+
     return (
         <Card
             className="shadow-sm d-flex align-items-center flight-card"
@@ -120,9 +124,9 @@ const FlightCard: React.FC<FlightCardProps> = ({ flightData, onClick, bookButton
                                                 <>
                                                     <span className='flight-stop'>{itinerary.segments.length - 1} stop </span>
                                                     <span>{itinerary.segments.map((segment: any, segmentIndex: number) => {
-                                                        if (index !== 0) {
+                                                        if (typeof segmentIndex === 'number' && segmentIndex > 0) {
                                                             return (
-                                                                <span key={index} className='flight-duration'>{segment.departure.iataCode}</span>
+                                                                <span key={segmentIndex} className='flight-duration'>{segment.departure.iataCode}</span>
                                                             );
                                                         }
                                                         return null;
@@ -157,16 +161,43 @@ const FlightCard: React.FC<FlightCardProps> = ({ flightData, onClick, bookButton
                                 <Col sm={12} className='baggage-info'>
                                     <Row>
                                         <Col xs={"auto"} className='p-0'>
-                                            <div className='bag-icon'>
-                                                <PiBagSimpleFill />
-                                                <span>1</span>
-                                            </div>
+                                            <OverlayTrigger
+                                                placement='top'
+                                                overlay={
+                                                    <Tooltip id={`tooltip-top`} className='flight-tooltip shadow'>
+                                                        <div className='d-flex flex-column'>
+                                                            <div>Carry-on Baggage</div>
+                                                            <span>1 Bag</span>
+                                                        </div>
+                                                    </Tooltip>
+                                                }>
+                                                <div className='bag-icon'>
+                                                    <PiBagSimpleFill />
+                                                    <span>1</span>
+                                                </div>
+                                            </OverlayTrigger>
                                         </Col>
                                         <Col xs={"auto"} className='p-0'>
-                                            <div className='bag-icon'>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 22 22" className="text-white"><path d="M9.629 3.94h2.726v2.096H9.63zm4.543 2.096h-.909V3.94a.46.46 0 0 0 .455-.463.46.46 0 0 0-.455-.463H8.721a.46.46 0 0 0-.454.463c0 .255.203.463.454.463v2.096h-.908c-1.002 0-1.817.83-1.817 1.852v8.336c0 1.021.815 1.852 1.817 1.852h.227v.463c0 .256.203.463.454.463s.454-.207.454-.463v-.463h4.088v.463a.46.46 0 0 0 .455.463c.25 0 .454-.207.454-.463v-.463h.227c1.002 0 1.817-.831 1.817-1.852V7.888c0-1.021-.815-1.852-1.817-1.852"></path></svg>
-                                                <span>1</span>
-                                            </div>
+                                            <OverlayTrigger
+                                                placement='top'
+                                                overlay={
+                                                    <Tooltip id={`tooltip-top`} className='flight-tooltip shadow'>
+                                                        <div className='d-flex flex-column'>
+                                                            <div>Check-in Baggage</div>
+                                                            <span>{numOfCheckInBags>0? (numOfCheckInBags === 1 ? `1 Bag`: `${numOfCheckInBags} Bags`): 'Not Included'}</span>
+                                                        </div>
+                                                    </Tooltip>
+                                                }>
+                                                <div className={`bag-icon ${numOfCheckInBags===0 && 'none'}`}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 22 22" className="text-white"><path d="M9.629 3.94h2.726v2.096H9.63zm4.543 2.096h-.909V3.94a.46.46 0 0 0 .455-.463.46.46 0 0 0-.455-.463H8.721a.46.46 0 0 0-.454.463c0 .255.203.463.454.463v2.096h-.908c-1.002 0-1.817.83-1.817 1.852v8.336c0 1.021.815 1.852 1.817 1.852h.227v.463c0 .256.203.463.454.463s.454-.207.454-.463v-.463h4.088v.463a.46.46 0 0 0 .455.463c.25 0 .454-.207.454-.463v-.463h.227c1.002 0 1.817-.831 1.817-1.852V7.888c0-1.021-.815-1.852-1.817-1.852"></path></svg>
+                                                    {numOfCheckInBags > 0 ? <span>{numOfCheckInBags}</span> :
+                                                        (
+                                                            <span>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 22 22" className="absolute"><path fill="#f76746" d="m4.859 15.764 11.19-11.19 2.377 2.379L7.238 18.14z"></path><path fill="#fff" d="M5.646 16.39 16.836 5.2l.819.819-11.19 11.19z"></path></svg>
+                                                            </span>
+                                                        )}
+                                                </div>
+                                            </OverlayTrigger>
                                         </Col>
                                         <Col className='align-items-center d-flex text-start'>
                                             <span>Baggage Info</span>

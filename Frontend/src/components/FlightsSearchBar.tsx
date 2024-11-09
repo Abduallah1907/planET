@@ -19,7 +19,6 @@ import { IoMdAirplane, IoMdClose } from "react-icons/io";
 import { IoFlag } from "react-icons/io5";
 import SkyscannerService from "../services/SkyscannerService";
 import { Calendar, DateRange, Range } from "react-date-range";
-import DatePicker from "react-datepicker";
 import { format } from "date-fns";
 
 interface Location {
@@ -49,7 +48,7 @@ interface Location {
 }
 
 interface FlightSearchBarProps {
-    onSubmit?: (data: object) => void;
+    onSubmit?: (data: object, searchQuery: object) => void;
 }
 
 const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({ onSubmit }) => {
@@ -64,11 +63,13 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({ onSubmit }) => {
     const [fromDestination, setFromDestination] = useState<string>("");
     const [fromDestinationDisplayed, setFromDestinationDisplayed] = useState<string>("");
     const [fromDestinations, setFromDestinations] = useState<Location[]>([]);
+    const [fromSelectedOption, setFromSelectedOption] = useState<string>("");
     const [fromDropdownOpen, setFromDropdownOpen] = useState<boolean>(false);
 
     const [toDestination, setToDestination] = useState<string>("");
     const [toDestinationDisplayed, setToDestinationDisplayed] = useState<string>("");
     const [toDestinations, setToDestinations] = useState<Location[]>([]);
+    const [toSelectedOption, setToSelectedOption] = useState<string>("");
     const [toDropdownOpen, setToDropdownOpen] = useState<boolean>(false);
 
     const [isRotated, setIsRotated] = useState(false);
@@ -255,11 +256,13 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({ onSubmit }) => {
         if (setDropdownVisible === setFromDropdownOpen) {
             setFromDestinationDisplayed(Utils.capitalizeFirstLetter(option.PlaceName) + " (" + option.IataCode + ")");
             setFromDestination(option.IataCode);
+            setFromSelectedOption(option.CityName ? `${Utils.capitalizeFirstLetter(option.CityName)}, ${Utils.capitalizeFirstLetter(option.CountryName)}` : `${Utils.capitalizeFirstLetter(option.CountryName)}`);
             setFromDropdownOpen(false);
         }
         else {
             setToDestinationDisplayed(Utils.capitalizeFirstLetter(option.PlaceName) + " (" + option.IataCode + ")");
             setToDestination(option.IataCode);
+            setToSelectedOption(option.CityName ? `${Utils.capitalizeFirstLetter(option.CityName)}, ${Utils.capitalizeFirstLetter(option.CountryName)}` : `${Utils.capitalizeFirstLetter(option.CountryName)}`);
             setToDropdownOpen(false);
         }
     };
@@ -297,12 +300,14 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({ onSubmit }) => {
                 setFromDestination("");
                 setFromDestinationDisplayed("");
                 setFromDestinations([]);
+                setFromSelectedOption("");
                 setFromDropdownOpen(false);
                 break;
             case "to":
                 setToDestination("");
                 setToDestinationDisplayed("");
                 setToDestinations([]);
+                setToSelectedOption("");
                 setToDropdownOpen(false);
                 break;
             case "depart":
@@ -354,6 +359,7 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({ onSubmit }) => {
             returnDateRef.current?.focus();
             return;
         }
+
         const formData = {
             originLocationCode: fromDestination,
             destinationLocationCode: toDestination,
@@ -366,7 +372,7 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({ onSubmit }) => {
             ...(flightDirection !== 0 && { returnDate: returnDate })
         }
         if (onSubmit) {
-            onSubmit(formData);
+            onSubmit(formData, {...formData,fromSelectedOption: fromSelectedOption,toSelectedOption: toSelectedOption,});
         }
     };
 
@@ -436,7 +442,7 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({ onSubmit }) => {
                                                 <Row>
                                                     <span className="ms-2 location-address">
                                                         {option.AirportInformation ? option.AirportInformation.Distance?.Value.toFixed(0) + " km from " : ""}
-                                                        {option.Type === 'COUNTRY' ? option.CountryName : `${Utils.capitalizeFirstLetter(option.CityName)}, ${Utils.capitalizeFirstLetter(option.CountryName)}`}
+                                                        {option.Type === 'COUNTRY' ? option.CountryName : (option.CityName ? `${Utils.capitalizeFirstLetter(option.CityName)}, ${Utils.capitalizeFirstLetter(option.CountryName)}` : `${Utils.capitalizeFirstLetter(option.CountryName)}`)}
                                                     </span>
                                                 </Row>
                                             </Col>
@@ -495,7 +501,7 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({ onSubmit }) => {
                                                     <Row>
                                                         <span className="ms-2 location-address">
                                                             {option.AirportInformation ? option.AirportInformation.Distance?.Value.toFixed(0) + " km from " : ""}
-                                                            {option.Type === 'COUNTRY' ? option.CountryName : `${Utils.capitalizeFirstLetter(option.CityName)}, ${Utils.capitalizeFirstLetter(option.CountryName)}`}
+                                                            {option.Type === 'COUNTRY' ? option.CountryName : (option.CityName ? `${Utils.capitalizeFirstLetter(option.CityName)}, ${Utils.capitalizeFirstLetter(option.CountryName)}` : `${Utils.capitalizeFirstLetter(option.CountryName)}`)}
                                                         </span>
                                                     </Row>
                                                 </Col>
@@ -522,8 +528,8 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({ onSubmit }) => {
                                 min={todayDate}
                                 value={
                                     (isRoundTrip && departureDate && returnDate) ?
-                                    `${format(new Date(departureDate), 'dd MMM') ?? ''} - ${format(new Date(returnDate), 'dd MMM') ?? ''}` :
-                                    (departureDate ? format(new Date(departureDate), 'dd MMM') : '')
+                                        `${format(new Date(departureDate), 'dd MMM') ?? ''} - ${format(new Date(returnDate), 'dd MMM') ?? ''}` :
+                                        (departureDate ? format(new Date(departureDate), 'dd MMM') : '')
                                 }
                                 placeholder={isRoundTrip ? "Choose Dates" : "Add date"}
                                 onClick={() => setDatePickerOpen(true)}
@@ -662,7 +668,7 @@ const FlightsSearchBar: React.FC<FlightSearchBarProps> = ({ onSubmit }) => {
                                                 <span>{t("children")}</span>
                                             </Row>
                                             <Row>
-                                                <span>Aged 0 to 12</span>
+                                                <span>Aged 2 to 12</span>
                                             </Row>
                                         </label>
                                     </Col>

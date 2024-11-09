@@ -2,12 +2,12 @@ import AmadeusService from "../../services/AmadeusService";
 import { useAppContext } from "../../AppContext";
 import FlightsSearchBar from "../../components/FlightsSearchBar";
 import { useEffect, useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, ProgressBar } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import FlightCard from "../../components/Cards/FlightCard";
 import FilterBy from "../../components/FilterBy/FilterBy";
 import { useAppDispatch } from "../../store/hooks";
-import { selectFlightOffer } from "../../store/flightSlice";
+import { selectFlightOffer, setFlightSearchQuery } from "../../store/flightSlice";
 
 export default function FlightsPage() {
     const navigate = useNavigate();
@@ -25,6 +25,8 @@ export default function FlightsPage() {
     });
     const [flights, setFlights] = useState([]);
     const [filteredFlights, setFilteredFlights] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false); // Add loading state
+    const [progress, setProgress] = useState(0);
 
     const handleFilterChange = (filterData: { [key: string]: any }) => {
         setFilter({
@@ -33,15 +35,20 @@ export default function FlightsPage() {
         });
     };
 
-    const handleSearchSubmit = async (data: object) => {
+    const handleSearchSubmit = async (data: any, searchQuery: any) => {
+        setLoading(true); // Set loading to true
+        setProgress(10); // Reset progress to 0
         try {
             data = { ...data, currencyCode: currency };
             const flightData = await AmadeusService.searchFlights(data);
+            setProgress(40); // Initial progress as loading starts
             if (flightData.status === 500) {
                 throw new Error("Internal Server Error");
             }
             if (flightData.data && Array.isArray(flightData.data)) { // Verify response is an array
                 setFlights(flightData.data);
+                dispatch(setFlightSearchQuery({ ...searchQuery, currencyCode: currency }));
+                setProgress(60); // Initial progress as loading starts
             } else {
                 setFlights([]);
             }
@@ -55,8 +62,12 @@ export default function FlightsPage() {
             setFilter({
                 Price: `${Math.min(...flightData.data.map((flight: any) => flight.price.total))}-${Math.max(...flightData.data.map((flight: any) => flight.price.total))}`,
             });
+            setProgress(90); // Initial progress as loading starts
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false); // Set loading to false
+            setProgress(100); // Initial progress as loading starts
         }
     }
 
@@ -91,17 +102,24 @@ export default function FlightsPage() {
             <Container fluid>
                 <Row>
                     {/* Filter and sort section */}
-                    {flights.length > 0 && (
-                        <Col sm={12} md={3} lg={3} className="px-0">
+                    <Col sm={12} md={3} lg={3} className="px-0">
+                        {(flights.length > 0 && !loading) && (
                             <FilterBy filterOptions={filtercomponent} onFilterChange={handleFilterChange} />
-                        </Col>
-                    )}
+                        )}
+                    </Col>
                     {/* Flight results section */}
                     <Col sm={12} md={9} lg={8}>
+                        {loading && (
+                            <Row className="mt-3 m-1 d-flex justify-content-center">
+                                <Col sm={12}>
+                                    <ProgressBar variant="main" animated now={progress} />
+                                </Col>
+                            </Row>
+                        )} {/* Render progress bar when loading */}
                         <Row className="m-1">
                             {filteredFlights.map((flightData: any, index: number) => (
                                 <Col md={12} className="mt-2">
-                                    <FlightCard key={index} flightData={flightData} bookButton={true} onClick={()=>handleBookingClick(flightData)} />
+                                    <FlightCard key={index} flightData={flightData} bookButton={true} onClick={() => handleBookingClick(flightData)} />
                                 </Col>
                             ))}
                         </Row>
