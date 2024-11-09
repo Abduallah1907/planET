@@ -11,7 +11,7 @@ export interface IComplaint {
   body: string;
   reply: string;
   date: Date;
-
+  createdAt: Date;
   status: string;
 }
 

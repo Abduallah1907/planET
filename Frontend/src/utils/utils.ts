@@ -40,6 +40,15 @@ export class Utils {
     return `${year}-${month}-${day}`;
   }
 
+  // 'DD/MM/YYYY'
+  static formatDateDay(date: any): string {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  }
+
   // Function to deep clone an object
   static deepClone<T>(obj: T): T {
     return JSON.parse(JSON.stringify(obj));
