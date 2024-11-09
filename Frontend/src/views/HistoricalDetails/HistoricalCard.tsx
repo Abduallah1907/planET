@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Badge, Modal, Button } from 'react-bootstrap';
-import { FaBookmark, FaRegBookmark } from 'react-icons/fa';
+import { FaBookmark, FaRegBookmark, FaShareAlt } from 'react-icons/fa';
 import Rating from '../../components/Rating/Rating';
 import './historicalcard.css'
 import { HistoricalService } from '../../services/HistoricalService';
@@ -41,17 +41,7 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
   const handleCloseAdvertiserModal = () => {
     setShowAdvertiserModal(false);
   };
-  const handleReserve = () => {
-    setShowModal(true);
-  };
-  const confirmReserve = () => {
-    setShowModal(false);
-    if (localHistoricalData && localHistoricalData.active_flag) {
-      alert("Reservation done successfully!");
-    } else {
-      alert("This is not available for reservation!");
-    }
-  };
+ 
   const user = useAppSelector((state) => state.user);
 
   const getHistoricalLocationById = async (id: string) => {
@@ -63,6 +53,39 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
     getHistoricalLocationById(id);
   }, [id]);
 
+  const shareLink = `${window.location.origin}/HistoricalDetails/${id}`;
+
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(shareLink);
+    alert('Link copied to clipboard!');
+  };
+
+  const shareViaEmail = () => {
+    const subject = encodeURIComponent('Check out this historical location!');
+    const body = encodeURIComponent(`I found this interesting historical location: ${shareLink}`);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Check out this historical location!',
+          text: 'I found this interesting historical location:',
+          url: shareLink,
+        });
+      } catch (err) {
+        console.error('Error sharing: ', err);
+      }
+    } else {
+      // Fallback for browsers that do not support the Web Share API
+      copyToClipboard();
+    }
+  };
+
+
+  
   return (
     <Container className="historical-card-container mt-5">
       <div className="historical-card">
@@ -129,51 +152,23 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
               {localHistoricalData?.opening_hours_to}
             </p>
             <p className="opening-days">
-              Opening Days: {localHistoricalData?.opening_days}
+              Opening Days: {localHistoricalData?.opening_days.join(", ")} 
             </p>
             <p className="price"> Price: {localHistoricalData?.price}</p>
 
             {user.role==="TOURIST"  && (
             <div className="d-flex justify-content-center">
-            <button className="reserve-button" onClick={handleReserve}>
-                Reserve
-              </button>
+           
+              <Button className="share-button-historical" onClick={handleShare}>
+                <FaShareAlt />
+              </Button>
             </div>
             )}
           </div>
         </div>
       </div>
 
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Reservation</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>Are you sure you want to reserve this activity?</p>
-          <p>
-            <strong>Activity Name:</strong> {localHistoricalData?.name}
-          </p>
-          <p>
-            <strong>Opening Hours:</strong>{" "}
-            {localHistoricalData?.opening_hours_from} -{" "}
-            {localHistoricalData?.opening_hours_to}
-          </p>
-          <p>
-            <strong>Opening Days:</strong> {localHistoricalData?.opening_days}
-          </p>
-          <p>
-            <strong>Price:</strong> {localHistoricalData?.price}
-          </p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="main" className="border-warning-subtle" onClick={() => setShowModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="main-inverse" onClick={confirmReserve}>
-            Confirm
-          </Button>
-        </Modal.Footer>
-      </Modal>
+  
 
       <Modal
         show={showAdvertiserModal}

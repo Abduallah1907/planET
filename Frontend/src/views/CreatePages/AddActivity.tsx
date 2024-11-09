@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { ActivityService } from "../../services/ActivityService";
 import CategoryService from "../../services/CategoryService";
 import { AdminService } from "../../services/AdminService";
-import showToast from "../../utils/showToast";
 import { ToastTypes } from "../../utils/toastTypes";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
@@ -228,8 +227,8 @@ const AdvertiserCreate: React.FC = () => {
           console.error("Advertiser Id is undefined");
         }
       }
-    };
-  }
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./ItineraryCard.css";
 import { Container, Badge, Modal, Button } from "react-bootstrap";
-import { FaRegBookmark, FaBookmark } from "react-icons/fa";
+import { FaRegBookmark, FaBookmark, FaShareAlt } from "react-icons/fa";
 import { MdTimeline } from "react-icons/md";
 import Rating from "../components/Rating/Rating"; // Optional
 import { ItineraryService } from "../services/ItineraryService";
@@ -38,6 +38,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
   const [showDatesModal, setShowDatesModal] = useState(false);
   const navigate = useNavigate();
   const [itineraryData, setItineraryData] = useState<ItineraryData>({
+
     name: "",
     tags: [],
     average_rating: 0,
@@ -53,6 +54,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
     pickup_loc: [],
     drop_off_loc: [],
   });
+
 
   // State for selected date and time
   const [selectedDateTime, setSelectedDateTime] = useState({
@@ -73,6 +75,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
   const toggleBookmark = () => {
     setIsBookmarked(!isBookmarked);
   };
+  const shareLink = `${window.location.origin}/ItineraryDetails/${id}`;
 
   // Functions to open and close modals
   const handleDetailsModal = () => setShowDetailsModal(!showDetailsModal);
@@ -98,6 +101,34 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
     const formattedDate = `${selectedDateTime.date}T${selectedDateTime.time.substring(0, 5)}:00`;
     navigate(`/bookItinerary/${id}?time_to_attend=${encodeURIComponent(formattedDate)}`);
   };
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(shareLink);
+    alert('Link copied to clipboard!');
+  };
+
+  const shareViaEmail = () => {
+    const subject = encodeURIComponent('Check out this itinerary!');
+    const body = encodeURIComponent(`I found this interesting itinerary: ${shareLink}`);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Check out this itinerary!',
+          text: 'I found this interesting itinerary:',
+          url: shareLink,
+        });
+      } catch (err) {
+        console.error('Error sharing: ', err);
+      }
+    } else {
+      // Fallback for browsers that do not support the Web Share API
+      copyToClipboard();
+    }
+  };
+
 
   return (
     <Container className="mt-3">
@@ -160,6 +191,9 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
             <button className="reserve-button" onClick={handleDetailsModal}>
                 Reserve
               </button>
+              <Button className="share-button" onClick={handleShare}>
+                <FaShareAlt />
+              </Button>
             </div>
             )}
             </div>

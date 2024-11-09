@@ -12,9 +12,8 @@ import languages from "../../utils/languageOptions.json";
 import { useNavigate, useParams } from "react-router-dom";
 import SlotsModal from "../../components/SlotsModals"; // Import SlotModal component
 import { useAppSelector } from "../../store/hooks";
+import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
-import showToast from "../../utils/showToast";
-import { set } from "react-datepicker/dist/date_utils";
 
 interface FormData {
   name?: string;
@@ -117,7 +116,7 @@ const ItineraryForm: React.FC = () => {
     if (name === "price") {
       const numericValue = parseInt(value);
       if (numericValue < 0) {
-        // showToast("Price cannot be negative", ToastTypes.ERROR);// Show toast message not API
+        showToastMessage("Price cannot be negative", ToastTypes.ERROR); // Show toast message not API
         setFormData({ ...formData, [name]: 0 });
         return;
       }

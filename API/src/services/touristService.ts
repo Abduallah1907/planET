@@ -980,14 +980,14 @@ export default class TouristService {
     const complaint = new this.complaintModel({
       tourist_id: new Types.ObjectId(tourist_id),
       title: data.title,
-      date: data.date === undefined ? new Date() : data.date,
+      date: data.date === undefined ? Date.now() : data.date,
       body: data.body,
     });
     if (complaint instanceof Error)
       throw new InternalServerError("Internal server error");
     await complaint.save();
 
-    return new response(true, complaint, "Complaint filed", 201);
+    return new response(true, complaint, "Complaint filed successfully", 201);
   }
   //View My list of complaints
   public async viewMyComplaintsService(tourist_id: string) {
@@ -1255,6 +1255,7 @@ export default class TouristService {
       tourist_id: tourist_id,
       type: TicketType.Activity,
       time_to_attend: { $lt: Date.now() },
+      cancelled: false,
     });
 
     if (tickets instanceof Error) {
@@ -1329,6 +1330,7 @@ export default class TouristService {
       tourist_id: tourist_id,
       type: TicketType.Activity,
       time_to_attend: { $gte: Date.now() },
+      cancelled: false,
     });
 
     if (tickets instanceof Error) {
@@ -1410,6 +1412,7 @@ export default class TouristService {
       tourist_id: tourist_id,
       type: TicketType.Itinerary,
       time_to_attend: { $lt: Date.now() },
+      cancelled: false,
     });
 
     if (tickets instanceof Error) {
@@ -1484,6 +1487,7 @@ export default class TouristService {
       tourist_id: tourist_id,
       type: TicketType.Itinerary,
       time_to_attend: { $gte: Date.now() },
+      cancelled: false,
     });
 
     if (tickets instanceof Error) {

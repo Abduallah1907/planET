@@ -151,8 +151,8 @@ const App: React.FC = () => {
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/SellerDashboard" element={<SellerDashboard />} />
         <Route path="/SettingSide" element={<SettingSide />} />
-        <Route path="/TourGuide" element={<ProfileFormTourGuide />} />
-        <Route path="/Advertiser" element={<Advertiser />} />
+        <Route path="/TourGuide/Profile" element={<ProfileFormTourGuide />} />
+        <Route path="/Advertiser/profile" element={<Advertiser />} />
 
         <Route path="/AddNewProduct" element={<AddNewProduct />} />
         <Route path="/AddActivity" element={<AdvertiserCreate />} />
@@ -185,7 +185,7 @@ const App: React.FC = () => {
         <Route path="/JoinUs" element={<StakeholderReg />} />
 
         <Route path="/Tourist/Profile" element={<ProfileForm />} />
-        <Route path="/SellerProfile" element={<SellerProfile />} />
+        <Route path="/Seller/Profile" element={<SellerProfile />} />
 
         <Route path="/Categories" element={<CategoryTable />} />
         <Route path="/Tags" element={<TagsTable />} />

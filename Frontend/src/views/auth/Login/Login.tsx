@@ -72,11 +72,9 @@ export default function Login() {
             "Your account is waiting for approval",
             ToastTypes.WARNING
           );
-          navigate("/login");
           break;
         case "REJECTED":
           showToastMessage("Your account is rejected", ToastTypes.ERROR);
-          navigate("/login");
           break;
         case "APPROVED":
       }
@@ -101,7 +99,6 @@ export default function Login() {
         case "TOUR_GUIDE":
           dispatch(
             setNavItems([
-              { path: "/TourGuide", label: "Profile" },
               { path: "/TourGuideDashboard", label: "Dashboard" },
               { path: "/AddItinerary", label: "Add Itinerary" },
               { path: "/MyItineraries", label: "My Itineraries" },
@@ -110,13 +107,12 @@ export default function Login() {
           if (user.first_time_login) {
             navigate("/TourGuideFirst");
           } else {
-            navigate("/TourGuide");
+            navigate("/TourGuide/profile");
           }
           break;
         case "ADVERTISER":
           dispatch(
             setNavItems([
-              { path: "/Advertiser", label: "Profile" },
               { path: "/AddActivity", label: "Create Activity" },
               { path: "/MyActivities", label: "My Activites" },
             ])
@@ -124,13 +120,12 @@ export default function Login() {
           if (user.first_time_login) {
             navigate("/AdvertiserFirst");
           } else {
-            navigate("/Advertiser");
+            navigate("/Advertiser/profile");
           }
           break;
         case "SELLER":
           dispatch(
             setNavItems([
-              { path: "/SellerProfile", label: "Profile" },
               { path: "/SellerDashboard", label: "Dashboard" },
               { path: "/AddNewProduct", label: "Add New Product" },
               { path: "/MyProducts", label: "My Products" },
@@ -139,7 +134,7 @@ export default function Login() {
           if (user.first_time_login) {
             navigate("/SellerFirstProfile");
           } else {
-            navigate("/SellerProfile");
+            navigate("/Seller/Profile");
           }
           break;
         case "GOVERNOR":

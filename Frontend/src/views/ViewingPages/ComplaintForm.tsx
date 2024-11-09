@@ -13,15 +13,12 @@ interface FormData {
 }
 
 const ComplaintForm: React.FC = () => {
-  const { id = "" } = useParams<{ id: string }>();
   const tourist = useAppSelector((state) => state.user.stakeholder_id);
   const [formData, setFormData] = useState<FormData>({
     title: "",
     problem: "",
     date: "",
   });
-  const [showModal, setShowModal] = useState(false); // Modal state
-
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -39,20 +36,6 @@ const ComplaintForm: React.FC = () => {
       date: formData.date,
     };
     await TouristService.fileComplaint(tourist._id, data);
-    setShowModal(true); // Show the modal after successful submission
-  };
-
-  const handleCancel = () => {
-    setFormData({
-      title: "",
-      problem: "",
-      date: "",
-    });
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    handleCancel();
   };
 
   return (
@@ -88,7 +71,7 @@ const ComplaintForm: React.FC = () => {
           />
 
           <AdminFormGroup
-            label="Date"
+            label="Date of problem"
             type="date"
             placeholder="Select the date the problem occurred"
             id="date"
@@ -111,25 +94,6 @@ const ComplaintForm: React.FC = () => {
           </div>
         </Form>
       </Container>
-
-      {/* Modal for success message */}
-      <Modal show={showModal} onHide={handleCloseModal} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Submission Successful</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Your complaint has been submitted successfully!</Modal.Body>
-        <Modal.Footer>
-          <Button
-            type="submit"
-            className="button"
-            variant="main-inverse"
-            style={{ backgroundColor: "#d76f30", borderColor: "#d76f30" }}
-            onClick={handleCloseModal}
-          >
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </div>
   );
 };
