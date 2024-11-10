@@ -94,11 +94,12 @@ const HistoricalPlaceForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Add form submission logic here
+
     const tagsMap = selectedTags.reduce((acc, tag) => {
       acc[tag.id] = tag.value;
       return acc;
     }, {} as { [key: string]: string });
+
     const reqData = {
       name: formData.name,
       location: { latitude: 0, longitude: 0 },
@@ -114,7 +115,9 @@ const HistoricalPlaceForm: React.FC = () => {
       governor_id: Governer.stakeholder_id._id,
       active_flag: formData.active_flag,
     };
+
     await HistoricalService.addHistoricalLocation(reqData);
+
     navigate("/MyHistoricalLocations");
   };
 
@@ -163,7 +166,7 @@ const HistoricalPlaceForm: React.FC = () => {
           <h2 className="my-profile-heading">Add Historical Location</h2>
         </Col>
       </Row>
-      <Container className="mt-4">
+      <Container>
         <Form onSubmit={handleSubmit}>
           <Row>
             <Col>

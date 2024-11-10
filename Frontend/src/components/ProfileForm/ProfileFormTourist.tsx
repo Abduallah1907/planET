@@ -93,10 +93,35 @@ const ProfileForm: React.FC = () => {
     });
   }, [Tourist]); // Dependency array to rerun this effect when Tourist data changes
   const OnClick = async () => {
-    // Check if passwords are both filled and match
+    const requiredFields = [
+      { field: formData.firstName, name: "First Name" },
+      { field: formData.lastName, name: "Last Name" },
+      { field: formData.email, name: "Email" },
+      { field: formData.mobile, name: "Mobile Number" },
+      { field: formData.profession, name: "Profession" },
+      { field: formData.nationality, name: "Nationality" },
+    ];
+
+    for (const { field, name } of requiredFields) {
+      if (!field) {
+        showToastMessage(`${name} is required.`, ToastTypes.ERROR);
+        return;
+      }
+    }
+    if (
+      (formData.password && !formData.retypePassword) ||
+      (!formData.password && formData.retypePassword)
+    ) {
+      showToastMessage(
+        "Please fill out both password fields.",
+        ToastTypes.ERROR
+      );
+      return;
+    }
+
     if (formData.password && formData.password !== formData.retypePassword) {
       showToastMessage("Passwords do not match", ToastTypes.ERROR);
-      return; // Exit if passwords don't match
+      return;
     }
     if (formData.mobile.length !== 11) {
       showToastMessage(
@@ -112,14 +137,13 @@ const ProfileForm: React.FC = () => {
       newEmail: formData.email,
       job: formData.profession,
       nation: formData.nationality,
+      phone_number: formData.mobile,
     };
 
-    // Only add password to update data if it's filled and matches
     if (formData.password) {
       updateData.password = formData.password;
     }
 
-    // Send the update request with the constructed updateData object
     const Tourist1 = await TouristService.updateTourist(
       Tourist.email,
       updateData
@@ -311,7 +335,7 @@ const ProfileForm: React.FC = () => {
                 id="firstName"
                 name="firstName"
                 disabled={false}
-                required={false}
+                required={true}
                 value={formData.firstName}
                 onChange={handleChange}
               />
@@ -324,7 +348,7 @@ const ProfileForm: React.FC = () => {
                 id="lastName"
                 name="lastName"
                 disabled={false}
-                required={false}
+                required={true}
                 value={formData.lastName}
                 onChange={handleChange}
               />
@@ -409,7 +433,7 @@ const ProfileForm: React.FC = () => {
                 id="profession"
                 name="profession"
                 disabled={false}
-                required={false}
+                required={true}
                 value={formData.profession}
                 onChange={handleChange}
               />

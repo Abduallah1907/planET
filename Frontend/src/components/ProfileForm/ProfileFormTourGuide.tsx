@@ -217,7 +217,20 @@ const ProfileFormGuide: React.FC = () => {
     setCreatedWork((prev) => prev.filter((_, i) => i !== index));
   };
   const OnClick = async () => {
-    // Password validation
+    const requiredFields = [
+      { field: formData.firstName, name: "First Name" },
+      { field: formData.lastName, name: "Last Name" },
+      { field: formData.email, name: "Email" },
+      { field: formData.mobile, name: "Mobile Number" },
+      { field: formData.yearsOfExperience, name: "Years of Experience" },
+    ];
+
+    for (const { field, name } of requiredFields) {
+      if (!field) {
+        showToastMessage(`${name} is required.`, ToastTypes.ERROR);
+        return;
+      }
+    }
     if (
       (formData.changePassword && !formData.retypePassword) ||
       (!formData.changePassword && formData.retypePassword)
