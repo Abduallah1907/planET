@@ -120,17 +120,41 @@ const Advertiser: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const requiredFields = [
+      { field: formData.firstName, name: "First Name" },
+      { field: formData.lastName, name: "Last Name" },
+      { field: formData.email, name: "Email" },
+      { field: formData.mobile, name: "Mobile Number" },
+      { field: formData.about, name: "About" },
+      { field: formData.hotline, name: "Hotline" },
+      { field: formData.companyProfile, name: "Company Profile" },
+      { field: formData.linktoweb, name: "Link to Website" },
+    ];
+
+    for (const { field, name } of requiredFields) {
+      if (!field) {
+        showToastMessage(`${name} is required.`, ToastTypes.ERROR);
+        return;
+      }
+    }
+
     // Password validation
     if (
       (formData.changePassword && !formData.retypePassword) ||
       (!formData.changePassword && formData.retypePassword)
     ) {
-      showToastMessage("Please fill out both password fields.", ToastTypes.ERROR);
+      showToastMessage(
+        "Please fill out both password fields.",
+        ToastTypes.ERROR
+      );
       return;
     }
     // Phone number validation for length
     if (formData.mobile.length !== 11) {
-      showToastMessage("Mobile number must be exactly 11 digits.", ToastTypes.ERROR);
+      showToastMessage(
+        "Mobile number must be exactly 11 digits.",
+        ToastTypes.ERROR
+      );
       return;
     }
 

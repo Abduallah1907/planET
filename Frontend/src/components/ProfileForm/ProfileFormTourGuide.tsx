@@ -224,6 +224,21 @@ const ProfileFormGuide: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const requiredFields = [
+      { field: formData.firstName, name: "First Name" },
+      { field: formData.lastName, name: "Last Name" },
+      { field: formData.email, name: "Email" },
+      { field: formData.mobile, name: "Mobile Number" },
+      { field: formData.yearsOfExperience, name: "Years of Experience" },
+    ];
+
+    for (const { field, name } of requiredFields) {
+      if (!field) {
+        showToastMessage(`${name} is required.`, ToastTypes.ERROR);
+        return;
+      }
+    }
+
     if (
       (formData.changePassword && !formData.retypePassword) ||
       (!formData.changePassword && formData.retypePassword)
