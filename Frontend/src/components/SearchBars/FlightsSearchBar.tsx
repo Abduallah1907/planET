@@ -13,11 +13,11 @@ import {
 } from "react-bootstrap";
 import './flightsSearchBar.css';
 import { BiChevronDown } from "react-icons/bi";
-import { Utils } from "../utils/utils";
+import { Utils } from "../../utils/utils";
 import { FaExchangeAlt, FaMapPin } from "react-icons/fa";
 import { IoMdAirplane, IoMdClose } from "react-icons/io";
 import { IoFlag } from "react-icons/io5";
-import SkyscannerService from "../services/SkyscannerService";
+import SkyscannerService from "../../services/SkyscannerService";
 import { Calendar, DateRange, Range } from "react-date-range";
 import { format } from "date-fns";
 

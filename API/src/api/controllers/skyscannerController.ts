@@ -6,9 +6,9 @@ import { Request, Response } from 'express';
 export default class SkyscannerController {
 
     public async getLocationsBykeyword(req: any, res: any) {
-        const { keyword } = req.query;
+        const { keyword, type } = req.query;
         const skyscannerService = Container.get(SkyscannerService);
-        const response = await skyscannerService.getLocationsService(keyword);
+        const response = await skyscannerService.getLocationsService(keyword, type);
         res.status(200).send(response);
     }
 

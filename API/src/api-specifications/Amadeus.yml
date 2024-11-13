@@ -474,7 +474,7 @@ paths:
           schema:
             type: number
           required: false
-          description: Number of adults
+          description: Number of adults per room (1-9)
         - name : checkInDate
           in: query
           schema:
@@ -489,6 +489,12 @@ paths:
             format: date
           required: false
           description: Check-out date
+        - name: roomQuantity
+          in: query
+          schema:
+            type: number
+          required: false
+          description: Number of rooms requested(1-9)
         - name: priceRange
           in: query
           schema:

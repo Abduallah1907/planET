@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './topbarlinks.css';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../store/hooks';
 import UserRoles from '../../types/userRoles';
 
@@ -10,9 +10,40 @@ const TopBarLinks: React.FC = () => {
     const [activeButton, setActiveButton] = useState<string | null>(null);
     const userRole = useAppSelector(state => state.user.role);
     const navigate = useNavigate();
+    const location = useLocation(); // Get the current route
+
+    useEffect(() => {
+        setActiveBasedOnCurrentRoute();
+    }, [location]);
+
+    const setActiveBasedOnCurrentRoute = () => {
+        switch (location.pathname.toLowerCase()) {
+            case '/activity':
+                setActiveButton('Activities');
+                break;
+            case '/itinerary':
+                setActiveButton('Itineraries');
+                break;
+            case '/historical':
+                setActiveButton('Historical_Locations');
+                break;
+            case '/products':
+                setActiveButton('Products');
+                break;
+            case '/flights':
+                setActiveButton('Flights');
+                break;
+            case '/hotels':
+                setActiveButton('Hotels');
+                break;
+            default:
+                setActiveButton(null);
+                break;
+        }
+    }
 
     const handleButtonClick = (buttonName: string) => {
-        setActiveButton(buttonName);
+        setActiveBasedOnCurrentRoute();
         switch (buttonName) {
             case 'Activities':
                 navigate('/Activity');
@@ -28,6 +59,9 @@ const TopBarLinks: React.FC = () => {
                 break;
             case 'Flights':
                 navigate('/Flights');
+                break;
+            case 'Hotels':
+                navigate('/Hotels');
                 break;
             default:
                 break;
@@ -68,6 +102,12 @@ const TopBarLinks: React.FC = () => {
                     onClick={() => handleButtonClick('Flights')}
                 >
                     {t('flights')}
+                </button>
+                <button
+                    className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Hotels' ? 'active' : ''}`}
+                    onClick={() => handleButtonClick('Hotels')}
+                >
+                    {t('hotels')}
                 </button>
             </div>
         </div>

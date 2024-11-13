@@ -95,18 +95,47 @@ export default class AmadeusService {
     }
   }
 
+  public async getHotelRatings(params: any) {
+    try {
+      const response = await this.amadeus.eReputation.hotelSentiments.get(params);
+      return new Response(true, response.data, 'Hotel Ratings Fetched successfully', 200);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   public async getHotelOffersService(params: ReferenceDataLocationsHotelsByCityParams, hotelOffersParams: HotelOffersSearchParams) {
     try {
       const hotelsList = await this.getHotelsListService(params);
       const hotels = hotelsList.data;
+      const hotelIdsArray = hotels.map((hotel: any) => hotel.hotelId);
       const hotelIdsString = hotels.map((hotel: any) => hotel.hotelId).join();
       const { hotelIds, ...restHotelOffersParams } = hotelOffersParams;
-      const searchParams = {
-        hotelIds: hotelIdsString,
-        ...restHotelOffersParams
-      };
-      const response = await this.amadeus.shopping.hotelOffersSearch.get(searchParams);
-      return new Response(true, response.data, 'Hotel Offers Fetched successfully', 200);
+      const MAX_HOTEL_IDS = 10; // Adjust this value based on the API's maximum allowed hotel IDs per request
+
+      let allHotelOffers: any[] = [];
+
+      const maxHotels = hotelIdsArray.length > 20 ? 20 : hotelIdsArray.length;
+
+      for (let i = 0; i < maxHotels; i += MAX_HOTEL_IDS) {
+        const hotelIdsChunk = hotelIdsArray.slice(i, i + MAX_HOTEL_IDS).join();
+        const searchParams = {
+          hotelIds: hotelIdsChunk,
+          ...restHotelOffersParams
+        };
+        const response = await this.amadeus.shopping.hotelOffersSearch.get(searchParams);
+        allHotelOffers = allHotelOffers.concat(response.data);
+      }
+      allHotelOffers.forEach((hotelOffer: any) => {
+        const randomRatings = Math.floor(Math.random() * 100) + 1;
+        const randomReviews = Math.floor(Math.random() * 2000) + 1;
+        hotelOffer.hotel.rating = {
+          overallRating: randomRatings,
+          numberOfReviews: randomReviews,
+          numberOfRatings: randomReviews,
+        }
+      });
+      return new Response(true, allHotelOffers, 'Hotel Offers Fetched successfully', 200);
     } catch (error) {
       throw error;
     }

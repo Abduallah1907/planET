@@ -6,9 +6,10 @@ interface RatingProps {
   totalStars?: number; // Total number of stars, default is 5
   onChange?: (newRating: number) => void; // Callback when rating is changed
   readOnly?: boolean; // Flag to make the rating read-only
+  className?: string
 }
 
-const Rating: React.FC<RatingProps> = ({ rating = 0, totalStars = 5, onChange, readOnly = false }) => {
+const Rating: React.FC<RatingProps> = ({ rating = 0, totalStars = 5, onChange, readOnly = false, className = '' }) => {
   const [hoverRating, setHoverRating] = useState<number | null>(null); // For handling hover effect
 
   const handleClick = (index: number, event: React.MouseEvent<HTMLDivElement>) => {
@@ -59,7 +60,7 @@ const Rating: React.FC<RatingProps> = ({ rating = 0, totalStars = 5, onChange, r
     return stars;
   };
 
-  return <div className="rating">{renderStars()}</div>;
+  return <div className={`rating ` + className}>{renderStars()}</div>;
 };
 
 export default Rating;

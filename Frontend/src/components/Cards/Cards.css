@@ -108,13 +108,13 @@
 }
 
 @media (max-width: 768px) {
-  .flight-pricing {
+  .flight-pricing , .hotel-pricing{
     border-top: 0.0625rem solid #c1c7cf;
   }
 }
 
 @media (min-width: 768px) {
-  .flight-pricing {
+  .flight-pricing , .hotel-pricing{
     border-left: 0.0625rem solid #c1c7cf;
   }
 }

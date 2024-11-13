@@ -1,15 +1,16 @@
 import AmadeusService from "../../services/AmadeusService";
 import { useAppContext } from "../../AppContext";
-import FlightsSearchBar from "../../components/SearchBars/FlightsSearchBar";
 import { useEffect, useState } from "react";
 import { Col, Container, Row, ProgressBar } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import FlightCard from "../../components/Cards/FlightCard";
 import FilterBy from "../../components/FilterBy/FilterBy";
 import { useAppDispatch } from "../../store/hooks";
-import { selectFlightOffer, setFlightSearchQuery } from "../../store/flightSlice";
+import HotelsSearchBar from "../../components/SearchBars/HotelsSearchBar";
+import HotelCard from "../../components/Cards/HotelCard";
+import showToastMessage from "../../utils/showToastMessage";
+import { ToastTypes } from "../../utils/toastTypes";
 
-export default function FlightsPage() {
+export default function HotelsPage() {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { currency } = useAppContext();
@@ -23,8 +24,9 @@ export default function FlightsPage() {
     const [filter, setFilter] = useState({
         Price: `${filtercomponent.Price.min}-${filtercomponent.Price.max}`
     });
-    const [flights, setFlights] = useState([]);
-    const [filteredFlights, setFilteredFlights] = useState<any[]>([]);
+
+    const [hotels, setHotels] = useState([]);
+    const [filteredHotels, setFilteredHotels] = useState([]);
     const [loading, setLoading] = useState(false); // Add loading state
     const [progress, setProgress] = useState(0);
 
@@ -40,27 +42,27 @@ export default function FlightsPage() {
         setProgress(10); // Reset progress to 0
         try {
             data = { ...data, currencyCode: currency };
-            const flightData = await AmadeusService.searchFlights(data);
+            const hotelData = await AmadeusService.searchHotels(data);
             setProgress(40); // Initial progress as loading starts
-            if (flightData.status === 500) {
+            if (hotelData.status === 500) {
                 throw new Error("Internal Server Error");
             }
-            if (flightData.data && Array.isArray(flightData.data)) { // Verify response is an array
-                setFlights(flightData.data);
-                dispatch(setFlightSearchQuery({ ...searchQuery, currencyCode: currency }));
+            if (hotelData.data && Array.isArray(hotelData.data)) { // Verify response is an array
+                setHotels(hotelData.data);
+                //dispatch(setFlightSearchQuery({ ...searchQuery, currencyCode: currency }));
                 setProgress(60); // Initial progress as loading starts
             } else {
-                setFlights([]);
+                setHotels([]);
             }
             setFilterComponents({
                 Price: {
                     type: "slider",
-                    min: Math.min(...flightData.data.map((flight: any) => flight.price.total)),
-                    max: Math.max(...flightData.data.map((flight: any) => flight.price.total))
+                    min: Math.min(...hotelData.data.map((hotel: any) => hotel.offers[0].price.total)),
+                    max: Math.max(...hotelData.data.map((hotel: any) => hotel.offers[0].price.total))
                 }
             })
             setFilter({
-                Price: `${Math.min(...flightData.data.map((flight: any) => flight.price.total))}-${Math.max(...flightData.data.map((flight: any) => flight.price.total))}`,
+                Price: `${Math.min(...hotelData.data.map((hotel: any) => hotel.offers[0].price.total))}-${Math.max(...hotelData.data.map((hotel: any) => hotel.offers[0].price.total))}`,
             });
             setProgress(90); // Initial progress as loading starts
         } catch (error) {
@@ -72,43 +74,42 @@ export default function FlightsPage() {
     }
 
     useEffect(() => {
-        const filterFlights = () => {
-            const filtered = flights.filter((flight: any) => {
+        const filterHotels = () => {
+            const filtered = hotels.filter((hotel: any) => {
                 if (filter.Price) {
                     const [min, max] = filter.Price.split("-").map(Number); // Parse min and max as numbers
-                    if (flight.price.total < min || flight.price.total > max) {
+                    if (hotel.offers[0].price.total < min || hotel.offers[0].price.total > max) {
                         return false;
                     }
                 }
                 return true;
             });
-            setFilteredFlights(filtered);
+            setFilteredHotels(filtered);
         };
-        filterFlights();
-    }, [filter.Price, flights]);
+        filterHotels();
+    }, [filter.Price, hotels]);
 
-    const handleBookingClick = (flightData: any) => {
-        dispatch(selectFlightOffer(flightData));
-        navigate("/flights/booking");
+    const handleBookingClick = () => {
+        showToastMessage("Hotel Booked Successfully", ToastTypes.SUCCESS);
     }
 
     return (
         <>
             <div className="bg-main p-4">
                 <Container>
-                    <FlightsSearchBar onSubmit={handleSearchSubmit} />
+                    <HotelsSearchBar onSubmit={handleSearchSubmit} />
                 </Container>
             </div>
             <Container fluid>
                 <Row>
                     {/* Filter and sort section */}
-                    <Col sm={12} md={3} lg={3} className="px-0">
-                        {(flights.length > 0 && !loading) && (
+                    <Col sm={12} md={12} lg={3} className="px-0">
+                        {(hotels.length > 0 && !loading) && (
                             <FilterBy filterOptions={filtercomponent} onFilterChange={handleFilterChange} />
                         )}
                     </Col>
-                    {/* Flight results section */}
-                    <Col sm={12} md={9} lg={8}>
+                    {/* Hotels results section */}
+                    <Col sm={12} md={12} lg={8}>
                         {loading && (
                             <Row className="mt-3 m-1 d-flex justify-content-center">
                                 <Col sm={12}>
@@ -117,9 +118,10 @@ export default function FlightsPage() {
                             </Row>
                         )} {/* Render progress bar when loading */}
                         <Row className="m-1">
-                            {filteredFlights.map((flightData: any, index: number) => (
+                            {filteredHotels.map((hotelData: any, index: number) => (
                                 <Col md={12} className="mt-2">
-                                    <FlightCard key={index} flightData={flightData} bookButton={true} onClick={() => handleBookingClick(flightData)} />
+                                    {/* <FlightCard key={index} flightData={flightData} bookButton={true} onClick={() => handleBookingClick(flightData)} /> */}
+                                    <HotelCard key={index} hotelData={hotelData} onClick={handleBookingClick} bookButton={true} />
                                 </Col>
                             ))}
                         </Row>

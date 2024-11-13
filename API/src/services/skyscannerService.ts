@@ -28,11 +28,11 @@ export default class SkyscannerService {
 
 
 
-    async getLocationsService(keyword: string) {
+    async getLocationsService(keyword: string, type: string) {
         try {
             const response = await axios.get(`https://www.skyscanner.net/g/autosuggest-search/api/v1/search-flight/EG/en-GB/${keyword}?isDestination=false&enable_general_search_v2=true`);
             // const response = await axios.get(`https://www.skyscanner.net/g/autosuggest-search/api/v1/search-flight/EG/en-GB/${keyword}?isDestination=false`);
-            const locations = response.data.slice(0, 5).map((location: any) => {
+            const locations = response.data.map((location: any) => {
                 return {
                     ...location,
                     Type: this.getType(location),
@@ -46,7 +46,10 @@ export default class SkyscannerService {
                     AirportInformation: AirportInformation ? { ...AirportInformation, IataCode: location.AirportInformation.PlaceId } : undefined
                 }
             });
-            return locationsTransformed;
+            if (type) {
+                return locationsTransformed.filter((location: any) => location.Type === type).slice(0, 5);
+            }
+            return locationsTransformed.slice(0, 5);
         } catch (error) {
             throw error;
         }

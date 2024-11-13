@@ -37,9 +37,9 @@ export default class AmadeusController{
 
     public async getHotelOffers(req: any, res: any){
         const amadeusService: AmadeusService = Container.get(AmadeusService);
-        const { cityCode, chainCodes, amenities, ratings, adults, checkInDate, checkOutDate, priceRange, currencyCode, paymentPolicy, boardType, lang } = req.query;
+        const { cityCode, chainCodes, amenities, ratings, adults, checkInDate, checkOutDate, roomQuantity, priceRange, currencyCode, paymentPolicy, boardType, lang } = req.query;
         const hotelListParams = { cityCode, chainCodes, amenities, ratings };
-        const hotelOffersParams = { hotelIds: "", adults, checkInDate, checkOutDate, priceRange, currencyCode, paymentPolicy, boardType, lang };
+        const hotelOffersParams = { hotelIds: "", adults, checkInDate, checkOutDate, roomQuantity, priceRange, currencyCode, paymentPolicy, boardType, lang };
         const hotelOffers = await amadeusService.getHotelOffersService(hotelListParams, hotelOffersParams);
         res.status(hotelOffers.status).json(hotelOffers);
     }
