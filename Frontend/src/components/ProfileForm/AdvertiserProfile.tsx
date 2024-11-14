@@ -47,7 +47,7 @@ const AdvertiserProfile: React.FC = () => {
   const Advertiser = useAppSelector((state) => state.user);
   const getAdvertiserData = async () => {
     if (
-      Advertiser.stakeholder_id.logo &&
+      Advertiser.stakeholder_id?.logo &&
       isValidObjectId(Advertiser.stakeholder_id.logo)
     ) {
       const file = await FileService.downloadFile(

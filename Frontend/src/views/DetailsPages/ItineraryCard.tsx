@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import "./ItineraryCard.css";
 import { Container, Badge, Modal, Button } from "react-bootstrap";
 import { FaRegBookmark, FaBookmark, FaShareAlt } from "react-icons/fa";
 import { MdTimeline } from "react-icons/md";
-import Rating from "../components/Rating/Rating"; // Optional
-import { ItineraryService } from "../services/ItineraryService";
+import Rating from "../../components/Rating/Rating"; // Optional
+import { ItineraryService } from "../../services/ItineraryService";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../store/hooks";
+import { useAppSelector } from "../../store/hooks";
+import { useAppContext } from "../../AppContext";
 
 interface ItineraryCardProps {
   id: string;
@@ -38,7 +39,6 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
   const [showDatesModal, setShowDatesModal] = useState(false);
   const navigate = useNavigate();
   const [itineraryData, setItineraryData] = useState<ItineraryData>({
-
     name: "",
     tags: [],
     average_rating: 0,
@@ -54,6 +54,12 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
     pickup_loc: [],
     drop_off_loc: [],
   });
+
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
+
+  const convertedPrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(itineraryData?.price ?? 0, baseCurrency, currency);
+  }, [itineraryData, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
 
 
   // State for selected date and time
@@ -184,7 +190,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
             >
               View Timeline
             </p>
-            <p className="price">${itineraryData.price}</p>
+            <p className="price">{convertedPrice}</p>
 
             {user.role==="TOURIST"  && (
             <div className="d-flex justify-content-center">
@@ -218,7 +224,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
             {selectedDateTime.time}
           </p>
           <p>
-            <strong>Price:</strong> ${itineraryData.price}
+            <strong>Price:</strong>{convertedPrice}
           </p>
         </Modal.Body>
         <Modal.Footer>

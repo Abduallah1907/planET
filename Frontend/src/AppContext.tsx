@@ -1,5 +1,27 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 import currencyConverter from './utils/currencyConverterSingelton';
+import Currencies from './utils/currencies.json';
+
+interface Currency {
+  name: string;
+  demonym: string;
+  majorSingle: string;
+  majorPlural: string;
+  ISOnum: number | null;
+  symbol: string;
+  symbolNative: string;
+  minorSingle: string;
+  minorPlural: string;
+  ISOdigits: number;
+  decimals: number;
+  numToBasic: number | null;
+}
+
+interface CurrencyMap {
+  [key: string]: Currency;
+}
+
+const typedCurrencies: CurrencyMap = Currencies;
 
 interface AppContextProps {
   currentFlag: string;
@@ -26,16 +48,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const convertedAmount = convertCurrency(amount, fromCurrency, toCurrency);
     const formattedAmount = Number.isInteger(convertedAmount) ? convertedAmount.toString() : convertedAmount.toFixed(2);
     
-    switch (toCurrency) {
-      case 'EGP':
-        return `EGP ${formattedAmount}`;
-      case 'USD':
-        return `$${formattedAmount}`;
-      case 'EUR':
-        return `€${formattedAmount}`;
-      default:
-        return `EGP ${formattedAmount}`;
-    }
+    return `${typedCurrencies[toCurrency].symbol} ${formattedAmount}`;
   };
 
   return (

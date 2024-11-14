@@ -1,5 +1,4 @@
-
-.activity-card {
+.historical-card {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -8,7 +7,7 @@
   padding: 20px;
 }
 
-.activity-details {
+.historical-details {
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -20,18 +19,38 @@
   background-color: #f4f4f4;
   border-radius: 10px;
   position: relative;
-
 }
-
 
 .details {
   flex: 1;
   margin-left: 20px;
 }
 
-.price {
-  font-size: 2rem;
-  color: #333;
+.details h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.details .custom-badge {
+  background-color: #d76f30;
+  color: white;
+}
+
+.details .rating-stars {
+  margin-left: auto;
+}
+
+.details .Advertiser {
+  cursor: pointer;
+  color: blue;
+  text-decoration: underline;
+}
+
+.details .Category,
+.details .date,
+.details .time,
+.details .price {
+  margin-bottom: 10px;
 }
 
 
@@ -47,6 +66,11 @@
   margin-left: 60px;
 }
 
+.reserve-button:hover {
+  background-color: var(--secondary-color);
+  color: var(--main-color);
+  border: 2px solid var(--main-color);
+}
 
 .image-placeholder i {
   /* Adjust the color and width as needed */
@@ -58,27 +82,19 @@
   margin-left: 1.2rem;
 }
 
-.details h2{
-  font-family: volkhov , serif;
-}
-.reserve-button:hover {
-  background-color: var(--secondary-color);
-  color: var(--main-color);
-  border: 2px solid var(--main-color);
-}
-.share-button{
+.share-button-historical {
   background-color: var(--main-color);
   color: white;
   border: none;
   font-size: 1rem;
   cursor: pointer;
   border-radius: 5px;
-  margin-top: 10px;
-  margin-left: 10px;
+  position: absolute;
+  right: 9.5rem;
 }
-.share-button:hover {
+
+.share-button-historical:hover {
   background-color: var(--secondary-color);
   color: var(--main-color);
   border: 2px solid var(--main-color);
 }
-

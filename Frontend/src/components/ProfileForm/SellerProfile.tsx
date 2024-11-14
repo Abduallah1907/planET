@@ -42,7 +42,7 @@ const SellerProfile: React.FC = () => {
 
   const getSellerData = async () => {
     if (
-      Seller.stakeholder_id.logo &&
+      Seller.stakeholder_id?.logo &&
       isValidObjectId(Seller.stakeholder_id.logo)
     ) {
       const file = await FileService.downloadFile(Seller.stakeholder_id.logo);

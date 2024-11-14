@@ -30,7 +30,7 @@
 
 .logo-gif {
     clip-path: inset(1px);
-  }
+}
 
 .button-container {
     display: flex;
@@ -152,4 +152,69 @@
     font-weight: bold;
     position: absolute;
     margin-left: 1.2rem;
+}
+
+.btn-currency {
+    color: white !important;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold !important;
+}
+
+.btn-currency:hover {
+    background-color: rgba(192, 192, 192, 0.3) !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+    cursor: pointer;
+}
+
+@media (min-width: 992px) {
+    .btn-currency {
+        margin-right: 15px;
+    }
+}
+
+.currency-button {
+    width: 25%;
+    padding: 1rem;
+    background-color: transparent !important;
+    border: none !important;
+}
+
+.currency-button.active {
+    background-color: rgba(215, 111, 48, 0.06) !important;
+}
+
+.currency-button.active,
+.currency-button.active .currency-symbol {
+    color: var(--main-color) !important;
+}
+
+.currency-button:hover {
+    background-color: rgba(26, 26, 26, 0.06) !important;
+}
+
+.currency-button .currency-name {
+    font-weight: normal;
+}
+
+.currency-button .currency-symbol {
+    color: #595959;
+}
+
+.currency-modal .modal-dialog {
+    max-width: 90% !important;
+}
+
+.currency-modal .modal-content {
+    border-radius: 1.25rem;
+}
+
+.currency-modal .modal-header {
+    padding: 1.5rem;
+    padding-bottom: 1rem;
+}
+
+.currency-modal .modal-title {
+    font-weight: bold;
 }

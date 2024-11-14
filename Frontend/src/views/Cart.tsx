@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Row, Col, Card, Button } from "react-bootstrap";
 import CartCard from "../components/Cards/CartCard";
 import { useAppSelector } from "../store/hooks";
 import { use } from "i18next";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../AppContext";
 
 interface Product {
   id: any;
@@ -29,6 +30,15 @@ const CartPage: React.FC = () => {
     dispatch(clearCart());
   };? */
   const navigate = useNavigate();
+
+
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
+
+  const convertedPrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(cart?.total ?? 0, baseCurrency, currency);
+  }, [cart, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
+
+
 
   return (
     <div className="cart-page p-3">
@@ -60,8 +70,8 @@ const CartPage: React.FC = () => {
           <Card className="p-3 shadow-sm">
             <Card.Body>
               <h5>Your Subtotal</h5>
-              <h4 className="my-3">${cart.total.toFixed(2)}</h4>
-              <Button variant="main-inverse" className="w-100 mb-4" onClick={()=>navigate("/ProductPayment")}>Confirm Order </Button>
+              <h4 className="my-3">{convertedPrice}</h4>
+              <Button variant="main-inverse" className="w-100 mb-4" onClick={() => navigate("/ProductPayment")}>Confirm Order </Button>
             </Card.Body>
           </Card>
         </Col>

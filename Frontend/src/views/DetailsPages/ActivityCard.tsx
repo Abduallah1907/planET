@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./ActivityCard.css";
 import { Container, Badge, Modal, Button } from "react-bootstrap";
 import { FaShareAlt, FaBookmark, FaRegBookmark } from "react-icons/fa";
@@ -9,6 +9,7 @@ import { use } from "i18next";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
 import { Utils } from "../../utils/utils";
+import { useAppContext } from "../../AppContext";
 
 interface ActivityCardProps {
   id: string;
@@ -46,6 +47,13 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
     navigator.clipboard.writeText(shareLink);
     alert("Link copied to clipboard!");
   };
+
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
+
+  const convertedPrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(activityData?.price ?? 0, baseCurrency, currency);
+  }, [activityData, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
+
 
   const shareViaEmail = () => {
     const subject = encodeURIComponent("Check out this activity!");
@@ -177,7 +185,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
                 : "Date not available"}
             </p>
             <p className="time">{activityData?.time}</p>
-            <p className="price">${activityData?.price}</p>
+            <p className="price">{convertedPrice}</p>
 
             <div className="d-flex justify-content-center">
               {user.role === "TOURIST" && (

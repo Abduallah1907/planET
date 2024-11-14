@@ -28,12 +28,6 @@
   margin-left: 20px;
 }
 
-.price {
-  font-size: 2rem;
-  color: #333;
-}
-
-
 .reserve-button {
   background-color: var(--main-color);
   color: white;
