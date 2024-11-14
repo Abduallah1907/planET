@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import "./Advertiser.css";
+import "./ProfileForm.css";
 import Logo from "../../assets/person-circle.svg";
 import {
   Container,
@@ -43,7 +43,7 @@ interface FormData {
   previousWork: WorkExperience[];
 }
 
-const ProfileFormGuide: React.FC = () => {
+const TourGuideProfile: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -163,6 +163,7 @@ const ProfileFormGuide: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFormData({ ...formData, logo: e.target.files[0] });
+      setFileUrl(URL.createObjectURL(e.target.files[0]));
     }
   };
 
@@ -500,10 +501,8 @@ const ProfileFormGuide: React.FC = () => {
           </Row>
           <Row>
             <Col>
-              <Form.Group controlId="formFile" className="mb-3">
-                <Form.Label>
-                  <h3>Upload Logo</h3> {/* Added 'Seller Logo' label */}
-                </Form.Label>
+              <Form.Group controlId="formFile" className="mb-3 form-group">
+                <Form.Label>Upload Logo{/* Added 'TourGuide Logo' label */}</Form.Label>
                 <Form.Control
                   type="file"
                   name="logo"
@@ -621,4 +620,4 @@ const ProfileFormGuide: React.FC = () => {
   );
 };
 
-export default ProfileFormGuide;
+export default TourGuideProfile;

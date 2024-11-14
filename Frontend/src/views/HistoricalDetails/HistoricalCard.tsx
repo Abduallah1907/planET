@@ -53,7 +53,7 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
     getHistoricalLocationById(id);
   }, [id]);
 
-  const shareLink = `${window.location.origin}/HistoricalDetails/${id}`;
+  const shareLink = `${window.location.origin}/Historical/${id}`;
 
 
   const copyToClipboard = () => {

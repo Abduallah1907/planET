@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Navbar, Button, Dropdown, Container, Nav, Row, Col, OverlayTrigger, Tooltip } from "react-bootstrap";
 import "./topbar.css";
 import Logo from "../../assets/LogoNoBackground.svg";
+import LogoGif from "../../assets/LogoNoBackground.gif";
 import { useNavigate } from "react-router-dom";
 import EgyptFlag from "../../assets/Egypt.webp";
 import FranceFlag from "../../assets/FRANCE.webp";
@@ -23,6 +24,16 @@ const TopBar: React.FC = () => {
   const { currentFlag, setCurrentFlag, currency, setCurrency } =
     useAppContext();
   const { i18n, t } = useTranslation();
+  const [gifEnded, setGifEnded] = useState(false);
+
+  useEffect(() => {
+    const gifDuration = 2000; // Duration of the GIF in milliseconds
+    const timer = setTimeout(() => {
+      setGifEnded(true);
+    }, gifDuration);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleFlagChange = (flag: string, language: string) => {
     setCurrentFlag(flag);
@@ -99,13 +110,23 @@ const TopBar: React.FC = () => {
           </div> : null
         }
         <Navbar.Brand onClick={() => navigate("/")} className="brand-container">
-          <img
-            src={Logo}
-            width="150"
-            height="100"
-            className="align-top logo"
-            alt="Travel Agency logo"
-          />
+          {gifEnded ? (
+            <img
+              src={Logo}
+              width="150"
+              height="100"
+              className="align-top logo"
+              alt="Travel Agency logo"
+            />
+          ) : (
+            <img
+              src={LogoGif}
+              width="150"
+              height="100"
+              className="align-top logo logo-gif"
+              alt="Loading"
+            />
+          )}
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />

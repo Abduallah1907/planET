@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import "./Advertiser.css";
+import "./ProfileForm.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { useAppSelector } from "../../store/hooks";
@@ -97,6 +97,7 @@ const SellerProfile: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFormData({ ...formData, logo: e.target.files[0] });
+      setFileUrl(URL.createObjectURL(e.target.files[0]));
     }
   };
 
@@ -217,7 +218,7 @@ const SellerProfile: React.FC = () => {
             </Col>
             <Col>
               <CustomFormGroup
-                label="Last Name:"
+                label="Last Name"
                 type="text"
                 placeholder="Enter your Last Name"
                 id="lastName"
@@ -232,7 +233,7 @@ const SellerProfile: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="Email:"
+                label="Email"
                 type="email"
                 placeholder="Enter your email"
                 id="email"
@@ -245,7 +246,7 @@ const SellerProfile: React.FC = () => {
             </Col>
             <Col>
               <CustomFormGroup
-                label="Username:"
+                label="Username"
                 type="username"
                 placeholder="Enter your username"
                 id="username"
@@ -261,7 +262,7 @@ const SellerProfile: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="change your password"
+                label="Change Password"
                 type="password"
                 placeholder="Change your password"
                 id="password"
@@ -274,7 +275,7 @@ const SellerProfile: React.FC = () => {
             </Col>
             <Col>
               <CustomFormGroup
-                label="Retype Password:"
+                label="Retype Password"
                 type="password"
                 placeholder="Retype your password"
                 id="retypePassword"
@@ -290,7 +291,7 @@ const SellerProfile: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="Description:"
+                label="Description"
                 type="text"
                 placeholder="Enter your description"
                 id="description"
@@ -322,10 +323,8 @@ const SellerProfile: React.FC = () => {
           {/* New row for logo upload */}
           <Row>
             <Col>
-              <Form.Group controlId="formFile" className="mb-3">
-                <Form.Label>
-                  <h3>Upload Logo</h3>
-                </Form.Label>
+              <Form.Group controlId="formFile" className="mb-3 form-group">
+                <Form.Label>Upload Seller Logo</Form.Label>
                 <Form.Control
                   type="file"
                   name="logo"

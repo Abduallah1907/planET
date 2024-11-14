@@ -77,7 +77,7 @@ export default function ItinerariesPage() {
     itinerary.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   const onItineraryClick = (id: string) => {
-    navigate(`/ItineraryDetails/${id}`);
+    navigate(`/Itinerary/${id}`);
   };
 
   return (

@@ -43,7 +43,6 @@ export default function HotelsPage() {
         try {
             data = { ...data, currencyCode: currency };
             const hotelData = await AmadeusService.searchHotels(data);
-            setProgress(40); // Initial progress as loading starts
             if (hotelData.status === 500) {
                 throw new Error("Internal Server Error");
             }
@@ -72,6 +71,28 @@ export default function HotelsPage() {
             setProgress(100); // Initial progress as loading starts
         }
     }
+    useEffect(() => {
+        let interval: NodeJS.Timeout | null = null;
+    
+        if (loading && progress < 100 && progress >= 10) {
+            interval = setInterval(() => {
+                setProgress(prevProgress => {
+                    if (prevProgress < 100) {
+                        return prevProgress + 5;
+                    } else {
+                        clearInterval(interval!);
+                        return prevProgress;
+                    }
+                });
+            }, 1000);
+        }
+    
+        return () => {
+            if (interval) {
+                clearInterval(interval);
+            }
+        };
+    }, [loading]);
 
     useEffect(() => {
         const filterHotels = () => {

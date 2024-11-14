@@ -1,13 +1,15 @@
 import AmadeusService from "../../services/AmadeusService";
 import { useAppContext } from "../../AppContext";
 import FlightsSearchBar from "../../components/SearchBars/FlightsSearchBar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Col, Container, Row, ProgressBar } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import FlightCard from "../../components/Cards/FlightCard";
 import FilterBy from "../../components/FilterBy/FilterBy";
 import { useAppDispatch } from "../../store/hooks";
 import { selectFlightOffer, setFlightSearchQuery } from "../../store/flightSlice";
+import PlaneSVG from "../../assets/PlaneNoBackground.svg";
+import "./viewingPages.css";
 
 export default function FlightsPage() {
     const navigate = useNavigate();
@@ -27,6 +29,26 @@ export default function FlightsPage() {
     const [filteredFlights, setFilteredFlights] = useState<any[]>([]);
     const [loading, setLoading] = useState(false); // Add loading state
     const [progress, setProgress] = useState(0);
+
+    const planeRef = useRef<HTMLImageElement>(null);
+
+    useEffect(() => {
+        const handleAnimationEnd = () => {
+            if (planeRef.current) {
+                planeRef.current.style.display = "none";
+            }
+        };
+        
+        if (planeRef.current) {
+            planeRef.current.addEventListener("animationend", handleAnimationEnd);
+        }
+
+        return () => {
+            if (planeRef.current) {
+                planeRef.current.removeEventListener("animationend", handleAnimationEnd);
+            }
+        };
+    }, []);
 
     const handleFilterChange = (filterData: { [key: string]: any }) => {
         setFilter({
@@ -95,6 +117,7 @@ export default function FlightsPage() {
     return (
         <>
             <div className="bg-main p-4">
+            <img src={PlaneSVG} alt="Plane" className="plane-svg" width={"50"} ref={planeRef} />
                 <Container>
                     <FlightsSearchBar onSubmit={handleSearchSubmit} />
                 </Container>

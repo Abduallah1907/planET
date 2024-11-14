@@ -75,7 +75,7 @@ const ItineraryCard: React.FC<ItineraryCardProps> = ({ id }) => {
   const toggleBookmark = () => {
     setIsBookmarked(!isBookmarked);
   };
-  const shareLink = `${window.location.origin}/ItineraryDetails/${id}`;
+  const shareLink = `${window.location.origin}/Itinerary/${id}`;
 
   // Functions to open and close modals
   const handleDetailsModal = () => setShowDetailsModal(!showDetailsModal);

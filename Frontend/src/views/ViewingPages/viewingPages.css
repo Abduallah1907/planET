@@ -1,0 +1,17 @@
+@keyframes fly {
+    0% {
+        left: -10%;
+        /* Start from outside the left of the viewport */
+    }
+    100% {
+        left: 100%;
+        /* Move to outside the right of the viewport */
+    }
+}
+
+.plane-svg {
+    position: absolute;
+    top: 10%;
+    transform: translateY(100%);
+    animation: fly 3s linear forwards;
+}
