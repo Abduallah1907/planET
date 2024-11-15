@@ -32,6 +32,20 @@
     clip-path: inset(1px);
 }
 
+@keyframes clipSvg {
+    0% {
+        clip-path: inset(1px);
+    }
+
+    100% {
+        clip-path: inset(0);
+    }   
+}
+
+.logo-gif-transform{
+    animation: clipSvg 0.5s forwards;
+}
+
 .button-container {
     display: flex;
     align-items: center;

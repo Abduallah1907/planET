@@ -119,7 +119,7 @@ const TopBar: React.FC = () => {
         currencyName.toLowerCase().includes(currencySearch.toLowerCase()) || currencyCode.toLowerCase().includes(currencySearch.toLowerCase())
       )
     );
-  }, [currencySearch, currencies]);
+  }, [currencySearch]);
   const currencyChunks = chunkArray(filteredCurrencies, 4);
 
   const sidebarState = useAppSelector((state) => state.sidebar.isActive)
@@ -165,7 +165,7 @@ const TopBar: React.FC = () => {
               src={Logo}
               width="150"
               height="100"
-              className="align-top logo"
+              className="align-top logo logo-gif-transform"
               alt="Travel Agency logo"
             />
           ) : (

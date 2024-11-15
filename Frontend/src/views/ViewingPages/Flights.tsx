@@ -57,6 +57,29 @@ export default function FlightsPage() {
         });
     };
 
+    useEffect(() => {
+        let interval: NodeJS.Timeout | null = null;
+    
+        if (loading && progress < 100 && progress >= 10) {
+            interval = setInterval(() => {
+                setProgress(prevProgress => {
+                    if (prevProgress < 100) {
+                        return prevProgress + 5;
+                    } else {
+                        clearInterval(interval!);
+                        return prevProgress;
+                    }
+                });
+            }, 1000);
+        }
+    
+        return () => {
+            if (interval) {
+                clearInterval(interval);
+            }
+        };
+    }, [loading]);
+
     const handleSearchSubmit = async (data: any, searchQuery: any) => {
         setLoading(true); // Set loading to true
         setProgress(10); // Reset progress to 0

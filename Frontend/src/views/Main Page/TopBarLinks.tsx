@@ -4,6 +4,7 @@ import './topbarlinks.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../store/hooks';
 import UserRoles from '../../types/userRoles';
+import { Col, Row } from 'react-bootstrap';
 
 const TopBarLinks: React.FC = () => {
     const { t } = useTranslation();
@@ -70,46 +71,59 @@ const TopBarLinks: React.FC = () => {
 
     return (
         <div className="top-bar-links">
-            <div className="links-bar">
-                <button
-                    className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Activities' ? 'active' : ''}`}
-                    onClick={() => handleButtonClick('Activities')}
-                >
-                    {t('activities')}
-                </button>
-                <button
-                    className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Itineraries' ? 'active' : ''}`}
-                    onClick={() => handleButtonClick('Itineraries')}
-                >
-                    {t('itineraries')}
-                </button>
-                <button
-                    className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Historical_Locations' ? 'active' : ''}`}
-                    onClick={() => handleButtonClick('Historical_Locations')}
-                >
-                    {t('historical_locations')}
-                </button>
-                {(userRole === UserRoles.Admin || userRole === UserRoles.Seller || userRole === UserRoles.Tourist) && (
+            <Row className="links-bar">
+                <Col>
                     <button
-                        className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Products' ? 'active' : ''}`}
-                        onClick={() => handleButtonClick('Products')}
+                        className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Activities' ? 'active' : ''}`}
+                        onClick={() => handleButtonClick('Activities')}
                     >
-                        {t('products')}
+                        {t('activities')}
                     </button>
+                </Col>
+                <Col>
+                    <button
+                        className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Itineraries' ? 'active' : ''}`}
+                        onClick={() => handleButtonClick('Itineraries')}
+                    >
+                        {t('itineraries')}
+                    </button>
+                </Col>
+                <Col>
+                    <button
+                        className={`btn-custom-primary btn-rounded text-nowrap mx-2 ${activeButton === 'Historical_Locations' ? 'active' : ''}`}
+                        onClick={() => handleButtonClick('Historical_Locations')}
+                    >
+                        {t('historical_locations')}
+                    </button>
+                </Col>
+
+                {(userRole === UserRoles.Admin || userRole === UserRoles.Seller || userRole === UserRoles.Tourist) && (
+                    <Col>
+                        <button
+                            className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Products' ? 'active' : ''}`}
+                            onClick={() => handleButtonClick('Products')}
+                        >
+                            {t('products')}
+                        </button>
+                    </Col>
                 )}
-                <button
-                    className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Flights' ? 'active' : ''}`}
-                    onClick={() => handleButtonClick('Flights')}
-                >
-                    {t('flights')}
-                </button>
-                <button
-                    className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Hotels' ? 'active' : ''}`}
-                    onClick={() => handleButtonClick('Hotels')}
-                >
-                    {t('hotels')}
-                </button>
-            </div>
+                <Col>
+                    <button
+                        className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Flights' ? 'active' : ''}`}
+                        onClick={() => handleButtonClick('Flights')}
+                    >
+                        {t('flights')}
+                    </button>
+                </Col>
+                <Col>
+                    <button
+                        className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Hotels' ? 'active' : ''}`}
+                        onClick={() => handleButtonClick('Hotels')}
+                    >
+                        {t('hotels')}
+                    </button>
+                </Col>
+            </Row>
         </div>
     );
 }

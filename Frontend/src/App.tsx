@@ -110,6 +110,7 @@ const App: React.FC = () => {
             navItems={navItems} // Pass the settings nav items
           />
         </div>
+        
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/Login" element={<Login />} />

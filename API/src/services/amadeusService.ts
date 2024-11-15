@@ -115,16 +115,19 @@ export default class AmadeusService {
 
       let allHotelOffers: any[] = [];
 
-      const maxHotels = hotelIdsArray.length > 20 ? 20 : hotelIdsArray.length;
-
+      const maxHotels = hotelIdsArray.length > 30 ? 30 : hotelIdsArray.length;
       for (let i = 0; i < maxHotels; i += MAX_HOTEL_IDS) {
         const hotelIdsChunk = hotelIdsArray.slice(i, i + MAX_HOTEL_IDS).join();
         const searchParams = {
           hotelIds: hotelIdsChunk,
           ...restHotelOffersParams
         };
-        const response = await this.amadeus.shopping.hotelOffersSearch.get(searchParams);
-        allHotelOffers = allHotelOffers.concat(response.data);
+        try {
+          const response = await this.amadeus.shopping.hotelOffersSearch.get(searchParams);
+          allHotelOffers = allHotelOffers.concat(response.data);
+        } catch (error) {
+          throw error;
+        }
       }
       allHotelOffers.forEach((hotelOffer: any) => {
         const randomRatings = Math.floor(Math.random() * 100) + 1;
