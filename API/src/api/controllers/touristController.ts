@@ -89,33 +89,36 @@ export class TouristController {
   }
 
   public async bookActivity(req: any, res: any) {
-    const { email, activity_id } = req.body;
+    const { email, activity_id, payment_type } = req.body;
     const touristService: TouristService = Container.get(TouristService);
     const bookedActivity = await touristService.bookActivityService(
       email,
-      activity_id
+      activity_id,
+      payment_type
     );
     res.status(bookedActivity.status).json(bookedActivity);
   }
 
   public async bookItinerary(req: any, res: any) {
-    const { email, itinerary_id, time_to_attend } = req.body;
+    const { email, itinerary_id, time_to_attend, payment_type } = req.body;
     const touristService: TouristService = Container.get(TouristService);
     const bookedItinerary = await touristService.bookItineraryService(
       email,
       itinerary_id,
-      time_to_attend
+      time_to_attend,
+      payment_type
     );
     res.status(bookedItinerary.status).json(bookedItinerary);
   }
 
   public async bookHistoricalLocation(req: any, res: any) {
-    const { email, historical_location_id } = req.body;
+    const { email, historical_location_id, payment_type } = req.body;
     const touristService: TouristService = Container.get(TouristService);
     const bookedHistoricalLocation =
       await touristService.bookHistoricalLocationService(
         email,
-        historical_location_id
+        historical_location_id,
+        payment_type
       );
     res.status(bookedHistoricalLocation.status).json(bookedHistoricalLocation);
   }

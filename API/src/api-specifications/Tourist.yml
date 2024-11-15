@@ -372,6 +372,9 @@ paths:
                 activity_id:
                   type: string
                   description: ID of the activity
+                payment_type:
+                  type: string
+                  description: Payment type
       responses:
         200:
           description: Activity booked successfully
@@ -400,7 +403,10 @@ paths:
                   description: ID of the itinerary
                 time_to_attend:
                   type: string
-                  description: Time chosen to attend the itinerary  
+                  description: Time chosen to attend the itinerary 
+                payment_type:
+                  type: string
+                  description: Payment type   
       responses:
         200:
           description: Itinerary booked successfully
@@ -427,6 +433,9 @@ paths:
                 historical_location_id:
                   type: string
                   description: ID of the historical location
+                payment_type:
+                  type: string
+                  description: Payment type  
       responses:
         200:
           description: Historical location booked successfully

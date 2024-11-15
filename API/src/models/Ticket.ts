@@ -1,5 +1,6 @@
 import { ITicket } from "@/interfaces/ITicket";
 import TicketType from "@/types/enums/ticketType";
+import PaymentType from "@/types/enums/paymentType";
 import mongoose from "mongoose";
 
 const ticketSchema = new mongoose.Schema(
@@ -33,6 +34,11 @@ const ticketSchema = new mongoose.Schema(
     },
     points_received: {
       type: Number,
+      required: true,
+    },
+    payment_type: {
+      type: String,
+      enum: Object.values(PaymentType),
       required: true,
     },
   },

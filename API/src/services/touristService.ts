@@ -476,7 +476,11 @@ export default class TouristService {
     return new response(true, comment_rating, "Activity rated", 201);
   }
 
-  public async bookActivityService(email: string, activity_id: string) {
+  public async bookActivityService(
+    email: string,
+    activity_id: string,
+    payment_type: PaymentType
+  ) {
     if (!Types.ObjectId.isValid(activity_id)) {
       throw new BadRequestError("Invalid id");
     }
@@ -553,6 +557,7 @@ export default class TouristService {
       booking_id: activity_id,
       cancelled: false,
       points_received: points_received,
+      payment_type: payment_type,
       time_to_attend: new Date(
         `${activity.date.toISOString().split("T")[0]}T${activity.time}`
       ), // Combine date and time
@@ -581,7 +586,8 @@ export default class TouristService {
   public async bookItineraryService(
     email: string,
     itinerary_id: string,
-    time_to_attend: Date
+    time_to_attend: Date,
+    payment_type: PaymentType
   ) {
     if (!Types.ObjectId.isValid(itinerary_id)) {
       throw new BadRequestError("Invalid id");
@@ -646,6 +652,8 @@ export default class TouristService {
       booking_id: itinerary_id,
       cancelled: false,
       points_received: points_received,
+      payment_type: payment_type,
+
       time_to_attend: time_to_attend,
     });
     ticket.save();
@@ -669,7 +677,8 @@ export default class TouristService {
 
   public async bookHistoricalLocationService(
     email: string,
-    historical_location_id: string
+    historical_location_id: string,
+    payment_type: PaymentType
   ) {
     const historicalLocationService = Container.get(Historical_locationService);
 
@@ -736,6 +745,7 @@ export default class TouristService {
       booking_id: historical_location_id,
       cancelled: false,
       points_received: points_received,
+      payment_type: payment_type,
       time_to_attend: new Date(
         `${historical_location.date.toISOString().split("T")[0]}T${
           historical_location.time
@@ -1297,6 +1307,7 @@ export default class TouristService {
         points_received: t.points_received,
         time_to_attend: t.time_to_attend,
         active: activity.active_flag,
+        payment_type: t.payment_type,
         image: activity.image, // Use the activity image
       });
     }
@@ -1372,6 +1383,7 @@ export default class TouristService {
         points_received: t.points_received,
         time_to_attend: t.time_to_attend,
         active: activity.active_flag,
+        payment_type: t.payment_type,
         image: activity.image, // Use the activity image
       });
     }
@@ -1453,6 +1465,7 @@ export default class TouristService {
         cancelled: t.cancelled,
         points_received: t.points_received,
         active: itinerary.active_flag,
+        payment_type: t.payment_type,
         time_to_attend: t.time_to_attend,
       });
     }
@@ -1529,6 +1542,7 @@ export default class TouristService {
         cancelled: t.cancelled,
         points_received: t.points_received,
         active: itinerary.active_flag,
+        payment_type: t.payment_type,
         time_to_attend: t.time_to_attend,
       });
     }
@@ -1609,6 +1623,7 @@ export default class TouristService {
         cancelled: t.cancelled,
         points_received: t.points_received,
         time_to_attend: t.time_to_attend,
+        payment_type: t.payment_type,
         active: historicalLocation.active_flag,
         image: historicalLocation.images[0], // Fetch only first image of historical location
       });
@@ -1691,6 +1706,7 @@ export default class TouristService {
         cancelled: t.cancelled,
         points_received: t.points_received,
         time_to_attend: t.time_to_attend,
+        payment_type: t.payment_type,
         active: historicalLocation.active_flag,
         image: historicalLocation.images[0], // Fetch only first image of historical location
       });
