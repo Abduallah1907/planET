@@ -16,7 +16,7 @@ export default (app: Router) => {
   router.get("/getUsers/:page", authorize([]), adminController.getUsers);
 
   router.get("/getUserNumbers", adminController.getUserNumbers);
-  router.get("/getUserNumbersForMonth/:year/:monthNumber", adminController.getUserNumbersForMonth);
+  router.get("/getUserNumbersForYear/:year", adminController.getUserNumbersForYear);
 
   // This searches by exact username; if no username is found it returns empty data
   // i.e it does not throw an error

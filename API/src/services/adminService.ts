@@ -215,17 +215,22 @@ export default class AdminService {
     const numberOfUsers = await this.userModel.find({}).countDocuments();
     return new response(true, { numberOfUsers }, "Returning user count", 200);
   }
-  public async getUserNumbersForMonthService(year: number, month: number): Promise<response> {
-    if (month > 12 || month < 1) throw new BadRequestError("Please insert a number between 1 and 12 for the month");
-
+  public async getUserNumbersForYearService(year: number): Promise<response> {
+    const usersPerMonth: number[] = [];
     // remember that for month, it is indexed from zero not 1, so we subtract
-    const startOfMonth = new Date(year, month - 1, 1);
-    startOfMonth.setHours(0, 0, 0, 0);
+    for (let i = 0; i < 12; i++) {
+      const startOfMonth = new Date(year, i, 1);
+      startOfMonth.setHours(0, 0, 0, 0);
 
-    const endOfMonth = new Date(year, month, 0);
-    endOfMonth.setHours(23, 59, 59, 999);
-    const numberOfUsers = await this.userModel.find({ createdAt: { $gte: startOfMonth, $lte: endOfMonth } }).countDocuments();
-    return new response(true, { numberOfUsers }, "Returning user count of current month", 200);
+      const endOfMonth = new Date(year, i + 1, 0);
+      endOfMonth.setHours(23, 59, 59, 999);
+
+      // console.log("start of month: " + startOfMonth);
+      // console.log("end of month: " + endOfMonth);
+      const numberOfUsers = await this.userModel.find({ createdAt: { $gte: startOfMonth, $lte: endOfMonth } }).countDocuments();
+      usersPerMonth.push(numberOfUsers);
+    }
+    return new response(true, { usersPerMonth }, "Returning user count of current year", 200);
   }
   // CRUD for categories
   public async createCategoryService(type: string): Promise<any> {
