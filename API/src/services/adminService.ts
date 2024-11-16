@@ -4,13 +4,11 @@ import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
 import { IAdminUpdateDTO, IUserAdminCreateAdminDTO, IUserAdminCreateGovernorDTO, IUserAdminViewDTO, IUserInputDTO } from "@/interfaces/IUser";
-import { InternalServerError, HttpError, BadRequestError, NotFoundError } from "@/types/Errors";
+import { InternalServerError, HttpError, BadRequestError, NotFoundError, ForbiddenError } from "@/types/Errors";
 import UserService from "./userService";
 import bcrypt from "bcryptjs";
 import { IComplaint, IComplaintAdminViewDTO } from "@/interfaces/IComplaint";
 import ComplaintStatus from "@/types/enums/complaintStatus";
-import { dir } from "console";
-import { ITourist } from "@/interfaces/ITourist";
 
 // User related services (delete, view, and create users)
 
@@ -30,7 +28,8 @@ export default class AdminService {
     private historicalLocationsModel: Models.Historical_locationsModel,
     @Inject("productModel") private productModel: Models.ProductModel,
     @Inject("tagModel") private tagModel: Models.TagModel,
-    @Inject("complaintModel") private complaintModel: Models.ComplaintModel
+    @Inject("complaintModel") private complaintModel: Models.ComplaintModel,
+    @Inject("promo_codeModel") private promoCodeModel: Models.Promo_codeModel
   ) {}
 
   public async getUsersService(page: number): Promise<any> {
@@ -499,5 +498,37 @@ export default class AdminService {
     }));
 
     return new response(true, filteredComplaintsDTO, "Filtered complaints", 200);
+  }
+
+  public async createPromoCodeService(duration: number, discount: number): Promise<response> {
+    if (duration <= 0 || !duration) throw new BadRequestError("The duration must be a postive number");
+    if (discount > 100 || !discount)
+      throw new BadRequestError("This discount inserted is greater than 100 or the discount was not entered. Do you want us to give them money? :)");
+    // another solution is to use the objectID as our code, but that won't be very user friendly
+    let randomCode;
+    while (true) {
+      randomCode = (Math.random() + 1).toString(36).substring(2);
+      const codeAlreadyExists = await this.promoCodeModel.findOne({ code: randomCode });
+      console.log(codeAlreadyExists);
+      if (!codeAlreadyExists) break;
+    }
+    const expiry_date = new Date();
+    expiry_date.setHours(23, 59, 59, 999);
+    expiry_date.setDate(expiry_date.getDate() + duration);
+    await this.promoCodeModel.create({ code: randomCode, expiry_date, discount });
+
+    return new response(true, { promoCode: randomCode }, "Code successfully generated!", 200);
+  }
+
+  public async createPromoCodeWithCodeSerivce(expiry_date: Date, discount: number, promoCode: string) {
+    if (expiry_date < new Date()) throw new BadRequestError("The expiry date inserted has already passed");
+    if (discount > 100) throw new BadRequestError("This discount inserted is greater than 100. Do you want us to give them money? :)");
+    if (!promoCode) throw new BadRequestError("Please write out a promo code");
+
+    const codeAlreadyExists = await this.promoCodeModel.find({ code: promoCode });
+    if (codeAlreadyExists) throw new ForbiddenError("The promocode already exists!");
+
+    await this.promoCodeModel.create({ code: promoCode, expiry_date, discount });
+    return new response(true, {}, "Code successfully generated!", 200);
   }
 }

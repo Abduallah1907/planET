@@ -71,4 +71,7 @@ export default (app: Router) => {
   router.put("/markComplaintResolved/:complaint_id", adminController.markComplaintResolved);
   router.put("/markComplaintPending/:complaint_id", adminController.markComplaintPending);
   router.put("/replyComplaint/:complaint_id", adminController.replyComplaint);
+
+  router.post("/createPromoCode", adminController.createPromoCode);
+  router.post("createPromoCodeWithCode");
 };
