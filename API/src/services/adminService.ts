@@ -211,9 +211,19 @@ export default class AdminService {
     return new response(true, adminOutput, "Admin created successfully", 201);
   }
 
-  public async getUserNumbersService() {
+  public async getUserNumbersService(): Promise<response> {
     const numberOfUsers = await this.userModel.find({}).countDocuments();
     return new response(true, numberOfUsers, "Returning user count", 200);
+  }
+  public async getUserNumbersForCurrentMonthService(): Promise<response> {
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    endOfMonth.setHours(23, 59, 59, 999);
+    const numberOfUsers = await this.userModel.find({ createdAt: { $gte: startOfMonth, $lte: endOfMonth } }).countDocuments();
+    return new response(true, { numberOfUsers }, "Returning user count of current month", 200);
   }
   // CRUD for categories
   public async createCategoryService(type: string): Promise<any> {
