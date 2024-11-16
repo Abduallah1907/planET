@@ -14,6 +14,7 @@ export default (app: Router) => {
   // This returns all users given a page number
   // Each page has 10 users
   router.get("/getUsers/:page", authorize([]), adminController.getUsers);
+  router.get("/getUserNumbers", adminController.getUserNumbers);
 
   // This searches by exact username; if no username is found it returns empty data
   // i.e it does not throw an error

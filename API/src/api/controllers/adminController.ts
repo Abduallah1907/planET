@@ -17,6 +17,12 @@ export class AdminController {
     res.status(users.status).json(users);
   }
 
+  public async getUserNumbers(req: Request, res: Response): Promise<void> {
+    const adminService: AdminService = Container.get(AdminService);
+    const numberOfUsers = await adminService.getUserNumbersService();
+    res.status(numberOfUsers.status).json(numberOfUsers);
+  }
+
   public async searchUser(req: Request, res: Response): Promise<any> {
     const { username } = req.params;
     const adminService: AdminService = Container.get(AdminService);
