@@ -23,9 +23,12 @@ export class AdminController {
     res.status(numberOfUsers.status).json(numberOfUsers);
   }
 
-  public async getUserNumbersForCurrentMonth(req: Request, res: Response): Promise<void> {
+  public async getUserNumbersForMonth(req: Request, res: Response): Promise<void> {
+    const { monthNumber, year } = req.params;
+    const monthInteger: number = parseInt(monthNumber);
+    const yearNumber: number = parseInt(year);
     const adminService: AdminService = Container.get(AdminService);
-    const numberOfUsers = await adminService.getUserNumbersForCurrentMonthService();
+    const numberOfUsers = await adminService.getUserNumbersForMonthService(yearNumber, monthInteger);
     res.status(numberOfUsers.status).json(numberOfUsers);
   }
 
