@@ -1630,6 +1630,7 @@ export default class TouristService {
     const touristInfo = await this.touristModel.findOne({ user_id: userInfo._id });
     if (!touristInfo) throw new NotFoundError("Tourist not found");
 
+    if (!address) throw new BadRequestError("The address field was empty");
     // i dont check for duplicates, mostly because amazon doesn't either :)
     // deleting would just delete the oldest one if it a duplicate
     touristInfo.addresses.push(address);
@@ -1643,6 +1644,7 @@ export default class TouristService {
     if (!userInfo) throw new NotFoundError("Tourist not found");
     const touristInfo = await this.touristModel.findOne({ user_id: userInfo._id });
     if (!touristInfo) throw new NotFoundError("Tourist not found");
+    if (!address) throw new BadRequestError("The address field was empty");
 
     // should be conflict error ):
     const index = touristInfo.addresses.indexOf(address);
