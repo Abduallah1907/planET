@@ -48,8 +48,7 @@ export default class TouristService {
     @Inject("tour_guideModel") private tour_guideModel: Models.Tour_guideModel,
     @Inject("productModel") private productModel: Models.ProductModel,
     @Inject("ticketModel") private ticketModel: Models.TicketModel,
-    @Inject("cartModel") private cartModel: Models.CartModel,
-    @Inject("wishlistModel") private wishlistModel: Models.WishlistModel
+    @Inject("cartModel") private cartModel: Models.CartModel // @Inject("wishlistModel") private wishlistModel: Models.WishlistModel
   ) {}
 
   public async getTouristService(email: string) {
@@ -1585,12 +1584,10 @@ export default class TouristService {
     const productInfo = await this.productModel.findById(productID);
     if (!productInfo) throw new NotFoundError("Product not found");
 
-    let wishlistInfo = await this.wishlistModel.findOne({ tourist_id: touristInfo._id });
-    // if this the first time every a user wishlists something, we create his wishlist
-    if (!wishlistInfo) wishlistInfo = await this.wishlistModel.create({ tourist_id: touristInfo._id });
-
-    wishlistInfo.products.push(productInfo._id as ObjectId);
-    await wishlistInfo.save();
+    if (touristInfo.wishlist.includes(productInfo._id as ObjectId)) throw new BadRequestError("Product has already been wishlisted"); // should be conflict error ):
+    touristInfo.wishlist.push(productInfo._id as ObjectId);
+    console.log(touristInfo);
+    await touristInfo.save();
 
     return new response(true, {}, "Wishlisted product!", 200);
   }
