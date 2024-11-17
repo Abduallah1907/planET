@@ -27,6 +27,7 @@ import itinerary from "@/api/routes/itinerary";
 import { IOrderCartDTO } from "@/interfaces/IOrder";
 import PaymentType from "@/types/enums/paymentType";
 import OrderStatus from "@/types/enums/orderStatus";
+import tourist from "@/api/routes/tourist";
 
 // comment and ratings
 // complaint
@@ -1587,9 +1588,30 @@ export default class TouristService {
     // should be conflict error ):
     if (touristInfo.wishlist.includes(productInfo._id as ObjectId)) throw new BadRequestError("Product has already been wishlisted");
     touristInfo.wishlist.push(productInfo._id as ObjectId);
-    console.log(touristInfo);
     await touristInfo.save();
 
     return new response(true, {}, "Wishlisted product!", 200);
+  }
+
+  public async removeProductFromWishlistService(email: string, productID: Types.ObjectId): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel.findOne({ user_id: userInfo._id });
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+
+    // one might ask what is the of this find, why not just directly put the productID
+    // my answer dear friend is because the array we look into does not accept Types.ObjectId :)
+    const productInfo = await this.productModel.findById(productID);
+    if (!productInfo) throw new NotFoundError("Product not found");
+
+    // should be conflict error ):
+    console.log(touristInfo.wishlist);
+    const index = touristInfo.wishlist.indexOf(productInfo._id as ObjectId);
+    if (index === -1) throw new BadRequestError("Product was not found in wishlist");
+    touristInfo.wishlist.splice(index, 1);
+    console.log(touristInfo.wishlist);
+    await touristInfo.save();
+
+    return new response(true, {}, "Removed product!", 200);
   }
 }

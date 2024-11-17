@@ -245,7 +245,15 @@ export class TouristController {
     const { email, product_id } = req.params;
     const productObjectID = new Types.ObjectId(product_id);
     const touristService: TouristService = Container.get(TouristService);
-    const pastOrders = await touristService.addProductToWishlistService(email, productObjectID);
-    res.status(pastOrders.status).json(pastOrders);
+    const wishlist = await touristService.addProductToWishlistService(email, productObjectID);
+    res.status(wishlist.status).json(wishlist);
+  }
+
+  public async removeProductFromWishlist(req: Request, res: Response): Promise<void> {
+    const { email, product_id } = req.params;
+    const productObjectID = new Types.ObjectId(product_id);
+    const touristService: TouristService = Container.get(TouristService);
+    const wishlist = await touristService.removeProductFromWishlistService(email, productObjectID);
+    res.status(wishlist.status).json(wishlist);
   }
 }

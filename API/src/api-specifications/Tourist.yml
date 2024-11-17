@@ -988,3 +988,29 @@ paths:
           description: The product is already added to the wishlist
         404:
           description: Could not find tourist/product using the email/product id
+  /api/tourist/removeProductFromWishlist/{email}/{product_id}:
+    put:
+      tags:
+        - Tourist
+        - Wishlist
+      summary: Removes a product from a wishlist if it exists; if not, throws an error
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+        - in: path
+          name: product_id
+          required: true
+          description: ID of product we want to remove from the wishlist
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successfully removed product to wishlist
+        400:
+          description: The product is already removed or could not be found in the wishlist
+        404:
+          description: Could not find tourist/product using the email/product id

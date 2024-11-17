@@ -56,4 +56,5 @@ export default (app: Router) => {
   route.get("/getPastOrders/:email", touristController.getPastOrders);
 
   route.put("/addProductToWishlist/:email/:product_id", touristController.addProductToWishlist);
+  route.delete("/removeProductFromWishlist/:email/:product_id", touristController.removeProductFromWishlist);
 };
