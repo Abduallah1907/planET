@@ -48,7 +48,7 @@ export default class TouristService {
     @Inject("tour_guideModel") private tour_guideModel: Models.Tour_guideModel,
     @Inject("productModel") private productModel: Models.ProductModel,
     @Inject("ticketModel") private ticketModel: Models.TicketModel,
-    @Inject("cartModel") private cartModel: Models.CartModel // @Inject("wishlistModel") private wishlistModel: Models.WishlistModel
+    @Inject("cartModel") private cartModel: Models.CartModel
   ) {}
 
   public async getTouristService(email: string) {
@@ -1584,7 +1584,8 @@ export default class TouristService {
     const productInfo = await this.productModel.findById(productID);
     if (!productInfo) throw new NotFoundError("Product not found");
 
-    if (touristInfo.wishlist.includes(productInfo._id as ObjectId)) throw new BadRequestError("Product has already been wishlisted"); // should be conflict error ):
+    // should be conflict error ):
+    if (touristInfo.wishlist.includes(productInfo._id as ObjectId)) throw new BadRequestError("Product has already been wishlisted");
     touristInfo.wishlist.push(productInfo._id as ObjectId);
     console.log(touristInfo);
     await touristInfo.save();
