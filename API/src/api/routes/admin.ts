@@ -73,5 +73,8 @@ export default (app: Router) => {
   router.put("/replyComplaint/:complaint_id", adminController.replyComplaint);
 
   router.post("/createPromoCode", adminController.createPromoCode);
-  router.post("createPromoCodeWithCode");
+
+  // this route is not called yet (le8yat mafahem law momken el frontend yeinsert el string lel promocode zay nafso wala la2)
+  // (a use case for frontend creating the code themselves is for birthdays, so it has the user's name instead of a random string)
+  // router.post("createPromoCodeWithCode");
 };

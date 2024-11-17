@@ -520,6 +520,8 @@ export default class AdminService {
     return new response(true, { promoCode: randomCode }, "Code successfully generated!", 200);
   }
 
+  // this service is not called yet (le8yat mafahem law momken el frontend yeinsert el string lel promocode zay nafso wala la2)
+  // (a use case for frontend creating the code themselves is for birthdays, so it has the user's name instead of a random string)
   public async createPromoCodeWithCodeSerivce(expiry_date: Date, discount: number, promoCode: string) {
     if (expiry_date < new Date()) throw new BadRequestError("The expiry date inserted has already passed");
     if (discount > 100) throw new BadRequestError("This discount inserted is greater than 100. Do you want us to give them money? :)");
