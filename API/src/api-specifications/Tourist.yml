@@ -403,10 +403,10 @@ paths:
                   description: ID of the itinerary
                 time_to_attend:
                   type: string
-                  description: Time chosen to attend the itinerary 
+                  description: Time chosen to attend the itinerary
                 payment_type:
                   type: string
-                  description: Payment type   
+                  description: Payment type
       responses:
         200:
           description: Itinerary booked successfully
@@ -435,7 +435,7 @@ paths:
                   description: ID of the historical location
                 payment_type:
                   type: string
-                  description: Payment type  
+                  description: Payment type
       responses:
         200:
           description: Historical location booked successfully
@@ -961,4 +961,29 @@ paths:
         400:
           description: Bad request
         500:
-          description: Internal server error        
+          description: Internal server error
+  /api/tourist/addProductToWishlist/{email}/{product_id}:
+    put:
+      tags:
+        - Tourist
+        - Wishlist
+      summary: Adds a product to the wishlist of a user. (law enta bet2ra el 7eta deeh,fakerny ashoof eh el hay7sal law el product et3amelaha archive)
+      description: It also creates the wishlist if it is the first time wishlisting something, but this is entirely for backend
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+        - in: path
+          name: product_id
+          required: true
+          description: ID of product we want to add to wishlist
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successfully added product to wishlist
+        404:
+          description: Could not find tourist/product using the email/product id
