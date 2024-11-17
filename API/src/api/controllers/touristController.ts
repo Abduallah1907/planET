@@ -263,4 +263,27 @@ export class TouristController {
     const wishlist = await touristService.viewWishlistService(email);
     res.status(wishlist.status).json(wishlist);
   }
+
+  public async addAddress(req: Request, res: Response): Promise<void> {
+    const { email } = req.params;
+    const { address } = req.body;
+    const touristService: TouristService = Container.get(TouristService);
+    const addressResponse = await touristService.addDeliveryAddressService(email, address);
+    res.status(addressResponse.status).json(addressResponse);
+  }
+
+  public async removeAddress(req: Request, res: Response): Promise<void> {
+    const { email } = req.params;
+    const { address } = req.body;
+    const touristService: TouristService = Container.get(TouristService);
+    const addressResponse = await touristService.removeDeliveryAddressService(email, address);
+    res.status(addressResponse.status).json(addressResponse);
+  }
+
+  public async getAddresses(req: Request, res: Response): Promise<void> {
+    const { email } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const addresses = await touristService.viewDeliveryAddressesService(email);
+    res.status(addresses.status).json(addresses);
+  }
 }

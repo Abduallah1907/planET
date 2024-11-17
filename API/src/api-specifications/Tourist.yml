@@ -1039,82 +1039,79 @@ paths:
                     type: boolean
                     example: true
                   data:
-                    type: object
-                    properties:
-                      wishlist:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            _id:
-                              type: string
-                              description: The unique identifier for the product
-                              example: "6727d4a9c143ff8b82b5786a"
-                            seller_id:
-                              type: string
-                              description: The unique identifier for the seller
-                              example: "6727d4a9c143ff8b82b57868"
-                            comments:
-                              type: array
-                              items:
-                                type: string
-                                description: List of comment IDs related to the product
-                                example:
-                                  - "6727d4d1c143ff8b82b57b80"
-                                  - "6727d4dfc143ff8b82b57fee"
-                            name:
-                              type: string
-                              description: Name of the product
-                              example: "Unbranded Cotton Chair"
-                            description:
-                              type: string
-                              description: A detailed description of the product
-                              example: "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality"
-                            picture:
-                              type: string
-                              description: URL to the product image
-                              example: "https://loremflickr.com/2916/1546?lock=6488587091388677"
-                            price:
-                              type: integer
-                              description: Price of the product
-                              example: 2628
-                            quantity:
-                              type: integer
-                              description: Available quantity of the product
-                              example: 639
-                            sales:
-                              type: integer
-                              description: Total sales of the product
-                              example: 10357
-                            average_rating:
-                              type: number
-                              format: float
-                              description: Average rating of the product
-                              example: 3.6
-                            archieve_flag:
-                              type: boolean
-                              description: Flag indicating if the product is archived
-                              example: false
-                            tourist_id:
-                              type: array
-                              items:
-                                type: string
-                              description: List of tourist IDs associated with the product (if any)
-                              example: []
-                            createdAt:
-                              type: string
-                              format: date-time
-                              description: Product creation timestamp
-                              example: "2024-11-03T19:53:13.610Z"
-                            updatedAt:
-                              type: string
-                              format: date-time
-                              description: Product last updated timestamp
-                              example: "2024-11-03T19:54:47.849Z"
-                            __v:
-                              type: integer
-                              description: Internal version field (for Mongoose)
-                              example: 5
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          description: The unique identifier for the product
+                          example: "6727d4a9c143ff8b82b5786a"
+                        seller_id:
+                          type: string
+                          description: The unique identifier for the seller
+                          example: "6727d4a9c143ff8b82b57868"
+                        comments:
+                          type: array
+                          items:
+                            type: string
+                            description: List of comment IDs related to the product
+                            example:
+                              - "6727d4d1c143ff8b82b57b80"
+                              - "6727d4dfc143ff8b82b57fee"
+                        name:
+                          type: string
+                          description: Name of the product
+                          example: "Unbranded Cotton Chair"
+                        description:
+                          type: string
+                          description: A detailed description of the product
+                          example: "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality"
+                        picture:
+                          type: string
+                          description: URL to the product image
+                          example: "https://loremflickr.com/2916/1546?lock=6488587091388677"
+                        price:
+                          type: integer
+                          description: Price of the product
+                          example: 2628
+                        quantity:
+                          type: integer
+                          description: Available quantity of the product
+                          example: 639
+                        sales:
+                          type: integer
+                          description: Total sales of the product
+                          example: 10357
+                        average_rating:
+                          type: number
+                          format: float
+                          description: Average rating of the product
+                          example: 3.6
+                        archieve_flag:
+                          type: boolean
+                          description: Flag indicating if the product is archived
+                          example: false
+                        tourist_id:
+                          type: array
+                          items:
+                            type: string
+                          description: List of tourist IDs associated with the product (if any)
+                          example: []
+                        createdAt:
+                          type: string
+                          format: date-time
+                          description: Product creation timestamp
+                          example: "2024-11-03T19:53:13.610Z"
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          description: Product last updated timestamp
+                          example: "2024-11-03T19:54:47.849Z"
+                        __v:
+                          type: integer
+                          description: Internal version field (for Mongoose)
+                          example: 5
                   message:
                     type: string
                     example: "Returning product inside wishlist"

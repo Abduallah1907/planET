@@ -1621,6 +1621,45 @@ export default class TouristService {
 
     const wishlist = touristInfo.wishlist;
 
-    return new response(true, { wishlist }, "Returning product inside wishlist", 200);
+    return new response(true, wishlist, "Returning product inside wishlist", 200);
+  }
+
+  public async addDeliveryAddressService(email: string, address: string): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel.findOne({ user_id: userInfo._id });
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+
+    // i dont check for duplicates, mostly because amazon doesn't either :)
+    // deleting would just delete the oldest one if it a duplicate
+    touristInfo.addresses.push(address);
+    await touristInfo.save();
+
+    return new response(true, {}, "Added address!", 200);
+  }
+
+  public async removeDeliveryAddressService(email: string, address: string): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel.findOne({ user_id: userInfo._id });
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+
+    // should be conflict error ):
+    const index = touristInfo.addresses.indexOf(address);
+    if (index === -1) throw new BadRequestError("Address was not found in saved addresses, or has already been removed");
+    touristInfo.addresses.splice(index, 1);
+    await touristInfo.save();
+
+    return new response(true, {}, "Removed address!", 200);
+  }
+
+  public async viewDeliveryAddressesService(email: string): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel.findOne({ user_id: userInfo._id });
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+
+    const addresses = touristInfo.addresses;
+    return new response(true, addresses, "Returning addresses", 200);
   }
 }

@@ -58,4 +58,8 @@ export default (app: Router) => {
   route.put("/addProductToWishlist/:email/:product_id", touristController.addProductToWishlist);
   route.delete("/removeProductFromWishlist/:email/:product_id", touristController.removeProductFromWishlist);
   route.get("/viewWishlist/:email", touristController.viewWishlist);
+
+  route.put("/addAddress/:email", touristController.addAddress);
+  route.delete("/removeAddress/:email", touristController.removeAddress);
+  route.get("/getAddresses/:email", touristController.getAddresses);
 };
