@@ -1605,13 +1605,22 @@ export default class TouristService {
     if (!productInfo) throw new NotFoundError("Product not found");
 
     // should be conflict error ):
-    console.log(touristInfo.wishlist);
     const index = touristInfo.wishlist.indexOf(productInfo._id as ObjectId);
     if (index === -1) throw new BadRequestError("Product was not found in wishlist");
     touristInfo.wishlist.splice(index, 1);
-    console.log(touristInfo.wishlist);
     await touristInfo.save();
 
     return new response(true, {}, "Removed product!", 200);
+  }
+
+  public async viewWishlistService(email: string): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel.findOne({ user_id: userInfo._id }).populate("wishlist");
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+
+    const wishlist = touristInfo.wishlist;
+
+    return new response(true, { wishlist }, "Returning product inside wishlist", 200);
   }
 }

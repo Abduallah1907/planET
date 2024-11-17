@@ -256,4 +256,11 @@ export class TouristController {
     const wishlist = await touristService.removeProductFromWishlistService(email, productObjectID);
     res.status(wishlist.status).json(wishlist);
   }
+
+  public async viewWishlist(req: Request, res: Response): Promise<void> {
+    const { email } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const wishlist = await touristService.viewWishlistService(email);
+    res.status(wishlist.status).json(wishlist);
+  }
 }
