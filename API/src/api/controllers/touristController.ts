@@ -242,7 +242,8 @@ export class TouristController {
   }
 
   public async addProductToWishlist(req: Request, res: Response): Promise<void> {
-    const { email, product_id } = req.params;
+    const { email } = req.params;
+    const { product_id } = req.body;
     const productObjectID = new Types.ObjectId(product_id);
     const touristService: TouristService = Container.get(TouristService);
     const wishlist = await touristService.addProductToWishlistService(email, productObjectID);
@@ -250,7 +251,8 @@ export class TouristController {
   }
 
   public async removeProductFromWishlist(req: Request, res: Response): Promise<void> {
-    const { email, product_id } = req.params;
+    const { email } = req.params;
+    const { product_id } = req.body;
     const productObjectID = new Types.ObjectId(product_id);
     const touristService: TouristService = Container.get(TouristService);
     const wishlist = await touristService.removeProductFromWishlistService(email, productObjectID);

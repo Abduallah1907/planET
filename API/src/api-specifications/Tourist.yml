@@ -962,7 +962,7 @@ paths:
           description: Bad request
         500:
           description: Internal server error
-  /api/tourist/addProductToWishlist/{email}/{product_id}:
+  /api/tourist/addProductToWishlist/{email}:
     put:
       tags:
         - Tourist
@@ -975,12 +975,16 @@ paths:
           description: Email of the tourist
           schema:
             type: string
-        - in: path
-          name: product_id
-          required: true
-          description: ID of product we want to add to wishlist
-          schema:
-            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: string
+                  example: "6727d4abc143ff8b82b57877"
       responses:
         200:
           description: Successfully added product to wishlist
@@ -988,8 +992,8 @@ paths:
           description: The product is already added to the wishlist
         404:
           description: Could not find tourist/product using the email/product id
-  /api/tourist/removeProductFromWishlist/{email}/{product_id}:
-    put:
+  /api/tourist/removeProductFromWishlist/{email}:
+    delete:
       tags:
         - Tourist
         - Wishlist
@@ -1001,12 +1005,16 @@ paths:
           description: Email of the tourist
           schema:
             type: string
-        - in: path
-          name: product_id
-          required: true
-          description: ID of product we want to remove from the wishlist
-          schema:
-            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: string
+                  example: "6727d4abc143ff8b82b57877"
       responses:
         200:
           description: Successfully removed product to wishlist
@@ -1180,7 +1188,7 @@ paths:
           description: The address does not exist or was already deleted
         404:
           description: Could not find tourist using the email
-  /api/tourist/getAddress/{email}:
+  /api/tourist/getAddresses/{email}:
     get:
       tags:
         - Tourist
