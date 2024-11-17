@@ -968,7 +968,6 @@ paths:
         - Tourist
         - Wishlist
       summary: Adds a product to the wishlist of a user. (law enta bet2ra el 7eta deeh,fakerny ashoof eh el hay7sal law el product et3amelaha archive)
-      description: It also creates the wishlist if it is the first time wishlisting something, but this is entirely for backend
       parameters:
         - in: path
           name: email
@@ -985,5 +984,7 @@ paths:
       responses:
         200:
           description: Successfully added product to wishlist
+        400:
+          description: The product is already added to the wishlist
         404:
           description: Could not find tourist/product using the email/product id
