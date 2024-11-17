@@ -664,6 +664,8 @@ paths:
                     type: integer
                     description: The HTTP status code
                     example: 200
+        "400":
+          description: "Either the discount number was greater than 100, the duration inserted is zero/negative, or either of those are empty"
 components:
   schemas:
     Complaint:
