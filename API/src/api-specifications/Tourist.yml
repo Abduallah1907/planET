@@ -987,4 +987,24 @@ paths:
         400:
           description: Bad request
         500:
-          description: Internal server error         
+          description: Internal server error  
+  /api/tourist/getBookmarkedActivities/{email}:
+    get:
+      tags:
+        - Tourist
+      summary: Get bookmarked activities
+      description: Get bookmarked activities for a tourist
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        200:
+          description: Bookmarked activities retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error               

@@ -37,6 +37,10 @@ import { IOrderCartDTO } from "@/interfaces/IOrder";
 import PaymentType from "@/types/enums/paymentType";
 import OrderStatus from "@/types/enums/orderStatus";
 import UserStatus from "@/types/enums/userStatus";
+import Ticket from "@/models/Ticket";
+import { IBookmarkActivity } from "@/interfaces/IBookmark_notify";
+import category from "@/api/routes/category";
+import advertiser from "@/api/routes/advertiser";
 
 // comment and ratings
 // complaint
@@ -1917,5 +1921,63 @@ export default class TouristService {
       throw new InternalServerError("Internal server error");
 
     return new response(true, bookmark, "Activity bookmarked", 201);
+  }
+  public async getBookmarkedActivitiesService(email: string) {
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+      status: UserStatus.APPROVED,
+    });
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const bookmarks = await this.bookmark_notifyModel.find({
+      tourist_id: tourist._id,
+    });
+    if (bookmarks instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (bookmarks == null) throw new NotFoundError("Bookmarks not found");
+
+    const bookmarks_info = [];
+
+    for (let i = 0; i < bookmarks.length; i++) {
+      const activity = await this.activityModel.findById(
+        bookmarks[i].activity_id
+      );
+      if (activity instanceof Error)
+        throw new InternalServerError("Internal server error");
+      if (activity == null) throw new NotFoundError("Activity not found");
+
+      bookmarks_info.push({
+        name: activity.name,
+        image: activity.image,
+        date: activity.date,
+        time: activity.time,
+        price: activity.price,
+        price_range: activity.price_range,
+        special_discount: activity.special_discount,
+        active_flag: activity.active_flag,
+        inappropriate_flag: activity.inappropriate_flag,
+        booking_flag: activity.booking_flag,
+        average_rating: activity.average_rating,
+        advertiser_id: activity.advertiser_id,
+        category: activity.category,
+        comments: activity.comments,
+        location: activity.location,
+        tags: activity.tags,
+      });
+    }
+    return new response(
+      true,
+      bookmarks_info,
+      "Bookmarked activities found",
+      200
+    );
   }
 }

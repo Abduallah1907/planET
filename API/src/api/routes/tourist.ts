@@ -145,4 +145,9 @@ export default (app: Router) => {
   route.get("/getPastOrders/:email", touristController.getPastOrders);
 
   route.post("/bookmarkActivity", touristController.bookmarkActivity);
+
+  route.get(
+    "/getBookmarkedActivities/:email",
+    touristController.getBookmarkedActivities
+  );
 };

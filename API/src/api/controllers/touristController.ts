@@ -330,4 +330,11 @@ export class TouristController {
     );
     res.status(bookmarkedActivity.status).json(bookmarkedActivity);
   }
+  public async getBookmarkedActivities(req: any, res: any) {
+    const { email } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const bookmarkedActivities =
+      await touristService.getBookmarkedActivitiesService(email);
+    res.status(bookmarkedActivities.status).json(bookmarkedActivities);
+  }
 }
