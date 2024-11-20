@@ -143,4 +143,6 @@ export default (app: Router) => {
   route.post("/createOrder", touristController.createOrder);
 
   route.get("/getPastOrders/:email", touristController.getPastOrders);
+
+  route.post("/bookmarkActivity", touristController.bookmarkActivity);
 };

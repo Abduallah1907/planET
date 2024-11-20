@@ -36,6 +36,7 @@ import itinerary from "@/api/routes/itinerary";
 import { IOrderCartDTO } from "@/interfaces/IOrder";
 import PaymentType from "@/types/enums/paymentType";
 import OrderStatus from "@/types/enums/orderStatus";
+import UserStatus from "@/types/enums/userStatus";
 
 // comment and ratings
 // complaint
@@ -57,7 +58,9 @@ export default class TouristService {
     @Inject("tour_guideModel") private tour_guideModel: Models.Tour_guideModel,
     @Inject("productModel") private productModel: Models.ProductModel,
     @Inject("ticketModel") private ticketModel: Models.TicketModel,
-    @Inject("cartModel") private cartModel: Models.CartModel
+    @Inject("cartModel") private cartModel: Models.CartModel,
+    @Inject("bookmark_notifyModel")
+    private bookmark_notifyModel: Models.Bookmark_notifyModel
   ) {}
 
   public async getTouristService(email: string) {
@@ -1871,5 +1874,48 @@ export default class TouristService {
     }
 
     return new response(true, orders, "Past orders found", 200);
+  }
+  public async bookmarkActivityService(email: string, activity_id: string) {
+    if (!Types.ObjectId.isValid(activity_id)) {
+      throw new BadRequestError("Invalid activity id");
+    }
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+      status: UserStatus.APPROVED,
+    });
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (user == null) throw new NotFoundError("User not found");
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const activity = await this.activityModel.findById(activity_id);
+
+    if (activity instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (activity == null) throw new NotFoundError("Activity not found");
+
+    if (activity.active_flag == false)
+      throw new BadRequestError("Activity is not active cannot be bookmarked");
+
+    if (activity.inappropriate_flag == true)
+      throw new BadRequestError(
+        "Activity is inappropriate cannot be bookmarked"
+      );
+    //These checks can be removed because i only want to bookmark the activity to view it later
+    const bookmark = new this.bookmark_notifyModel({
+      activity_id: activity_id,
+      tourist_id: tourist._id,
+    });
+    await bookmark.save();
+    if (bookmark instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    return new response(true, bookmark, "Activity bookmarked", 201);
   }
 }
