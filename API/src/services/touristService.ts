@@ -1803,6 +1803,11 @@ export default class TouristService {
         quantity: product.quantity - quantity,
         $addToSet: { tourist_id: tourist_id },
       });
+      //check if product is out of stock
+      if (product.quantity == 0) {
+       //create a notification for the Seller/admin Both
+       
+      }
 
       //Already handled in frontend but why not
     }
