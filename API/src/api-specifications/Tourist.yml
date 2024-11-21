@@ -961,7 +961,28 @@ paths:
         400:
           description: Bad request
         500:
-          description: Internal server error       
+          description: Internal server error   
+  /api/tourist/getCurrentOrders/{email}:
+    get:
+      tags:
+        - Tourist
+      summary: Get current orders
+      description: Get current orders for a tourist
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        200:
+          description: Current orders retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error     
+                 
   /api/tourist/bookmarkActivity:
     post:
       tags:

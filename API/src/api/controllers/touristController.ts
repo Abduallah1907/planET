@@ -320,6 +320,12 @@ export class TouristController {
     const pastOrders = await touristService.getPastOrdersService(email);
     res.status(pastOrders.status).json(pastOrders);
   }
+  public async getCurrentOrders(req: any, res: any) {
+    const { email } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const currentOrders = await touristService.getCurrentOrdersService(email);
+    res.status(currentOrders.status).json(currentOrders);
+  }
 
   public async bookmarkActivity(req: any, res: any) {
     const { email, activity_id } = req.body;

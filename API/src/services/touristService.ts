@@ -1866,8 +1866,11 @@ export default class TouristService {
     if (tourist == null) throw new NotFoundError("Tourist not found");
 
     const orders = await this.orderModel
-      .find({ tourist_id: tourist._id })
-      .populate("products.items.product_id"); //In sprint 3 add status to be delivered products only
+      .find({
+        tourist_id: tourist._id,
+        status: { $in: [OrderStatus.Delivered, OrderStatus.Cancelled] },
+      })
+      .populate("products.items.product_id");
 
     if (orders instanceof Error) {
       throw new InternalServerError("Internal server error");
@@ -1878,6 +1881,47 @@ export default class TouristService {
     }
 
     return new response(true, orders, "Past orders found", 200);
+  }
+  public async getCurrentOrdersService(email: string) {
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+    });
+
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const orders = await this.orderModel
+      .find({
+        tourist_id: tourist._id,
+        status: {
+          $in: [
+            OrderStatus.Pending,
+            OrderStatus.Processing,
+            OrderStatus.Shipped,
+          ],
+        },
+      })
+      .populate("products.items.product_id");
+
+    if (orders instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+
+    if (orders == null) {
+      throw new NotFoundError("Order not found");
+    }
+
+    return new response(true, orders, "Current orders found", 200);
   }
   public async bookmarkActivityService(email: string, activity_id: string) {
     if (!Types.ObjectId.isValid(activity_id)) {
