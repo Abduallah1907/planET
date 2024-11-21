@@ -169,6 +169,12 @@ export default class ActivityService {
         "Cannot enter both price and price range,choose one of them"
       );
     }
+
+    //check if the booking_flag is false and want to change it from body if I want to change it to true
+    let sendmessage = false;
+    const activity = await this.activityModel.findById(new Types.ObjectId(id));
+    if (activity?.booking_flag == false) {
+    }
     const updatedActivity = await this.activityModel.findByIdAndUpdate(
       new Types.ObjectId(id),
       activityData,
