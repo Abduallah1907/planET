@@ -63,4 +63,5 @@ export interface UpdateIActivityDTO {
   special_discount?: number;
   tags?: ObjectId[];
   active_flag?: boolean;
+  booking_flag?: boolean;
 }

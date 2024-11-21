@@ -6,12 +6,17 @@ import {
   NotFoundError,
 } from "@/types/Errors";
 import response from "@/types/responses/response";
-import { Inject, Service } from "typedi";
+import Container, { Inject, Service } from "typedi";
 import mongoose, { Types } from "mongoose";
 import { IFilterComponents } from "@/interfaces/IFilterComponents";
 import { ObjectId } from "mongodb";
 import UserRoles from "@/types/enums/userRoles";
 import User from "@/models/user";
+import Notification from "@/models/Notification";
+import Bookmark_Notify from "@/models/Bookmark_notify";
+import UserType from "@/types/enums/userTypesNotified";
+import notificationService from "./notificationService";
+import NotificationService from "./notificationService";
 @Service()
 export default class ActivityService {
   constructor(
@@ -20,7 +25,13 @@ export default class ActivityService {
     @Inject("advertiserModel") private advertiserModel: Models.AdvertiserModel,
     @Inject("tagModel") private tagModel: Models.TagModel,
     @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel,
-    @Inject("ticketModel") private ticketModel: Models.TicketModel
+    @Inject("ticketModel") private ticketModel: Models.TicketModel,
+    @Inject("notificationModel")
+    private notificationModel: Models.NotificationModel,
+    @Inject("bookmark_notifyModel")
+    private bookmark_notifyModel: Models.Bookmark_notifyModel,
+    @Inject("touristModel") private touristModel: Models.TouristModel,
+    @Inject("userModel") private userModel: Models.UserModel
   ) {}
 
   public async getAllActivitiesService(role: string) {
@@ -171,9 +182,13 @@ export default class ActivityService {
     }
 
     //check if the booking_flag is false and want to change it from body if I want to change it to true
-    let sendmessage = false;
+    let sendmessage = false; //if the booking_flag is false and want to change it to true
     const activity = await this.activityModel.findById(new Types.ObjectId(id));
-    if (activity?.booking_flag == false) {
+    if (activity == null) {
+      throw new NotFoundError("Activity not found");
+    }
+    if (activity instanceof Error) {
+      throw new InternalServerError("Internal server error");
     }
     const updatedActivity = await this.activityModel.findByIdAndUpdate(
       new Types.ObjectId(id),
@@ -186,7 +201,69 @@ export default class ActivityService {
     if (updatedActivity == null) {
       throw new NotFoundError("No Activity with this ID");
     }
+    //check if the booking_flag is false and want to change it from body if I want to change it to true
+    if (
+      activity.booking_flag == false &&
+      updatedActivity.booking_flag == true
+    ) {
+      //Add Notification and send Email
+      //get all bookmarks for this activity
+      const bookmarks = await this.bookmark_notifyModel.find({
+        activity_id: new Types.ObjectId(id),
+      });
+      if (bookmarks instanceof Error) {
+        throw new InternalServerError("Internal server error");
+      }
+      const notificationService = Container.get(NotificationService);
 
+      //create notifications for each user
+      for (const bookmark of bookmarks) {
+        console.log("bookmark", bookmark);
+        let message = `The activity ${updatedActivity.name} is now available for booking`;
+        console.log("message", message);
+        let notification = await notificationService.createNotificationService(
+          bookmark.tourist_id,
+          message,
+          UserType.Tourist
+        );
+        if (notification instanceof Error) {
+          throw new InternalServerError("Internal server error");
+        }
+        if (notification == null) {
+          throw new NotFoundError("Notification not created");
+        }
+        //things before sending email
+        let tourist = await this.touristModel.findById(bookmark.tourist_id);
+        if (tourist instanceof Error) {
+          throw new InternalServerError("Tourist Internal server error");
+        }
+        if (tourist == null) {
+          throw new NotFoundError("Tourist not found");
+        }
+        let user = await this.userModel.findById(
+          new Types.ObjectId((tourist as any).user_id)
+        );
+        if (user instanceof Error) {
+          throw new InternalServerError("User Internal server error");
+        }
+        if (user == null) {
+          throw new NotFoundError("User not found");
+        }
+        //send email
+        const Title = "Activity is now available for booking";
+        const mail = await notificationService.sendEmailNotificationService(
+          Title,
+          user.email,
+          message
+        );
+        if (mail instanceof Error) {
+          throw new InternalServerError("Internal server error");
+        }
+        if (mail == null) {
+          throw new NotFoundError("Email not sent");
+        }
+      }
+    }
     return new response(
       true,
       updatedActivity,
