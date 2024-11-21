@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import "./ProfileFormTourist.css";
+import "./TouristProfile.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form, Modal } from "react-bootstrap";
 import nationalityOptionsData from "../../utils/nationalityOptions.json"; // Adjust the path as necessary
@@ -35,7 +35,7 @@ interface FormData {
   dob: string;
 }
 
-const ProfileForm: React.FC = () => {
+const TouristProfile: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -164,7 +164,7 @@ const ProfileForm: React.FC = () => {
       retypePassword: "",
       username: Tourist.username,
       nationality: Tourist.stakeholder_id?.nation || "", // Optional chaining
-      dob: Tourist.stakeholder_id?.date_of_birth || "", // Optional chaining
+      dob: format(new Date(Tourist.stakeholder_id?.date_of_birth), "dd/MM/yyyy") || "", // Optional chaining
     });
   }, [Tourist]); // Dependency array to rerun this effect when Tourist data changes
 
@@ -510,4 +510,4 @@ const ProfileForm: React.FC = () => {
   );
 };
 
-export default ProfileForm;
+export default TouristProfile;

@@ -1,13 +1,15 @@
 import AmadeusService from "../../services/AmadeusService";
 import { useAppContext } from "../../AppContext";
 import FlightsSearchBar from "../../components/SearchBars/FlightsSearchBar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Col, Container, Row, ProgressBar } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import FlightCard from "../../components/Cards/FlightCard";
 import FilterBy from "../../components/FilterBy/FilterBy";
 import { useAppDispatch } from "../../store/hooks";
 import { selectFlightOffer, setFlightSearchQuery } from "../../store/flightSlice";
+import PlaneSVG from "../../assets/PlaneNoBackground.svg";
+import "./viewingPages.css";
 
 export default function FlightsPage() {
     const navigate = useNavigate();
@@ -28,12 +30,55 @@ export default function FlightsPage() {
     const [loading, setLoading] = useState(false); // Add loading state
     const [progress, setProgress] = useState(0);
 
+    const planeRef = useRef<HTMLImageElement>(null);
+
+    useEffect(() => {
+        const handleAnimationEnd = () => {
+            if (planeRef.current) {
+                planeRef.current.style.display = "none";
+            }
+        };
+        
+        if (planeRef.current) {
+            planeRef.current.addEventListener("animationend", handleAnimationEnd);
+        }
+
+        return () => {
+            if (planeRef.current) {
+                planeRef.current.removeEventListener("animationend", handleAnimationEnd);
+            }
+        };
+    }, []);
+
     const handleFilterChange = (filterData: { [key: string]: any }) => {
         setFilter({
             Price: filterData.price || `${filtercomponent.Price.min}-${filtercomponent.Price.max}`,
             ...filterData
         });
     };
+
+    useEffect(() => {
+        let interval: NodeJS.Timeout | null = null;
+    
+        if (loading && progress < 100 && progress >= 10) {
+            interval = setInterval(() => {
+                setProgress(prevProgress => {
+                    if (prevProgress < 100) {
+                        return prevProgress + 5;
+                    } else {
+                        clearInterval(interval!);
+                        return prevProgress;
+                    }
+                });
+            }, 1000);
+        }
+    
+        return () => {
+            if (interval) {
+                clearInterval(interval);
+            }
+        };
+    }, [loading]);
 
     const handleSearchSubmit = async (data: any, searchQuery: any) => {
         setLoading(true); // Set loading to true
@@ -95,6 +140,7 @@ export default function FlightsPage() {
     return (
         <>
             <div className="bg-main p-4">
+            <img src={PlaneSVG} alt="Plane" className="plane-svg" width={"50"} ref={planeRef} />
                 <Container>
                     <FlightsSearchBar onSubmit={handleSearchSubmit} />
                 </Container>

@@ -8,6 +8,7 @@
 
 body {
   font-family: 'League Spartan', sans-serif;
+  overflow-x: hidden;
 }
 
 @font-face {
@@ -180,16 +181,6 @@ body {
   /* Change border color when opened */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   /* Change box shadow when opened */
-}
-
-/* Specific styles for the currency dropdown when it is opened */
-.currency-dropdown .dropdown-menu.show {
-  background-color: var(--secondary-color);
-  /* Example background color for currency dropdown when opened */
-  border-color: var(--main-color);
-  /* Example border color for currency dropdown when opened */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  /* Example box shadow for currency dropdown when opened */
 }
 
 .dropdown-item {

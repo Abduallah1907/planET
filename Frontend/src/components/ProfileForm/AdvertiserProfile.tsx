@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import "./Advertiser.css";
+import "./ProfileForm.css";
 import Logo from "../../assets/person-circle.svg";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { AdvertiserService } from "../../services/AdvertiserService";
@@ -28,7 +28,7 @@ interface FormData {
   linktoweb: string;
 }
 
-const Advertiser: React.FC = () => {
+const AdvertiserProfile: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -47,7 +47,7 @@ const Advertiser: React.FC = () => {
   const Advertiser = useAppSelector((state) => state.user);
   const getAdvertiserData = async () => {
     if (
-      Advertiser.stakeholder_id.logo &&
+      Advertiser.stakeholder_id?.logo &&
       isValidObjectId(Advertiser.stakeholder_id.logo)
     ) {
       const file = await FileService.downloadFile(
@@ -113,6 +113,7 @@ const Advertiser: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFormData({ ...formData, logo: e.target.files[0] });
+      setFileUrl(URL.createObjectURL(e.target.files[0]));
     }
   };
 
@@ -276,7 +277,7 @@ const Advertiser: React.FC = () => {
             </Col>
             <Col>
               <CustomFormGroup
-                label="Last Name:"
+                label="Last Name"
                 type="text"
                 placeholder="Enter your Last Name"
                 id="lastName"
@@ -291,7 +292,7 @@ const Advertiser: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="Email:"
+                label="Email"
                 type="email"
                 placeholder="Enter your email"
                 id="email"
@@ -304,7 +305,7 @@ const Advertiser: React.FC = () => {
             </Col>
             <Col>
               <CustomFormGroup
-                label="Username:"
+                label="Username"
                 type="text"
                 placeholder="Enter your username"
                 id="username"
@@ -320,7 +321,7 @@ const Advertiser: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="change Password:"
+                label="Change Password"
                 type="password"
                 placeholder="Enter your password"
                 id="changePassword"
@@ -333,7 +334,7 @@ const Advertiser: React.FC = () => {
             </Col>
             <Col>
               <CustomFormGroup
-                label="Retype Password:"
+                label="Retype Password"
                 type="password"
                 placeholder="Retype your password"
                 id="retypePassword"
@@ -349,7 +350,7 @@ const Advertiser: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="About:"
+                label="About"
                 type="text"
                 placeholder="about"
                 id="about"
@@ -362,7 +363,7 @@ const Advertiser: React.FC = () => {
             </Col>
             <Col>
               <CustomFormGroup
-                label="Mobile Number:"
+                label="Mobile Number"
                 type="tel"
                 placeholder="Enter your mobile number"
                 id="mobile"
@@ -379,7 +380,7 @@ const Advertiser: React.FC = () => {
           <Row>
             <Col>
               <CustomFormGroup
-                label="hotline:"
+                label="Hotline"
                 type="text"
                 placeholder="Enter your hotline"
                 id="hotline"
@@ -392,7 +393,7 @@ const Advertiser: React.FC = () => {
             </Col>
             <Col>
               <CustomFormGroup
-                label="company profile "
+                label="Company profile"
                 type="text"
                 placeholder="Enter your companyProfile"
                 id="companyProfile"
@@ -423,10 +424,8 @@ const Advertiser: React.FC = () => {
           {/* New row for logo upload */}
           <Row>
             <Col>
-              <Form.Group controlId="formFile" className="mb-3">
-                <Form.Label>
-                  <h3>Upload Seller Logo</h3> {/* Added 'Seller Logo' label */}
-                </Form.Label>
+              <Form.Group controlId="formFile" className="mb-3 form-group">
+                <Form.Label>Upload Advertiser Logo{/* Added 'Advertiser Logo' label */}</Form.Label>
                 <Form.Control
                   type="file"
                   name="logo"
@@ -454,4 +453,4 @@ const Advertiser: React.FC = () => {
   );
 };
 
-export default Advertiser;
+export default AdvertiserProfile;

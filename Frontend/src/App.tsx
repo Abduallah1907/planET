@@ -16,13 +16,12 @@ import AdminDashboard from "./views/AdminDashboard/AdminDashboard";
 import MainPage from "./views/Main Page/MainPage";
 import { AppProvider } from "./AppContext";
 import SellerDashboard from "./views/SellerDashboard/SellerDashboard";
-import ActivityDetails from "./views/ProductDetails/ActivityDetails";
+import ActivityDetails from "./views/DetailsPages/ActivityDetails";
 import Login from "./views/auth/Login/Login";
-import ProfileForm from "./components/ProfileForm/ProfileFormTourist";
+import TouristProfile from "./components/ProfileForm/TouristProfile";
 import SellerProfile from "./components/ProfileForm/SellerProfile";
-import SettingSide from "./components/ProfileForm/settingSide";
-import Advertiser from "./components/ProfileForm/Advertiser";
-import ProfileFormTourGuide from "./components/ProfileForm/ProfileFormTourGuide";
+import AdvertiserProfile from "./components/ProfileForm/AdvertiserProfile";
+import TourGuideProfile from "./components/ProfileForm/TourGuideProfile";
 import SellerFirstProfile from "./components/ProfileForm/SellerFirstProfile";
 import TourGuideFirst from "./components/ProfileForm/TourGuideFirst";
 import AdvertiserFirst from "./components/ProfileForm/AdvertiserFirst";
@@ -34,7 +33,7 @@ import AddItinerary from "./views/CreatePages/AddItinerary";
 import Itinerary from "./views/ViewingPages/Itinerary";
 import HistoricalPlaces from "./views/ViewingPages/HistoricalPlaces";
 import Products from "./views/ViewingPages/Products";
-import HistoricalDetails from "./views/HistoricalDetails/HistoricalDetails";
+import HistoricalDetails from "./views/DetailsPages/HistoricalDetails";
 import StakeholderReg from "./views/auth/StakeholderReg/StakeholderReg";
 import EditHistoricalLocation from "./views/EditPages/EditHistoricalLocation";
 import EditProduct from "./views/EditPages/EditProduct";
@@ -51,7 +50,7 @@ import Sidebar from "./components/SideBar/Sidebar";
 import CategoryTable from "./views/Tables/CategoryTable";
 import TagsTable from "./views/Tables/TagTable";
 import HistoricalTagsTable from "./views/Tables/HistoricalTagTable";
-import ItineraryDetails from "./views/ProductDetails/ItineraryDetails";
+import ItineraryDetails from "./views/DetailsPages/ItineraryDetails";
 import ChangePasswordForm from "./views/auth/ChangePasswordForm";
 import ForgetPassword from "./views/auth/ForgetPassword";
 import CheckOTP from "./views/auth/CheckOTP";
@@ -111,6 +110,7 @@ const App: React.FC = () => {
             navItems={navItems} // Pass the settings nav items
           />
         </div>
+        
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/Login" element={<Login />} />
@@ -127,25 +127,14 @@ const App: React.FC = () => {
           <Route path="/governer" element={<CreateGoverner />} />
           <Route path="/test" element={<BookingLayout />} />
 
-          <Route path="/Activity" element={<Activities />} />
-
-          <Route path="/Activity/:id" element={<ActivityDetails />} />
-          <Route
-            path="/bookActivity/:id"
-            element={<BookingActivity email={email} />}
-          />
+          <Route path="/bookActivity/:id" element={<BookingActivity email={email} />} />
           <Route path="/bookItinerary/:id" element={<BookingItinerary />} />
           <Route path="/MyBookings/upcoming" element={<MyBookings />} />
           <Route path="/MyBookings/past" element={<MyBookings />} />
-          <Route
-            path="/MyItineraryBookings/upcoming"
-            element={<MyItineraryBookings />}
-          />
-          <Route
-            path="/MyItineraryBookings/past"
-            element={<MyItineraryBookings />}
-          />
+          <Route path="/MyItineraryBookings/upcoming" element={<MyItineraryBookings />} />
+          <Route path="/MyItineraryBookings/past" element={<MyItineraryBookings />} />
 
+          <Route path="/Activity" element={<Activities />} />
           <Route path="/Itinerary" element={<Itinerary />} />
           <Route path="/Historical" element={<HistoricalPlaces />} />
           <Route path="/Products" element={<Products />} />
@@ -156,18 +145,19 @@ const App: React.FC = () => {
           <Route path="/TourGuidedashboard" element={<TourGuideDashboard />} />
           <Route path="/AdminDashboard" element={<AdminDashboard />} />
           <Route path="/SellerDashboard" element={<SellerDashboard />} />
-          <Route path="/SettingSide" element={<SettingSide />} />
-          <Route path="/TourGuide/Profile" element={<ProfileFormTourGuide />} />
-          <Route path="/Advertiser/profile" element={<Advertiser />} />
+          <Route path="/TourGuide/Profile" element={<TourGuideProfile />} />
+          <Route path="/Advertiser/profile" element={<AdvertiserProfile />} />
+          <Route path="/Tourist/Profile" element={<TouristProfile />} />
+          <Route path="/Seller/Profile" element={<SellerProfile />} />
 
           <Route path="/AddNewProduct" element={<AddNewProduct />} />
           <Route path="/AddActivity" element={<AdvertiserCreate />} />
           <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
           <Route path="/AddItinerary" element={<AddItinerary />} />
 
-          <Route path="/ActivityDetails/:id" element={<ActivityDetails />} />
-          <Route path="/ItineraryDetails/:id" element={<ItineraryDetails />} />
-          <Route path="/HistoricalDetails/:id" element={<HistoricalDetails />} />
+          <Route path="/Activity/:id" element={<ActivityDetails />} />
+          <Route path="/Itinerary/:id" element={<ItineraryDetails />} />
+          <Route path="/Historical/:id" element={<HistoricalDetails />} />
 
           <Route path="/EditActivity/:activity_id" element={<EditActivity />} />
           <Route path="/EditHistoricalLocation/:historical_location_id" element={<EditHistoricalLocation />} />
@@ -180,9 +170,6 @@ const App: React.FC = () => {
           <Route path="/MyProducts" element={<MyProducts />} />
 
           <Route path="/JoinUs" element={<StakeholderReg />} />
-
-          <Route path="/Tourist/Profile" element={<ProfileForm />} />
-          <Route path="/Seller/Profile" element={<SellerProfile />} />
 
           <Route path="/Categories" element={<CategoryTable />} />
           <Route path="/Tags" element={<TagsTable />} />

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Container, Badge, Modal, Button } from 'react-bootstrap';
 import { FaBookmark, FaRegBookmark, FaShareAlt } from 'react-icons/fa';
 import Rating from '../../components/Rating/Rating';
 import './historicalcard.css'
 import { HistoricalService } from '../../services/HistoricalService';
 import { useAppSelector } from '../../store/hooks';
+import { useAppContext } from "../../AppContext";
 
 
 interface ILocalHistoricalLocationTourist {
@@ -30,6 +31,13 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
     useState<ILocalHistoricalLocationTourist | null>(null);
   const [showModal, setShowModal] = useState(false);
 
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
+
+  const convertedPrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(localHistoricalData?.price ?? 0, baseCurrency, currency);
+  }, [localHistoricalData, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
+
+
   const toggleBookmark = () => {
     setIsBookmarked(!isBookmarked);
   };
@@ -41,7 +49,7 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
   const handleCloseAdvertiserModal = () => {
     setShowAdvertiserModal(false);
   };
- 
+
   const user = useAppSelector((state) => state.user);
 
   const getHistoricalLocationById = async (id: string) => {
@@ -53,7 +61,7 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
     getHistoricalLocationById(id);
   }, [id]);
 
-  const shareLink = `${window.location.origin}/HistoricalDetails/${id}`;
+  const shareLink = `${window.location.origin}/Historical/${id}`;
 
 
   const copyToClipboard = () => {
@@ -85,7 +93,7 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
   };
 
 
-  
+
   return (
     <Container className="historical-card-container mt-5">
       <div className="historical-card">
@@ -152,23 +160,23 @@ const HistoricalCard: React.FC<{ id: string }> = ({ id }) => {
               {localHistoricalData?.opening_hours_to}
             </p>
             <p className="opening-days">
-              Opening Days: {localHistoricalData?.opening_days.join(", ")} 
+              Opening Days: {localHistoricalData?.opening_days.join(", ")}
             </p>
-            <p className="price"> Price: {localHistoricalData?.price}</p>
+            <p className="price">{convertedPrice}</p>
 
-            {user.role==="TOURIST"  && (
-            <div className="d-flex justify-content-center">
-           
-              <Button className="share-button-historical" onClick={handleShare}>
-                <FaShareAlt />
-              </Button>
-            </div>
+            {user.role === "TOURIST" && (
+              <div className="d-flex justify-content-center">
+
+                <Button className="share-button-historical" onClick={handleShare}>
+                  <FaShareAlt />
+                </Button>
+              </div>
             )}
           </div>
         </div>
       </div>
 
-  
+
 
       <Modal
         show={showAdvertiserModal}

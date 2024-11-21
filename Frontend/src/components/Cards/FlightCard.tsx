@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { PiBagSimpleFill } from 'react-icons/pi';
 import './Cards.css';
 import { Card, Row, Col, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import airlinesData from '../../airlines.json';
+import airlinesData from '../../utils/airlines.json';
 import { useAppContext } from '../../AppContext';
 import { BsFillSuitcase2Fill } from 'react-icons/bs';
 import { FaUtensils } from 'react-icons/fa';

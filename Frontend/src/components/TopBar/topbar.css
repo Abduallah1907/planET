@@ -1,30 +1,49 @@
-
-
 .top-bar {
     background-color: var(--main-color);
     height: 100px;
     display: flex;
-    align-items: center; 
-    position: fixed; /* Fix the top bar at the top */
-    width: 100%; /* Full width of the screen */
-    z-index: 12; /* Ensure the top bar is above the sidebar */
+    align-items: center;
+    position: fixed;
+    /* Fix the top bar at the top */
+    width: 100%;
+    /* Full width of the screen */
+    z-index: 12;
+    /* Ensure the top bar is above the sidebar */
 }
 
 .sidebar-toggle-icon {
     cursor: pointer;
-    margin-left: 20px; 
+    margin-left: 20px;
 }
 
 .brand-container {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; 
+    align-items: flex-start;
     margin-left: 40px;
 }
 
 .logo {
     margin-right: 5px;
     cursor: pointer;
+}
+
+.logo-gif {
+    clip-path: inset(1px);
+}
+
+@keyframes clipSvg {
+    0% {
+        clip-path: inset(1px);
+    }
+
+    100% {
+        clip-path: inset(0);
+    }   
+}
+
+.logo-gif-transform{
+    animation: clipSvg 0.5s forwards;
 }
 
 .button-container {
@@ -34,9 +53,12 @@
 }
 
 .btn-flag {
-    width: 30px; /* Ensure width and height are equal */
-    height: 30px; /* Ensure width and height are equal */
-    background-image: url('../../assets/UK.webp'); /* Ensure this path is correct */
+    width: 30px;
+    /* Ensure width and height are equal */
+    height: 30px;
+    /* Ensure width and height are equal */
+    background-image: url('../../assets/UK.webp');
+    /* Ensure this path is correct */
 
     background-size: cover;
     background-position: center;
@@ -45,24 +67,29 @@
     margin-right: 15px;
     border-radius: 50% !important;
 }
+
 .btn-flag:hover {
     scale: 0.9;
 }
 
 .btn-help {
-    border: white !important; /* Remove any border */
+    border: white !important;
+    /* Remove any border */
     cursor: pointer;
-    margin-right: 15px; /* Space between buttons */
-    scale: 0.75; /* Set initial scale */
+    margin-right: 15px;
+    /* Space between buttons */
+    scale: 0.75;
+    /* Set initial scale */
 }
 
-.btn-help svg{
+.btn-help svg {
     font-size: 1.75rem !important;
     color: white !important;
 }
 
 .btn-help:hover {
-    scale: 0.85; /* Adjust as needed */
+    scale: 0.85;
+    /* Adjust as needed */
     background-color: transparent !important;
     background-size: cover;
     background-position: center;
@@ -83,15 +110,17 @@
 }
 
 .btn-text:hover {
-    background-color: rgba(192, 192, 192, 0.3) !important; 
+    background-color: rgba(192, 192, 192, 0.3) !important;
     color: #ffffff !important;
     margin-right: 15px !important;
-    font-weight: bold !important; /* Adjust font weight as needed */
-    cursor: pointer; /* Change cursor to pointer */
+    font-weight: bold !important;
+    /* Adjust font weight as needed */
+    cursor: pointer;
+    /* Change cursor to pointer */
 }
 
 @media (max-width: 992px) {
-    .navbar-collapse{
+    .navbar-collapse {
         background-color: var(--main-color);
         border: 1px solid white;
         z-index: 99;
@@ -99,41 +128,107 @@
         padding: 1rem;
     }
 
-    .navbar-collapse .btn{
-        color: white !important;
+    .navbar-collapse .btn {
         margin: 0.1rem !important;
     }
 
-    .navbar-collapse .btn-help svg{
+    .navbar-collapse .btn-help svg {
         color: white !important;
     }
 }
+
 .badge-bronze {
-    color: #442200; /* Bronze color */
-  }
-  
-  .badge-silver {
-    color: #c0c0c0; /* Silver color */
-  }
-  
-  .badge-gold {
-    color: #ffd700; /* Gold color */
-  }
-  
-  
-  
-  .badge-default {
-    color: #ffffff; /* Default color */
-  }
+    color: #442200;
+    /* Bronze color */
+}
 
-  .badge-bronze,
-    .badge-silver,
-    .badge-gold,
-    .badge-default {
-        font-weight: bold;
-        position: absolute;
-        margin-left: 1.2rem;
+.badge-silver {
+    color: #c0c0c0;
+    /* Silver color */
+}
+
+.badge-gold {
+    color: #ffd700;
+    /* Gold color */
+}
+
+
+
+.badge-default {
+    color: #ffffff;
+    /* Default color */
+}
+
+.badge-bronze,
+.badge-silver,
+.badge-gold,
+.badge-default {
+    font-weight: bold;
+    position: absolute;
+    margin-left: 1.2rem;
+}
+
+.btn-currency {
+    color: white !important;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold !important;
+}
+
+.btn-currency:hover {
+    background-color: rgba(192, 192, 192, 0.3) !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+    cursor: pointer;
+}
+
+@media (min-width: 992px) {
+    .btn-currency {
+        margin-right: 15px;
     }
+}
 
+.currency-button {
+    width: 25%;
+    padding: 1rem;
+    background-color: transparent !important;
+    border: none !important;
+}
 
+.currency-button.active {
+    background-color: rgba(215, 111, 48, 0.06) !important;
+}
 
+.currency-button.active,
+.currency-button.active .currency-symbol {
+    color: var(--main-color) !important;
+}
+
+.currency-button:hover {
+    background-color: rgba(26, 26, 26, 0.06) !important;
+}
+
+.currency-button .currency-name {
+    font-weight: normal;
+}
+
+.currency-button .currency-symbol {
+    color: #595959;
+}
+
+.currency-modal .modal-dialog {
+    max-width: 90% !important;
+}
+
+.currency-modal .modal-content {
+    border-radius: 1.25rem;
+}
+
+.currency-modal .modal-header {
+    padding: 1.5rem;
+    padding-bottom: 1rem;
+}
+
+.currency-modal .modal-title {
+    font-weight: bold;
+}

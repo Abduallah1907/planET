@@ -1,7 +1,7 @@
 import React from "react";
 
 import HistoricalCard from "./HistoricalCard";
-import LatestReviews from "../ProductDetails/LatestReview";
+import LatestReviews from "./LatestReview";
 import { useParams } from "react-router-dom";
 
 const HistoricalDetails: React.FC = () => {

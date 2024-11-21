@@ -1,0 +1,65 @@
+@keyframes fly {
+    0% {
+        left: -10%;
+        /* Start from outside the left of the viewport */
+    }
+
+    100% {
+        left: 100%;
+        /* Move to outside the right of the viewport */
+    }
+}
+
+.plane-svg {
+    position: absolute;
+    top: 10%;
+    transform: translateY(100%);
+    animation: fly 3s linear forwards;
+}
+
+.map-price-button {
+    align-items: center;
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    position: relative;
+}
+
+.map-price-marker {
+    align-items: center;
+    border: 3px solid;
+    border-radius: .5rem;
+    display: flex;
+    justify-content: center;
+    padding: .125rem .5rem;
+    border: 3px solid var(--main-color);
+    color: white;
+    background-color: var(--main-color);
+}
+
+.map-price-marker span {
+    font-size: .875rem;
+    font-weight: 700;
+}
+
+.map-price-button.active .map-price-marker {
+    background-color: white;
+    color: var(--main-color);
+}
+
+.yNHHyP-marker-view:has(.map-price-button.active){
+    z-index: 1;
+}
+
+.map-price-pin .map-marker-arrow {
+    background-color: var(--main-color);
+    border-radius: 25%;
+    height: 1rem;
+    position: absolute;
+    top: 50%;
+    transform: rotate(45deg);
+    width: 1rem;
+    z-index: -1;
+}
