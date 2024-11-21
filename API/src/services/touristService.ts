@@ -1955,6 +1955,13 @@ export default class TouristService {
       throw new BadRequestError(
         "Activity is inappropriate cannot be bookmarked"
       );
+    const activitycheck = await this.bookmark_notifyModel.find({
+      activity_id: activity_id,
+      tourist_id: tourist._id,
+    });
+    if (activitycheck.length > 0) {
+      throw new BadRequestError("Activity already bookmarked");
+    }
     //These checks can be removed because i only want to bookmark the activity to view it later
     const bookmark = new this.bookmark_notifyModel({
       activity_id: activity_id,
@@ -1966,6 +1973,42 @@ export default class TouristService {
 
     return new response(true, bookmark, "Activity bookmarked", 201);
   }
+
+  public async unbookmarkActivityService(email: string, activity_id: string) {
+    if (!Types.ObjectId.isValid(activity_id)) {
+      throw new BadRequestError("Invalid activity id");
+    }
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+      status: UserStatus.APPROVED,
+    });
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const activity = await this.activityModel.findById(activity_id);
+    if (activity instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (activity == null) throw new NotFoundError("Activity is not available");
+
+    const bookmark = await this.bookmark_notifyModel.findOneAndDelete({
+      activity_id: activity_id,
+      tourist_id: tourist._id,
+    });
+    if (bookmark instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (bookmark == null)
+      throw new NotFoundError("Bookmark not found to be unbookmarked");
+
+    return new response(true, bookmark, "Activity unbookmarked", 200);
+  }
+
   public async getBookmarkedActivitiesService(email: string) {
     const user = await this.userModel.findOne({
       email: email,

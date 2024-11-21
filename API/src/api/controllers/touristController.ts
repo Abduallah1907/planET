@@ -336,6 +336,16 @@ export class TouristController {
     );
     res.status(bookmarkedActivity.status).json(bookmarkedActivity);
   }
+
+  public async unbookmarkActivity(req: any, res: any) {
+    const { email, activity_id } = req.body;
+    const touristService: TouristService = Container.get(TouristService);
+    const unbookmarkedActivity = await touristService.unbookmarkActivityService(
+      email,
+      activity_id
+    );
+    res.status(unbookmarkedActivity.status).json(unbookmarkedActivity);
+  }
   public async getBookmarkedActivities(req: any, res: any) {
     const { email } = req.params;
     const touristService: TouristService = Container.get(TouristService);

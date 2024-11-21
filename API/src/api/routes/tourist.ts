@@ -148,6 +148,8 @@ export default (app: Router) => {
 
   route.post("/bookmarkActivity", touristController.bookmarkActivity);
 
+  route.delete("/unbookmarkActivity", touristController.unbookmarkActivity);
+
   route.get(
     "/getBookmarkedActivities/:email",
     touristController.getBookmarkedActivities
