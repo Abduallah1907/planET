@@ -15,7 +15,7 @@ export default (app: Router) => {
   app.use("/notification", router);
 
   router.get(
-    "/getNotificationsById/:id",
+    "/getNotificationsByEmail/:email",
     authorize(Object.values(UserType)),
     notificationController.getNotificationsById
   );

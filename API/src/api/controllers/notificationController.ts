@@ -7,11 +7,11 @@ import { Types } from "mongoose";
 export default class NotificationController {
   //Get all notifications using id
   public async getNotificationsById(req: any, res: any) {
-    const { id } = req.params;
+    const { email } = req.params;
     const notificationService: NotificationService =
       Container.get(NotificationService);
     const notifications = await notificationService.getNotificationsByIdService(
-      id
+      email
     );
     res.status(notifications.status).json(notifications);
   }

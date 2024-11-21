@@ -12,12 +12,21 @@ import mongoose, { Types } from "mongoose";
 import Notification from "@/models/Notification";
 import { ObjectId } from "mongodb";
 import MailerService from "@/services/mailer";
+import admin from "@/api/routes/admin";
 
 @Service()
 export default class NotificationService {
   constructor(
     @Inject("notificationModel")
-    private notificationModel: Models.NotificationModel
+    private notificationModel: Models.NotificationModel,
+    @Inject("userModel")
+    private userModel: Models.UserModel,
+    @Inject("advertiserModel")
+    private advertiserModel: Models.AdvertiserModel,
+    @Inject("sellerModel")
+    private sellerModel: Models.SellerModel,
+    @Inject("tour_guideModel") private tourGuideModel: Models.Tour_guideModel,
+    @Inject("touristModel") private touristModel: Models.TouristModel
   ) {}
   //create notification
   public async createNotificationService(
@@ -58,12 +67,90 @@ export default class NotificationService {
     );
   }
   //get all notifications using id and read all notifications
-  public async getNotificationsByIdService(id: string) {
-    if (!Types.ObjectId.isValid(id)) {
-      throw new BadRequestError("Invalid Id");
+  public async getNotificationsByIdService(email: string) {
+    //get user id
+    console.log(`Searching for user with email: ${email}`);
+    const user = await this.userModel.findOne({ email: email });
+    console.log(`User found: ${user}`);
+    if (user instanceof Error) {
+      throw new InternalServerError("Internal server error");
     }
+    if (user == null) {
+      throw new NotFoundError("User not found");
+    }
+    let id: string;
+    let user_type: string;
+    //get notified id
+    switch (user.role) {
+      case "ADMIN":
+        id = user._id as unknown as string;
+        user_type = UserType.Admin;
+        console.log("he is admin");
+        break;
+      case "ADVERTISER":
+        //get advertiser id
+        const advertiser = await this.advertiserModel.findOne({
+          user_id: user._id,
+        });
+        if (advertiser instanceof Error) {
+          throw new InternalServerError("Internal server error");
+        }
+        if (advertiser == null) {
+          throw new NotFoundError("Advertiser not found");
+        }
+        console.log("he is advertiser");
+        id = advertiser._id as unknown as string;
+        user_type = UserType.Advertiser;
+        break;
+      case "SELLER":
+        const seller = await this.sellerModel.findOne({
+          user_id: user._id,
+        });
+
+        if (seller instanceof Error) {
+          throw new InternalServerError("Internal server error");
+        }
+        if (seller == null) {
+          throw new NotFoundError("Governor not found");
+        }
+        console.log("he is seller");
+        id = seller._id as unknown as string;
+        user_type = UserType.Seller;
+        break;
+      case "TOUR_GUIDE":
+        const tourGuide = await this.tourGuideModel.findOne({
+          user_id: user._id,
+        });
+        if (tourGuide instanceof Error) {
+          throw new InternalServerError("Internal server error");
+        }
+        if (tourGuide == null) {
+          throw new NotFoundError("Tour Guide not found");
+        }
+        console.log("he is tour guide");
+        id = tourGuide._id as unknown as string;
+        user_type = UserType.TourGuide;
+        break;
+      case "TOURIST":
+        const tourist = await this.touristModel.findOne({
+          user_id: user._id,
+        });
+        if (tourist instanceof Error) {
+          throw new InternalServerError("Internal server error");
+        }
+        if (tourist == null) {
+          throw new NotFoundError("Tourist not found");
+        }
+        console.log("he is tourist");
+        id = tourist._id as unknown as string;
+        user_type = UserType.Tourist;
+        break;
+      default:
+        throw new BadRequestError("Invalid user type");
+    }
+
     const notifications = await this.notificationModel.find({
-      notified_id: id,
+      notified_id: new Types.ObjectId(id),
     });
     if (notifications instanceof Error) {
       throw new InternalServerError("Internal server error");

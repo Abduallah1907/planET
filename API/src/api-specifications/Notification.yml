@@ -7,15 +7,15 @@ tags:
   - name: Notification
     description: Notification Retrieval and Counter APIs
 paths:
-  /api/notification/getNotificationsById/{id}:
+  /api/notification/getNotificationsByEmail/{email}:
     get:
       tags:
         - Notification
-      summary: Get Notifications by Id and flag as read
+      summary: Get Notifications by email and flag as read
       parameters:
-        - name: id
+        - name: email
           in: path
-          description: Notified Id
+          description: Notified email
           required: true
           schema:
             type: string
