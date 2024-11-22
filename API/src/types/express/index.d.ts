@@ -22,6 +22,7 @@ import { ITourist } from "@/interfaces/ITourist";
 import { IWishlist } from "@/interfaces/IWishlist";
 import { ITag } from "@/interfaces/ITag";
 import { IHistorical_tag } from "@/interfaces/IHistorical_tag";
+import { INotification } from "@/interfaces/INotification";
 
 declare global {
   namespace Express {
@@ -56,5 +57,6 @@ declare global {
     export type Historical_tagModel = Model<IHistorical_tag & Document>;
     export type CartModel = Model<ICart & Document>;
     export type OTPModel = Model<any & Document>;
+    export type NotificationModel = Model<any & Document>;
   }
 }

@@ -8,15 +8,18 @@ const bookmarkNotifySchema = new mongoose.Schema(
       ref: "Activity",
       required: true,
     },
-    user_id: {
+    tourist_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Tourist",
       required: true,
     },
   },
   { timestamps: true }
 );
 
-const Bookmark_Notify = mongoose.model<IBookmark_Notify & mongoose.Document>("Bookmark_Notify", bookmarkNotifySchema);
+const Bookmark_Notify = mongoose.model<IBookmark_Notify & mongoose.Document>(
+  "Bookmark_Notify",
+  bookmarkNotifySchema
+);
 
 export default Bookmark_Notify;
