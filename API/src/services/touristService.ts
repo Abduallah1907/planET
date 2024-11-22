@@ -400,7 +400,7 @@ export default class TouristService {
     return new response(true, comment_rating, "Activity rated", 201);
   }
 
-  public async bookActivityService(email: string, activity_id: string, payment_type: PaymentType) {
+  public async bookActivityService(email: string, activity_id: string, payment_type: PaymentType, promoCode: string) {
     if (!Types.ObjectId.isValid(activity_id)) {
       throw new BadRequestError("Invalid id");
     }
@@ -409,32 +409,26 @@ export default class TouristService {
       role: UserRoles.Tourist,
     });
     if (user instanceof Error) throw new InternalServerError("Internal server error");
-
     if (user == null) throw new NotFoundError("User not found");
-
     const tourist = await this.touristModel.findOne({ user_id: user._id });
-
     if (tourist instanceof Error) throw new InternalServerError("Internal server error");
-
     if (tourist == null) throw new NotFoundError("Tourist not found");
-
     const tourist_id = tourist._id;
 
     const activity = await this.activityModel.findById({ _id: activity_id });
-
     if (activity instanceof Error) throw new InternalServerError("Internal server error");
-
     if (activity == null) throw new NotFoundError("Activity not found");
-
     if (activity.booking_flag == false) throw new BadRequestError("Activity is not available for booking");
-
     if (activity.inappropriate_flag == true) throw new BadRequestError("Activity is inappropriate");
-
     if (activity.active_flag == false) throw new BadRequestError("Activity is not active");
-
     if (activity.special_discount) {
       if (activity.price !== undefined) {
         activity.price = activity.price - activity.price * (activity.special_discount / 100);
+        if (promoCode) {
+          const validPromo = await this.isValidCodeService(promoCode);
+          if (!validPromo) throw new BadRequestError("There was an issue when tyring to check the promo code");
+          activity.price = activity.price - activity.price * validPromo.data.discount_percent;
+        }
       }
     }
     const findPreviousTicket = await this.ticketModel.findOne({

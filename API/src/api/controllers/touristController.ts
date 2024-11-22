@@ -67,9 +67,9 @@ export class TouristController {
   }
 
   public async bookActivity(req: any, res: any) {
-    const { email, activity_id, payment_type } = req.body;
+    const { email, activity_id, payment_type, promoCode } = req.body;
     const touristService: TouristService = Container.get(TouristService);
-    const bookedActivity = await touristService.bookActivityService(email, activity_id, payment_type);
+    const bookedActivity = await touristService.bookActivityService(email, activity_id, payment_type, promoCode);
     res.status(bookedActivity.status).json(bookedActivity);
   }
 
