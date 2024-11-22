@@ -1,0 +1,47 @@
+openapi: "3.0.0"
+info:
+  title: Notification
+  version: "1.0.0"
+  description: Notification Retrieval and Counter APIs
+tags:
+  - name: Notification
+    description: Notification Retrieval and Counter APIs
+paths:
+  /api/notification/getNotificationsByEmail/{email}:
+    get:
+      tags:
+        - Notification
+      summary: Get Notifications by email and flag as read
+      parameters:
+        - name: email
+          in: path
+          description: Notified email
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: All Notifications
+        "500":
+          description: Internal Server Error
+        "404":
+          description: Not Found
+  /api/notification/getNotificationNumber/{email}:
+    get:
+      tags:
+        - Notification
+      summary: Get Notification unread Number
+      parameters:
+        - name: email
+          in: path
+          description: Notified Email
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Notification Number is retrieved
+        "500":
+          description: Internal Server Error
+        "404":
+          description: Not Found

@@ -9,6 +9,7 @@ import bcrypt from "bcryptjs";
 import config from "@/config";
 import { ObjectId, Types } from "mongoose";
 import MailerService from "./mailer";
+import NotificationService from "./notificationService";
 
 @Service()
 export default class UserService {
@@ -19,8 +20,115 @@ export default class UserService {
     @Inject("advertiserModel") private advertiserModel: Models.AdvertiserModel,
     @Inject("tour_guideModel") private tourGuideModel: Models.Tour_guideModel,
     @Inject("governorModel") private governorModel: Models.GovernorModel,
-    @Inject("otpModel") private otpModel: Models.OTPModel
+    @Inject("otpModel") private otpModel: Models.OTPModel,
+    @Inject("notificationModel")
+    private notificationModel: Models.NotificationModel,
+    @Inject("ticketModel") private ticketModel: Models.TicketModel,
+    @Inject("historical_locationModel")
+    private historical_locationsModel: Models.Historical_locationsModel,
+    @Inject("itineraryModel") private itineraryModel: Models.ItineraryModel,
+    @Inject("activityModel") private activityModel: Models.ActivityModel
   ) {}
+  //added By Basyo
+  //48 hours for upcoming events
+  public async SendNotificationAndEmailforUpcomingEvents() {
+    const currentDate = new Date();
+    //48 hours after the current date
+    const upcomingDate = new Date(currentDate.getTime() + 48 * 60 * 60 * 1000);
+    //Get all upcoming tickets
+    const tickets = await this.ticketModel.find({
+      time_to_attend: { $lte: upcomingDate, $gte: currentDate },
+      cancelled: false,
+    });
+    if (tickets instanceof Error)
+      throw new InternalServerError("Internal server error");
+    //loop through all tickets
+    if (tickets != null) {
+      const notificationService = Container.get(NotificationService);
+      for (const ticket of tickets) {
+        //message writing
+        let message = "";
+        let title = "";
+        switch (ticket.type) {
+          case "HISTORICAL_LOCATION":
+            let historical_location =
+              await this.historical_locationsModel.findOne({
+                _id: ticket.booking_id,
+              });
+            if (historical_location instanceof Error)
+              throw new InternalServerError("Internal server error");
+            if (historical_location == null)
+              throw new NotFoundError("Historical location not found");
+            message = `Upcoming historical location ${historical_location.name} with id ${ticket._id} in ${ticket.time_to_attend}`;
+            title = "Upcoming historical location";
+            break;
+          case "ITINERARY":
+            let itinerary = await this.itineraryModel.findOne({
+              _id: ticket.booking_id,
+            });
+            if (itinerary instanceof Error)
+              throw new InternalServerError("Internal server error");
+            if (itinerary == null)
+              throw new NotFoundError("Itinerary not found");
+            message = `Upcoming itinerary ${itinerary.name} with id ${ticket._id} in ${ticket.time_to_attend}`;
+            title = "Upcoming itinerary";
+            break;
+          case "ACTIVITY":
+            let activity = await this.activityModel.findOne({
+              _id: ticket.booking_id,
+            });
+            if (activity instanceof Error)
+              throw new InternalServerError("Internal server error");
+            if (activity == null) throw new NotFoundError("Activity not found");
+            message = `Upcoming activity ${activity.name} with id ${ticket._id} in ${ticket.time_to_attend}`;
+            title = "Upcoming activity";
+            break;
+        }
+        //see in notifications if it is a duplicate
+        const notification = await this.notificationModel.findOne({
+          notified_id: ticket.tourist_id,
+          user_type: UserRoles.Tourist,
+          message: message,
+        });
+        if (notification instanceof Error)
+          throw new InternalServerError("Internal server error");
+        if (notification == null) {
+          //create notification
+          const newnotification = notificationService.createNotificationService(
+            new Types.ObjectId(ticket.tourist_id.toString()),
+            message,
+            UserRoles.Tourist
+          );
+          if (newnotification instanceof Error)
+            throw new InternalServerError("Internal server error");
+          if (newnotification == null)
+            throw new NotFoundError("Failed to create notification");
+          //send email
+          //get the email of the tourist
+          let tourist = await this.touristModel.findOne({
+            _id: ticket.tourist_id,
+          });
+          if (tourist instanceof Error)
+            throw new InternalServerError("Internal server error");
+          if (tourist == null) throw new NotFoundError("Tourist not found");
+          let user = await this.userModel.findById(
+            new Types.ObjectId((tourist as any).user_id)
+          );
+          if (user instanceof Error)
+            throw new InternalServerError("Internal server error");
+          if (user == null) throw new NotFoundError("User not found");
+          const mail = notificationService.sendEmailNotificationService(
+            title,
+            user.email,
+            message
+          );
+          if (mail instanceof Error)
+            throw new InternalServerError("Internal server error");
+          if (mail == null) throw new NotFoundError("Failed to send email");
+        }
+      }
+    }
+  }
 
   public async createUserService(userData: IUserInputDTO) {
     // const phoneNumRegex =
@@ -132,7 +240,8 @@ export default class UserService {
     };
     user.first_time_login = false;
     await user.save();
-
+    //The fuction of upcoming events
+    this.SendNotificationAndEmailforUpcomingEvents();
     return new response(true, userOutput, "Logged in successfully", 200);
   }
 
