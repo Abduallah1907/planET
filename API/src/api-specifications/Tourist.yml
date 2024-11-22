@@ -358,7 +358,9 @@ paths:
       tags:
         - Tourist
       summary: Book an activity
-      description: Book an activity for a tourist
+      description:
+        Book an activity for a tourist. If there is a promocode, then it will automatically check if it is valid apply it if needed. If there is no promocode
+        simply leave it empty, or just don't send it as part of the request body. This is not fully tested, eshtem fe el lesa ma5alesh payment type
       requestBody:
         required: true
         content:
@@ -375,11 +377,17 @@ paths:
                 payment_type:
                   type: string
                   description: Payment type
+                promoCode:
+                  type: string
+                  example: ipw0o29eugf
+                  description: If the user inserted a promocode. If not, this should be either an empty string or just not sent as part of the request
       responses:
         200:
           description: Activity booked successfully
         400:
-          description: Bad request
+          description: Bad request or the promocode has expired
+        404:
+          description: Code does not even exist, cannot use it
         500:
           description: Internal server error
   /api/tourist/bookItinerary:
@@ -387,7 +395,9 @@ paths:
       tags:
         - Tourist
       summary: Book an itinerary
-      description: Book an itinerary for a tourist
+      description:
+        Book an itinerary for a tourist. If there is a promocode, then it will automatically check if it is valid apply it if needed. If there is no promocode
+        simply leave it empty, or just don't send it as part of the request body. This is not fully tested, eshtem fe el lesa ma5alesh payment type
       requestBody:
         required: true
         content:
@@ -403,15 +413,21 @@ paths:
                   description: ID of the itinerary
                 time_to_attend:
                   type: string
-                  description: Time chosen to attend the itinerary 
+                  description: Time chosen to attend the itinerary
                 payment_type:
                   type: string
-                  description: Payment type   
+                  description: Payment type
+                promoCode:
+                  type: string
+                  example: ipw0o29eugf
+                  description: If the user inserted a promocode. If not, this should be either an empty string or just not sent as part of the request
       responses:
         200:
           description: Itinerary booked successfully
         400:
-          description: Bad request
+          description: Bad request or the promocode has expired
+        404:
+          description: Code does not even exist, cannot use it
         500:
           description: Internal server error
   /api/tourist/bookHistoricalLocation:
@@ -435,7 +451,7 @@ paths:
                   description: ID of the historical location
                 payment_type:
                   type: string
-                  description: Payment type  
+                  description: Payment type
       responses:
         200:
           description: Historical location booked successfully
@@ -900,7 +916,9 @@ paths:
       tags:
         - Tourist
       summary: Create order cart
-      description: Create an order cart for a tourist
+      description:
+        Create an order cart for a tourist. If there is a promocode, then it will automatically check if it is valid apply it if needed. If there is no promocode
+        simply leave it empty, or just don't send it as part of the request body.
       requestBody:
         required: true
         content:
@@ -935,6 +953,10 @@ paths:
                 payment_type:
                   type: string
                   description: Payment type
+                promoCode:
+                  type: string
+                  example: ipw0o29eugf
+                  description: If the user inserted a promocode. If not, this should be either an empty string or just not sent as part of the request
       responses:
         200:
           description: Order cart created successfully
@@ -959,8 +981,57 @@ paths:
         200:
           description: Past orders retrieved successfully
         400:
-          description: Bad request
+          description: Bad request or the promocode has expired
+        404:
+          description: Code does not even exist, cannot use it
         500:
+          description: Internal server error
+  /api/tourist/isValidPromo/{promoCode}:
+    get:
+      tags:
+        - Tourist
+        - Promo Code
+      summary: Returns whether a promo code is valid or not
+      description: For a promo code to be valid, it must 1) acutally exist in our database and 2) has not expired yet
+      parameters:
+        - in: path
+          name: promoCode
+          required: true
+          description: promoCode we want to check. Typically is 11 letters long
+          schema:
+            type: string
+            example: ipw0orieugf
+      responses:
+        "200":
+          description: Code is valid, also returns the discount percentage
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      valid:
+                        type: boolean
+                        example: true
+                      discount_percent:
+                        type: integer
+                        example: 20
+                  message:
+                    type: string
+                    example: "Code is valid!"
+                  status:
+                    type: integer
+                    example: 200
+        "400":
+          description: Code had expired, cannot use it
+        "404":
+          description: Code does not even exist, cannot use it
+        "500":
           description: Internal server error   
   /api/tourist/getCurrentOrders/{email}:
     get:

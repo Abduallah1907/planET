@@ -31,6 +31,81 @@ paths:
           description: A list of users.
         "500":
           description: Internal Server Error.
+
+  /api/admin/getUserNumbers:
+    get:
+      tags:
+        - Admin
+      summary: Returns the number of all users that are registered and have not deleted their account
+      responses:
+        "200":
+          description: Returns a single number
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates whether the request was successful
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      numberOfUsers:
+                        type: integer
+                        description: The total number of users
+                        example: 92
+                  message:
+                    type: string
+                    description: A message describing the response
+                    example: "Returning user count"
+                  status:
+                    type: integer
+                    description: The status code
+                    example: 200
+  /api/admin/getUserNumbersForMonth/{year}:
+    get:
+      tags:
+        - Admin
+      summary: Returns the number of all users that are registered and have not deleted their account for a specific year
+      parameters:
+        - name: year
+          in: path
+          description: The year we want to see our users per month
+          required: true
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: Returns an array of numbers, each number corresponding to the number of users for that month (the first element is Janurary, the second Feburary, and so on)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates whether the request was successful
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      usersPerMonth:
+                        type: array
+                        items:
+                          type: integer
+                        description: An array of user counts per month for the current year
+                        example: [45, 32, 67, 56, 89, 73, 112, 98, 101, 120, 92, 81]
+                  message:
+                    type: string
+                    description: A message describing the response
+                    example: "Returning user count of current year"
+                  status:
+                    type: integer
+                    description: The status code
+                    example: 200
   /api/admin/searchUser/{username}:
     get:
       tags:
@@ -541,6 +616,56 @@ paths:
         "500":
           description: Internal Server Error.
 
+  /api/admin/createPromoCode:
+    post:
+      tags:
+        - Admin
+      summary: Given a duration (in days) for the promocode, and its discount value, it returns a unique promocode.
+        The expiry date is set to be the date from today plus the duration, at the very end of the day (midnight)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                numberOfDays:
+                  type: string
+                  description: The number of days for which the discount applies
+                  example: "2"
+                discount:
+                  type: string
+                  description: The discount percentage (e.g., "20" for 20% off)
+                  example: "20"
+      responses:
+        "200":
+          description: Discount code generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates if the discount code was successfully generated
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      promoCode:
+                        type: string
+                        description: The generated promo code
+                        example: "tamnx0zlb7h"
+                  message:
+                    type: string
+                    description: A message describing the result
+                    example: "Code successfully generated!"
+                  status:
+                    type: integer
+                    description: The HTTP status code
+                    example: 200
+        "400":
+          description: "Either the discount number was greater than 100, the duration inserted is zero/negative, or either of those are empty"
 components:
   schemas:
     Complaint:
@@ -584,7 +709,7 @@ components:
             - Pending
             - Resolved
           description: The current status of the complaint
-        createdAt: 
+        createdAt:
           type: string
           format: date-time
           description: The date the complaint was created
