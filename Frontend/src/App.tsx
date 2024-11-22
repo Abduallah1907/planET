@@ -3,8 +3,8 @@ import CreateAdmin from "./views/CreateAdmin/CreateAdmin";
 import TopBar from "./components/TopBar/TopBar";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import 'react-date-range/dist/styles.css'; // main style file
-import 'react-date-range/dist/theme/default.css'; // theme css file
+import "react-date-range/dist/styles.css"; // main style file
+import "react-date-range/dist/theme/default.css"; // theme css file
 import "./App.css";
 import CreateGoverner from "./views/CreateGoverner/CreateGovernor";
 import BookingLayout from "./views/ViewingPages/Activities";
@@ -61,6 +61,7 @@ import ComplaintForm from "./views/ViewingPages/ComplaintForm";
 import AllComplaints from "./components/Complaints/AllComplaints";
 import MyComplaints from "./components/TouristComplaints/MyComplaints";
 import Cart from "./views/Cart";
+import Sales from "./components/Revenue/sales";
 
 import BookingActivity from "./views/BookingPages/BookingActivity";
 import BookingItinerary from "./views/BookingPages/BookingItinerary";
@@ -110,7 +111,7 @@ const App: React.FC = () => {
             navItems={navItems} // Pass the settings nav items
           />
         </div>
-        
+
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/Login" element={<Login />} />
@@ -127,12 +128,21 @@ const App: React.FC = () => {
           <Route path="/governer" element={<CreateGoverner />} />
           <Route path="/test" element={<BookingLayout />} />
 
-          <Route path="/bookActivity/:id" element={<BookingActivity email={email} />} />
+          <Route
+            path="/bookActivity/:id"
+            element={<BookingActivity email={email} />}
+          />
           <Route path="/bookItinerary/:id" element={<BookingItinerary />} />
           <Route path="/MyBookings/upcoming" element={<MyBookings />} />
           <Route path="/MyBookings/past" element={<MyBookings />} />
-          <Route path="/MyItineraryBookings/upcoming" element={<MyItineraryBookings />} />
-          <Route path="/MyItineraryBookings/past" element={<MyItineraryBookings />} />
+          <Route
+            path="/MyItineraryBookings/upcoming"
+            element={<MyItineraryBookings />}
+          />
+          <Route
+            path="/MyItineraryBookings/past"
+            element={<MyItineraryBookings />}
+          />
 
           <Route path="/Activity" element={<Activities />} />
           <Route path="/Itinerary" element={<Itinerary />} />
@@ -152,7 +162,10 @@ const App: React.FC = () => {
 
           <Route path="/AddNewProduct" element={<AddNewProduct />} />
           <Route path="/AddActivity" element={<AdvertiserCreate />} />
-          <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
+          <Route
+            path="/AddHistoricalLocation"
+            element={<AddHistoricalLocation />}
+          />
           <Route path="/AddItinerary" element={<AddItinerary />} />
 
           <Route path="/Activity/:id" element={<ActivityDetails />} />
@@ -160,14 +173,24 @@ const App: React.FC = () => {
           <Route path="/Historical/:id" element={<HistoricalDetails />} />
 
           <Route path="/EditActivity/:activity_id" element={<EditActivity />} />
-          <Route path="/EditHistoricalLocation/:historical_location_id" element={<EditHistoricalLocation />} />
-          <Route path="/EditItinerary/:itinerary_id" element={<EditItinerary />} />
+          <Route
+            path="/EditHistoricalLocation/:historical_location_id"
+            element={<EditHistoricalLocation />}
+          />
+          <Route
+            path="/EditItinerary/:itinerary_id"
+            element={<EditItinerary />}
+          />
           <Route path="/EditProduct/:product_id" element={<EditProduct />} />
 
           <Route path="/MyActivities" element={<MyActivities />} />
-          <Route path="/MyHistoricalLocations" element={<MyHistoricalPlaces />} />
+          <Route
+            path="/MyHistoricalLocations"
+            element={<MyHistoricalPlaces />}
+          />
           <Route path="/MyItineraries" element={<MyItinerary />} />
           <Route path="/MyProducts" element={<MyProducts />} />
+          <Route path="/Sales" element={<Sales />} />
 
           <Route path="/JoinUs" element={<StakeholderReg />} />
 
