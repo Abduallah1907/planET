@@ -218,9 +218,7 @@ export default class ActivityService {
 
       //create notifications for each user
       for (const bookmark of bookmarks) {
-        console.log("bookmark", bookmark);
         let message = `The activity ${updatedActivity.name} is now available for booking`;
-        console.log("message", message);
         let notification = await notificationService.createNotificationService(
           bookmark.tourist_id,
           message,
