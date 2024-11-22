@@ -403,10 +403,10 @@ paths:
                   description: ID of the itinerary
                 time_to_attend:
                   type: string
-                  description: Time chosen to attend the itinerary 
+                  description: Time chosen to attend the itinerary
                 payment_type:
                   type: string
-                  description: Payment type   
+                  description: Payment type
       responses:
         200:
           description: Itinerary booked successfully
@@ -435,7 +435,7 @@ paths:
                   description: ID of the historical location
                 payment_type:
                   type: string
-                  description: Payment type  
+                  description: Payment type
       responses:
         200:
           description: Historical location booked successfully
@@ -961,4 +961,49 @@ paths:
         400:
           description: Bad request
         500:
-          description: Internal server error        
+          description: Internal server error
+  /api/tourist/isValidPromo/{promoCode}:
+    get:
+      tags:
+        - Tourist
+        - Promo Code
+      summary: Returns whether a promo code is valid or not
+      description: For a promo code to be valid, it must 1) acutally exist in our database and 2) has not expired yet
+      parameters:
+        - in: path
+          name: promoCode
+          required: true
+          description: promoCode we want to check. Typically is 11 letters long
+          schema:
+            type: string
+            example: ipw0orieugf
+      responses:
+        "200":
+          description: Code is valid, also returns the discount percentage
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      valid:
+                        type: boolean
+                        example: true
+                      discount_percent:
+                        type: integer
+                        example: 20
+                  message:
+                    type: string
+                    example: "Code is valid!"
+                  status:
+                    type: integer
+                    example: 200
+        "400":
+          description: Code had expired, cannot use it
+        "404":
+          description: Code does not even exist, cannot use it
