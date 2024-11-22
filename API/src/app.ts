@@ -2,6 +2,8 @@ import express from "express";
 import config from "@/config";
 import Logger from "@/loaders/logger";
 import "reflect-metadata";
+import { SocketIOLoader } from "@/loaders/socket";
+import Container from "typedi";
 
 async function startServer() {
   const app = express();
@@ -14,7 +16,7 @@ async function startServer() {
    **/
   await require("./loaders").default({ expressApp: app });
 
-  app
+  const server = app
     .listen(config.port, () => {
       Logger.info(`
           ################################################
@@ -26,6 +28,12 @@ async function startServer() {
       Logger.error(err);
       process.exit(1);
     });
+
+  // Get the SocketIOLoader instance from the typedi container
+  const socketIOLoader = Container.get(SocketIOLoader);
+
+  // Initialize the Socket.IO server
+  socketIOLoader.initialize(server);
 }
 
 startServer();
