@@ -358,7 +358,9 @@ paths:
       tags:
         - Tourist
       summary: Book an activity
-      description: Book an activity for a tourist
+      description:
+        Book an activity for a tourist. If there is a promocode, then it will automatically check if it is valid apply it if needed. If there is no promocode
+        simply leave it empty, or just don't send it as part of the request body. This is not fully tested, eshtem fe el lesa ma5alesh payment type
       requestBody:
         required: true
         content:
@@ -375,6 +377,10 @@ paths:
                 payment_type:
                   type: string
                   description: Payment type
+                promoCode:
+                  type: string
+                  example: ipw0o29eugf
+                  description: If the user inserted a promocode. If not, this should be either an empty string or just not sent as part of the request
       responses:
         200:
           description: Activity booked successfully
@@ -387,7 +393,9 @@ paths:
       tags:
         - Tourist
       summary: Book an itinerary
-      description: Book an itinerary for a tourist
+      description:
+        Book an itinerary for a tourist. If there is a promocode, then it will automatically check if it is valid apply it if needed. If there is no promocode
+        simply leave it empty, or just don't send it as part of the request body. This is not fully tested, eshtem fe el lesa ma5alesh payment type
       requestBody:
         required: true
         content:
@@ -407,6 +415,10 @@ paths:
                 payment_type:
                   type: string
                   description: Payment type
+                promoCode:
+                  type: string
+                  example: ipw0o29eugf
+                  description: If the user inserted a promocode. If not, this should be either an empty string or just not sent as part of the request
       responses:
         200:
           description: Itinerary booked successfully
