@@ -26,15 +26,15 @@ paths:
           description: Internal Server Error
         "404":
           description: Not Found
-  /api/notification/getNotificationNumber/{id}:
+  /api/notification/getNotificationNumber/{email}:
     get:
       tags:
         - Notification
       summary: Get Notification unread Number
       parameters:
-        - name: id
+        - name: email
           in: path
-          description: Notified Id
+          description: Notified Email
           required: true
           schema:
             type: string

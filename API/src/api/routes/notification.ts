@@ -17,10 +17,10 @@ export default (app: Router) => {
   router.get(
     "/getNotificationsByEmail/:email",
     authorize(Object.values(UserType)),
-    notificationController.getNotificationsById
+    notificationController.getNotificationsByEmail
   );
   router.get(
-    "/getNotificationNumber/:id",
+    "/getNotificationNumber/:email",
     authorize(Object.values(UserType)),
     notificationController.getNotificationNumber
   );
