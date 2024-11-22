@@ -41,6 +41,7 @@ import Ticket from "@/models/Ticket";
 import { IBookmarkActivity } from "@/interfaces/IBookmark_notify";
 import category from "@/api/routes/category";
 import advertiser from "@/api/routes/advertiser";
+import NotificationService from "./notificationService";
 
 // comment and ratings
 // complaint
@@ -64,7 +65,10 @@ export default class TouristService {
     @Inject("ticketModel") private ticketModel: Models.TicketModel,
     @Inject("cartModel") private cartModel: Models.CartModel,
     @Inject("bookmark_notifyModel")
-    private bookmark_notifyModel: Models.Bookmark_notifyModel
+    private bookmark_notifyModel: Models.Bookmark_notifyModel,
+    @Inject("notificationModel")
+    private notificationModel: Models.NotificationModel,
+    @Inject("sellerModel") private sellerModel: Models.SellerModel
   ) {}
 
   public async getTouristService(email: string) {
@@ -1805,15 +1809,74 @@ export default class TouristService {
       if (quantity > product.quantity) {
         throw new BadRequestError("Quantity not available to place order");
       }
-      await this.productModel.findByIdAndUpdate(product_id, {
-        sales: product.sales + quantity,
-        quantity: product.quantity - quantity,
-        $addToSet: { tourist_id: tourist_id },
-      });
+      const updatedProduct = await this.productModel.findByIdAndUpdate(
+        product_id,
+        {
+          sales: product.sales + quantity,
+          quantity: product.quantity - quantity,
+          $addToSet: { tourist_id: tourist_id },
+        },
+        { new: true }
+      );
+      if (updatedProduct instanceof Error)
+        throw new InternalServerError("Internal server error");
+      if (updatedProduct == null) throw new NotFoundError("Product not found");
       //check if product is out of stock
-      if (product.quantity == 0) {
-       //create a notification for the Seller/admin Both
-       
+      if (updatedProduct.quantity == 0 && product.seller_id) {
+        //create a notification for the Seller/admin Both
+        let message = `Product ${product.name} with id ${product._id} is out of stock`;
+        let title = "Product out of stock";
+        //get the seller to see if he is Admin or Seller and bl mara get email
+        const seller = await this.sellerModel.findById(product.seller_id);
+        if (seller instanceof Error)
+          throw new InternalServerError("Internal server error");
+        if (seller == null) throw new NotFoundError("Seller not found");
+        const user = await this.userModel.findById(seller.user_id);
+        if (user instanceof Error)
+          throw new InternalServerError("Internal server error");
+        if (user == null) throw new NotFoundError("User not found");
+        //create notification for seller
+        const notificationService = Container.get(NotificationService);
+        let newnotification;
+        switch (user.role) {
+          case UserRoles.Seller:
+            newnotification = notificationService.createNotificationService(
+              new Types.ObjectId(product.seller_id.toString()),
+              message,
+              UserRoles.Seller
+            );
+            if (newnotification instanceof Error)
+              throw new InternalServerError("Internal server error");
+            if (newnotification == null) {
+              throw new BadRequestError("Notification not found");
+            }
+            break;
+          case UserRoles.Admin:
+            newnotification = notificationService.createNotificationService(
+              new Types.ObjectId(product.seller_id.toString()),
+              message,
+              UserRoles.Admin
+            );
+            if (newnotification instanceof Error)
+              throw new InternalServerError("Internal server error");
+            if (newnotification == null) {
+              throw new BadRequestError("Notification not found");
+            }
+            break;
+          default:
+            throw new BadRequestError("Invalid role");
+        }
+        //send Email to the seller
+        const mail = notificationService.sendEmailNotificationService(
+          title,
+          user.email,
+          message
+        );
+        if (mail instanceof Error)
+          throw new InternalServerError("Internal server error");
+        if (mail == null) {
+          throw new BadRequestError("Email not sent");
+        }
       }
 
       //Already handled in frontend but why not
