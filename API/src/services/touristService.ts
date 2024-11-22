@@ -61,7 +61,7 @@ export default class TouristService {
     @Inject("notificationModel")
     private notificationModel: Models.NotificationModel,
     @Inject("sellerModel") private sellerModel: Models.SellerModel
-  ) {}
+  ) { }
 
   public async getTouristService(email: string) {
     const user = await this.userModel.findOne({
@@ -432,6 +432,9 @@ export default class TouristService {
     if (activity.booking_flag === false) throw new BadRequestError("Activity is not available for booking");
     if (activity.inappropriate_flag === true) throw new BadRequestError("Activity is inappropriate");
     if (activity.active_flag === false) throw new BadRequestError("Activity is not active");
+    if (activity.date < new Date()) {
+      throw new BadRequestError("Activity date has passed cannot book");
+    }
     if (activity.price !== undefined) {
       if (activity.special_discount) {
         activity.price = activity.price - activity.price * (activity.special_discount / 100);
@@ -511,6 +514,12 @@ export default class TouristService {
     if (itinerary === null) throw new NotFoundError("Itinerary not found");
     if (itinerary.active_flag === false) throw new BadRequestError("Itinerary is not active for booking");
     if (itinerary.inappropriate_flag === true) throw new BadRequestError("Itinerary is inappropriate");
+    const timeToAttendDate = new Date(time_to_attend);
+    if (timeToAttendDate < new Date()) {
+      throw new BadRequestError(
+        "Itinerary date you choose has passed, cannot book"
+      );
+    }
 
     const findPreviousTicket = await this.ticketModel.findOne({
       tourist_id: tourist_id,

@@ -22,11 +22,19 @@ export default (app: Router) => {
   // i.e it does not throw an error
   // returns all users that have a matching username and excludes information about the salt and password
   // a nice TODO would be to have it ID
-  router.get("/searchUser/:username", authorize([]), adminController.searchUser);
+  router.get(
+    "/searchUser/:username",
+    authorize([]),
+    adminController.searchUser
+  );
 
   // Given an ID, it deletes the user if the email is valid and returns
   // the deleted user information (excluding information about the salt and password)
-  router.delete("/deleteUser/:email", authorize([]), adminController.deleteUser);
+  router.delete(
+    "/deleteUser/:email",
+    authorize([]),
+    adminController.deleteUser
+  );
 
   // Given an email, name, phone number, username, and password,
   // automatically creates the account and returns the newly created governor
@@ -50,7 +58,11 @@ export default (app: Router) => {
   router.put("/updateCategory", authorize([]), adminController.updateCategory);
 
   // Given a category name, it will delete the category
-  router.delete("/deleteCategory/:type", authorize([]), adminController.deleteCategory);
+  router.delete(
+    "/deleteCategory/:type",
+    authorize([]),
+    adminController.deleteCategory
+  );
 
   router.post("/createTag", authorize([]), adminController.createTag);
   router.get("/getTags/:page", adminController.getTags);
@@ -65,12 +77,29 @@ export default (app: Router) => {
 
   // COMPLAINTS
   router.get("/getComplaints", adminController.getComplaints);
-  router.get("/getSortComplaintByDate/:page", adminController.getSortComplaintByDate);
-  router.get("/getFilterComplaintsByStatus/:page", adminController.getFilteredComplaintsByStatus);
-  router.get("/getComplaintByID/:complaint_id", adminController.getComplaintByID);
-  router.put("/markComplaintResolved/:complaint_id", adminController.markComplaintResolved);
-  router.put("/markComplaintPending/:complaint_id", adminController.markComplaintPending);
+  router.get(
+    "/getSortComplaintByDate/:page",
+    adminController.getSortComplaintByDate
+  );
+  router.get(
+    "/getFilterComplaintsByStatus/:page",
+    adminController.getFilteredComplaintsByStatus
+  );
+  router.get(
+    "/getComplaintByID/:complaint_id",
+    adminController.getComplaintByID
+  );
+  router.put(
+    "/markComplaintResolved/:complaint_id",
+    adminController.markComplaintResolved
+  );
+  router.put(
+    "/markComplaintPending/:complaint_id",
+    adminController.markComplaintPending
+  );
   router.put("/replyComplaint/:complaint_id", adminController.replyComplaint);
+
+  router.get("/getSalesReport", adminController.getSalesReport);
 
   router.post("/createPromoCode", adminController.createPromoCode);
 

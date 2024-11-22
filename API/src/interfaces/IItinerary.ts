@@ -21,6 +21,7 @@ export interface IItinerary extends Document {
   inappropriate_flag: boolean;
   tour_guide_id: ObjectId;
   name: string;
+  image?: mongoose.Schema.Types.ObjectId;
   category?: ObjectId;
   average_rating: number;
   createdAt?: Date;
@@ -41,6 +42,7 @@ export interface IItineraryCreateDTO {
   accessibility: boolean;
   pickup_loc: Location;
   drop_off_loc: Location;
+  image?: mongoose.Schema.Types.ObjectId;
   tags?: ObjectId[];
   active_flag: boolean;
 }
@@ -58,6 +60,7 @@ export interface IItineraryUpdateDTO {
   accessibility?: boolean;
   pickup_loc?: Location;
   drop_off_loc?: Location;
+  image?: mongoose.Schema.Types.ObjectId;
   tags?: ObjectId[];
   active_flag: boolean;
 }
@@ -76,6 +79,7 @@ export interface IItineraryOutputDTO {
   duration: String;
   available_dates: Date[];
   inappropriate_flag: Boolean;
+  image?: mongoose.Schema.Types.ObjectId;
   active_flag: Boolean;
   tags?: ObjectId[];
   timeline: any;
@@ -95,6 +99,7 @@ export interface IItineraryOutputAllDTO {
   duration: String;
   available_dates: Date[];
   inappropriate_flag: Boolean;
+  image?: mongoose.Schema.Types.ObjectId;
   active_flag: Boolean;
   reviews_count: Number;
   tags?: ObjectId[];

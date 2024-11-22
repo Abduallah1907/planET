@@ -9,6 +9,10 @@ import UserService from "./userService";
 import bcrypt from "bcryptjs";
 import { IComplaint, IComplaintAdminViewDTO } from "@/interfaces/IComplaint";
 import ComplaintStatus from "@/types/enums/complaintStatus";
+import { dir, time } from "console";
+import { ITourist } from "@/interfaces/ITourist";
+import { ISalesReport, ISalesReportTotal } from "@/interfaces/IReport";
+import TicketType from "@/types/enums/ticketType";
 
 // User related services (delete, view, and create users)
 
@@ -29,6 +33,8 @@ export default class AdminService {
     @Inject("productModel") private productModel: Models.ProductModel,
     @Inject("tagModel") private tagModel: Models.TagModel,
     @Inject("complaintModel") private complaintModel: Models.ComplaintModel,
+    @Inject("ticketModel") private ticketModel: Models.TicketModel,
+    @Inject("orderModel") private orderModel: Models.OrderModel,
     @Inject("promo_codeModel") private promoCodeModel: Models.Promo_codeModel
   ) {}
 
@@ -532,5 +538,197 @@ export default class AdminService {
 
     await this.promoCodeModel.create({ code: promoCode, expiry_date, discount });
     return new response(true, {}, "Code successfully generated!", 200);
+  }
+  // public async getSalesReportService() {
+  //   const bookingIds = await this.ticketModel.distinct("booking_id");
+  //   const productIds: Types.ObjectId[] = await this.orderModel.distinct(
+  //     "products.items.product_id"
+  //   );
+  //   const salesReport: ISalesReport[] = [];
+
+  //   for (const bookingId of bookingIds) {
+  //     const tickets = await this.ticketModel.find({ booking_id: bookingId });
+  //     let id: string = bookingId.toString();
+  //     let name: string = "";
+  //     let average_rating: number = 0;
+  //     let revenue: number = 0;
+  //     let image: mongoose.Schema.Types.ObjectId | undefined = undefined;
+  //     for (const ticket of tickets) {
+  //       switch (ticket.type) {
+  //         case TicketType.Activity:
+  //           const activity = await this.activityModel.findById(bookingId);
+  //           name = activity?.name ?? "";
+  //           average_rating = activity?.average_rating ?? 0;
+  //           image = activity?.image ?? undefined;
+  //           break;
+  //         case TicketType.Itinerary:
+  //           const itinerary = await this.itineraryModel.findById(bookingId);
+  //           name = itinerary?.name ?? "";
+  //           average_rating = itinerary?.average_rating ?? 0;
+  //           image = itinerary?.image ?? undefined;
+  //           break;
+  //         default:
+  //           break;
+  //       }
+  //       revenue += ticket.price.valueOf();
+  //     }
+  //     salesReport.push({
+  //       id,
+  //       name,
+  //       average_rating,
+  //       revenue: revenue * 0.1,
+  //       image,
+  //     });
+  //   } //For activitites and itineraries
+  //   for (const productId of productIds) {
+  //     const orders = await this.orderModel.find({
+  //       products: { items: { product_id: productId } },
+  //     });
+  //     let id: string = productId.toString();
+  //     let name: string = "";
+  //     let average_rating: number = 0;
+  //     let revenue: number = 0;
+  //     let image: mongoose.Schema.Types.ObjectId | undefined = undefined;
+
+  //     for (const order of orders) {
+  //       const product = await this.productModel.findById(productId);
+  //       name = product?.name ?? "";
+  //       average_rating = product?.average_rating ?? 0;
+  //       image = product?.image ?? undefined;
+  //       for (const item of order.products.items) {
+  //         revenue += (product?.price ?? 0) * (item.quantity ?? 0);
+  //       }
+  //     }
+  //     salesReport.push({
+  //       id,
+  //       name,
+  //       average_rating,
+  //       revenue: revenue * 0.1,
+  //       image,
+  //     });
+  //   } //For products
+
+  //   return new response(
+  //     true,
+  //     salesReport,
+  //     "Sales report generated successfully",
+  //     200
+  //   );
+  // }
+  public async getSalesReportServiceGPT() {
+    const activityAndItineraryReport = await this.ticketModel.aggregate([
+      // Group tickets by booking_id
+      {
+        $group: {
+          _id: "$booking_id",
+          tickets: { $push: "$$ROOT" }, // Include all ticket data
+          // createdAt: { $first: "$createdAt" }, // Get the first time_to_attend
+          totalRevenue: { $sum: "$price" }, // Sum up ticket prices
+        },
+      },
+      // Join with activities and itineraries based on booking_id
+      {
+        $lookup: {
+          from: "activities", // Collection name for activities
+          localField: "_id",
+          foreignField: "_id",
+          as: "activityDetails",
+        },
+      },
+      {
+        $lookup: {
+          from: "itineraries", // Collection name for itineraries
+          localField: "_id",
+          foreignField: "_id",
+          as: "itineraryDetails",
+        },
+      },
+      // Flatten activity and itinerary details for easier processing
+      {
+        $match: {
+          "tickets.price": { $gt: 0 },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          name: {
+            $cond: [
+              { $gt: [{ $size: "$activityDetails" }, 0] },
+              { $arrayElemAt: ["$activityDetails.name", 0] },
+              { $arrayElemAt: ["$itineraryDetails.name", 0] },
+            ],
+          },
+          average_rating: {
+            $cond: [
+              { $gt: [{ $size: "$activityDetails" }, 0] },
+              { $arrayElemAt: ["$activityDetails.average_rating", 0] },
+              { $arrayElemAt: ["$itineraryDetails.average_rating", 0] },
+            ],
+          },
+          image: {
+            $cond: [
+              { $gt: [{ $size: "$activityDetails" }, 0] },
+              { $arrayElemAt: ["$activityDetails.image", 0] },
+              { $arrayElemAt: ["$itineraryDetails.image", 0] },
+            ],
+          },
+          type: {
+            $cond: [
+              { $gt: [{ $size: "$activityDetails" }, 0] },
+              "ACTIVITY",
+              "ITINERARY",
+            ],
+          },
+          // time_to_attend: 1,
+          // date: "$createdAt", // Directly reference the time_to_attend field
+
+          revenue: { $multiply: ["$totalRevenue", 0.1] }, // Only 10% revenue goes to admin
+        },
+      },
+    ]);
+    const productReport = await this.productModel.aggregate([
+      // Project fields to calculate revenue and simplify output
+      { $match: { sales: { $gt: 0 } } },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          average_rating: 1,
+          image: 1,
+          // date: "$createdAt", // Directly reference the createdAt field
+          type: "PRODUCT",
+          revenue: { $multiply: ["$sales", "$price"] }, // Calculate total revenue
+        },
+      },
+      // Add admin's 10% share of the revenue
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          average_rating: 1,
+          image: 1,
+          // date: 1,
+          type: "PRODUCT",
+          revenue: { $multiply: ["$revenue", 0.1] }, // Admin's 10% share
+        },
+      },
+    ]);
+
+    const salesReports: ISalesReport[] = [
+      ...activityAndItineraryReport,
+      ...productReport,
+    ];
+    let totalRevenue = 0;
+    for (const salesReport of salesReports) {
+      totalRevenue += salesReport.revenue;
+    }
+    const salesReportTotal: ISalesReportTotal = { salesReports, totalRevenue };
+    return new response(
+      true,
+      salesReportTotal,
+      "Sales report generated successfully",
+      200
+    );
   }
 }
