@@ -590,6 +590,35 @@ export default class TouristService {
       );
 
     if (updatedTourist == null) throw new NotFoundError("Tourist not found");
+    //Send the receipt to the tourist email
+    const notificationService = Container.get(NotificationService);
+    const receiptMessage = `Dear ${user.name},\n\nYour Activity booking for ${
+      activity.name
+    } has been confirmed. Here are the details:\n\nActivity: ${
+      activity.name
+    }\nDate: ${activity.date.toDateString()}\n${
+      activity.price != undefined
+        ? `Price: ${activity.price}`
+        : `Price Range: ${activity.price_range?.min} - ${activity.price_range?.max}`
+    }\nID: ${activity._id}
+        \n\nThank you for booking with us!\n\nBest regards,\nYour Favourite Travel Team`;
+
+    const emailSent = await notificationService.sendEmailNotificationService(
+      "Itinerary Booking Confirmation",
+      user.email,
+      receiptMessage
+    );
+
+    if (emailSent instanceof Error) {
+      throw new InternalServerError(
+        "Failed to send booking confirmation email"
+      );
+    }
+    if (emailSent == null) {
+      throw new InternalServerError(
+        "Failed to send booking confirmation email"
+      );
+    }
 
     return new response(true, ticket, "Activity booked", 201);
   }
@@ -682,7 +711,27 @@ export default class TouristService {
       throw new InternalServerError("Internal server error");
 
     if (updatedTourist == null) throw new NotFoundError("Tourist not found");
+    //Send the receipt to the tourist email
+    const notificationService = Container.get(NotificationService);
+    const receiptMessage = `Dear ${user.name},\n\nYour itinerary booking for ${itinerary.name} has been confirmed. Here are the details:\n\nItinerary: ${itinerary.name}\nDate: ${time_to_attend}\nPrice: ${itinerary.price}\nID: ${itinerary._id}
+    \n\nThank you for booking with us!\n\nBest regards,\nYour Favourite Travel Team`;
 
+    const emailSent = await notificationService.sendEmailNotificationService(
+      "Itinerary Booking Confirmation",
+      user.email,
+      receiptMessage
+    );
+
+    if (emailSent instanceof Error) {
+      throw new InternalServerError(
+        "Failed to send booking confirmation email"
+      );
+    }
+    if (emailSent == null) {
+      throw new InternalServerError(
+        "Failed to send booking confirmation email"
+      );
+    }
     return new response(true, ticket, "Itinerary booked", 201);
   }
 
@@ -774,6 +823,35 @@ export default class TouristService {
       { wallet: newWallet, $push: { tickets: ticket._id } },
       { new: true }
     );
+    //Send the receipt to the tourist email
+    //Send the receipt to the tourist email
+    // const notificationService = Container.get(NotificationService);
+    // const receiptMessage = `Dear ${user.name},\n\n
+    // Your historical location booking for
+    // ${historical_location.name} has been confirmed.
+    //  Here are the details:\n\n
+    //  Historical Location: ${historical_location.name}
+    //  \nDate: ${historical_location.date_time}\n
+    //  Price: ${historical_location.price}\nID: ${historical_location._id}
+    // \n\nThank you for booking with us!\n\nBest regards,\nYour Favourite Travel Team`;
+
+    // const emailSent = await notificationService.sendEmailNotificationService(
+    //   "Itinerary Booking Confirmation",
+    //   user.email,
+    //   receiptMessage
+    // );
+
+    // if (emailSent instanceof Error) {
+    //   throw new InternalServerError(
+    //     "Failed to send booking confirmation email"
+    //   );
+    // }
+    // if (emailSent == null) {
+    //   throw new InternalServerError(
+    //     "Failed to send booking confirmation email"
+    //   );
+    // }
+
     return new response(true, ticket, "Historical location booked", 201);
   }
 
