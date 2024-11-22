@@ -4,9 +4,7 @@ import express from "express";
 import Container from "typedi";
 import authorize from "../middlewares/authorize";
 import UserRoles from "@/types/enums/userRoles";
-import getRoleAndID from "../middlewares/getRole";
-import exp from "constants";
-import UserType from "@/types/enums/userTypesNotified";
+
 const router = Router();
 export default (app: Router) => {
   const notificationController: NotificationController = Container.get(
@@ -16,12 +14,12 @@ export default (app: Router) => {
 
   router.get(
     "/getNotificationsByEmail/:email",
-    authorize(Object.values(UserType)),
+    authorize(Object.values(UserRoles)),
     notificationController.getNotificationsByEmail
   );
   router.get(
     "/getNotificationNumber/:email",
-    authorize(Object.values(UserType)),
+    authorize(Object.values(UserRoles)),
     notificationController.getNotificationNumber
   );
 };

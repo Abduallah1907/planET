@@ -1,32 +1,16 @@
-<<<<<<< HEAD
-import { Service } from "typedi";
-import { SocketIOLoader } from "@/loaders/socket";
-
-@Service()
-export class NotificationService {
-    constructor(private socketIOLoader: SocketIOLoader) {}
-
-    public sendNotification(userId: string, message: string): void {
-        const io = this.socketIOLoader.getSocketIO();
-        io.to(userId).emit("notification", message);
-        console.log(`Notification sent to user ${userId}: ${message}`);
-    }
-=======
 import { INotification } from "@/interfaces/INotification";
-import UserType from "@/types/enums/userTypesNotified";
 import {
   BadRequestError,
-  ForbiddenError,
   InternalServerError,
   NotFoundError,
 } from "@/types/Errors";
 import response from "@/types/responses/response";
 import Container, { Inject, Service } from "typedi";
-import mongoose, { Types } from "mongoose";
-import Notification from "@/models/Notification";
+import { Types } from "mongoose";
 import { ObjectId } from "mongodb";
 import MailerService from "@/services/mailer";
-import admin from "@/api/routes/admin";
+import { SocketIOLoader } from "@/loaders/socket";
+import UserRoles from "@/types/enums/userRoles";
 
 @Service()
 export default class NotificationService {
@@ -40,8 +24,16 @@ export default class NotificationService {
     @Inject("sellerModel")
     private sellerModel: Models.SellerModel,
     @Inject("tour_guideModel") private tourGuideModel: Models.Tour_guideModel,
-    @Inject("touristModel") private touristModel: Models.TouristModel
-  ) {}
+    @Inject("touristModel") private touristModel: Models.TouristModel,
+    private socketIOLoader: SocketIOLoader
+  ) { }
+  
+  public sendNotification(userId: string, message: string): void {
+    const io = this.socketIOLoader.getSocketIO();
+    io.to(userId).emit("notification", message);
+    console.log(`Notification sent to user ${userId}: ${message}`);
+  }
+  
   //create notification
   public async createNotificationService(
     notified_id: ObjectId,
@@ -51,7 +43,7 @@ export default class NotificationService {
     if (!Types.ObjectId.isValid(notified_id)) {
       throw new BadRequestError("Invalid Id");
     }
-    if (!Object.values(UserType).includes(user_type as UserType)) {
+    if (!Object.values(UserRoles).includes(user_type as UserRoles)) {
       throw new BadRequestError("Invalid user type");
     }
     const notification = new this.notificationModel({
@@ -96,7 +88,7 @@ export default class NotificationService {
     switch (user.role) {
       case "ADMIN":
         id = user._id as unknown as string;
-        user_type = UserType.Admin;
+        user_type = UserRoles.Admin;
         break;
       case "ADVERTISER":
         //get advertiser id
@@ -110,7 +102,7 @@ export default class NotificationService {
           throw new NotFoundError("Advertiser not found");
         }
         id = advertiser._id as unknown as string;
-        user_type = UserType.Advertiser;
+        user_type = UserRoles.Advertiser;
         break;
       case "SELLER":
         const seller = await this.sellerModel.findOne({
@@ -124,7 +116,7 @@ export default class NotificationService {
           throw new NotFoundError("Governor not found");
         }
         id = seller._id as unknown as string;
-        user_type = UserType.Seller;
+        user_type = UserRoles.Seller;
         break;
       case "TOUR_GUIDE":
         const tourGuide = await this.tourGuideModel.findOne({
@@ -137,7 +129,7 @@ export default class NotificationService {
           throw new NotFoundError("Tour Guide not found");
         }
         id = tourGuide._id as unknown as string;
-        user_type = UserType.TourGuide;
+        user_type = UserRoles.TourGuide;
         break;
       case "TOURIST":
         const tourist = await this.touristModel.findOne({
@@ -150,7 +142,7 @@ export default class NotificationService {
           throw new NotFoundError("Tourist not found");
         }
         id = tourist._id as unknown as string;
-        user_type = UserType.Tourist;
+        user_type = UserRoles.Tourist;
         break;
       default:
         throw new BadRequestError("Invalid user type");
@@ -201,7 +193,7 @@ export default class NotificationService {
     switch (user.role) {
       case "ADMIN":
         id = user._id as unknown as string;
-        user_type = UserType.Admin;
+        user_type = UserRoles.Admin;
         break;
       case "ADVERTISER":
         //get advertiser id
@@ -215,7 +207,7 @@ export default class NotificationService {
           throw new NotFoundError("Advertiser not found");
         }
         id = advertiser._id as unknown as string;
-        user_type = UserType.Advertiser;
+        user_type = UserRoles.Advertiser;
         break;
       case "SELLER":
         const seller = await this.sellerModel.findOne({
@@ -229,7 +221,7 @@ export default class NotificationService {
           throw new NotFoundError("Governor not found");
         }
         id = seller._id as unknown as string;
-        user_type = UserType.Seller;
+        user_type = UserRoles.Seller;
         break;
       case "TOUR_GUIDE":
         const tourGuide = await this.tourGuideModel.findOne({
@@ -242,7 +234,7 @@ export default class NotificationService {
           throw new NotFoundError("Tour Guide not found");
         }
         id = tourGuide._id as unknown as string;
-        user_type = UserType.TourGuide;
+        user_type = UserRoles.TourGuide;
         break;
       case "TOURIST":
         const tourist = await this.touristModel.findOne({
@@ -255,7 +247,7 @@ export default class NotificationService {
           throw new NotFoundError("Tourist not found");
         }
         id = tourist._id as unknown as string;
-        user_type = UserType.Tourist;
+        user_type = UserRoles.Tourist;
         break;
       default:
         throw new BadRequestError("Invalid user type");
@@ -287,5 +279,4 @@ export default class NotificationService {
     //return response
     return new response(true, null, "Email sent", 200);
   }
->>>>>>> origin/backend
 }

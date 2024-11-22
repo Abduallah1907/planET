@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-import mongoose from "mongoose";
-
-export interface INotification {
-    userId: mongoose.Schema.Types.ObjectId;
-    title: string;
-    message: string;
-    timestamp: Date;
-    isRead: boolean;
-    type: string;
-}
-=======
 import UserType from "@/types/enums/userTypesNotified";
 import mongoose, { Document } from "mongoose";
 
@@ -23,4 +11,3 @@ export interface INotification extends Document {
   createdAt?: Date;
   updatedAt?: Date;
 }
->>>>>>> origin/backend

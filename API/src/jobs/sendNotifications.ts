@@ -2,7 +2,7 @@ import { Container } from 'typedi';
 import MailerService from '@/services/mailer';
 import { Logger } from 'winston';
 import { Job } from 'agenda';
-import { NotificationService } from '@/services/notificationService';
+import NotificationService from '@/services/notificationService';
 import TouristService from '@/services/touristService';
 
 export default class sendNotificationJob {
