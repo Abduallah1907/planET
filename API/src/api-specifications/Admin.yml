@@ -540,7 +540,16 @@ paths:
           description: Could not find the complaint using the complaint_id
         "500":
           description: Internal Server Error.
-
+  /api/admin/getSalesReport:        
+    get:
+      tags:
+        - Admin
+      summary: Get the sales report of the website
+      responses:
+        "200":
+          description: Sales report retrieved successfully
+        "500":
+          description: Internal Server Error.
 components:
   schemas:
     Complaint:
