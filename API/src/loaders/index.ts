@@ -118,11 +118,6 @@ export default async ({ expressApp }: { expressApp: Application }) => {
     // Notice the require syntax and the '.default'
     model: require("../models/Tourist").default,
   };
-  const wishlistModel = {
-    name: "wishlistModel",
-    // Notice the require syntax and the '.default'
-    model: require("../models/Wishlist").default,
-  };
   const historical_tagModel = {
     name: "historical_tagModel",
     // Notice the require syntax and the '.default'
@@ -167,7 +162,6 @@ export default async ({ expressApp }: { expressApp: Application }) => {
       ticketModel,
       tour_guideModel,
       touristModel,
-      wishlistModel,
       tagModel,
       historical_tagModel,
       otpModel,

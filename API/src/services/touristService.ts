@@ -57,7 +57,7 @@ export default class TouristService {
     @Inject("promo_codeModel") private promoCodeModel: Models.Promo_codeModel,
     @Inject("bookmark_notifyModel")
     private bookmark_notifyModel: Models.Bookmark_notifyModel
-  ) {}
+  ) { }
 
   public async getTouristService(email: string) {
     const user = await this.userModel.findOne({
@@ -1590,8 +1590,7 @@ export default class TouristService {
       role: UserRoles.Tourist,
     });
 
-    if (user instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (user instanceof Error) throw new InternalServerError("Internal server error");
 
     if (user == null) throw new NotFoundError("User not found");
 
@@ -1768,5 +1767,96 @@ export default class TouristService {
       "Bookmarked activities found",
       200
     );
+  }
+
+  public async addProductToWishlistService(email: string, productID: Types.ObjectId): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel.findOne({ user_id: userInfo._id });
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+
+    // one might ask what is the of this find, why not just directly put the productID
+    // my answer dear friend is because the array we push into does not accept Types.ObjectId :)
+    const productInfo = await this.productModel.findById(productID);
+    if (!productInfo) throw new NotFoundError("Product not found");
+
+    // should be conflict error ):
+    if (touristInfo.wishlist.includes(productInfo._id as ObjectId)) throw new BadRequestError("Product has already been wishlisted");
+    touristInfo.wishlist.push(productInfo._id as ObjectId);
+    await touristInfo.save();
+
+    return new response(true, {}, "Wishlisted product!", 200);
+  }
+
+  public async removeProductFromWishlistService(email: string, productID: Types.ObjectId): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel.findOne({ user_id: userInfo._id });
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+
+    // one might ask what is the of this find, why not just directly put the productID
+    // my answer dear friend is because the array we look into does not accept Types.ObjectId :)
+    const productInfo = await this.productModel.findById(productID);
+    if (!productInfo) throw new NotFoundError("Product not found");
+
+    // should be conflict error ):
+    const index = touristInfo.wishlist.indexOf(productInfo._id as ObjectId);
+    if (index === -1) throw new BadRequestError("Product was not found in wishlist");
+    touristInfo.wishlist.splice(index, 1);
+    await touristInfo.save();
+
+    return new response(true, {}, "Removed product!", 200);
+  }
+
+  public async viewWishlistService(email: string): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel.findOne({ user_id: userInfo._id }).populate("wishlist");
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+
+    const wishlist = touristInfo.wishlist;
+
+    return new response(true, wishlist, "Returning product inside wishlist", 200);
+  }
+
+  public async addDeliveryAddressService(email: string, address: string): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel.findOne({ user_id: userInfo._id });
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+
+    if (!address) throw new BadRequestError("The address field was empty");
+    // i dont check for duplicates, mostly because amazon doesn't either :)
+    // deleting would just delete the oldest one if it a duplicate
+    touristInfo.addresses.push(address);
+    await touristInfo.save();
+
+    return new response(true, {}, "Added address!", 200);
+  }
+
+  public async removeDeliveryAddressService(email: string, address: string): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel.findOne({ user_id: userInfo._id });
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+    if (!address) throw new BadRequestError("The address field was empty");
+
+    // should be conflict error ):
+    const index = touristInfo.addresses.indexOf(address);
+    if (index === -1) throw new BadRequestError("Address was not found in saved addresses, or has already been removed");
+    touristInfo.addresses.splice(index, 1);
+    await touristInfo.save();
+
+    return new response(true, {}, "Removed address!", 200);
+  }
+
+  public async viewDeliveryAddressesService(email: string): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel.findOne({ user_id: userInfo._id });
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+
+    const addresses = touristInfo.addresses;
+    return new response(true, addresses, "Returning addresses", 200);
   }
 }

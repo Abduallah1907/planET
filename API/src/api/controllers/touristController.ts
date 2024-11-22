@@ -27,6 +27,7 @@ export class TouristController {
     const touristData: ITouristCreateDTO = req.body;
     const touristService: TouristService = Container.get(TouristService);
     const createdTourist = await touristService.createTouristService(touristData);
+    const createdTourist = await touristService.createTouristService(touristData);
     res.status(createdTourist.status).json(createdTourist);
   }
 
@@ -239,6 +240,54 @@ export class TouristController {
     const touristService: TouristService = Container.get(TouristService);
     const pastOrders = await touristService.getPastOrdersService(email);
     res.status(pastOrders.status).json(pastOrders);
+  }
+
+  public async addProductToWishlist(req: Request, res: Response): Promise<void> {
+    const { email } = req.params;
+    const { product_id } = req.body;
+    const productObjectID = new Types.ObjectId(product_id);
+    const touristService: TouristService = Container.get(TouristService);
+    const wishlist = await touristService.addProductToWishlistService(email, productObjectID);
+    res.status(wishlist.status).json(wishlist);
+  }
+
+  public async removeProductFromWishlist(req: Request, res: Response): Promise<void> {
+    const { email } = req.params;
+    const { product_id } = req.body;
+    const productObjectID = new Types.ObjectId(product_id);
+    const touristService: TouristService = Container.get(TouristService);
+    const wishlist = await touristService.removeProductFromWishlistService(email, productObjectID);
+    res.status(wishlist.status).json(wishlist);
+  }
+
+  public async viewWishlist(req: Request, res: Response): Promise<void> {
+    const { email } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const wishlist = await touristService.viewWishlistService(email);
+    res.status(wishlist.status).json(wishlist);
+  }
+
+  public async addAddress(req: Request, res: Response): Promise<void> {
+    const { email } = req.params;
+    const { address } = req.body;
+    const touristService: TouristService = Container.get(TouristService);
+    const addressResponse = await touristService.addDeliveryAddressService(email, address);
+    res.status(addressResponse.status).json(addressResponse);
+  }
+
+  public async removeAddress(req: Request, res: Response): Promise<void> {
+    const { email } = req.params;
+    const { address } = req.body;
+    const touristService: TouristService = Container.get(TouristService);
+    const addressResponse = await touristService.removeDeliveryAddressService(email, address);
+    res.status(addressResponse.status).json(addressResponse);
+  }
+
+  public async getAddresses(req: Request, res: Response): Promise<void> {
+    const { email } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const addresses = await touristService.viewDeliveryAddressesService(email);
+    res.status(addresses.status).json(addresses);
   }
 
   public async isValidCode(req: Request, res: Response) {
