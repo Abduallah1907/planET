@@ -27,7 +27,6 @@ export class TouristController {
     const touristData: ITouristCreateDTO = req.body;
     const touristService: TouristService = Container.get(TouristService);
     const createdTourist = await touristService.createTouristService(touristData);
-    const createdTourist = await touristService.createTouristService(touristData);
     res.status(createdTourist.status).json(createdTourist);
   }
 
