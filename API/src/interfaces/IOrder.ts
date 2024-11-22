@@ -18,4 +18,5 @@ export interface IOrderCartDTO {
   cart: Cart;
   cost: number;
   payment_type: PaymentType;
+  promoCode?: string;
 }

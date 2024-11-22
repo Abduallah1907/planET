@@ -417,10 +417,10 @@ export default class TouristService {
 
     const activity = await this.activityModel.findById({ _id: activity_id });
     if (activity instanceof Error) throw new InternalServerError("Internal server error");
-    if (activity == null) throw new NotFoundError("Activity not found");
-    if (activity.booking_flag == false) throw new BadRequestError("Activity is not available for booking");
-    if (activity.inappropriate_flag == true) throw new BadRequestError("Activity is inappropriate");
-    if (activity.active_flag == false) throw new BadRequestError("Activity is not active");
+    if (activity === null) throw new NotFoundError("Activity not found");
+    if (activity.booking_flag === false) throw new BadRequestError("Activity is not available for booking");
+    if (activity.inappropriate_flag === true) throw new BadRequestError("Activity is inappropriate");
+    if (activity.active_flag === false) throw new BadRequestError("Activity is not active");
     if (activity.price !== undefined) {
       if (activity.special_discount) {
         activity.price = activity.price - activity.price * (activity.special_discount / 100);
@@ -1471,17 +1471,16 @@ export default class TouristService {
     return new response(true, tour_guides_info, "Tour guides found", 200);
   }
   public async createOrderService(orderData: IOrderCartDTO) {
-    const { tourist_id, cart, cost, payment_type } = orderData;
+    const { tourist_id, cart, payment_type, promoCode } = orderData;
+    let { cost } = orderData;
     if (!Types.ObjectId.isValid(tourist_id.toString())) {
       throw new BadRequestError("Invalid id ");
     }
     const tourist = await this.touristModel.findById(tourist_id);
-
     if (tourist instanceof Error) throw new InternalServerError("Internal server error");
+    if (tourist === null) throw new NotFoundError("Tourist not found");
 
-    if (tourist == null) throw new NotFoundError("Tourist not found");
-
-    if (payment_type == PaymentType.CreditCard) {
+    if (payment_type === PaymentType.CreditCard) {
       //Sprint 3
     }
     // if(discount){
@@ -1492,9 +1491,7 @@ export default class TouristService {
       const product = await this.productModel.findById(product_id);
 
       if (product instanceof Error) throw new InternalServerError("Internal server error");
-
-      if (product == null) throw new NotFoundError("Product not found");
-
+      if (product === null) throw new NotFoundError("Product not found");
       if (quantity > product.quantity) {
         throw new BadRequestError("Quantity not available to place order");
       }
@@ -1507,26 +1504,30 @@ export default class TouristService {
       //Already handled in frontend but why not
     }
 
+    if (promoCode) {
+      const validPromo = await this.isValidCodeService(promoCode);
+      if (!validPromo) throw new BadRequestError("There was an issue when tyring to check the promo code");
+      cost = cost - cost * (validPromo.data.discount_percent / 100);
+    }
+
     const order = new this.orderModel({
       tourist_id: new Types.ObjectId(tourist_id.toString()),
       products: cart,
       date: Date.now(),
       status: OrderStatus.Pending,
       payment_type: payment_type,
-      cost: cost,
+      totalCost: cost,
     });
     await order.save();
 
     if (order instanceof Error) throw new InternalServerError("Internal server error");
 
-    if (order == null) throw new NotFoundError("Order not found");
-
+    if (order === null) throw new NotFoundError("Order not found");
     const newWallet = tourist.wallet - cost;
     if (newWallet < 0) {
       throw new BadRequestError("Insufficient funds to place order");
     }
     const updatedTourist = await this.touristModel.findByIdAndUpdate(tourist_id, { wallet: newWallet, $push: { orders: order._id } }, { new: true });
-
     if (updatedTourist instanceof Error) throw new InternalServerError("Internal server error");
 
     if (updatedTourist == null) throw new NotFoundError("Tourist not found");
