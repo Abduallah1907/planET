@@ -385,7 +385,9 @@ paths:
         200:
           description: Activity booked successfully
         400:
-          description: Bad request
+          description: Bad request or the promocode has expired
+        404:
+          description: Code does not even exist, cannot use it
         500:
           description: Internal server error
   /api/tourist/bookItinerary:
@@ -423,7 +425,9 @@ paths:
         200:
           description: Itinerary booked successfully
         400:
-          description: Bad request
+          description: Bad request or the promocode has expired
+        404:
+          description: Code does not even exist, cannot use it
         500:
           description: Internal server error
   /api/tourist/bookHistoricalLocation:
@@ -912,7 +916,9 @@ paths:
       tags:
         - Tourist
       summary: Create order cart
-      description: Create an order cart for a tourist
+      description:
+        Create an order cart for a tourist. If there is a promocode, then it will automatically check if it is valid apply it if needed. If there is no promocode
+        simply leave it empty, or just don't send it as part of the request body.
       requestBody:
         required: true
         content:
@@ -947,6 +953,10 @@ paths:
                 payment_type:
                   type: string
                   description: Payment type
+                promoCode:
+                  type: string
+                  example: ipw0o29eugf
+                  description: If the user inserted a promocode. If not, this should be either an empty string or just not sent as part of the request
       responses:
         200:
           description: Order cart created successfully
@@ -971,7 +981,9 @@ paths:
         200:
           description: Past orders retrieved successfully
         400:
-          description: Bad request
+          description: Bad request or the promocode has expired
+        404:
+          description: Code does not even exist, cannot use it
         500:
           description: Internal server error
   /api/tourist/isValidPromo/{promoCode}:

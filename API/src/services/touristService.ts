@@ -1516,7 +1516,7 @@ export default class TouristService {
       date: Date.now(),
       status: OrderStatus.Pending,
       payment_type: payment_type,
-      totalCost: cost,
+      cost: cost,
     });
     await order.save();
 
