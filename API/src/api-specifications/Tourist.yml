@@ -358,7 +358,9 @@ paths:
       tags:
         - Tourist
       summary: Book an activity
-      description: Book an activity for a tourist
+      description:
+        Book an activity for a tourist. If there is a promocode, then it will automatically check if it is valid apply it if needed. If there is no promocode
+        simply leave it empty, or just don't send it as part of the request body. This is not fully tested, eshtem fe el lesa ma5alesh payment type
       requestBody:
         required: true
         content:
@@ -375,11 +377,17 @@ paths:
                 payment_type:
                   type: string
                   description: Payment type
+                promoCode:
+                  type: string
+                  example: ipw0o29eugf
+                  description: If the user inserted a promocode. If not, this should be either an empty string or just not sent as part of the request
       responses:
         200:
           description: Activity booked successfully
         400:
-          description: Bad request
+          description: Bad request or the promocode has expired
+        404:
+          description: Code does not even exist, cannot use it
         500:
           description: Internal server error
   /api/tourist/bookItinerary:
@@ -387,7 +395,9 @@ paths:
       tags:
         - Tourist
       summary: Book an itinerary
-      description: Book an itinerary for a tourist
+      description:
+        Book an itinerary for a tourist. If there is a promocode, then it will automatically check if it is valid apply it if needed. If there is no promocode
+        simply leave it empty, or just don't send it as part of the request body. This is not fully tested, eshtem fe el lesa ma5alesh payment type
       requestBody:
         required: true
         content:
@@ -407,11 +417,17 @@ paths:
                 payment_type:
                   type: string
                   description: Payment type
+                promoCode:
+                  type: string
+                  example: ipw0o29eugf
+                  description: If the user inserted a promocode. If not, this should be either an empty string or just not sent as part of the request
       responses:
         200:
           description: Itinerary booked successfully
         400:
-          description: Bad request
+          description: Bad request or the promocode has expired
+        404:
+          description: Code does not even exist, cannot use it
         500:
           description: Internal server error
   /api/tourist/bookHistoricalLocation:
@@ -900,7 +916,9 @@ paths:
       tags:
         - Tourist
       summary: Create order cart
-      description: Create an order cart for a tourist
+      description:
+        Create an order cart for a tourist. If there is a promocode, then it will automatically check if it is valid apply it if needed. If there is no promocode
+        simply leave it empty, or just don't send it as part of the request body.
       requestBody:
         required: true
         content:
@@ -935,6 +953,10 @@ paths:
                 payment_type:
                   type: string
                   description: Payment type
+                promoCode:
+                  type: string
+                  example: ipw0o29eugf
+                  description: If the user inserted a promocode. If not, this should be either an empty string or just not sent as part of the request
       responses:
         200:
           description: Order cart created successfully
@@ -959,9 +981,79 @@ paths:
         200:
           description: Past orders retrieved successfully
         400:
-          description: Bad request
+          description: Bad request or the promocode has expired
+        404:
+          description: Code does not even exist, cannot use it
         500:
           description: Internal server error
+  /api/tourist/isValidPromo/{promoCode}:
+    get:
+      tags:
+        - Tourist
+        - Promo Code
+      summary: Returns whether a promo code is valid or not
+      description: For a promo code to be valid, it must 1) acutally exist in our database and 2) has not expired yet
+      parameters:
+        - in: path
+          name: promoCode
+          required: true
+          description: promoCode we want to check. Typically is 11 letters long
+          schema:
+            type: string
+            example: ipw0orieugf
+      responses:
+        "200":
+          description: Code is valid, also returns the discount percentage
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      valid:
+                        type: boolean
+                        example: true
+                      discount_percent:
+                        type: integer
+                        example: 20
+                  message:
+                    type: string
+                    example: "Code is valid!"
+                  status:
+                    type: integer
+                    example: 200
+        "400":
+          description: Code had expired, cannot use it
+        "404":
+          description: Code does not even exist, cannot use it
+        "500":
+          description: Internal server error   
+  /api/tourist/getCurrentOrders/{email}:
+    get:
+      tags:
+        - Tourist
+      summary: Get current orders
+      description: Get current orders for a tourist
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        200:
+          description: Current orders retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error     
+
   /api/tourist/bookmarkActivity:
     post:
       tags:
@@ -987,7 +1079,59 @@ paths:
         400:
           description: Bad request
         500:
-          description: Internal server error
+          description: Internal server error  
+  /api/tourist/unbookmarkActivity:
+    delete:
+      tags:
+        - Tourist
+      summary: Unbookmark an activity
+      description: Unbookmark an activity for a tourist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: email of the tourist
+                activity_id:
+                  type: string
+                  description: ID of the activity
+      responses:
+        200:
+          description: Activity unbookmarked successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error  
+  /api/tourist/unbookmarkActivity:
+    delete:
+      tags:
+        - Tourist
+      summary: Unbookmark an activity
+      description: Unbookmark an activity for a tourist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: email of the tourist
+                activity_id:
+                  type: string
+                  description: ID of the activity
+      responses:
+        200:
+          description: Activity unbookmarked successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error  
   /api/tourist/getBookmarkedActivities/{email}:
     get:
       tags:
@@ -1046,5 +1190,275 @@ paths:
           description: Order cancelled successfully
         400:
           description: Bad request
+        500:
+          description: Internal server error
+
+          description: Internal server error
+  /api/tourist/addProductToWishlist/{email}:
+    put:
+      tags:
+        - Tourist
+        - Wishlist
+      summary: Adds a product to the wishlist of a user. (law enta bet2ra el 7eta deeh,fakerny ashoof eh el hay7sal law el product et3amelaha archive)
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: string
+                  example: "6727d4abc143ff8b82b57877"
+      responses:
+        200:
+          description: Successfully added product to wishlist
+        400:
+          description: The product is already added to the wishlist
+        404:
+          description: Could not find tourist/product using the email/product id
+  /api/tourist/removeProductFromWishlist/{email}:
+    delete:
+      tags:
+        - Tourist
+        - Wishlist
+      summary: Removes a product from a wishlist if it exists; if not, throws an error
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: string
+                  example: "6727d4abc143ff8b82b57877"
+      responses:
+        200:
+          description: Successfully removed product to wishlist
+        400:
+          description: The product is already removed or could not be found in the wishlist
+        404:
+          description: Could not find tourist/product using the email/product id
+  /api/tourist/viewWishlist/{email}:
+    get:
+      tags:
+        - Tourist
+        - Wishlist
+      summary: Returns the entire wishlist of a user
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully fetched wishlist products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          description: The unique identifier for the product
+                          example: "6727d4a9c143ff8b82b5786a"
+                        seller_id:
+                          type: string
+                          description: The unique identifier for the seller
+                          example: "6727d4a9c143ff8b82b57868"
+                        comments:
+                          type: array
+                          items:
+                            type: string
+                            description: List of comment IDs related to the product
+                            example:
+                              - "6727d4d1c143ff8b82b57b80"
+                              - "6727d4dfc143ff8b82b57fee"
+                        name:
+                          type: string
+                          description: Name of the product
+                          example: "Unbranded Cotton Chair"
+                        description:
+                          type: string
+                          description: A detailed description of the product
+                          example: "The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality"
+                        picture:
+                          type: string
+                          description: URL to the product image
+                          example: "https://loremflickr.com/2916/1546?lock=6488587091388677"
+                        price:
+                          type: integer
+                          description: Price of the product
+                          example: 2628
+                        quantity:
+                          type: integer
+                          description: Available quantity of the product
+                          example: 639
+                        sales:
+                          type: integer
+                          description: Total sales of the product
+                          example: 10357
+                        average_rating:
+                          type: number
+                          format: float
+                          description: Average rating of the product
+                          example: 3.6
+                        archieve_flag:
+                          type: boolean
+                          description: Flag indicating if the product is archived
+                          example: false
+                        tourist_id:
+                          type: array
+                          items:
+                            type: string
+                          description: List of tourist IDs associated with the product (if any)
+                          example: []
+                        createdAt:
+                          type: string
+                          format: date-time
+                          description: Product creation timestamp
+                          example: "2024-11-03T19:53:13.610Z"
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          description: Product last updated timestamp
+                          example: "2024-11-03T19:54:47.849Z"
+                        __v:
+                          type: integer
+                          description: Internal version field (for Mongoose)
+                          example: 5
+                  message:
+                    type: string
+                    example: "Returning product inside wishlist"
+                  status:
+                    type: integer
+                    example: 200
+        "404":
+          description: Could not find tourist using the email
+
+  /api/tourist/addAddress/{email}:
+    put:
+      tags:
+        - Tourist
+      summary: Adds an address to the tourist. Duplicates are allowed.
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address:
+                  type: string
+                  example: "ta7t beity"
+      responses:
+        200:
+          description: Successfully added address
+        400:
+          description: The address does not exist i.e the address field was left empty
+        404:
+          description: Could not find tourist using the email
+
+  /api/tourist/removeAddress/{email}:
+    delete:
+      tags:
+        - Tourist
+      summary: Removes an address to the tourist. If there are duplicates, deletes the oldest one
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address:
+                  type: string
+                  example: "ta7t beity"
+      responses:
+        200:
+          description: Successfully deleted address
+        400:
+          description: The address does not exist or was already deleted
+        404:
+          description: Could not find tourist using the email
+  /api/tourist/getAddresses/{email}:
+    get:
+      tags:
+        - Tourist
+      summary: Returns all the addresses for the user
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully retrieved the user's addresses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: string
+                    description: A list of addresses
+                    example:
+                      - "fo2 beity"
+                  message:
+                    type: string
+                    example: "Returning addresses"
+                  status:
+                    type: integer
+                    example: 200
+        400:
+          description: The address does not exist or was already deleted
+        404:
+          description: Could not find tourist using the email
         500:
           description: Internal server error

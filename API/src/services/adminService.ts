@@ -15,13 +15,16 @@ import {
   HttpError,
   BadRequestError,
   NotFoundError,
+  ForbiddenError,
 } from "@/types/Errors";
 import UserService from "./userService";
 import bcrypt from "bcryptjs";
 import { IComplaint, IComplaintAdminViewDTO } from "@/interfaces/IComplaint";
 import ComplaintStatus from "@/types/enums/complaintStatus";
-import { dir } from "console";
+import { dir, time } from "console";
 import { ITourist } from "@/interfaces/ITourist";
+import { ISalesReport, ISalesReportTotal } from "@/interfaces/IReport";
+import TicketType from "@/types/enums/ticketType";
 
 // User related services (delete, view, and create users)
 
@@ -41,7 +44,10 @@ export default class AdminService {
     private historicalLocationsModel: Models.Historical_locationsModel,
     @Inject("productModel") private productModel: Models.ProductModel,
     @Inject("tagModel") private tagModel: Models.TagModel,
-    @Inject("complaintModel") private complaintModel: Models.ComplaintModel
+    @Inject("complaintModel") private complaintModel: Models.ComplaintModel,
+    @Inject("ticketModel") private ticketModel: Models.TicketModel,
+    @Inject("orderModel") private orderModel: Models.OrderModel,
+    @Inject("promo_codeModel") private promoCodeModel: Models.Promo_codeModel
   ) {}
 
   public async getUsersService(page: number): Promise<any> {
@@ -260,6 +266,34 @@ export default class AdminService {
     return new response(true, adminOutput, "Admin created successfully", 201);
   }
 
+  public async getUserNumbersService(): Promise<response> {
+    const numberOfUsers = await this.userModel.find({}).countDocuments();
+    return new response(true, { numberOfUsers }, "Returning user count", 200);
+  }
+  public async getUserNumbersForYearService(year: number): Promise<response> {
+    const usersPerMonth: number[] = [];
+    // remember that for month, it is indexed from zero not 1, so we subtract
+    for (let i = 0; i < 12; i++) {
+      const startOfMonth = new Date(year, i, 1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      const endOfMonth = new Date(year, i + 1, 0);
+      endOfMonth.setHours(23, 59, 59, 999);
+
+      // console.log("start of month: " + startOfMonth);
+      // console.log("end of month: " + endOfMonth);
+      const numberOfUsers = await this.userModel
+        .find({ createdAt: { $gte: startOfMonth, $lte: endOfMonth } })
+        .countDocuments();
+      usersPerMonth.push(numberOfUsers);
+    }
+    return new response(
+      true,
+      { usersPerMonth },
+      "Returning user count of current year",
+      200
+    );
+  }
   // CRUD for categories
   public async createCategoryService(type: string): Promise<any> {
     const category = await this.categoryModel.create({ type });
@@ -646,6 +680,261 @@ export default class AdminService {
       true,
       filteredComplaintsDTO,
       "Filtered complaints",
+      200
+    );
+  }
+
+  public async createPromoCodeService(
+    duration: number,
+    discount: number
+  ): Promise<response> {
+    if (duration <= 0 || !duration)
+      throw new BadRequestError("The duration must be a postive number");
+    if (discount > 100 || !discount)
+      throw new BadRequestError(
+        "This discount inserted is greater than 100 or the discount was not entered. Do you want us to give them money? :)"
+      );
+    // another solution is to use the objectID as our code, but that won't be very user friendly
+    let randomCode;
+    while (true) {
+      randomCode = (Math.random() + 1).toString(36).substring(2);
+      const codeAlreadyExists = await this.promoCodeModel.findOne({
+        code: randomCode,
+      });
+      console.log(codeAlreadyExists);
+      if (!codeAlreadyExists) break;
+    }
+    const expiry_date = new Date();
+    expiry_date.setHours(23, 59, 59, 999);
+    expiry_date.setDate(expiry_date.getDate() + duration);
+    await this.promoCodeModel.create({
+      code: randomCode,
+      expiry_date,
+      discount,
+    });
+
+    return new response(
+      true,
+      { promoCode: randomCode },
+      "Code successfully generated!",
+      200
+    );
+  }
+
+  // this service is not called yet (le8yat mafahem law momken el frontend yeinsert el string lel promocode zay nafso wala la2)
+  // (a use case for frontend creating the code themselves is for birthdays, so it has the user's name instead of a random string)
+  public async createPromoCodeWithCodeSerivce(
+    expiry_date: Date,
+    discount: number,
+    promoCode: string
+  ) {
+    if (expiry_date < new Date())
+      throw new BadRequestError("The expiry date inserted has already passed");
+    if (discount > 100)
+      throw new BadRequestError(
+        "This discount inserted is greater than 100. Do you want us to give them money? :)"
+      );
+    if (!promoCode) throw new BadRequestError("Please write out a promo code");
+
+    const codeAlreadyExists = await this.promoCodeModel.find({
+      code: promoCode,
+    });
+    if (codeAlreadyExists)
+      throw new ForbiddenError("The promocode already exists!");
+
+    await this.promoCodeModel.create({
+      code: promoCode,
+      expiry_date,
+      discount,
+    });
+    return new response(true, {}, "Code successfully generated!", 200);
+  }
+  public async getSalesReportService(start_date: string, end_date: string) {
+    const convertDate = (date: string): string => {
+      const [day, month, year] = date.split("/");
+      return `${month}-${day}-${year}`;
+    };
+
+    start_date = start_date ? convertDate(start_date) : start_date;
+    end_date = end_date ? convertDate(end_date) : end_date;
+
+    let isoStartDate = start_date ? new Date(start_date) : null;
+
+    let isoEndDate = end_date
+      ? new Date(new Date(end_date).setDate(new Date(end_date).getDate() + 1))
+      : null;
+
+    const activityAndItineraryReport = await this.ticketModel.aggregate([
+      // Group tickets by booking_id
+
+      {
+        $group: {
+          _id: "$booking_id",
+          tickets: { $push: "$$ROOT" }, // Include all ticket data
+          // createdAt: { $first: "$createdAt" }, // Get the first time_to_attend
+          totalRevenue: { $sum: "$price" }, // Sum up ticket prices
+        },
+      },
+      // Join with activities and itineraries based on booking_id
+      {
+        $lookup: {
+          from: "activities", // Collection name for activities
+          localField: "_id",
+          foreignField: "_id",
+          as: "activityDetails",
+        },
+      },
+      {
+        $lookup: {
+          from: "itineraries", // Collection name for itineraries
+          localField: "_id",
+          foreignField: "_id",
+          as: "itineraryDetails",
+        },
+      },
+      // Flatten activity and itinerary details for easier processing
+      {
+        $match: {
+          "tickets.price": { $gt: 0 },
+          ...(isoStartDate || isoEndDate
+            ? {} // Skip the condition if either date is provided
+            : { "tickets.time_to_attend": { $exists: true } }), // Only apply the match if no dates are provided
+        },
+      },
+      // Add specific conditions for date range if both start_date and/or end_date are provided
+      ...(isoStartDate || isoEndDate
+        ? [
+            {
+              $match: {
+                $and: [
+                  isoStartDate
+                    ? {
+                        "tickets.createdAt": {
+                          $gte: isoStartDate,
+                        },
+                      }
+                    : {},
+                  isoEndDate
+                    ? {
+                        "tickets.createdAt": {
+                          $lte: isoEndDate,
+                        },
+                      }
+                    : {},
+                ].filter(Boolean), // Removes any empty conditions
+              },
+            },
+          ]
+        : []),
+
+      {
+        $project: {
+          _id: 1,
+          name: {
+            $cond: [
+              { $gt: [{ $size: "$activityDetails" }, 0] },
+              { $arrayElemAt: ["$activityDetails.name", 0] },
+              { $arrayElemAt: ["$itineraryDetails.name", 0] },
+            ],
+          },
+          average_rating: {
+            $cond: [
+              { $gt: [{ $size: "$activityDetails" }, 0] },
+              { $arrayElemAt: ["$activityDetails.average_rating", 0] },
+              { $arrayElemAt: ["$itineraryDetails.average_rating", 0] },
+            ],
+          },
+          image: {
+            $cond: [
+              { $gt: [{ $size: "$activityDetails" }, 0] },
+              { $arrayElemAt: ["$activityDetails.image", 0] },
+              { $arrayElemAt: ["$itineraryDetails.image", 0] },
+            ],
+          },
+          type: {
+            $cond: [
+              { $gt: [{ $size: "$activityDetails" }, 0] },
+              "ACTIVITY",
+              "ITINERARY",
+            ],
+          },
+
+          revenue: { $multiply: ["$totalRevenue", 0.1] }, // Only 10% revenue goes to admin
+        },
+      },
+    ]);
+    const productReport = await this.orderModel.aggregate([
+      // Filter by date range
+      {
+        $match: {
+          ...(isoStartDate && { createdAt: { $gte: isoStartDate } }),
+          ...(isoEndDate && { createdAt: { $lte: isoEndDate } }),
+        },
+      },
+      // Unwind the items array to process each product separately
+      {
+        $unwind: "$products.items",
+      },
+      // Lookup product details from the Product collection
+      {
+        $lookup: {
+          from: "products", // Product collection name
+          localField: "products.items.product_id",
+          foreignField: "_id",
+          as: "productDetails",
+        },
+      },
+      // Flatten the productDetails array
+      {
+        $unwind: "$productDetails",
+      },
+      // Calculate the revenue for each product
+      {
+        $project: {
+          _id: "$productDetails._id",
+          name: "$productDetails.name",
+          average_rating: "$productDetails.average_rating",
+          image: "$productDetails.image",
+          revenue: {
+            $multiply: ["$products.items.quantity", "$productDetails.price"],
+          },
+        },
+      },
+      // Group by product_id to sum up the total revenue
+      {
+        $group: {
+          _id: "$_id",
+          name: { $first: "$name" },
+          average_rating: { $first: "$average_rating" },
+          image: { $first: "$image" },
+          revenue: { $sum: "$revenue" },
+        },
+      },
+      // Project final fields
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          average_rating: 1,
+          image: 1,
+          type: "PRODUCT",
+          revenue: 1,
+        },
+      },
+    ]);
+    const salesReports: ISalesReport[] = [
+      ...activityAndItineraryReport,
+      ...productReport,
+    ];
+    let totalRevenue = 0;
+    for (const salesReport of salesReports) {
+      totalRevenue += salesReport.revenue;
+    }
+    const salesReportTotal: ISalesReportTotal = { salesReports, totalRevenue };
+    return new response(
+      true,
+      salesReportTotal,
+      "Sales report generated successfully",
       200
     );
   }

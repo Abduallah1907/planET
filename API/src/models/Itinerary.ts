@@ -26,6 +26,10 @@ const itinerarySchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
     },
+    image: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "upload.files", // Reference the correct collection
+    },
     name: {
       type: String,
       required: true,

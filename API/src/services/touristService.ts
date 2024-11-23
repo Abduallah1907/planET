@@ -64,6 +64,7 @@ export default class TouristService {
     @Inject("productModel") private productModel: Models.ProductModel,
     @Inject("ticketModel") private ticketModel: Models.TicketModel,
     @Inject("cartModel") private cartModel: Models.CartModel,
+    @Inject("promo_codeModel") private promoCodeModel: Models.Promo_codeModel,
     @Inject("bookmark_notifyModel")
     private bookmark_notifyModel: Models.Bookmark_notifyModel,
     @Inject("notificationModel")
@@ -490,7 +491,8 @@ export default class TouristService {
   public async bookActivityService(
     email: string,
     activity_id: string,
-    payment_type: PaymentType
+    payment_type: PaymentType,
+    promoCode: string
   ) {
     if (!Types.ObjectId.isValid(activity_id)) {
       throw new BadRequestError("Invalid id");
@@ -501,40 +503,43 @@ export default class TouristService {
     });
     if (user instanceof Error)
       throw new InternalServerError("Internal server error");
-
     if (user == null) throw new NotFoundError("User not found");
-
     const tourist = await this.touristModel.findOne({ user_id: user._id });
-
     if (tourist instanceof Error)
       throw new InternalServerError("Internal server error");
-
     if (tourist == null) throw new NotFoundError("Tourist not found");
-
     const tourist_id = tourist._id;
 
     const activity = await this.activityModel.findById({ _id: activity_id });
-
     if (activity instanceof Error)
       throw new InternalServerError("Internal server error");
-
-    if (activity == null) throw new NotFoundError("Activity not found");
-
-    if (activity.booking_flag == false)
+    if (activity === null) throw new NotFoundError("Activity not found");
+    if (activity.booking_flag === false)
       throw new BadRequestError("Activity is not available for booking");
-
-    if (activity.inappropriate_flag == true)
+    if (activity.inappropriate_flag === true)
       throw new BadRequestError("Activity is inappropriate");
-
-    if (activity.active_flag == false)
+    if (activity.active_flag === false)
       throw new BadRequestError("Activity is not active");
-
-    if (activity.special_discount) {
-      if (activity.price !== undefined) {
+    if (activity.date < new Date()) {
+      throw new BadRequestError("Activity date has passed cannot book");
+    }
+    if (activity.price !== undefined) {
+      if (activity.special_discount) {
         activity.price =
           activity.price - activity.price * (activity.special_discount / 100);
       }
+      if (promoCode) {
+        const validPromo = await this.isValidCodeService(promoCode);
+        if (!validPromo)
+          throw new BadRequestError(
+            "There was an issue when tyring to check the promo code"
+          );
+        activity.price =
+          activity.price -
+          activity.price * (validPromo.data.discount_percent / 100);
+      }
     }
+
     const findPreviousTicket = await this.ticketModel.findOne({
       tourist_id: tourist_id,
       booking_id: activity_id,
@@ -627,7 +632,8 @@ export default class TouristService {
     email: string,
     itinerary_id: string,
     time_to_attend: Date,
-    payment_type: PaymentType
+    payment_type: PaymentType,
+    promoCode: string
   ) {
     if (!Types.ObjectId.isValid(itinerary_id)) {
       throw new BadRequestError("Invalid id");
@@ -639,30 +645,27 @@ export default class TouristService {
 
     if (user instanceof Error)
       throw new InternalServerError("Internal server error");
-
-    if (user == null) throw new NotFoundError("User not found");
-
+    if (user === null) throw new NotFoundError("User not found");
     const tourist = await this.touristModel.findOne({ user_id: user._id });
-
     if (tourist instanceof Error)
       throw new InternalServerError("Internal server error");
-
-    if (tourist == null) throw new NotFoundError("Tourist not found");
-
+    if (tourist === null) throw new NotFoundError("Tourist not found");
     const tourist_id = tourist._id;
 
     const itinerary = await this.itineraryModel.findById({ _id: itinerary_id });
-
     if (itinerary instanceof Error)
       throw new InternalServerError("Internal server error");
-
-    if (itinerary == null) throw new NotFoundError("Itinerary not found");
-
-    if (itinerary.active_flag == false)
+    if (itinerary === null) throw new NotFoundError("Itinerary not found");
+    if (itinerary.active_flag === false)
       throw new BadRequestError("Itinerary is not active for booking");
-
-    if (itinerary.inappropriate_flag == true)
+    if (itinerary.inappropriate_flag === true)
       throw new BadRequestError("Itinerary is inappropriate");
+    const timeToAttendDate = new Date(time_to_attend);
+    if (timeToAttendDate < new Date()) {
+      throw new BadRequestError(
+        "Itinerary date you choose has passed, cannot book"
+      );
+    }
 
     const findPreviousTicket = await this.ticketModel.findOne({
       tourist_id: tourist_id,
@@ -673,6 +676,17 @@ export default class TouristService {
     if (findPreviousTicket) {
       throw new BadRequestError("Already booked this itinerary");
     }
+    if (promoCode) {
+      const validPromo = await this.isValidCodeService(promoCode);
+      if (!validPromo)
+        throw new BadRequestError(
+          "There was an issue when tyring to check the promo code"
+        );
+      itinerary.price =
+        itinerary.price -
+        itinerary.price * (validPromo.data.discount_percent / 100);
+    }
+
     let points_received = await this.recievePointsService(
       tourist_id as Types.ObjectId,
       itinerary.price
@@ -693,7 +707,6 @@ export default class TouristService {
       cancelled: false,
       points_received: points_received,
       payment_type: payment_type,
-
       time_to_attend: time_to_attend,
     });
     ticket.save();
@@ -1858,18 +1871,17 @@ export default class TouristService {
     return new response(true, tour_guides_info, "Tour guides found", 200);
   }
   public async createOrderService(orderData: IOrderCartDTO) {
-    const { tourist_id, cart, cost, payment_type } = orderData;
+    const { tourist_id, cart, payment_type, promoCode } = orderData;
+    let { cost } = orderData;
     if (!Types.ObjectId.isValid(tourist_id.toString())) {
       throw new BadRequestError("Invalid id ");
     }
     const tourist = await this.touristModel.findById(tourist_id);
-
     if (tourist instanceof Error)
       throw new InternalServerError("Internal server error");
+    if (tourist === null) throw new NotFoundError("Tourist not found");
 
-    if (tourist == null) throw new NotFoundError("Tourist not found");
-
-    if (payment_type == PaymentType.CreditCard) {
+    if (payment_type === PaymentType.CreditCard) {
       //Sprint 3
     }
     // if(discount){
@@ -1881,9 +1893,7 @@ export default class TouristService {
 
       if (product instanceof Error)
         throw new InternalServerError("Internal server error");
-
-      if (product == null) throw new NotFoundError("Product not found");
-
+      if (product === null) throw new NotFoundError("Product not found");
       if (quantity > product.quantity) {
         throw new BadRequestError("Quantity not available to place order");
       }
@@ -1960,6 +1970,15 @@ export default class TouristService {
       //Already handled in frontend but why not
     }
 
+    if (promoCode) {
+      const validPromo = await this.isValidCodeService(promoCode);
+      if (!validPromo)
+        throw new BadRequestError(
+          "There was an issue when tyring to check the promo code"
+        );
+      cost = cost - cost * (validPromo.data.discount_percent / 100);
+    }
+
     const order = new this.orderModel({
       tourist_id: new Types.ObjectId(tourist_id.toString()),
       products: cart,
@@ -1973,8 +1992,7 @@ export default class TouristService {
     if (order instanceof Error)
       throw new InternalServerError("Internal server error");
 
-    if (order == null) throw new NotFoundError("Order not found");
-
+    if (order === null) throw new NotFoundError("Order not found");
     const newWallet = tourist.wallet - cost;
     if (newWallet < 0) {
       throw new BadRequestError("Insufficient funds to place order");
@@ -1984,7 +2002,6 @@ export default class TouristService {
       { wallet: newWallet, $push: { orders: order._id } },
       { new: true }
     );
-
     if (updatedTourist instanceof Error)
       throw new InternalServerError("Internal server error");
 
@@ -2012,8 +2029,11 @@ export default class TouristService {
     if (tourist == null) throw new NotFoundError("Tourist not found");
 
     const orders = await this.orderModel
-      .find({ tourist_id: tourist._id })
-      .populate("products.items.product_id"); //In sprint 3 add status to be delivered products only
+      .find({
+        tourist_id: tourist._id,
+        status: { $in: [OrderStatus.Delivered, OrderStatus.Cancelled] },
+      })
+      .populate("products.items.product_id");
 
     if (orders instanceof Error) {
       throw new InternalServerError("Internal server error");
@@ -2024,6 +2044,63 @@ export default class TouristService {
     }
 
     return new response(true, orders, "Past orders found", 200);
+  }
+
+  public async isValidCodeService(code: string): Promise<response> {
+    const promoCode = await this.promoCodeModel.findOne({ code });
+    if (!promoCode)
+      throw new NotFoundError("No such promocode was found with that code");
+    const today = new Date();
+    if (promoCode.expiry_date < today)
+      throw new BadRequestError("Promo code has expired");
+
+    return new response(
+      true,
+      { valid: true, discount_percent: promoCode.discount },
+      "Code is valid!",
+      200
+    );
+  }
+  public async getCurrentOrdersService(email: string) {
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+    });
+
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const orders = await this.orderModel
+      .find({
+        tourist_id: tourist._id,
+        status: {
+          $in: [
+            OrderStatus.Pending,
+            OrderStatus.Processing,
+            OrderStatus.Shipped,
+          ],
+        },
+      })
+      .populate("products.items.product_id");
+
+    if (orders instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+
+    if (orders == null) {
+      throw new NotFoundError("Order not found");
+    }
+
+    return new response(true, orders, "Current orders found", 200);
   }
   public async bookmarkActivityService(email: string, activity_id: string) {
     if (!Types.ObjectId.isValid(activity_id)) {
@@ -2057,6 +2134,13 @@ export default class TouristService {
       throw new BadRequestError(
         "Activity is inappropriate cannot be bookmarked"
       );
+    const activitycheck = await this.bookmark_notifyModel.find({
+      activity_id: activity_id,
+      tourist_id: tourist._id,
+    });
+    if (activitycheck.length > 0) {
+      throw new BadRequestError("Activity already bookmarked");
+    }
     //These checks can be removed because i only want to bookmark the activity to view it later
     const bookmark = new this.bookmark_notifyModel({
       activity_id: activity_id,
@@ -2068,6 +2152,42 @@ export default class TouristService {
 
     return new response(true, bookmark, "Activity bookmarked", 201);
   }
+
+  public async unbookmarkActivityService(email: string, activity_id: string) {
+    if (!Types.ObjectId.isValid(activity_id)) {
+      throw new BadRequestError("Invalid activity id");
+    }
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+      status: UserStatus.APPROVED,
+    });
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (user == null) throw new NotFoundError("User not found");
+
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+
+    const activity = await this.activityModel.findById(activity_id);
+    if (activity instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (activity == null) throw new NotFoundError("Activity is not available");
+
+    const bookmark = await this.bookmark_notifyModel.findOneAndDelete({
+      activity_id: activity_id,
+      tourist_id: tourist._id,
+    });
+    if (bookmark instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (bookmark == null)
+      throw new NotFoundError("Bookmark not found to be unbookmarked");
+
+    return new response(true, bookmark, "Activity unbookmarked", 200);
+  }
+
   public async getBookmarkedActivitiesService(email: string) {
     const user = await this.userModel.findOne({
       email: email,
@@ -2125,6 +2245,131 @@ export default class TouristService {
       "Bookmarked activities found",
       200
     );
+  }
+
+  public async addProductToWishlistService(
+    email: string,
+    productID: Types.ObjectId
+  ): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel.findOne({
+      user_id: userInfo._id,
+    });
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+
+    // one might ask what is the of this find, why not just directly put the productID
+    // my answer dear friend is because the array we push into does not accept Types.ObjectId :)
+    const productInfo = await this.productModel.findById(productID);
+    if (!productInfo) throw new NotFoundError("Product not found");
+
+    // should be conflict error ):
+    if (touristInfo.wishlist.includes(productInfo._id as ObjectId))
+      throw new BadRequestError("Product has already been wishlisted");
+    touristInfo.wishlist.push(productInfo._id as ObjectId);
+    await touristInfo.save();
+
+    return new response(true, {}, "Wishlisted product!", 200);
+  }
+
+  public async removeProductFromWishlistService(
+    email: string,
+    productID: Types.ObjectId
+  ): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel.findOne({
+      user_id: userInfo._id,
+    });
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+
+    // one might ask what is the of this find, why not just directly put the productID
+    // my answer dear friend is because the array we look into does not accept Types.ObjectId :)
+    const productInfo = await this.productModel.findById(productID);
+    if (!productInfo) throw new NotFoundError("Product not found");
+
+    // should be conflict error ):
+    const index = touristInfo.wishlist.indexOf(productInfo._id as ObjectId);
+    if (index === -1)
+      throw new BadRequestError("Product was not found in wishlist");
+    touristInfo.wishlist.splice(index, 1);
+    await touristInfo.save();
+
+    return new response(true, {}, "Removed product!", 200);
+  }
+
+  public async viewWishlistService(email: string): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel
+      .findOne({ user_id: userInfo._id })
+      .populate("wishlist");
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+
+    const wishlist = touristInfo.wishlist;
+
+    return new response(
+      true,
+      wishlist,
+      "Returning product inside wishlist",
+      200
+    );
+  }
+
+  public async addDeliveryAddressService(
+    email: string,
+    address: string
+  ): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel.findOne({
+      user_id: userInfo._id,
+    });
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+
+    if (!address) throw new BadRequestError("The address field was empty");
+    // i dont check for duplicates, mostly because amazon doesn't either :)
+    // deleting would just delete the oldest one if it a duplicate
+    touristInfo.addresses.push(address);
+    await touristInfo.save();
+
+    return new response(true, {}, "Added address!", 200);
+  }
+
+  public async removeDeliveryAddressService(
+    email: string,
+    address: string
+  ): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel.findOne({
+      user_id: userInfo._id,
+    });
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+    if (!address) throw new BadRequestError("The address field was empty");
+
+    // should be conflict error ):
+    const index = touristInfo.addresses.indexOf(address);
+    if (index === -1)
+      throw new BadRequestError(
+        "Address was not found in saved addresses, or has already been removed"
+      );
+    touristInfo.addresses.splice(index, 1);
+    await touristInfo.save();
+
+    return new response(true, {}, "Removed address!", 200);
+  }
+
+  public async viewDeliveryAddressesService(email: string): Promise<response> {
+    const userInfo = await this.userModel.findOne({ email });
+    if (!userInfo) throw new NotFoundError("Tourist not found");
+    const touristInfo = await this.touristModel.findOne({
+      user_id: userInfo._id,
+    });
+    if (!touristInfo) throw new NotFoundError("Tourist not found");
+
+    const addresses = touristInfo.addresses;
+    return new response(true, addresses, "Returning addresses", 200);
   }
   //View Order Details
   public async getOrderDetailsService(order_id: string) {
