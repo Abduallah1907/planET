@@ -22,7 +22,8 @@ import { ObjectId as MongoObjectID } from "mongodb";
 import UserRoles from "@/types/enums/userRoles";
 import TicketType from "@/types/enums/ticketType";
 import User from "@/models/user";
-
+import { Container } from "typedi";
+import NotificationService from "./notificationService";
 @Service()
 export default class ItineraryService {
   constructor(
@@ -113,7 +114,10 @@ export default class ItineraryService {
 
     if (itineraryUpdatedData.active_flag === true && !itinerary.active_flag)
       this.activateItineraryService(itinerary_id);
-    else if (itineraryUpdatedData.active_flag === false && itinerary.active_flag)
+    else if (
+      itineraryUpdatedData.active_flag === false &&
+      itinerary.active_flag
+    )
       this.deactivateItineraryService(itinerary_id);
 
     // Delete all slots with ObjectIds in itinerary.timeline
@@ -249,6 +253,35 @@ export default class ItineraryService {
 
     itinerary.inappropriate_flag = true;
     await itinerary.save();
+    // send email and create notification
+    //get tour guide id
+    const tour_guide = await this.tourGuideModel.findById(
+      itinerary.tour_guide_id
+    );
+    if (!tour_guide) throw new InternalServerError("Tour guide not found");
+    if (tour_guide == null) throw new NotFoundError("Tour guide not found");
+    // get user email from tour guide id
+    const user = await User.findById(tour_guide.user_id);
+    if (!user) throw new InternalServerError("User not found");
+    if (user == null) throw new NotFoundError("User not found");
+    //create notification
+    const notificationService = Container.get(NotificationService);
+    const message = `Your itinerary with id ${itinerary._id} and name ${itinerary.name} has been flagged as inappropriate`;
+    const notify = await notificationService.createNotificationService(
+      tour_guide._id,
+      message,
+      "TOUR_GUIDE"
+    );
+    if (notify instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (notify == null) throw new NotFoundError("Notification not created");
+    //send email
+    const Title = "Itinerary flagged as inappropriate";
+    const mail = await notificationService.sendEmailNotificationService(
+      Title,
+      user.email,
+      message
+    );
     return new response(
       true,
       { itinerary_id: itinerary_id },

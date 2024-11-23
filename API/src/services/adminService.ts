@@ -3,19 +3,8 @@ import Container, { Inject, Service } from "typedi";
 import response from "@/types/responses/response";
 import UserRoles from "@/types/enums/userRoles";
 import UserStatus from "@/types/enums/userStatus";
-import {
-  IAdminUpdateDTO,
-  IUserAdminCreateAdminDTO,
-  IUserAdminCreateGovernorDTO,
-  IUserAdminViewDTO,
-  IUserInputDTO,
-} from "@/interfaces/IUser";
-import {
-  InternalServerError,
-  HttpError,
-  BadRequestError,
-  NotFoundError,
-} from "@/types/Errors";
+import { IAdminUpdateDTO, IUserAdminCreateAdminDTO, IUserAdminCreateGovernorDTO, IUserAdminViewDTO, IUserInputDTO } from "@/interfaces/IUser";
+import { InternalServerError, HttpError, BadRequestError, NotFoundError, ForbiddenError } from "@/types/Errors";
 import UserService from "./userService";
 import bcrypt from "bcryptjs";
 import { IComplaint, IComplaintAdminViewDTO } from "@/interfaces/IComplaint";
@@ -45,7 +34,8 @@ export default class AdminService {
     @Inject("tagModel") private tagModel: Models.TagModel,
     @Inject("complaintModel") private complaintModel: Models.ComplaintModel,
     @Inject("ticketModel") private ticketModel: Models.TicketModel,
-    @Inject("orderModel") private orderModel: Models.OrderModel
+    @Inject("orderModel") private orderModel: Models.OrderModel,
+    @Inject("promo_codeModel") private promoCodeModel: Models.Promo_codeModel
   ) {}
 
   public async getUsersService(page: number): Promise<any> {
@@ -56,17 +46,7 @@ export default class AdminService {
       .skip((page - 1) * 10);
 
     const usersOutput: IUserAdminViewDTO[] = users.map(
-      (user: {
-        _id: any;
-        email: any;
-        name: any;
-        username: any;
-        role: any;
-        phone_number: any;
-        status: any;
-        createdAt: any;
-        updatedAt: any;
-      }) => ({
+      (user: { _id: any; email: any; name: any; username: any; role: any; phone_number: any; status: any; createdAt: any; updatedAt: any }) => ({
         _id: user._id as ObjectId,
         email: user.email,
         name: user.name,
@@ -85,21 +65,10 @@ export default class AdminService {
   public async searchUserService(username: string): Promise<any> {
     const regex = new RegExp(username, "i");
     const users = await this.userModel.find({ username: { $regex: regex } });
-    if (users instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (users instanceof Error) throw new InternalServerError("Internal server error");
 
     const usersOutput: IUserAdminViewDTO[] = users.map(
-      (user: {
-        _id: any;
-        email: any;
-        name: any;
-        username: any;
-        role: any;
-        phone_number: any;
-        status: any;
-        createdAt: any;
-        updatedAt: any;
-      }) => ({
+      (user: { _id: any; email: any; name: any; username: any; role: any; phone_number: any; status: any; createdAt: any; updatedAt: any }) => ({
         _id: user._id as ObjectId,
         email: user.email,
         name: user.name,
@@ -157,8 +126,7 @@ export default class AdminService {
         deletedRole = await this.touristModel.findOneAndDelete({ user_id });
         break;
     }
-    if (deletedRole instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (deletedRole instanceof Error) throw new InternalServerError("Internal server error");
 
     let userOutput: IUserAdminViewDTO = {
       _id: user._id as ObjectId,
@@ -172,17 +140,10 @@ export default class AdminService {
       updatedAt: user.updatedAt,
     };
     if (deletedRole) userOutput = { ...userOutput, ...deletedRole._doc };
-    return new response(
-      true,
-      { ...userOutput },
-      "User deleted sucessfully",
-      200
-    );
+    return new response(true, { ...userOutput }, "User deleted sucessfully", 200);
   }
 
-  public async createGovernorService(
-    governorData: IUserAdminCreateGovernorDTO
-  ): Promise<any> {
+  public async createGovernorService(governorData: IUserAdminCreateGovernorDTO): Promise<any> {
     // we add the status and role since they are not inputs taken by the user
     const newGovernorUser: IUserInputDTO = {
       name: governorData.name,
@@ -194,9 +155,7 @@ export default class AdminService {
     };
 
     const userService: UserService = Container.get(UserService);
-    const newUserResponse = await userService.createUserService(
-      newGovernorUser
-    );
+    const newUserResponse = await userService.createUserService(newGovernorUser);
 
     const newGovernor = await this.governorModel.create({
       user_id: newUserResponse.data._id,
@@ -215,17 +174,10 @@ export default class AdminService {
       updatedAt: newUserResponse.data.updatedAt,
     };
 
-    return new response(
-      true,
-      { ...governorOutput, nation: newGovernor.nation },
-      "Governor created successfully",
-      201
-    );
+    return new response(true, { ...governorOutput, nation: newGovernor.nation }, "Governor created successfully", 201);
   }
 
-  public async createAdminService(
-    adminData: IUserAdminCreateAdminDTO
-  ): Promise<any> {
+  public async createAdminService(adminData: IUserAdminCreateAdminDTO): Promise<any> {
     // we add the status and role since they are not inputs taken by the user
     const newAdminUser: IUserInputDTO = {
       name: adminData.name,
@@ -264,11 +216,31 @@ export default class AdminService {
     return new response(true, adminOutput, "Admin created successfully", 201);
   }
 
+  public async getUserNumbersService(): Promise<response> {
+    const numberOfUsers = await this.userModel.find({}).countDocuments();
+    return new response(true, { numberOfUsers }, "Returning user count", 200);
+  }
+  public async getUserNumbersForYearService(year: number): Promise<response> {
+    const usersPerMonth: number[] = [];
+    // remember that for month, it is indexed from zero not 1, so we subtract
+    for (let i = 0; i < 12; i++) {
+      const startOfMonth = new Date(year, i, 1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      const endOfMonth = new Date(year, i + 1, 0);
+      endOfMonth.setHours(23, 59, 59, 999);
+
+      // console.log("start of month: " + startOfMonth);
+      // console.log("end of month: " + endOfMonth);
+      const numberOfUsers = await this.userModel.find({ createdAt: { $gte: startOfMonth, $lte: endOfMonth } }).countDocuments();
+      usersPerMonth.push(numberOfUsers);
+    }
+    return new response(true, { usersPerMonth }, "Returning user count of current year", 200);
+  }
   // CRUD for categories
   public async createCategoryService(type: string): Promise<any> {
     const category = await this.categoryModel.create({ type });
-    if (category instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (category instanceof Error) throw new InternalServerError("Internal server error");
 
     return new response(true, category, "Created category successfully", 201);
   }
@@ -279,36 +251,17 @@ export default class AdminService {
       .sort({ type: 1 })
       .limit(10)
       .skip((page - 1) * 10);
-    if (categories instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (categories instanceof Error) throw new InternalServerError("Internal server error");
 
-    return new response(
-      true,
-      categories,
-      "Page " + page + " of Categories",
-      200
-    );
+    return new response(true, categories, "Page " + page + " of Categories", 200);
   }
 
-  public async updateCategoryService(
-    oldType: string,
-    newType: string
-  ): Promise<any> {
-    const updatedCategory = await this.categoryModel.findOneAndUpdate(
-      { type: oldType },
-      { type: newType },
-      { new: true }
-    );
-    if (updatedCategory instanceof Error)
-      throw new InternalServerError("Internal server error");
+  public async updateCategoryService(oldType: string, newType: string): Promise<any> {
+    const updatedCategory = await this.categoryModel.findOneAndUpdate({ type: oldType }, { type: newType }, { new: true });
+    if (updatedCategory instanceof Error) throw new InternalServerError("Internal server error");
     if (!updatedCategory) throw new HttpError("Category not found", 404);
 
-    return new response(
-      true,
-      updatedCategory,
-      "Category updated successfully",
-      200
-    );
+    return new response(true, updatedCategory, "Category updated successfully", 200);
   }
 
   public async deleteCategoryService(type: string): Promise<any> {
@@ -316,22 +269,15 @@ export default class AdminService {
       type: type,
     });
 
-    if (deletedCategory instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (deletedCategory instanceof Error) throw new InternalServerError("Internal server error");
     if (!deletedCategory) throw new HttpError("Category not found", 404);
 
-    return new response(
-      true,
-      deletedCategory,
-      "Category deleteted successfully",
-      200
-    );
+    return new response(true, deletedCategory, "Category deleteted successfully", 200);
   }
 
   public async createTagService(type: string): Promise<any> {
     const tag = await this.tagModel.create({ type });
-    if (tag instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (tag instanceof Error) throw new InternalServerError("Internal server error");
 
     return new response(true, tag, "Created tag successfully", 201);
   }
@@ -342,23 +288,14 @@ export default class AdminService {
       .sort({ type: 1 })
       .limit(10)
       .skip((page - 1) * 10);
-    if (tags instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (tags instanceof Error) throw new InternalServerError("Internal server error");
 
     return new response(true, tags, "Page " + page + " of tags", 200);
   }
 
-  public async updateTagService(
-    oldType: string,
-    newType: string
-  ): Promise<any> {
-    const updatedTag = await this.tagModel.findOneAndUpdate(
-      { type: oldType },
-      { type: newType },
-      { new: true }
-    );
-    if (updatedTag instanceof Error)
-      throw new InternalServerError("Internal server error");
+  public async updateTagService(oldType: string, newType: string): Promise<any> {
+    const updatedTag = await this.tagModel.findOneAndUpdate({ type: oldType }, { type: newType }, { new: true });
+    if (updatedTag instanceof Error) throw new InternalServerError("Internal server error");
     if (!updatedTag) throw new HttpError("Tag not found", 404);
 
     return new response(true, updatedTag, "Tag updated successfully", 200);
@@ -369,112 +306,65 @@ export default class AdminService {
     const tag = await this.tagModel.findOne({ type });
     //remove this tag from all activities
     //find in the tag array of activities and pull this tag from the array
-    const activities = await this.activityModel.updateMany(
-      { tags: { $in: [tag?._id] } },
-      { $pull: { tags: tag?._id } }
-    );
-    if (activities instanceof Error)
-      throw new InternalServerError("Internal server error");
+    const activities = await this.activityModel.updateMany({ tags: { $in: [tag?._id] } }, { $pull: { tags: tag?._id } });
+    if (activities instanceof Error) throw new InternalServerError("Internal server error");
     //remove this tag from all itineraries
-    const itineraries = await this.itineraryModel.updateMany(
-      { tags: { $in: [tag?._id] } },
-      { $pull: { tags: tag?._id } }
-    );
+    const itineraries = await this.itineraryModel.updateMany({ tags: { $in: [tag?._id] } }, { $pull: { tags: tag?._id } });
 
     const deletedTag = await this.tagModel.findOneAndDelete({ type });
 
-    if (deletedTag instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (deletedTag instanceof Error) throw new InternalServerError("Internal server error");
     if (!deletedTag) throw new HttpError("Tag not found", 404);
 
     return new response(true, deletedTag, "Tag deleted successfully", 200);
   }
 
   public async acceptUserService(email: string): Promise<any> {
-    const user = await this.userModel.findOneAndUpdate(
-      { email: email },
-      { status: UserStatus.APPROVED },
-      { new: true }
-    );
+    const user = await this.userModel.findOneAndUpdate({ email: email }, { status: UserStatus.APPROVED }, { new: true });
 
-    if (user instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (user instanceof Error) throw new InternalServerError("Internal server error");
 
     if (!user) throw new NotFoundError("User not found");
 
     if (user.status != UserStatus.WAITING_FOR_APPROVAL) {
-      throw new BadRequestError(
-        "User must be waiting for approval to be accepted"
-      );
+      throw new BadRequestError("User must be waiting for approval to be accepted");
     }
 
-    if (
-      user.role !== UserRoles.Seller &&
-      user.role !== UserRoles.TourGuide &&
-      user.role !== UserRoles.Advertiser
-    ) {
-      throw new BadRequestError(
-        "User must be a Seller, TourGuide, or Advertiser to be accepted"
-      );
+    if (user.role !== UserRoles.Seller && user.role !== UserRoles.TourGuide && user.role !== UserRoles.Advertiser) {
+      throw new BadRequestError("User must be a Seller, TourGuide, or Advertiser to be accepted");
     }
 
-    const userAccepted = await this.userModel.findOneAndUpdate(
-      { email: email },
-      { status: UserStatus.APPROVED },
-      { new: true }
-    );
+    const userAccepted = await this.userModel.findOneAndUpdate({ email: email }, { status: UserStatus.APPROVED }, { new: true });
 
-    if (userAccepted instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (userAccepted instanceof Error) throw new InternalServerError("Internal server error");
 
     return new response(true, userAccepted, "User accepted", 200);
     // TODO
   }
 
   public async rejectUserService(email: string): Promise<any> {
-    const user = await this.userModel.findOneAndUpdate(
-      { email: email },
-      { status: UserStatus.REJECTED },
-      { new: true }
-    );
-    if (user instanceof Error)
-      throw new InternalServerError("Internal server error");
+    const user = await this.userModel.findOneAndUpdate({ email: email }, { status: UserStatus.REJECTED }, { new: true });
+    if (user instanceof Error) throw new InternalServerError("Internal server error");
 
     if (!user) throw new NotFoundError("User not found");
 
     if (user.status != UserStatus.WAITING_FOR_APPROVAL) {
-      throw new BadRequestError(
-        "User must be waiting for approval to be accepted"
-      );
+      throw new BadRequestError("User must be waiting for approval to be accepted");
     }
-    if (
-      user.role !== UserRoles.Seller &&
-      user.role !== UserRoles.TourGuide &&
-      user.role !== UserRoles.Advertiser
-    ) {
-      throw new BadRequestError(
-        "User must be a Seller, TourGuide, or Advertiser to be accepted"
-      );
+    if (user.role !== UserRoles.Seller && user.role !== UserRoles.TourGuide && user.role !== UserRoles.Advertiser) {
+      throw new BadRequestError("User must be a Seller, TourGuide, or Advertiser to be accepted");
     }
 
-    const userRejected = await this.userModel.findOneAndUpdate(
-      { email: email },
-      { status: UserStatus.REJECTED },
-      { new: true }
-    );
+    const userRejected = await this.userModel.findOneAndUpdate({ email: email }, { status: UserStatus.REJECTED }, { new: true });
 
-    if (userRejected instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (userRejected instanceof Error) throw new InternalServerError("Internal server error");
 
     return new response(true, userRejected, "User rejected", 200);
 
     // TODO
   }
 
-  public async updateAdminService(
-    email: string,
-    AdminUpdateDTO: IAdminUpdateDTO
-  ) {
+  public async updateAdminService(email: string, AdminUpdateDTO: IAdminUpdateDTO) {
     const { newEmail, name, phone_number, password } = AdminUpdateDTO;
     let hashedPassword;
     if (password) {
@@ -490,8 +380,7 @@ export default class AdminService {
       },
       { new: true }
     );
-    if (user instanceof Error)
-      throw new InternalServerError("Internal server error");
+    if (user instanceof Error) throw new InternalServerError("Internal server error");
 
     if (!user) throw new NotFoundError("User not found");
 
@@ -500,38 +389,30 @@ export default class AdminService {
 
   // COMPLAINTS API
   public async getComplaintsService(): Promise<response> {
-    const complaints: IComplaint[] = await this.complaintModel
-      .find({})
-      .populate({
-        path: "tourist_id",
-        populate: { path: "user_id", select: "name" },
-        select: "tourist_id",
-      });
-    const complaintsOutput: IComplaintAdminViewDTO[] = complaints.map(
-      (complaint) => ({
-        date: complaint.date,
-        status: complaint.status,
-        title: complaint.title,
-        complaint_id: complaint._id as ObjectId,
-        tourist_name: complaint.tourist_id,
-        body: complaint.body,
-        reply: complaint.reply,
-        createdAt: complaint.createdAt,
-      })
-    );
+    const complaints: IComplaint[] = await this.complaintModel.find({}).populate({
+      path: "tourist_id",
+      populate: { path: "user_id", select: "name" },
+      select: "tourist_id",
+    });
+    const complaintsOutput: IComplaintAdminViewDTO[] = complaints.map((complaint) => ({
+      date: complaint.date,
+      status: complaint.status,
+      title: complaint.title,
+      complaint_id: complaint._id as ObjectId,
+      tourist_name: complaint.tourist_id,
+      body: complaint.body,
+      reply: complaint.reply,
+      createdAt: complaint.createdAt,
+    }));
     return new response(true, complaintsOutput, "Complaints are fetched", 200);
   }
 
-  public async getComplaintByIDService(
-    complaintID: Types.ObjectId
-  ): Promise<response> {
-    const complaint: IComplaint | null = await this.complaintModel
-      .findById(complaintID)
-      .populate({
-        path: "tourist_id",
-        populate: { path: "user_id", select: "name" },
-        select: "tourist_id",
-      });
+  public async getComplaintByIDService(complaintID: Types.ObjectId): Promise<response> {
+    const complaint: IComplaint | null = await this.complaintModel.findById(complaintID).populate({
+      path: "tourist_id",
+      populate: { path: "user_id", select: "name" },
+      select: "tourist_id",
+    });
     if (!complaint) throw new NotFoundError("No such complaint found");
 
     const complaintOutput: IComplaintAdminViewDTO = {
@@ -548,50 +429,33 @@ export default class AdminService {
     return new response(true, complaintOutput, "Complaint is fetched", 200);
   }
 
-  public async markComplaintResolvedService(
-    complaintID: Types.ObjectId
-  ): Promise<response> {
-    const complaint: IComplaint | null =
-      await this.complaintModel.findByIdAndUpdate(complaintID, {
-        status: ComplaintStatus.Resolved,
-      });
+  public async markComplaintResolvedService(complaintID: Types.ObjectId): Promise<response> {
+    const complaint: IComplaint | null = await this.complaintModel.findByIdAndUpdate(complaintID, {
+      status: ComplaintStatus.Resolved,
+    });
     if (!complaint) throw new NotFoundError("No such complaint found");
     return new response(true, {}, "Complaint status updated to resolved!", 200);
   }
 
-  public async markComplaintPendingService(
-    complaintID: Types.ObjectId
-  ): Promise<response> {
-    const complaint: IComplaint | null =
-      await this.complaintModel.findByIdAndUpdate(complaintID, {
-        status: ComplaintStatus.Pending,
-      });
+  public async markComplaintPendingService(complaintID: Types.ObjectId): Promise<response> {
+    const complaint: IComplaint | null = await this.complaintModel.findByIdAndUpdate(complaintID, {
+      status: ComplaintStatus.Pending,
+    });
     if (!complaint) throw new NotFoundError("No such complaint found");
     return new response(true, {}, "Complaint status updated to pending!", 200);
   }
 
-  public async replyComplaintService(
-    complaintID: Types.ObjectId,
-    complaintReply: string
-  ): Promise<response> {
-    if (!complaintReply)
-      throw new BadRequestError("pls reply with complaint reply");
-    const complaint: IComplaint | null =
-      await this.complaintModel.findByIdAndUpdate(complaintID, {
-        reply: complaintReply,
-      });
+  public async replyComplaintService(complaintID: Types.ObjectId, complaintReply: string): Promise<response> {
+    if (!complaintReply) throw new BadRequestError("pls reply with complaint reply");
+    const complaint: IComplaint | null = await this.complaintModel.findByIdAndUpdate(complaintID, {
+      reply: complaintReply,
+    });
     if (!complaint) throw new NotFoundError("No such complaint found");
     return new response(true, {}, "Added complaint reply!", 200);
   }
 
-  public async getSortedComplaintsByDateService(
-    direction: SortOrder,
-    page: number
-  ): Promise<response> {
-    if (!direction)
-      throw new BadRequestError(
-        "Choose either -1 or 1 as your direction for sorting"
-      );
+  public async getSortedComplaintsByDateService(direction: SortOrder, page: number): Promise<response> {
+    if (!direction) throw new BadRequestError("Choose either -1 or 1 as your direction for sorting");
     const sortedComplaints = await this.complaintModel
       .find({})
       .populate({
@@ -603,27 +467,21 @@ export default class AdminService {
       .limit(10)
       .skip((page - 1) * 10);
 
-    const sortedComplaintsDTO: IComplaintAdminViewDTO[] = sortedComplaints.map(
-      (complaint) => ({
-        date: complaint.date,
-        status: complaint.status,
-        title: complaint.title,
-        complaint_id: complaint._id as ObjectId,
-        tourist_name: complaint.tourist_id,
-        body: complaint.body,
-        reply: complaint.reply,
-        createdAt: complaint.createdAt,
-      })
-    );
+    const sortedComplaintsDTO: IComplaintAdminViewDTO[] = sortedComplaints.map((complaint) => ({
+      date: complaint.date,
+      status: complaint.status,
+      title: complaint.title,
+      complaint_id: complaint._id as ObjectId,
+      tourist_name: complaint.tourist_id,
+      body: complaint.body,
+      reply: complaint.reply,
+      createdAt: complaint.createdAt,
+    }));
     return new response(true, sortedComplaintsDTO, "Compliants sorted!", 200);
   }
 
-  public async filerComplaintByStatusService(
-    status: ComplaintStatus,
-    page: number
-  ): Promise<response> {
-    if (!status || !Object.values(ComplaintStatus).includes(status))
-      throw new BadRequestError("pls add a correct status to filter by");
+  public async filerComplaintByStatusService(status: ComplaintStatus, page: number): Promise<response> {
+    if (!status || !Object.values(ComplaintStatus).includes(status)) throw new BadRequestError("pls add a correct status to filter by");
     const filteredComplaints = await this.complaintModel
       .find({ status })
       .populate({
@@ -634,24 +492,52 @@ export default class AdminService {
       .limit(10)
       .skip((page - 1) * 10);
 
-    const filteredComplaintsDTO: IComplaintAdminViewDTO[] =
-      filteredComplaints.map((complaint) => ({
-        date: complaint.date,
-        status: complaint.status,
-        title: complaint.title,
-        complaint_id: complaint._id as ObjectId,
-        tourist_name: complaint.tourist_id,
-        body: complaint.body,
-        reply: complaint.reply,
-        createdAt: complaint.createdAt,
-      }));
+    const filteredComplaintsDTO: IComplaintAdminViewDTO[] = filteredComplaints.map((complaint) => ({
+      date: complaint.date,
+      status: complaint.status,
+      title: complaint.title,
+      complaint_id: complaint._id as ObjectId,
+      tourist_name: complaint.tourist_id,
+      body: complaint.body,
+      reply: complaint.reply,
+      createdAt: complaint.createdAt,
+    }));
 
-    return new response(
-      true,
-      filteredComplaintsDTO,
-      "Filtered complaints",
-      200
-    );
+    return new response(true, filteredComplaintsDTO, "Filtered complaints", 200);
+  }
+
+  public async createPromoCodeService(duration: number, discount: number): Promise<response> {
+    if (duration <= 0 || !duration) throw new BadRequestError("The duration must be a postive number");
+    if (discount > 100 || !discount)
+      throw new BadRequestError("This discount inserted is greater than 100 or the discount was not entered. Do you want us to give them money? :)");
+    // another solution is to use the objectID as our code, but that won't be very user friendly
+    let randomCode;
+    while (true) {
+      randomCode = (Math.random() + 1).toString(36).substring(2);
+      const codeAlreadyExists = await this.promoCodeModel.findOne({ code: randomCode });
+      console.log(codeAlreadyExists);
+      if (!codeAlreadyExists) break;
+    }
+    const expiry_date = new Date();
+    expiry_date.setHours(23, 59, 59, 999);
+    expiry_date.setDate(expiry_date.getDate() + duration);
+    await this.promoCodeModel.create({ code: randomCode, expiry_date, discount });
+
+    return new response(true, { promoCode: randomCode }, "Code successfully generated!", 200);
+  }
+
+  // this service is not called yet (le8yat mafahem law momken el frontend yeinsert el string lel promocode zay nafso wala la2)
+  // (a use case for frontend creating the code themselves is for birthdays, so it has the user's name instead of a random string)
+  public async createPromoCodeWithCodeSerivce(expiry_date: Date, discount: number, promoCode: string) {
+    if (expiry_date < new Date()) throw new BadRequestError("The expiry date inserted has already passed");
+    if (discount > 100) throw new BadRequestError("This discount inserted is greater than 100. Do you want us to give them money? :)");
+    if (!promoCode) throw new BadRequestError("Please write out a promo code");
+
+    const codeAlreadyExists = await this.promoCodeModel.find({ code: promoCode });
+    if (codeAlreadyExists) throw new ForbiddenError("The promocode already exists!");
+
+    await this.promoCodeModel.create({ code: promoCode, expiry_date, discount });
+    return new response(true, {}, "Code successfully generated!", 200);
   }
   public async getSalesReportService(start_date: string, end_date: string) {
     const convertDate = (date: string): string => {

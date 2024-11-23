@@ -18,6 +18,7 @@ import file from "./routes/file";
 import slot from "./routes/slot";
 import amadeus from "./routes/amadeus";
 import skyscanner from "./routes/skyscanner";
+import notification from "./routes/notification";
 export default () => {
   const app = Router();
 
@@ -38,6 +39,7 @@ export default () => {
   slot(app);
   amadeus(app);
   skyscanner(app);
+  notification(app);
 
   return app;
 };

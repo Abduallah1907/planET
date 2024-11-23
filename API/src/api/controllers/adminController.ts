@@ -9,6 +9,7 @@ import Container, { Inject, Service } from "typedi";
 import mongoose, { ReplaceOneModel, Types } from "mongoose";
 import admin from "../routes/admin";
 import ComplaintStatus from "@/types/enums/complaintStatus";
+import { IPromoCodeInputDTO } from "@/interfaces/IPromo_code";
 
 // CRUD for users
 @Service()
@@ -19,6 +20,20 @@ export class AdminController {
     const adminService: AdminService = Container.get(AdminService);
     const users = await adminService.getUsersService(pageNum);
     res.status(users.status).json(users);
+  }
+
+  public async getUserNumbers(req: Request, res: Response): Promise<void> {
+    const adminService: AdminService = Container.get(AdminService);
+    const numberOfUsers = await adminService.getUserNumbersService();
+    res.status(numberOfUsers.status).json(numberOfUsers);
+  }
+
+  public async getUserNumbersForYear(req: Request, res: Response): Promise<void> {
+    const { year } = req.params;
+    const yearNumber: number = parseInt(year);
+    const adminService: AdminService = Container.get(AdminService);
+    const numberOfUsers = await adminService.getUserNumbersForYearService(yearNumber);
+    res.status(numberOfUsers.status).json(numberOfUsers);
   }
 
   public async searchUser(req: Request, res: Response): Promise<any> {
@@ -229,5 +244,13 @@ export class AdminController {
       end_date as string
     );
     res.status(report.status).json(report);
+  }
+
+  public async createPromoCode(req: Request, res: Response): Promise<void> {
+    const { numberOfDays, discount } = req.body;
+    const durationNum: number = parseInt(numberOfDays);
+    const adminService: AdminService = Container.get(AdminService);
+    const complaint = await adminService.createPromoCodeService(durationNum, discount);
+    res.status(complaint.status).json(complaint);
   }
 }

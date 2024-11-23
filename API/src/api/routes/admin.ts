@@ -15,6 +15,12 @@ export default (app: Router) => {
   // Each page has 10 users
   router.get("/getUsers/:page", authorize([]), adminController.getUsers);
 
+  router.get("/getUserNumbers", adminController.getUserNumbers);
+  router.get(
+    "/getUserNumbersForYear/:year",
+    adminController.getUserNumbersForYear
+  );
+
   // This searches by exact username; if no username is found it returns empty data
   // i.e it does not throw an error
   // returns all users that have a matching username and excludes information about the salt and password
@@ -96,5 +102,11 @@ export default (app: Router) => {
   );
   router.put("/replyComplaint/:complaint_id", adminController.replyComplaint);
 
-  router.put("/getSalesReport", adminController.getSalesReport);
+  router.get("/getSalesReport", adminController.getSalesReport);
+
+  router.post("/createPromoCode", adminController.createPromoCode);
+
+  // this route is not called yet (le8yat mafahem law momken el frontend yeinsert el string lel promocode zay nafso wala la2)
+  // (a use case for frontend creating the code themselves is for birthdays, so it has the user's name instead of a random string)
+  // router.post("createPromoCodeWithCode");
 };
