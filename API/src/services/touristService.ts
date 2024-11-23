@@ -2139,4 +2139,44 @@ export default class TouristService {
     if (order == null) throw new NotFoundError("Order not found");
     return new response(true, order, "Order found", 200);
   }
+  //Cancel Order
+  public async cancelOrderService(order_id: string) {
+    if (!Types.ObjectId.isValid(order_id)) {
+      throw new BadRequestError("Invalid order id");
+    }
+    const order = await this.orderModel.findById(order_id);
+    if (order instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (order == null) throw new NotFoundError("Order not found");
+    if (order.status == OrderStatus.Cancelled) {
+      throw new BadRequestError("Order already cancelled");
+    }
+    if (order.status == OrderStatus.Delivered) {
+      throw new BadRequestError("Order already delivered");
+    }
+    const updatedorder = await this.orderModel.findByIdAndUpdate(
+      order_id,
+      { status: OrderStatus.Cancelled },
+      { new: true }
+    );
+    if (updatedorder instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (updatedorder == null) throw new NotFoundError("Order not found");
+    //return the money to the tourist in wallet
+    const tourist = await this.touristModel.findById(updatedorder.tourist_id);
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+    const newWallet = tourist.wallet + updatedorder.cost;
+    //update the tourist wallet
+    const updatedTourist = await this.touristModel.findByIdAndUpdate(
+      updatedorder.tourist_id,
+      { wallet: newWallet },
+      { new: true }
+    );
+    if (updatedTourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (updatedTourist == null) throw new NotFoundError("Tourist not found");
+    return new response(true, updatedorder, "Order cancelled", 200);
+  }
 }

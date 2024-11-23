@@ -1028,3 +1028,23 @@ paths:
           description: Bad request
         500:
           description: Internal server error
+  /api/tourist/cancelOrder/{order_id}:
+    put:
+      tags:
+        - Tourist
+      summary: Cancel order
+      description: Cancel order for a tourist
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          description: ID of the order
+          schema:
+            type: string
+      responses:
+        200:
+          description: Order cancelled successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error

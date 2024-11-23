@@ -155,4 +155,9 @@ export default (app: Router) => {
     authorize([UserRoles.Tourist]),
     touristController.getOrderDetails
   );
+  route.put(
+    "/cancelOrder/:order_id",
+    authorize([UserRoles.Tourist]),
+    touristController.cancelOrder
+  );
 };
