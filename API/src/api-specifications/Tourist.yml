@@ -403,10 +403,10 @@ paths:
                   description: ID of the itinerary
                 time_to_attend:
                   type: string
-                  description: Time chosen to attend the itinerary 
+                  description: Time chosen to attend the itinerary
                 payment_type:
                   type: string
-                  description: Payment type   
+                  description: Payment type
       responses:
         200:
           description: Itinerary booked successfully
@@ -435,7 +435,7 @@ paths:
                   description: ID of the historical location
                 payment_type:
                   type: string
-                  description: Payment type  
+                  description: Payment type
       responses:
         200:
           description: Historical location booked successfully
@@ -961,7 +961,7 @@ paths:
         400:
           description: Bad request
         500:
-          description: Internal server error       
+          description: Internal server error
   /api/tourist/bookmarkActivity:
     post:
       tags:
@@ -987,7 +987,7 @@ paths:
         400:
           description: Bad request
         500:
-          description: Internal server error  
+          description: Internal server error
   /api/tourist/getBookmarkedActivities/{email}:
     get:
       tags:
@@ -1007,4 +1007,24 @@ paths:
         400:
           description: Bad request
         500:
-          description: Internal server error               
+          description: Internal server error
+  /api/tourist/getOrderDetails/{order_id}:
+    get:
+      tags:
+        - Tourist
+      summary: Get order details
+      description: Get order details for a tourist
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          description: ID of the order
+          schema:
+            type: string
+      responses:
+        200:
+          description: Order details retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error

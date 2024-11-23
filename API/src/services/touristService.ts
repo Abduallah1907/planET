@@ -2126,4 +2126,17 @@ export default class TouristService {
       200
     );
   }
+  //View Order Details
+  public async getOrderDetailsService(order_id: string) {
+    if (!Types.ObjectId.isValid(order_id)) {
+      throw new BadRequestError("Invalid order id");
+    }
+    const order = await this.orderModel
+      .findById(order_id)
+      .populate("products.items.product_id");
+    if (order instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (order == null) throw new NotFoundError("Order not found");
+    return new response(true, order, "Order found", 200);
+  }
 }
