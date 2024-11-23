@@ -8,6 +8,8 @@ export interface ISalesReport {
   date: Date;
   image?: mongoose.Schema.Types.ObjectId;
   revenue: number;
+  first_buy: string;
+  last_buy: string;
   total_revenue: number;
 }
 export interface ISalesReportTotal {

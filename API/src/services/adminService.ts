@@ -25,6 +25,7 @@ import { dir, time } from "console";
 import { ITourist } from "@/interfaces/ITourist";
 import { ISalesReport, ISalesReportTotal } from "@/interfaces/IReport";
 import TicketType from "@/types/enums/ticketType";
+import { last } from "pdf-lib";
 
 // User related services (delete, view, and create users)
 
@@ -765,17 +766,56 @@ export default class AdminService {
       : null;
 
     const activityAndItineraryReport = await this.ticketModel.aggregate([
-      // Group tickets by booking_id
-
+      // Step 1: Calculate overall first_buy and last_buy globally
       {
         $group: {
           _id: "$booking_id",
           tickets: { $push: "$$ROOT" }, // Include all ticket data
-          // createdAt: { $first: "$createdAt" }, // Get the first time_to_attend
-          totalRevenue: { $sum: "$price" }, // Sum up ticket prices
+          first_buy: { $min: "$createdAt" }, // First purchase date globally
+          last_buy: { $max: "$createdAt" }, // Last purchase date globally
         },
       },
-      // Join with activities and itineraries based on booking_id
+
+      // Step 2: Apply the date filter (affects only tickets for revenue calculation)
+      ...(isoStartDate || isoEndDate
+        ? [
+            {
+              $set: {
+                tickets: {
+                  $filter: {
+                    input: "$tickets",
+                    as: "ticket",
+                    cond: {
+                      $and: [
+                        isoStartDate
+                          ? { $gte: ["$$ticket.createdAt", isoStartDate] }
+                          : true,
+                        isoEndDate
+                          ? { $lte: ["$$ticket.createdAt", isoEndDate] }
+                          : true,
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          ]
+        : []),
+
+      // Step 3: Recalculate revenue based on the filtered tickets
+      {
+        $set: {
+          revenue: {
+            $sum: "$tickets.price", // Sum of prices from the filtered tickets
+          },
+        },
+      },
+      {
+        $match: {
+          revenue: { $gt: 0 },
+        },
+      },
+      // Step 4: Lookup activity and itinerary details
       {
         $lookup: {
           from: "activities", // Collection name for activities
@@ -792,41 +832,8 @@ export default class AdminService {
           as: "itineraryDetails",
         },
       },
-      // Flatten activity and itinerary details for easier processing
-      {
-        $match: {
-          "tickets.price": { $gt: 0 },
-          ...(isoStartDate || isoEndDate
-            ? {} // Skip the condition if either date is provided
-            : { "tickets.time_to_attend": { $exists: true } }), // Only apply the match if no dates are provided
-        },
-      },
-      // Add specific conditions for date range if both start_date and/or end_date are provided
-      ...(isoStartDate || isoEndDate
-        ? [
-            {
-              $match: {
-                $and: [
-                  isoStartDate
-                    ? {
-                        "tickets.createdAt": {
-                          $gte: isoStartDate,
-                        },
-                      }
-                    : {},
-                  isoEndDate
-                    ? {
-                        "tickets.createdAt": {
-                          $lte: isoEndDate,
-                        },
-                      }
-                    : {},
-                ].filter(Boolean), // Removes any empty conditions
-              },
-            },
-          ]
-        : []),
 
+      // Step 5: Flatten activity and itinerary details for output
       {
         $project: {
           _id: 1,
@@ -858,24 +865,20 @@ export default class AdminService {
               "ITINERARY",
             ],
           },
-
-          revenue: { $multiply: ["$totalRevenue", 0.1] }, // Only 10% revenue goes to admin
+          revenue: 1, // Revenue after filtering
+          total_revenue: { $multiply: ["$revenue", 0.1] }, // 10% for admin
+          first_buy: 1, // Overall first buy (global, before filter)
+          last_buy: 1, // Overall last buy (global, before filter)
         },
       },
     ]);
     const productReport = await this.orderModel.aggregate([
-      // Filter by date range
-      {
-        $match: {
-          ...(isoStartDate && { createdAt: { $gte: isoStartDate } }),
-          ...(isoEndDate && { createdAt: { $lte: isoEndDate } }),
-        },
-      },
-      // Unwind the items array to process each product separately
+      // Step 1: Unwind the items array to process each product separately
       {
         $unwind: "$products.items",
       },
-      // Lookup product details from the Product collection
+
+      // Step 2: Lookup product details from the Product collection
       {
         $lookup: {
           from: "products", // Product collection name
@@ -884,33 +887,90 @@ export default class AdminService {
           as: "productDetails",
         },
       },
-      // Flatten the productDetails array
+
+      // Step 3: Flatten the productDetails array
       {
         $unwind: "$productDetails",
       },
-      // Calculate the revenue for each product
+
+      // Step 4: Group to calculate global first_buy and last_buy for each product
+      {
+        $group: {
+          _id: "$productDetails._id", // Group by product ID
+          name: { $first: "$productDetails.name" },
+          average_rating: { $first: "$productDetails.average_rating" },
+          image: { $first: "$productDetails.image" },
+          first_buy: { $min: "$createdAt" }, // Earliest purchase date
+          last_buy: { $max: "$createdAt" }, // Latest purchase date
+          orders: { $push: "$$ROOT" }, // Collect all order details
+        },
+      },
+
+      // Step 5: Re-process the orders to apply the date range filter
       {
         $project: {
-          _id: "$productDetails._id",
-          name: "$productDetails.name",
-          average_rating: "$productDetails.average_rating",
-          image: "$productDetails.image",
-          revenue: {
-            $multiply: ["$products.items.quantity", "$productDetails.price"],
+          _id: 1,
+          name: 1,
+          average_rating: 1,
+          image: 1,
+          first_buy: 1,
+          last_buy: 1,
+          orders: {
+            $filter: {
+              input: "$orders",
+              as: "order",
+              cond: {
+                $and: [
+                  isoStartDate
+                    ? { $gte: ["$$order.createdAt", isoStartDate] }
+                    : true,
+                  isoEndDate
+                    ? { $lte: ["$$order.createdAt", isoEndDate] }
+                    : true,
+                ],
+              },
+            },
           },
         },
       },
-      // Group by product_id to sum up the total revenue
+
+      // Step 6: Flatten the filtered orders back for revenue calculation
+      {
+        $unwind: "$orders",
+      },
+
+      // Step 7: Calculate revenue for each filtered order
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          average_rating: 1,
+          image: 1,
+          first_buy: 1,
+          last_buy: 1,
+          revenue: {
+            $multiply: [
+              "$orders.products.items.quantity",
+              "$orders.productDetails.price",
+            ],
+          },
+        },
+      },
+
+      // Step 8: Group again to sum up total revenue for each product
       {
         $group: {
           _id: "$_id",
           name: { $first: "$name" },
           average_rating: { $first: "$average_rating" },
           image: { $first: "$image" },
-          revenue: { $sum: "$revenue" },
+          first_buy: { $first: "$first_buy" }, // Use the first grouping results
+          last_buy: { $first: "$last_buy" }, // Use the first grouping results
+          revenue: { $sum: "$revenue" }, // Sum up the revenue
         },
       },
-      // Project final fields
+
+      // Step 9: Final projection
       {
         $project: {
           _id: 1,
@@ -919,16 +979,20 @@ export default class AdminService {
           image: 1,
           type: "PRODUCT",
           revenue: 1,
+          total_revenue: { $multiply: ["$revenue", 0.1] }, // 10% for admin
+          first_buy: 1,
+          last_buy: 1,
         },
       },
     ]);
+
     const salesReports: ISalesReport[] = [
       ...activityAndItineraryReport,
       ...productReport,
     ];
     let totalRevenue = 0;
     for (const salesReport of salesReports) {
-      totalRevenue += salesReport.revenue;
+      totalRevenue += salesReport.total_revenue;
     }
     const salesReportTotal: ISalesReportTotal = { salesReports, totalRevenue };
     return new response(
