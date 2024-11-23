@@ -102,7 +102,7 @@ export default (app: Router) => {
   );
   router.put("/replyComplaint/:complaint_id", adminController.replyComplaint);
 
-  router.get("/getSalesReport", adminController.getSalesReport);
+  router.put("/getSalesReport", adminController.getSalesReport);
 
   router.post("/createPromoCode", adminController.createPromoCode);
 
