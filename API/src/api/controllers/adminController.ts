@@ -223,7 +223,11 @@ export class AdminController {
   }
   public async getSalesReport(req: Request, res: Response): Promise<void> {
     const adminService: AdminService = Container.get(AdminService);
-    const report = await adminService.getSalesReportServiceGPT();
+    const { start_date, end_date } = req.query;
+    const report = await adminService.getSalesReportService(
+      start_date as string,
+      end_date as string
+    );
     res.status(report.status).json(report);
   }
 }

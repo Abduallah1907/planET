@@ -653,85 +653,24 @@ export default class AdminService {
       200
     );
   }
-  // public async getSalesReportService() {
-  //   const bookingIds = await this.ticketModel.distinct("booking_id");
-  //   const productIds: Types.ObjectId[] = await this.orderModel.distinct(
-  //     "products.items.product_id"
-  //   );
-  //   const salesReport: ISalesReport[] = [];
+  public async getSalesReportService(start_date: string, end_date: string) {
+    const convertDate = (date: string): string => {
+      const [day, month, year] = date.split("/");
+      return `${month}-${day}-${year}`;
+    };
 
-  //   for (const bookingId of bookingIds) {
-  //     const tickets = await this.ticketModel.find({ booking_id: bookingId });
-  //     let id: string = bookingId.toString();
-  //     let name: string = "";
-  //     let average_rating: number = 0;
-  //     let revenue: number = 0;
-  //     let image: mongoose.Schema.Types.ObjectId | undefined = undefined;
-  //     for (const ticket of tickets) {
-  //       switch (ticket.type) {
-  //         case TicketType.Activity:
-  //           const activity = await this.activityModel.findById(bookingId);
-  //           name = activity?.name ?? "";
-  //           average_rating = activity?.average_rating ?? 0;
-  //           image = activity?.image ?? undefined;
-  //           break;
-  //         case TicketType.Itinerary:
-  //           const itinerary = await this.itineraryModel.findById(bookingId);
-  //           name = itinerary?.name ?? "";
-  //           average_rating = itinerary?.average_rating ?? 0;
-  //           image = itinerary?.image ?? undefined;
-  //           break;
-  //         default:
-  //           break;
-  //       }
-  //       revenue += ticket.price.valueOf();
-  //     }
-  //     salesReport.push({
-  //       id,
-  //       name,
-  //       average_rating,
-  //       revenue: revenue * 0.1,
-  //       image,
-  //     });
-  //   } //For activitites and itineraries
-  //   for (const productId of productIds) {
-  //     const orders = await this.orderModel.find({
-  //       products: { items: { product_id: productId } },
-  //     });
-  //     let id: string = productId.toString();
-  //     let name: string = "";
-  //     let average_rating: number = 0;
-  //     let revenue: number = 0;
-  //     let image: mongoose.Schema.Types.ObjectId | undefined = undefined;
+    start_date = start_date ? convertDate(start_date) : start_date;
+    end_date = end_date ? convertDate(end_date) : end_date;
 
-  //     for (const order of orders) {
-  //       const product = await this.productModel.findById(productId);
-  //       name = product?.name ?? "";
-  //       average_rating = product?.average_rating ?? 0;
-  //       image = product?.image ?? undefined;
-  //       for (const item of order.products.items) {
-  //         revenue += (product?.price ?? 0) * (item.quantity ?? 0);
-  //       }
-  //     }
-  //     salesReport.push({
-  //       id,
-  //       name,
-  //       average_rating,
-  //       revenue: revenue * 0.1,
-  //       image,
-  //     });
-  //   } //For products
+    let isoStartDate = start_date ? new Date(start_date) : null;
 
-  //   return new response(
-  //     true,
-  //     salesReport,
-  //     "Sales report generated successfully",
-  //     200
-  //   );
-  // }
-  public async getSalesReportServiceGPT() {
+    let isoEndDate = end_date
+      ? new Date(new Date(end_date).setDate(new Date(end_date).getDate() + 1))
+      : null;
+
     const activityAndItineraryReport = await this.ticketModel.aggregate([
       // Group tickets by booking_id
+
       {
         $group: {
           _id: "$booking_id",
@@ -761,8 +700,37 @@ export default class AdminService {
       {
         $match: {
           "tickets.price": { $gt: 0 },
+          ...(isoStartDate || isoEndDate
+            ? {} // Skip the condition if either date is provided
+            : { "tickets.time_to_attend": { $exists: true } }), // Only apply the match if no dates are provided
         },
       },
+      // Add specific conditions for date range if both start_date and/or end_date are provided
+      ...(isoStartDate || isoEndDate
+        ? [
+            {
+              $match: {
+                $and: [
+                  isoStartDate
+                    ? {
+                        "tickets.createdAt": {
+                          $gte: isoStartDate,
+                        },
+                      }
+                    : {},
+                  isoEndDate
+                    ? {
+                        "tickets.createdAt": {
+                          $lte: isoEndDate,
+                        },
+                      }
+                    : {},
+                ].filter(Boolean), // Removes any empty conditions
+              },
+            },
+          ]
+        : []),
+
       {
         $project: {
           _id: 1,
@@ -801,34 +769,65 @@ export default class AdminService {
         },
       },
     ]);
-    const productReport = await this.productModel.aggregate([
-      // Project fields to calculate revenue and simplify output
-      { $match: { sales: { $gt: 0 } } },
+    const productReport = await this.orderModel.aggregate([
+      // Filter by date range
       {
-        $project: {
-          _id: 1,
-          name: 1,
-          average_rating: 1,
-          image: 1,
-          // date: "$createdAt", // Directly reference the createdAt field
-          type: "PRODUCT",
-          revenue: { $multiply: ["$sales", "$price"] }, // Calculate total revenue
+        $match: {
+          ...(isoStartDate && { createdAt: { $gte: isoStartDate } }),
+          ...(isoEndDate && { createdAt: { $lte: isoEndDate } }),
         },
       },
-      // Add admin's 10% share of the revenue
+      // Unwind the items array to process each product separately
+      {
+        $unwind: "$products.items",
+      },
+      // Lookup product details from the Product collection
+      {
+        $lookup: {
+          from: "products", // Product collection name
+          localField: "products.items.product_id",
+          foreignField: "_id",
+          as: "productDetails",
+        },
+      },
+      // Flatten the productDetails array
+      {
+        $unwind: "$productDetails",
+      },
+      // Calculate the revenue for each product
+      {
+        $project: {
+          _id: "$productDetails._id",
+          name: "$productDetails.name",
+          average_rating: "$productDetails.average_rating",
+          image: "$productDetails.image",
+          revenue: {
+            $multiply: ["$products.items.quantity", "$productDetails.price"],
+          },
+        },
+      },
+      // Group by product_id to sum up the total revenue
+      {
+        $group: {
+          _id: "$_id",
+          name: { $first: "$name" },
+          average_rating: { $first: "$average_rating" },
+          image: { $first: "$image" },
+          revenue: { $sum: "$revenue" },
+        },
+      },
+      // Project final fields
       {
         $project: {
           _id: 1,
           name: 1,
           average_rating: 1,
           image: 1,
-          // date: 1,
           type: "PRODUCT",
-          revenue: { $multiply: ["$revenue", 0.1] }, // Admin's 10% share
+          revenue: 1,
         },
       },
     ]);
-
     const salesReports: ISalesReport[] = [
       ...activityAndItineraryReport,
       ...productReport,
