@@ -167,3 +167,34 @@ paths:
           description: The email was unable to find an advertiser with that email, or the person having that email is not an advertiser.
         400:
           description: The advertiser still has upcoming activity(ies) that are booked by tourists.
+        500:
+          description: Internal server error
+  /api/advertiser/getSalesReport/{email}:
+    get:
+      tags:
+        - Advertiser
+      summary: Get sales report by email
+      parameters:
+        - in: path
+          name: email
+          schema:
+            type: string
+          required: true
+          description: Email of advertiser
+        - in: query
+          name: start_date
+          schema:
+            type: string
+          description: Start date of sales report
+        - in: query
+          name: end_date
+          schema:
+            type: string
+          description: End date of sales report    
+      responses:
+        200:
+          description: Sales report found
+        400:
+          description: Bad request
+        500:
+          description: Internal server error          

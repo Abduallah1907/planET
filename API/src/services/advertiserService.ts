@@ -20,6 +20,9 @@ import bcrypt from "bcryptjs";
 import { FileService } from "./fileService";
 import { IActivity } from "@/interfaces/IActivity";
 import UserStatus from "@/types/enums/userStatus";
+import { ISalesReportTotal, ISalesReportTourists } from "@/interfaces/IReport";
+import TicketType from "@/types/enums/ticketType";
+import tourist from "@/api/routes/tourist";
 @Service()
 export default class AdvertiserService {
   constructor(
@@ -259,5 +262,150 @@ export default class AdvertiserService {
     );
 
     return new response(true, {}, "Advertiser successfully deleted", 200);
+  }
+  public async getSalesReportService(
+    email: string,
+    start_date: string,
+    end_date: string
+  ): Promise<any> {
+    const convertDate = (date: string): string => {
+      const [day, month, year] = date.split("/");
+      return `${month}-${day}-${year}`;
+    };
+
+    start_date = start_date ? convertDate(start_date) : start_date;
+    end_date = end_date ? convertDate(end_date) : end_date;
+
+    let isoStartDate = start_date ? new Date(start_date) : null;
+
+    let isoEndDate = end_date
+      ? new Date(new Date(end_date).setDate(new Date(end_date).getDate() + 1))
+      : null;
+
+    const advertiserUser = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Advertiser,
+    });
+    if (!advertiserUser) throw new NotFoundError("User not found");
+    const advertiser = await this.advertiserModel.findOne({
+      user_id: advertiserUser._id,
+    });
+    if (!advertiser) throw new NotFoundError("Advertiser not found");
+
+    const activityReport = await this.ticketModel.aggregate([
+      // Step 1: Lookup activity details to filter by advertiser_id
+      {
+        $match: {
+          type: TicketType.Activity,
+        },
+      },
+      {
+        $lookup: {
+          from: "activities", // Collection name for activities
+          localField: "booking_id", // booking_id in ticket corresponds to activity _id
+          foreignField: "_id",
+          as: "activityDetails",
+        },
+      },
+
+      // Step 2: Filter out tickets that are not linked to the specified advertiser_id
+      {
+        $match: {
+          "activityDetails.advertiser_id": advertiser._id, // Replace advertiserId with the desired ID
+        },
+      },
+
+      // Step 3: Remove the `activityDetails` array as it is no longer needed
+      {
+        $set: {
+          activityDetails: { $arrayElemAt: ["$activityDetails", 0] }, // Flatten the array
+        },
+      },
+
+      // Step 4: Group tickets by `booking_id` (filtered by `advertiser_id`)
+      {
+        $group: {
+          _id: "$booking_id",
+          tickets: { $push: "$$ROOT" }, // Include all ticket data
+          first_buy: { $min: "$createdAt" }, // First purchase date globally
+          last_buy: { $max: "$createdAt" }, // Last purchase date globally
+        },
+      },
+
+      // Step 5: Apply the date filter (affects only tickets for revenue calculation)
+      ...(isoStartDate || isoEndDate
+        ? [
+            {
+              $set: {
+                tickets: {
+                  $filter: {
+                    input: "$tickets",
+                    as: "ticket",
+                    cond: {
+                      $and: [
+                        isoStartDate
+                          ? { $gte: ["$$ticket.createdAt", isoStartDate] }
+                          : true,
+                        isoEndDate
+                          ? { $lte: ["$$ticket.createdAt", isoEndDate] }
+                          : true,
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          ]
+        : []),
+
+      // Step 6: Recalculate revenue based on the filtered tickets
+      {
+        $set: {
+          revenue: {
+            $sum: "$tickets.price", // Sum of prices from the filtered tickets
+          },
+        },
+      },
+      {
+        $match: {
+          revenue: { $gt: 0 },
+        },
+      },
+
+      // Step 7: Add activity details for output
+      {
+        $lookup: {
+          from: "activities", // Collection name for activities
+          localField: "_id",
+          foreignField: "_id",
+          as: "activityDetails",
+        },
+      },
+
+      {
+        $project: {
+          _id: 1,
+          name: { $arrayElemAt: ["$activityDetails.name", 0] },
+          average_rating: {
+            $arrayElemAt: ["$activityDetails.average_rating", 0],
+          },
+          image: { $arrayElemAt: ["$activityDetails.image", 0] },
+          type: TicketType.Activity,
+          revenue: 1, // Revenue after filtering
+          total_revenue: { $multiply: ["$revenue", 0.1] }, // 10% for admin
+          first_buy: 1, // Overall first buy (global, before filter)
+          last_buy: 1, // Overall last buy (global, before filter)
+          tourist_count: { $size: "$tickets" },
+        },
+      },
+    ]);
+
+    const salesReports: ISalesReportTourists[] = [...activityReport];
+    let totalRevenue = 0;
+    for (const salesReport of salesReports) {
+      totalRevenue += salesReport.total_revenue;
+    }
+    const salesReportTotal: ISalesReportTotal = { salesReports, totalRevenue };
+    return new response(true, salesReportTotal, "Sales report fetched", 200);
   }
 }
