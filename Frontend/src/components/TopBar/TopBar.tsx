@@ -1,7 +1,8 @@
-import React from "react";
-import { Navbar, Button, Dropdown, Container, Nav, Row, Col, OverlayTrigger, Tooltip } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Navbar, Button, Dropdown, Container, Nav, Row, Col, OverlayTrigger, Tooltip, Modal, Stack, Form } from "react-bootstrap";
 import "./topbar.css";
 import Logo from "../../assets/LogoNoBackground.svg";
+import LogoGif from "../../assets/LogoNoBackground.gif";
 import { useNavigate } from "react-router-dom";
 import EgyptFlag from "../../assets/Egypt.webp";
 import FranceFlag from "../../assets/FRANCE.webp";
@@ -15,7 +16,29 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { toggleSidebar } from "../../store/sidebarSlice";
 import Avatar from "../Avatar/Avatar";
 import { SlBadge } from "react-icons/sl";
+import currencyConverter from '../../utils/currencyConverterSingelton';
+import Currencies from '../../utils/currencies.json';
+import { IoCheckmarkOutline } from "react-icons/io5";
 
+
+interface Currency {
+  name: string;
+  demonym: string;
+  majorSingle: string;
+  majorPlural: string;
+  ISOnum: number | null;
+  symbol: string;
+  symbolNative: string;
+  minorSingle: string;
+  minorPlural: string;
+  ISOdigits: number;
+  decimals: number;
+  numToBasic: number | null;
+}
+
+interface CurrencyMap {
+  [key: string]: Currency;
+}
 
 const TopBar: React.FC = () => {
 
@@ -23,6 +46,17 @@ const TopBar: React.FC = () => {
   const { currentFlag, setCurrentFlag, currency, setCurrency } =
     useAppContext();
   const { i18n, t } = useTranslation();
+  const [currencySearch, setCurrencySearch] = useState("");
+  const [gifEnded, setGifEnded] = useState(false);
+
+  useEffect(() => {
+    const gifDuration = 2000; // Duration of the GIF in milliseconds
+    const timer = setTimeout(() => {
+      setGifEnded(true);
+    }, gifDuration);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleFlagChange = (flag: string, language: string) => {
     setCurrentFlag(flag);
@@ -60,6 +94,33 @@ const TopBar: React.FC = () => {
   const handleJoinUs = () => {
     navigate("/JoinUs");
   };
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const typedCurrencies: CurrencyMap = Currencies;
+  const currencies = Array.from(currencyConverter.getCurrencies().entries());
+
+  // Function to chunk the currencies into groups of 4
+  const chunkArray = (array: [string, string][], chunkSize: number) => {
+    const chunks = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+      chunks.push(array.slice(i, i + chunkSize));
+    }
+    return chunks;
+  };
+
+  const [filteredCurrencies, setFilteredCurrencies] = useState<[string, string][]>(currencies);
+  useEffect(() => {
+    setFilteredCurrencies(
+      currencies.filter(([currencyCode, currencyName]) =>
+        currencyName.toLowerCase().includes(currencySearch.toLowerCase()) || currencyCode.toLowerCase().includes(currencySearch.toLowerCase())
+      )
+    );
+  }, [currencySearch]);
+  const currencyChunks = chunkArray(filteredCurrencies, 4);
 
   const sidebarState = useAppSelector((state) => state.sidebar.isActive)
   const dispatch = useAppDispatch();
@@ -99,13 +160,23 @@ const TopBar: React.FC = () => {
           </div> : null
         }
         <Navbar.Brand onClick={() => navigate("/")} className="brand-container">
-          <img
-            src={Logo}
-            width="150"
-            height="100"
-            className="align-top logo"
-            alt="Travel Agency logo"
-          />
+          {gifEnded ? (
+            <img
+              src={Logo}
+              width="150"
+              height="100"
+              className="align-top logo logo-gif-transform"
+              alt="Travel Agency logo"
+            />
+          ) : (
+            <img
+              src={LogoGif}
+              width="150"
+              height="100"
+              className="align-top logo logo-gif"
+              alt="Loading"
+            />
+          )}
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -169,7 +240,10 @@ const TopBar: React.FC = () => {
             </Dropdown>
 
             {/* Currency Dropdown */}
-            <Dropdown className="currency-dropdown">
+            <Button variant="currency" onClick={handleShow}>
+              {currency}
+            </Button>
+            {/* <Dropdown className="currency-dropdown">
               <Dropdown.Toggle className="btn-text btn-main dropdown-toggle p-1">
                 {t(currency.toLowerCase())}
               </Dropdown.Toggle>
@@ -193,7 +267,7 @@ const TopBar: React.FC = () => {
                   {t("egp")}
                 </Dropdown.Item>
               </Dropdown.Menu>
-            </Dropdown>
+            </Dropdown> */}
 
             <Button
               variant=""
@@ -260,7 +334,59 @@ const TopBar: React.FC = () => {
           </Nav>
         </Navbar.Collapse>
       </Container>
-    </Navbar>
+      <Modal className="currency-modal" show={show} onHide={handleClose} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Select your currency</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Stack gap={3}>
+            <Row>
+              <Col sm={12} md={{span: "4", offset: "4"}}>
+                <Form.Group className="mb-3 form-group">
+                  <Form.Control
+                    type="text"
+                    className="custom-form-control"
+                    placeholder="Search for a currency"
+                    value={currencySearch}
+                    onChange={(e) => setCurrencySearch(e.target.value)} />
+                </Form.Group>
+              </Col>
+            </Row>
+            {currencyChunks.map((chunk, index) => (
+              <Stack direction="horizontal" gap={3} key={index}>
+                {chunk.map((currencyObject) => (
+                  <Button
+                    variant="light"
+                    onClick={() => {
+                      handleCurrencyChange(currencyObject[0]);
+                      handleClose();
+                    }}
+                    key={currencyObject[1]}
+                    className={`currency-button text-start ${currency === currencyObject[0] ? "active" : ""}`}
+                  >
+                    <Row>
+                      <Col>
+                        <span className="currency-name">
+                          {currencyObject[1]}
+                          <div className="currency-symbol">
+                            {typedCurrencies[currencyObject[0]]?.symbol ?? currencyObject[0]}
+                          </div>
+                        </span>
+                      </Col>
+                      {currency === currencyObject[0] && (
+                        <Col xs="auto" className="align-content-center">
+                          <IoCheckmarkOutline size={24} />
+                        </Col>
+                      )}
+                    </Row>
+                  </Button>
+                ))}
+              </Stack>
+            ))}
+          </Stack>
+        </Modal.Body>
+      </Modal >
+    </Navbar >
   );
 };
 

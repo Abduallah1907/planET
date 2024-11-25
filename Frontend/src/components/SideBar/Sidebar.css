@@ -5,12 +5,25 @@
     position: fixed; /* Fix to the side */
     height: 100%; /* Full height of the viewport */
     top: 0; /* Stick to the top of the viewport */
-    padding-top: 150px; /* Adjust for the top bar space */
+    padding-top: 9.5rem; /* Adjust for the top bar space */
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Shadow effect */
     overflow-y: auto; /* Allow scrolling within the sidebar */
     transform: translateX(-100%); /* Initially hidden */
     transition: transform 0.3s ease; /* Smooth transition */
     z-index: 8; /* Ensure it is above other content */
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        padding-top: 13.5rem; /* Adjust width for smaller screens */
+    } 
+}
+
+@media (min-width:576px) and (max-width: 768px) {
+    .sidebar {
+        padding-top: 11.5rem; /* Adjust width for smaller screens */
+    }
+    
 }
 
 /* Sidebar open state */

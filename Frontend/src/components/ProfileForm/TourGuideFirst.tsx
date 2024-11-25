@@ -13,7 +13,7 @@ import { useAppSelector } from "../../store/hooks";
 import { TourGuideServices } from "../../services/TourGuideServices";
 import { FileService } from "../../services/FileService";
 import { FaTrashAlt } from "react-icons/fa";
-import "./Advertiser.css";
+import "./ProfileForm.css";
 
 interface WorkExperience {
   id?: string; // ID from the backend
@@ -296,9 +296,9 @@ const TourGuideFirst: React.FC = () => {
                 ))}
               </tbody>
             </Table>
-            <button className="update-btn" onClick={handleAddWork}>
+            <Button variant="main-inverse" className="px-5 py-2" onClick={handleAddWork}>
               + Add Work Experience
-            </button>
+            </Button>
           </Col>
         </Row>
         {/* Terms and Conditions Checkbox */}
@@ -320,12 +320,12 @@ const TourGuideFirst: React.FC = () => {
         </div>
 
         <div className="d-flex justify-content-center">
-          <button className="update-btn" onClick={OnClick}>
+          <Button type="submit" variant="main-inverse" className="px-5 py-2" onClick={OnClick}>
             Confirm
-          </button>
-          <button className="cancel-btn" onClick={handleCancel}>
+          </Button>
+          <Button variant="main-border" className="px-5 py-2" onClick={handleCancel}>
             Cancel
-          </button>
+          </Button>
         </div>
       </Form>
       {/* Terms and Conditions Modal */}

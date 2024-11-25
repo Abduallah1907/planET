@@ -1,10 +1,15 @@
 h2.my-profile-heading {
-    text-indent: 5rem; /* Removed indent for full alignment */
-    text-align: left; /* Aligns text left */
-    margin-bottom: 0rem; /* Reduced space below the heading */
+    text-indent: 5rem;
+    /* Removed indent for full alignment */
+    text-align: left;
+    /* Aligns text left */
+    margin-bottom: 0rem;
+    /* Reduced space below the heading */
     font-weight: bold;
-    margin-top: 30px; /* Space above the heading */
-    font-size: 40px; /* Font size */
+    margin-top: 30px;
+    /* Space above the heading */
+    font-size: 40px;
+    /* Font size */
 }
 
 
@@ -12,57 +17,37 @@ h2.my-profile-heading {
 /* Buttons */
 .form-actions {
     display: flex;
-    justify-content: center; /* Center buttons */
-    width: 100%; /* Allow buttons to take the full width */
-    margin-top: 1rem; /* Top margin */
-    margin-bottom: 1rem; /* Bottom margin */
+    justify-content: center;
+    /* Center buttons */
+    width: 100%;
+    /* Allow buttons to take the full width */
+    margin-top: 1rem;
+    /* Top margin */
+    margin-bottom: 1rem;
+    /* Bottom margin */
 }
 
-.update-btn,
-.cancel-btn {
-    padding: 0.5rem 1rem; /* Button padding */
-    flex: 1; /* Flexible width */
-    max-width: 150px; /* Max width for buttons */
-    margin: 0 0.5rem; /* Margin to bring buttons closer together */
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.update-btn {
-    background-color: #e67e22;
-    color: white;
-    border: none;
-}
-
-.update-btn:hover {
-    background-color: #d35400; /* Hover effect */
-}
-
-.cancel-btn {
-    background-color: white;
-    color: #e67e22;
-    border: 1px solid #e67e22;
-}
-
-.cancel-btn:hover {
-    background-color: #f2f2f2; /* Hover effect */
-}
 .dropdown-icon {
     margin-left: 8px;
-    font-size: 1.2rem; /* Adjust size if needed */
-    color: #881818; /* Adjust color */
-    display: inline-block; /* Ensure it is treated as a block-level element */
+    font-size: 1.2rem;
+    /* Adjust size if needed */
+    color: #881818;
+    /* Adjust color */
+    display: inline-block;
+    /* Ensure it is treated as a block-level element */
 }
+
 .custom-select-container {
     position: relative;
-    color: #881818; /* Adjust color */
-  }
-  
-  .dropdown-icon {
+    color: #881818;
+    /* Adjust color */
+}
+
+.dropdown-icon {
     position: absolute;
     top: 50%;
     right: 10px;
     transform: translateY(-50%);
-    pointer-events: none; /* Prevents clicks on the icon */
-  }
-  
+    pointer-events: none;
+    /* Prevents clicks on the icon */
+}

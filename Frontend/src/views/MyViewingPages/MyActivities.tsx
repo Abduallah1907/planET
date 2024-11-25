@@ -122,7 +122,7 @@ export default function ActivitiesPage() {
   });
 
   const onActivityClick = (id: string) => {
-    navigate(`/ActivityDetails/${id}`);
+    navigate(`/Activity/${id}`);
   };
 
   const filteredActivities = sortedActivities.filter((activity) =>

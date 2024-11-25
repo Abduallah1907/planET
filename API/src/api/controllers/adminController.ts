@@ -1,10 +1,15 @@
-import { IAdminUpdateDTO, IUserAdminCreateAdminDTO, IUserAdminCreateGovernorDTO } from "@/interfaces/IUser";
+import {
+  IAdminUpdateDTO,
+  IUserAdminCreateAdminDTO,
+  IUserAdminCreateGovernorDTO,
+} from "@/interfaces/IUser";
 import AdminService from "@/services/adminService";
 import { Request, Response } from "express";
 import Container, { Inject, Service } from "typedi";
 import mongoose, { ReplaceOneModel, Types } from "mongoose";
 import admin from "../routes/admin";
 import ComplaintStatus from "@/types/enums/complaintStatus";
+import { IPromoCodeInputDTO } from "@/interfaces/IPromo_code";
 
 // CRUD for users
 @Service()
@@ -15,6 +20,20 @@ export class AdminController {
     const adminService: AdminService = Container.get(AdminService);
     const users = await adminService.getUsersService(pageNum);
     res.status(users.status).json(users);
+  }
+
+  public async getUserNumbers(req: Request, res: Response): Promise<void> {
+    const adminService: AdminService = Container.get(AdminService);
+    const numberOfUsers = await adminService.getUserNumbersService();
+    res.status(numberOfUsers.status).json(numberOfUsers);
+  }
+
+  public async getUserNumbersForYear(req: Request, res: Response): Promise<void> {
+    const { year } = req.params;
+    const yearNumber: number = parseInt(year);
+    const adminService: AdminService = Container.get(AdminService);
+    const numberOfUsers = await adminService.getUserNumbersForYearService(yearNumber);
+    res.status(numberOfUsers.status).json(numberOfUsers);
   }
 
   public async searchUser(req: Request, res: Response): Promise<any> {
@@ -66,7 +85,10 @@ export class AdminController {
   public async updateCategory(req: Request, res: Response): Promise<any> {
     const { oldType, newType } = req.body;
     const adminService: AdminService = Container.get(AdminService);
-    const updatedCategory = await adminService.updateCategoryService(oldType, newType);
+    const updatedCategory = await adminService.updateCategoryService(
+      oldType,
+      newType
+    );
     res.status(updatedCategory.status).json(updatedCategory);
   }
 
@@ -122,7 +144,10 @@ export class AdminController {
     const { email } = req.params;
     const adminUpdateData: IAdminUpdateDTO = req.body;
     const adminService: AdminService = Container.get(AdminService);
-    const updatedAdmin = await adminService.updateAdminService(email, adminUpdateData);
+    const updatedAdmin = await adminService.updateAdminService(
+      email,
+      adminUpdateData
+    );
     res.status(updatedAdmin.status).json(updatedAdmin);
   }
 
@@ -138,23 +163,35 @@ export class AdminController {
     const { complaint_id } = req.params;
     const complaintIDObjectId = new Types.ObjectId(complaint_id);
     const adminService: AdminService = Container.get(AdminService);
-    const complaint = await adminService.getComplaintByIDService(complaintIDObjectId);
+    const complaint = await adminService.getComplaintByIDService(
+      complaintIDObjectId
+    );
     res.status(complaint.status).json(complaint);
   }
 
-  public async markComplaintResolved(req: Request, res: Response): Promise<void> {
+  public async markComplaintResolved(
+    req: Request,
+    res: Response
+  ): Promise<void> {
     const { complaint_id } = req.params;
     const complaintIDObjectId = new Types.ObjectId(complaint_id);
     const adminService: AdminService = Container.get(AdminService);
-    const complaint = await adminService.markComplaintResolvedService(complaintIDObjectId);
+    const complaint = await adminService.markComplaintResolvedService(
+      complaintIDObjectId
+    );
     res.status(complaint.status).json(complaint);
   }
 
-  public async markComplaintPending(req: Request, res: Response): Promise<void> {
+  public async markComplaintPending(
+    req: Request,
+    res: Response
+  ): Promise<void> {
     const { complaint_id } = req.params;
     const complaintIDObjectId = new Types.ObjectId(complaint_id);
     const adminService: AdminService = Container.get(AdminService);
-    const complaint = await adminService.markComplaintPendingService(complaintIDObjectId);
+    const complaint = await adminService.markComplaintPendingService(
+      complaintIDObjectId
+    );
     res.status(complaint.status).json(complaint);
   }
 
@@ -163,25 +200,53 @@ export class AdminController {
     const { reply }: { reply: string } = req.body;
     const complaintIDObjectId = new Types.ObjectId(complaint_id);
     const adminService: AdminService = Container.get(AdminService);
-    const complaint = await adminService.replyComplaintService(complaintIDObjectId, reply);
+    const complaint = await adminService.replyComplaintService(
+      complaintIDObjectId,
+      reply
+    );
     res.status(complaint.status).json(complaint);
   }
 
-  public async getSortComplaintByDate(req: Request, res: Response): Promise<void> {
+  public async getSortComplaintByDate(
+    req: Request,
+    res: Response
+  ): Promise<void> {
     const { page } = req.params;
     const pageNum: number = parseInt(page);
     const { direction } = req.body;
     const adminService: AdminService = Container.get(AdminService);
-    const complaint = await adminService.getSortedComplaintsByDateService(direction, pageNum);
+    const complaint = await adminService.getSortedComplaintsByDateService(
+      direction,
+      pageNum
+    );
     res.status(complaint.status).json(complaint);
   }
 
-  public async getFilteredComplaintsByStatus(req: Request, res: Response): Promise<void> {
+  public async getFilteredComplaintsByStatus(
+    req: Request,
+    res: Response
+  ): Promise<void> {
     const { page } = req.params;
     const pageNum: number = parseInt(page);
     const { filter_status } = req.body;
     const adminService: AdminService = Container.get(AdminService);
-    const complaint = await adminService.filerComplaintByStatusService(filter_status, pageNum);
+    const complaint = await adminService.filerComplaintByStatusService(
+      filter_status,
+      pageNum
+    );
+    res.status(complaint.status).json(complaint);
+  }
+  public async getSalesReport(req: Request, res: Response): Promise<void> {
+    const adminService: AdminService = Container.get(AdminService);
+    const report = await adminService.getSalesReportServiceGPT();
+    res.status(report.status).json(report);
+  }
+
+  public async createPromoCode(req: Request, res: Response): Promise<void> {
+    const { numberOfDays, discount } = req.body;
+    const durationNum: number = parseInt(numberOfDays);
+    const adminService: AdminService = Container.get(AdminService);
+    const complaint = await adminService.createPromoCodeService(durationNum, discount);
     res.status(complaint.status).json(complaint);
   }
 }

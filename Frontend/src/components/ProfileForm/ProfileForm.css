@@ -1,0 +1,61 @@
+h2.my-profile-heading {
+    text-indent: 5rem;
+    text-align: left;
+    margin-bottom: 0rem;
+    font-weight: bold;
+    margin-top: 30px;
+    font-size: 40px;
+}
+
+h3.my-profile-heading {
+    text-indent: 15rem;
+    text-align: left;
+    margin-bottom: 0rem;
+    margin-top: 0px;
+    font-size: 20px;
+}
+
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+
+
+.update-btn {
+    background-color: var(--main-color);
+    color: white;
+    border: none;
+    padding: 10px 50px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-left: 60px;
+    text-align: center;
+    margin-bottom: 10px;
+
+}
+
+.dropdown-icon {
+    margin-left: 8px;
+    font-size: 1.2rem;
+    color: #333;
+    display: inline-block;
+}
+
+.custom-select-container {
+    position: relative;
+}
+
+.dropdown-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+}

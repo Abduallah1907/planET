@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../FormGroup/FormGroup";
-import "./Advertiser.css";
+import "./ProfileForm.css";
 import { Container, Row, Col, Button, Form, Modal } from "react-bootstrap";
 import LogoPlaceholder from "../../assets/person-circle.svg"; // Placeholder logo
 import { useAppSelector } from "../../store/hooks";
@@ -211,12 +211,12 @@ const AdvertiserFirst: React.FC = () => {
           </div>
 
           <div className="d-flex justify-content-center">
-            <button className="update-btn" onClick={OnClick}>
+            <Button type="submit" variant="main-inverse" className="px-5 py-2" onClick={OnClick}>
               Confirm
-            </button>
-            <button className="cancel-btn" onClick={handleCancel}>
+            </Button>
+            <Button variant="main-border" className="px-5 py-2" onClick={handleCancel}>
               Cancel
-            </button>
+            </Button>
           </div>
         </Form>
         {/* Terms and Conditions Modal */}

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState , useMemo } from "react";
 import { Row, Col, Card, Button } from "react-bootstrap";
 import CartCard from "../components/Cards/CartCard";
 import { useAppSelector } from "../store/hooks";
 import { useNavigate } from "react-router-dom";
 import showToastMessage from "@/utils/showToastMessage";
+import { useAppContext } from "../AppContext";
 
 interface Product {
   id: string;
@@ -40,6 +41,15 @@ const CartPage: React.FC = () => {
       setIsPromoApplied(false);
     }
   };
+
+
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
+
+  const convertedPrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(cart?.total ?? 0, baseCurrency, currency);
+  }, [cart, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
+
+
 
   return (
     <div className="cart-page p-3">
@@ -113,6 +123,9 @@ const CartPage: React.FC = () => {
               >
                 Confirm Order
               </Button>
+              <h5>Your Subtotal</h5>
+              <h4 className="my-3">{convertedPrice}</h4>
+              <Button variant="main-inverse" className="w-100 mb-4" onClick={() => navigate("/ProductPayment")}>Confirm Order </Button>
             </Card.Body>
 
           </Card>

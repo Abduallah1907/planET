@@ -17,7 +17,7 @@
     border-radius: 0;
 }
 
-.flights-search-container .row.form-controls-row .col {
+.flights-search-container .row.form-controls-row .col:not(:last-of-type) {
     padding: 0.75rem 0.5rem;
     background-color: white;
 }
@@ -159,13 +159,6 @@
         width: 100%;
         font-size: 1.5rem;
         outline: none !important;
-    }
-
-    .flights-search-container .btn-custom:hover,
-    .flights-search-container .btn-custom:active {
-        border: none;
-        background-color: #003366;
-        color: white;
     }
 }
 

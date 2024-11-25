@@ -108,4 +108,26 @@ export default class MailerService {
       return { delivered: 0, status: "error" };
     }
   }
+  //send email notification
+  public async sendEmailNotification(
+    Title: string,
+    email: string,
+    message: string
+  ) {
+    //send email notification
+    // this.createNotificationService(notified_id, message, user_type);
+    //send email
+    const data = {
+      from: config.emails.user,
+      to: [email],
+      subject: Title,
+      text: message,
+    };
+    try {
+      this.emailTransporter.sendMail(data);
+      return { delivered: 1, status: "ok" };
+    } catch (e) {
+      return { delivered: 0, status: "error" };
+    }
+  }
 }

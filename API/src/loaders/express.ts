@@ -72,6 +72,7 @@ export default async ({ app }: { app: Application }) => {
     } else {
       res.status(err.status || 500).json({
         status: err.status || 500,
+        errors: err.errors,
         message: err.message,
         stack: err.stack,
       });
