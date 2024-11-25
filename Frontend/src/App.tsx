@@ -75,6 +75,7 @@ import { APIProvider } from "@vis.gl/react-google-maps";
 import ToastComponent from "./components/ToastComponent";
 import { useToastDispatcher } from "./utils/useToastDispatcher";
 import HotelsPage from "./views/ViewingPages/Hotels";
+import PromoCode from "./views/PromoCode";
 
 const App: React.FC = () => {
   useToastDispatcher();
@@ -191,6 +192,7 @@ const App: React.FC = () => {
           <Route path="/TourGuidesTable" element={<TourGuidesTable />} />
 
           <Route path="/Complaint" element={<ComplaintForm />} />
+          <Route path="/PromoCode" element={<PromoCode />} />
 
           <Route path="/ChangePasswordForm" element={<ChangePasswordForm />} />
           <Route path="/ChangePasswordG" element={<ChangePasswordG />} />
