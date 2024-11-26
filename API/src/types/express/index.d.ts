@@ -23,6 +23,7 @@ import { IWishlist } from "@/interfaces/IWishlist";
 import { ITag } from "@/interfaces/ITag";
 import { IHistorical_tag } from "@/interfaces/IHistorical_tag";
 import { INotification } from "@/interfaces/INotification";
+import { IAddress } from "@/interfaces/IAddress";
 
 declare global {
   namespace Express {
@@ -39,9 +40,7 @@ declare global {
     export type Comment_ratingModel = Model<IComment_rating & Document>;
     export type ComplaintModel = Model<IComplaint & Document>;
     export type GovernorModel = Model<IGovernor & Document>;
-    export type Historical_locationsModel = Model<
-      IHistorical_locations & Document
-    >;
+    export type Historical_locationsModel = Model<IHistorical_locations & Document>;
     export type ItineraryModel = Model<IItinerary & Document>;
     export type OrderModel = Model<IOrder & Document>;
     export type Previous_workModel = Model<IPrevious_work & Document>;
@@ -58,5 +57,6 @@ declare global {
     export type CartModel = Model<ICart & Document>;
     export type OTPModel = Model<any & Document>;
     export type NotificationModel = Model<any & Document>;
+    export type AddressModel = Model<IAddress & Document>;
   }
 }

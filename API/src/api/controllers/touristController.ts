@@ -14,6 +14,7 @@ import Comment_Rating from "@/models/Comment_rating";
 import { Types } from "mongoose";
 import { IComplaintCreateDTO } from "@/interfaces/IComplaint";
 import { IOrderCartDTO } from "@/interfaces/IOrder";
+import { IAddress } from "@/interfaces/IAddress";
 @Service()
 export class TouristController {
   public async getTourist(req: any, res: any) {
@@ -268,9 +269,9 @@ export class TouristController {
 
   public async addAddress(req: Request, res: Response): Promise<void> {
     const { email } = req.params;
-    const { address } = req.body;
+    const addressInfo: IAddress = req.body;
     const touristService: TouristService = Container.get(TouristService);
-    const addressResponse = await touristService.addDeliveryAddressService(email, address);
+    const addressResponse = await touristService.addDeliveryAddressService(email, addressInfo);
     res.status(addressResponse.status).json(addressResponse);
   }
 
@@ -305,27 +306,20 @@ export class TouristController {
   public async bookmarkActivity(req: any, res: any) {
     const { email, activity_id } = req.body;
     const touristService: TouristService = Container.get(TouristService);
-    const bookmarkedActivity = await touristService.bookmarkActivityService(
-      email,
-      activity_id
-    );
+    const bookmarkedActivity = await touristService.bookmarkActivityService(email, activity_id);
     res.status(bookmarkedActivity.status).json(bookmarkedActivity);
   }
 
   public async unbookmarkActivity(req: any, res: any) {
     const { email, activity_id } = req.body;
     const touristService: TouristService = Container.get(TouristService);
-    const unbookmarkedActivity = await touristService.unbookmarkActivityService(
-      email,
-      activity_id
-    );
+    const unbookmarkedActivity = await touristService.unbookmarkActivityService(email, activity_id);
     res.status(unbookmarkedActivity.status).json(unbookmarkedActivity);
   }
   public async getBookmarkedActivities(req: any, res: any) {
     const { email } = req.params;
     const touristService: TouristService = Container.get(TouristService);
-    const bookmarkedActivities =
-      await touristService.getBookmarkedActivitiesService(email);
+    const bookmarkedActivities = await touristService.getBookmarkedActivitiesService(email);
     res.status(bookmarkedActivities.status).json(bookmarkedActivities);
   }
 }

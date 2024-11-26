@@ -18,7 +18,7 @@ export interface ITouristOutputDTO {
   wallet: number;
   loyality_points: number;
   badge: TouristBadge;
-  addresses: string[];
+  addresses: mongoose.Schema.Types.ObjectId[];
   logo?: mongoose.Schema.Types.ObjectId;
   // cart: Cart;
   // wishlist: ObjectId[];
@@ -31,7 +31,7 @@ export interface ITourist extends Document {
   wallet: number;
   loyality_points: number;
   badge: TouristBadge;
-  addresses: string[];
+  addresses: mongoose.Schema.Types.ObjectId[];
   cart: Cart;
   wishlist: ObjectId[];
   date_of_birth: Date;
@@ -69,7 +69,7 @@ export interface ITouristUpdateDTO {
   phone_number?: string;
   job?: string;
   nation?: string;
-  addresses?: string[];
+  addresses?: mongoose.Schema.Types.ObjectId[];
   logo?: mongoose.Schema.Types.ObjectId;
 }
 
