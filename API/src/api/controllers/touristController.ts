@@ -328,4 +328,16 @@ export class TouristController {
       await touristService.getBookmarkedActivitiesService(email);
     res.status(bookmarkedActivities.status).json(bookmarkedActivities);
   }
+  public async getOrderDetails(req: any, res: any) {
+    const { order_id } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const orderDetails = await touristService.getOrderDetailsService(order_id);
+    res.status(orderDetails.status).json(orderDetails);
+  }
+  public async cancelOrder(req: any, res: any) {
+    const { order_id } = req.params;
+    const touristService: TouristService = Container.get(TouristService);
+    const cancelledOrder = await touristService.cancelOrderService(order_id);
+    res.status(cancelledOrder.status).json(cancelledOrder);
+  }
 }

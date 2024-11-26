@@ -1032,7 +1032,7 @@ paths:
         "404":
           description: Code does not even exist, cannot use it
         "500":
-          description: Internal server error   
+          description: Internal server error
   /api/tourist/getCurrentOrders/{email}:
     get:
       tags:
@@ -1052,7 +1052,7 @@ paths:
         400:
           description: Bad request
         500:
-          description: Internal server error     
+          description: Internal server error
 
   /api/tourist/bookmarkActivity:
     post:
@@ -1079,7 +1079,7 @@ paths:
         400:
           description: Bad request
         500:
-          description: Internal server error  
+          description: Internal server error
   /api/tourist/unbookmarkActivity:
     delete:
       tags:
@@ -1105,7 +1105,7 @@ paths:
         400:
           description: Bad request
         500:
-          description: Internal server error        
+          description: Internal server error
   /api/tourist/getBookmarkedActivities/{email}:
     get:
       tags:
@@ -1126,6 +1126,47 @@ paths:
           description: Bad request
         500:
           description: Internal server error
+  /api/tourist/getOrderDetails/{order_id}:
+    get:
+      tags:
+        - Tourist
+      summary: Get order details
+      description: Get order details for a tourist
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          description: ID of the order
+          schema:
+            type: string
+      responses:
+        200:
+          description: Order details retrieved successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+  /api/tourist/cancelOrder/{order_id}:
+    put:
+      tags:
+        - Tourist
+      summary: Cancel order
+      description: Cancel order for a tourist
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          description: ID of the order
+          schema:
+            type: string
+      responses:
+        200:
+          description: Order cancelled successfully
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
+
   /api/tourist/addProductToWishlist/{email}:
     put:
       tags:
