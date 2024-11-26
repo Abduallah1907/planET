@@ -76,6 +76,8 @@ import ToastComponent from "./components/ToastComponent";
 import { useToastDispatcher } from "./utils/useToastDispatcher";
 import HotelsPage from "./views/ViewingPages/Hotels";
 import BookmarkEvents from "./views/ViewingPages/BookmarkEvents";
+import AddDeliveryAddress from "./views/CreatePages/AddDeliveryAddress";
+import ChooseDeliveryAddress from "./views/ViewingPages/ChooseDeliveryAddress";
 
 const App: React.FC = () => {
   useToastDispatcher();
@@ -209,9 +211,11 @@ const App: React.FC = () => {
           <Route path="/Complaints" element={<AllComplaints />} />
           <Route path="/MyComplaints" element={<MyComplaints />} />
           <Route path="/Cart" element={<Cart />} />
+          <Route path="/ChooseDeliveryAddress" element={<ChooseDeliveryAddress />} />
           <Route path="/ProductPayment" element={<ProductPayemnt />} />
           <Route path="/RecentOrders" element={<RecentOrders />} />
           <Route path="/BookmarkEvents" element={<BookmarkEvents />} />
+          <Route path="/DeliveryAddress" element={<AddDeliveryAddress />} />
         </Routes>
         <ToastComponent />
       </APIProvider>
