@@ -70,4 +70,31 @@
       margin-right: 0;
     }
   }
+  .sales-form-container {
+    width: 20%; /* Adjust as needed */
+    margin: 0 auto; /* Center the form horizontally */
+  }
+  .form-row {
+    display: flex;
+    align-items: center; /* Align items vertically */
+    justify-content: center; /* Center items horizontally */
+    gap: 15px; /* Space between elements */
+    
+    
+  }
+  .apply-dates-btn {
+    margin-top: 20px;
+    background-color: var(--main-color); /* Button background color */
+    color: white; /* Text color inside the button */
+    border: none; /* Remove border */
+    padding: 5px 15px; /* Decrease padding to reduce the size */
+    font-size: 14px; /* Reduce font size for smaller text */
+    border-radius: 4px; /* Slightly smaller border radius for a more compact look */
+  }
+  
+  .apply-dates-btn:hover {
+    background-color: var(--main-color); /* Change color on hover */
+    color: black; /* Text color stays white */
+  }
+  
   

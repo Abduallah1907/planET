@@ -14,7 +14,7 @@ import "./sales.css";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import { useAppSelector } from "../../store/hooks";
 
-interface Sale {
+interface TG_Sales {
   _id: string;
   type: string;
   name: string;
@@ -42,9 +42,9 @@ const formatDate = (date: string) => {
   return `${day}/${month}/${year}`;
 };
 
-const Sales: React.FC = () => {
-  const Admin = useAppSelector((state) => state.user);
-  const [sales, setSales] = useState<Sale[]>([]);
+const TG_Sales: React.FC = () => {
+  const TG = useAppSelector((state) => state.user);
+  const [sales, setSales] = useState<TG_Sales[]>([]);
   const [filters, setFilters] = useState({
     typeFilter: "",
     nameFilter: "",
@@ -61,13 +61,29 @@ const Sales: React.FC = () => {
     setError(null);
 
     try {
-      const response = await SalesService.getAllSales(startDate, endDate);
+      // Check if TG.email is available
+      if (!TG.email) {
+        throw new Error("No email found. Please make sure you're logged in.");
+      }
 
-      if (
-        response.success &&
-        response.data.salesReports &&
-        Array.isArray(response.data.salesReports)
-      ) {
+      const response = await SalesService.getSalesTG(
+        TG.email,
+        startDate,
+        endDate
+      );
+
+      // Log the response for debugging purposes
+      console.log("API Response:", response);
+
+      // Check if response is valid and contains the success field
+      if (!response || !response.success) {
+        throw new Error(
+          "Failed to load sales data: Response is missing success field."
+        );
+      }
+
+      // Check if salesReports is an array
+      if (response.data && Array.isArray(response.data.salesReports)) {
         const formattedData = response.data.salesReports.map((sale: any) => ({
           _id: sale._id,
           type: sale.type,
@@ -78,16 +94,20 @@ const Sales: React.FC = () => {
         }));
         setSales(formattedData);
       } else {
-        throw new Error("Unexpected API response format.");
+        throw new Error(
+          "Unexpected API response format: salesReports is not an array."
+        );
       }
     } catch (err: any) {
       setError(
         err.message || "Failed to load sales data. Please try again later."
       );
+      console.error("Error fetching sales:", err); // Log errors for further debugging
     } finally {
       setLoading(false);
     }
   };
+
   const [dateError, setDateError] = useState<string | null>(null); // State to store date error
 
   const handleDateChange = () => {
@@ -149,11 +169,11 @@ const Sales: React.FC = () => {
       <div className="form-row">
         {/* Start Date */}
         <CustomFormGroup
-          label="Start Date (dd/mm/yyyy)"
+          label="Start Date "
           type="text"
           id="startDate"
           value={startDate}
-          placeholder="Enter Start Date"
+          placeholder="Enter Start Date (dd/mm/yyyy)"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setStartDate(e.target.value)
           }
@@ -163,11 +183,11 @@ const Sales: React.FC = () => {
         />
         {/* End Date */}
         <CustomFormGroup
-          label="End Date (dd/mm/yyyy)"
+          label="End Date"
           type="text"
           id="endDate"
           value={endDate}
-          placeholder="Enter End Date"
+          placeholder="Enter End Date (dd/mm/yyyy)"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setEndDate(e.target.value)
           }
@@ -279,4 +299,4 @@ const Sales: React.FC = () => {
   );
 };
 
-export default Sales;
+export default TG_Sales;
