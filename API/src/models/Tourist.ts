@@ -1,8 +1,6 @@
 import { ITourist } from "@/interfaces/ITourist";
 import TouristBadge from "@/types/enums/touristBadge";
 import mongoose from "mongoose";
-import CartSchema from "@/types/Cart"; // Adjust the import path as necessary
-import moongose from "@/loaders/moongose";
 
 const touristSchema = new mongoose.Schema(
   {
