@@ -19,7 +19,7 @@ export default async ({ agenda }: { agenda: Agenda }) => {
     }
   );
 
-  await agenda.start();
+  agenda.start();
   
-  await agenda.every("1 minutes", "send-notification");
+  agenda.every("1 minutes", "send-notification");
 };
