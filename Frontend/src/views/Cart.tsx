@@ -30,25 +30,44 @@ const CartPage: React.FC = () => {
   const [newSubtotal, setNewSubtotal] = useState(cart.total);
   const [promoError, setPromoError] = useState("");
 
+  const promoCodes = [
+    { code: "SAVE10", discountType: "flat", discountValue: 10 },
+    { code: "SAVE20", discountType: "percentage", discountValue: 20 },
+  ];
+  
 
   const handleApplyPromoCode = () => {
-    if (promoCode === "SAVE10") {
-      setNewSubtotal(oldSubtotal - 10); // Example: $10 discount
+    const promo = promoCodes.find((p) => p.code === promoCode);
+  
+    if (promo) {
+      let discountedSubtotal = cart.total;
+  
+      if (promo.discountType === "flat") {
+        discountedSubtotal -= promo.discountValue;
+      } else if (promo.discountType === "percentage") {
+        discountedSubtotal -= (cart.total * promo.discountValue) / 100;
+      }
+  
+      discountedSubtotal = Math.max(0, discountedSubtotal); // Prevent negative subtotal
+  
+      setNewSubtotal(discountedSubtotal);
       setIsPromoApplied(true);
-      setPromoError(""); // Clear error if the promo code is valid
+      setPromoError("");
     } else {
       setPromoError("Invalid or Expired Promo Code");
       setIsPromoApplied(false);
     }
   };
+  
 
 
   const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
 
   const convertedPrice = useMemo(() => {
-    return getConvertedCurrencyWithSymbol(cart?.total ?? 0, baseCurrency, currency);
-  }, [cart, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
-
+    const subtotal = isPromoApplied ? newSubtotal : cart.total;
+    return getConvertedCurrencyWithSymbol(subtotal, baseCurrency, currency);
+  }, [isPromoApplied, newSubtotal, cart.total, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
+  
 
 
   return (
@@ -102,29 +121,21 @@ const CartPage: React.FC = () => {
                   </Button>
                 </Col>
               </Row>
-
               <h5 className="mt-4">Subtotal</h5>
               {isPromoApplied ? (
-                <div>
-                  <h4 style={{ textDecoration: "line-through", color: "gray" }}>
-                    ${cart.total.toFixed(2)}
-                  </h4>
-                  <h4 style={{ color: "green" }}>${newSubtotal.toFixed(2)}</h4>
-                </div>
+              <div>
+              <h4 style={{ textDecoration: "line-through", color: "gray" }}>
+              {getConvertedCurrencyWithSymbol(cart.total, baseCurrency, currency)}
+              </h4>
+              <h4 style={{ color: "green" }}>
+              {getConvertedCurrencyWithSymbol(newSubtotal, baseCurrency, currency)}
+              </h4>
+              </div>
               ) : (
-                <h4>${cart.total.toFixed(2)}</h4>
+              <h4>
+              {getConvertedCurrencyWithSymbol(cart.total, baseCurrency, currency)}
+              </h4>
               )}
-
-              <Button
-                variant="main-inverse"
-                className="w-100 mb-4 mt-3"
-                onClick={() => navigate("/ProductPayment")}
-                aria-label="Confirm Order"
-              >
-                Confirm Order
-              </Button>
-              <h5>Your Subtotal</h5>
-              <h4 className="my-3">{convertedPrice}</h4>
               <Button variant="main-inverse" className="w-100 mb-4" onClick={() => navigate("/ProductPayment")}>Confirm Order </Button>
             </Card.Body>
 
