@@ -1,7 +1,6 @@
 import { ITourist } from "@/interfaces/ITourist";
 import TouristBadge from "@/types/enums/touristBadge";
 import mongoose from "mongoose";
-import CartSchema from "@/types/Cart"; // Adjust the import path as necessary
 
 const touristSchema = new mongoose.Schema(
   {
@@ -48,7 +47,8 @@ const touristSchema = new mongoose.Schema(
     },
     addresses: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Address",
       },
     ],
     wishlist: [
@@ -77,9 +77,6 @@ const touristSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Tourist = mongoose.model<ITourist & mongoose.Document>(
-  "Tourist",
-  touristSchema
-);
+const Tourist = mongoose.model<ITourist & mongoose.Document>("Tourist", touristSchema);
 
 export default Tourist;

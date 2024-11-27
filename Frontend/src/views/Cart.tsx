@@ -71,7 +71,7 @@ const CartPage: React.FC = () => {
             <Card.Body>
               <h5>Your Subtotal</h5>
               <h4 className="my-3">{convertedPrice}</h4>
-              <Button variant="main-inverse" className="w-100 mb-4" onClick={() => navigate("/ProductPayment")}>Confirm Order </Button>
+              <Button variant="main-inverse" className="w-100 mb-4" onClick={() => navigate("/ChooseDeliveryAddress")}>Confirm Order </Button>
             </Card.Body>
           </Card>
         </Col>

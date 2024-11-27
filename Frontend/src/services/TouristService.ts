@@ -1,6 +1,7 @@
 import axiosInstance from "../utils/axiosInstance";
 import axios from "axios";
 import showToast from "../../src/utils/showToast";
+import ActivitiesPage from "@/views/ViewingPages/Activities";
 
 class TouristService {
   public static getTouristByemail = async (email: string) => {
@@ -323,6 +324,86 @@ class TouristService {
       if (response.status === 201) {
         showToast(response.data);
       }
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static bookmarkActivity= async (email: string, activity_id: string) => {
+    try {
+      const response = await axiosInstance.post("/tourist/bookmarkActivity/", {
+        email,
+        activity_id,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error bookmarking activity:", error);
+      throw error;
+    }
+  };
+
+  public static unbookmarkActivity = async (email: string, activity_id: string) => {
+    try {
+      const response = await axiosInstance.delete("/tourist/unbookmarkActivity/", {
+        data: { email, activity_id }, // Use data to include the request body
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error unbookmarking activity:", error);
+      throw error;
+    }
+  };
+
+  
+
+  
+  public static getBookmarkedActivities = async (email: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/tourist/getBookmarkedActivities/${email}`
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+  
+  public static addAddress = async (email: string) => {
+    try {
+      const response = await axiosInstance.put(
+        `/tourist/addAddress/${email}`
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+  
+  public static removeAddress = async (email: string) => {
+    try {
+      const response = await axiosInstance.delete(
+        `/tourist/removeAddress/${email}`
+      );
+      if (response.status === 200) {
+        showToast(response.data);
+      }
+
+      return response.data;
+    } catch (error) {
+        // Rethrow the error to let the calling code handle it with the toast
+        throw error;
+    }
+  };
+  
+  public static getAddresses = async (email: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/tourist/getAddresses/${email}`
+      );
 
       return response.data;
     } catch (error) {

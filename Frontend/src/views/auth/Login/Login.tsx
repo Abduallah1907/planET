@@ -92,6 +92,8 @@ export default function Login() {
               },
               { path: "/TourGuidesTable", label: "View Tour Guides" },
               { path: "/RecentOrders", label: "Recent Orders" },
+              { path: "/BookmarkEvents", label: "View Bookmark Events" },
+              { path: "/DeliveryAddress", label: "Add Delivery Address" },
             ])
           );
           navigate("/tourist/Profile");
