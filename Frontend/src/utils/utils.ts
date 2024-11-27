@@ -117,6 +117,7 @@ export class Utils {
               { path: "/TourGuideDashboard", label: "Dashboard" },
               { path: "/AddItinerary", label: "Add Itinerary" },
               { path: "/MyItineraries", label: "My Itineraries" },
+              { path: "/TG_Sales", label: "Sales Report" },
             ])
           );
           break;
@@ -173,6 +174,7 @@ export class Utils {
               { path: "/UsersTable", label: "User Managment" },
               { path: "/ChangePasswordForm", label: "Change Password" },
               { path: "/Complaints", label: "Complaints" },
+              { path: "/sales", label: "Sales report" },
               { path: "/PromoCode", label: "Create Promo Code"}
             ])
           );
