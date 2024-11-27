@@ -724,31 +724,37 @@ export default class AdminService {
 
   // this service is not called yet (le8yat mafahem law momken el frontend yeinsert el string lel promocode zay nafso wala la2)
   // (a use case for frontend creating the code themselves is for birthdays, so it has the user's name instead of a random string)
-  public async createPromoCodeWithCodeSerivce(
-    expiry_date: Date,
+  public async createPromoCodeWithCodeSerivceforlogin(
+    duration: number,
     discount: number,
     promoCode: string
   ) {
-    if (expiry_date < new Date())
-      throw new BadRequestError("The expiry date inserted has already passed");
-    if (discount > 100)
+    if (duration <= 0 || !duration)
+      throw new BadRequestError("The duration must be a postive number");
+    if (discount > 100 || !discount)
       throw new BadRequestError(
-        "This discount inserted is greater than 100. Do you want us to give them money? :)"
+        "This discount inserted is greater than 100 or the discount was not entered. Do you want us to give them money? :)"
       );
-    if (!promoCode) throw new BadRequestError("Please write out a promo code");
-
-    const codeAlreadyExists = await this.promoCodeModel.find({
+    // another solution is to use the objectID as our code, but that won't be very user friendly
+    const codeAlreadyExists = await this.promoCodeModel.findOne({
       code: promoCode,
     });
-    if (codeAlreadyExists)
-      throw new ForbiddenError("The promocode already exists!");
-
+    if (codeAlreadyExists) return;
+    const expiry_date = new Date();
+    expiry_date.setHours(23, 59, 59, 999);
+    expiry_date.setDate(expiry_date.getDate() + duration);
     await this.promoCodeModel.create({
       code: promoCode,
       expiry_date,
       discount,
     });
-    return new response(true, {}, "Code successfully generated!", 200);
+
+    return new response(
+      true,
+      { promoCode: promoCode },
+      "Code successfully generated!",
+      200
+    );
   }
   public async getSalesReportService(start_date: string, end_date: string) {
     const convertDate = (date: string): string => {
