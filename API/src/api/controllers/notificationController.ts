@@ -1,7 +1,5 @@
 import Container, { Service } from "typedi";
-import { Request, Response } from "express";
 import NotificationService from "@/services/notificationService";
-import { Types } from "mongoose";
 
 @Service()
 export default class NotificationController {

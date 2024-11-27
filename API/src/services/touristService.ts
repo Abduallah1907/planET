@@ -1825,6 +1825,37 @@ export default class TouristService {
       200
     );
   }
+
+  public async getTicketsInTheNext24hours() {
+    const now = new Date();
+    const next24Hours = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+    const activityTickets = await this.ticketModel.find({
+      time_to_attend: { $gte: now, $lte: next24Hours },
+      cancelled: false,
+      type: TicketType.Activity,
+    }).populate('booking_id');
+    
+    const itineraryTickets = await this.ticketModel.find({
+      time_to_attend: { $gte: now, $lte: next24Hours },
+      cancelled: false,
+      type: TicketType.Itinerary,
+    }).populate('booking_id');
+    
+    const historicalTickets = await this.ticketModel.find({
+      time_to_attend: { $gte: now, $lte: next24Hours },
+      cancelled: false,
+      type: TicketType.Historical_Location,
+    }).populate('booking_id');
+    
+    const tickets = [...activityTickets, ...itineraryTickets, ...historicalTickets];
+    
+    if (tickets instanceof Error) {
+      throw new InternalServerError("Internal server error");
+    }
+    
+    return tickets;
+  }
+
   public async showMyTourGuidesService(tourist_id: string) {
     if (!Types.ObjectId.isValid(tourist_id)) {
       throw new BadRequestError("Invalid id ");
