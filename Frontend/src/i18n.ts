@@ -91,7 +91,8 @@ const resources = {
       "play_demo": "Play Demo",
       "we_offer_best_services": "We offer the best services",
       "create_governor_account": "Create Governor Account",
-      "explore_historical_locations": "Explore Historical Locations"
+      "explore_historical_locations": "Explore Historical Locations",
+      
 
 
 

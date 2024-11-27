@@ -78,6 +78,10 @@ import HotelsPage from "./views/ViewingPages/Hotels";
 import TG_Sales from "./components/Revenue/TG_Sales";
 import Adv_Sales from "./components/Revenue/Adv_Sales";
 import S_Sales from "./components/Revenue/S_Sales";
+import BookmarkEvents from "./views/ViewingPages/BookmarkEvents";
+import AddDeliveryAddress from "./views/CreatePages/AddDeliveryAddress";
+import ChooseDeliveryAddress from "./views/ViewingPages/ChooseDeliveryAddress";
+import PromoCode from "./views/PromoCode";
 
 const App: React.FC = () => {
   useToastDispatcher();
@@ -207,6 +211,7 @@ const App: React.FC = () => {
           <Route path="/TourGuidesTable" element={<TourGuidesTable />} />
 
           <Route path="/Complaint" element={<ComplaintForm />} />
+          <Route path="/PromoCode" element={<PromoCode />} />
 
           <Route path="/ChangePasswordForm" element={<ChangePasswordForm />} />
           <Route path="/ChangePasswordG" element={<ChangePasswordG />} />
@@ -214,8 +219,14 @@ const App: React.FC = () => {
           <Route path="/Complaints" element={<AllComplaints />} />
           <Route path="/MyComplaints" element={<MyComplaints />} />
           <Route path="/Cart" element={<Cart />} />
+          <Route
+            path="/ChooseDeliveryAddress"
+            element={<ChooseDeliveryAddress />}
+          />
           <Route path="/ProductPayment" element={<ProductPayemnt />} />
           <Route path="/RecentOrders" element={<RecentOrders />} />
+          <Route path="/BookmarkEvents" element={<BookmarkEvents />} />
+          <Route path="/DeliveryAddress" element={<AddDeliveryAddress />} />
         </Routes>
         <ToastComponent />
       </APIProvider>

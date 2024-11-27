@@ -14,8 +14,6 @@ import UserRoles from "@/types/enums/userRoles";
 import User from "@/models/user";
 import Notification from "@/models/Notification";
 import Bookmark_Notify from "@/models/Bookmark_notify";
-import UserType from "@/types/enums/userTypesNotified";
-import notificationService from "./notificationService";
 import NotificationService from "./notificationService";
 @Service()
 export default class ActivityService {
@@ -222,7 +220,7 @@ export default class ActivityService {
         let notification = await notificationService.createNotificationService(
           bookmark.tourist_id,
           message,
-          UserType.Tourist
+          UserRoles.Tourist
         );
         if (notification instanceof Error) {
           throw new InternalServerError("Internal server error");

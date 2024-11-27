@@ -115,5 +115,31 @@ class AdminService {
       throw error;
     }
   };
+
+  public static getUserNumbers = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/admin/getUserNumbers/`
+      );
+      if (response.status === 200) showToast(response.data);
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static getUserNumbersForMonth = async (year:string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/admin/getUserNumbersForYear/${year}`
+      );
+      if (response.status === 200) showToast(response.data);
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 export { AdminService };

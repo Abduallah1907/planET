@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import store from './store/store';
 import { DispatchProvider } from './dispatchContenxt';
+import { SocketProvider } from './socketContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -17,7 +18,9 @@ root.render(
     <Provider store={store}>
       <BrowserRouter>
         <DispatchProvider>
-          <App />
+          <SocketProvider>
+            <App />
+          </SocketProvider>
         </DispatchProvider>
       </BrowserRouter>
     </Provider>

@@ -106,6 +106,8 @@ export class Utils {
               },
               { path: "/TourGuidesTable", label: "View My Tour Guides" },
               { path: "/RecentOrders", label: "Recent Orders" },
+              { path: "/BookmarkEvents", label: "View Bookmark Events" },
+              { path: "/DeliveryAddress", label: "Add Delivery Address" },
             ])
           );
           break;
@@ -175,7 +177,7 @@ export class Utils {
               { path: "/ChangePasswordForm", label: "Change Password" },
               { path: "/Complaints", label: "Complaints" },
               { path: "/sales", label: "Sales report" },
-
+              { path: "/PromoCode", label: "Create Promo Code"}
             ])
           );
           break;

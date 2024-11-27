@@ -1,6 +1,7 @@
 import { INotification } from "@/interfaces/INotification";
-import UserType from "@/types/enums/userTypesNotified";
+import UserRoles from "@/types/enums/userRoles";
 import mongoose from "mongoose";
+
 const notificationSchema = new mongoose.Schema(
   {
     notified_id: {
@@ -17,7 +18,7 @@ const notificationSchema = new mongoose.Schema(
     },
     user_type: {
       type: String,
-      enum: Object.values(UserType),
+      enum: Object.values(UserRoles),
       required: true,
     },
   },

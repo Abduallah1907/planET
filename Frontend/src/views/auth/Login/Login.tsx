@@ -92,6 +92,8 @@ export default function Login() {
               },
               { path: "/TourGuidesTable", label: "View Tour Guides" },
               { path: "/RecentOrders", label: "Recent Orders" },
+              { path: "/BookmarkEvents", label: "View Bookmark Events" },
+              { path: "/DeliveryAddress", label: "Add Delivery Address" },
             ])
           );
           navigate("/tourist/Profile");
@@ -180,6 +182,7 @@ export default function Login() {
               { path: "/ChangePasswordForm", label: "Change Password" },
               { path: "/Complaints", label: "Complaints" },
               { path: "/sales", label: "Sales report" },
+              { path: "/PromoCode", label: "Create Promo Code" },
             ])
           );
           navigate("/AdminDashboard");
