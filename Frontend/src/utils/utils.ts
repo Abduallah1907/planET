@@ -124,6 +124,7 @@ export class Utils {
             setNavItems([
               { path: "/AddActivity", label: "Create Activity" },
               { path: "/MyActivities", label: "My Activites" },
+              { path: "/Adv_Sales", label: "Sales Report" },
             ])
           );
           break;
@@ -133,6 +134,7 @@ export class Utils {
               { path: "/SellerDashboard", label: "Dashboard" },
               { path: "/AddNewProduct", label: "Add New Product" },
               { path: "/MyProducts", label: "My Products" },
+              { path: "/S_Sales", label: "Sales Report" },
             ])
           );
           break;

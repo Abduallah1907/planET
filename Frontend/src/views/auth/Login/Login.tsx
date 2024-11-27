@@ -102,6 +102,7 @@ export default function Login() {
               { path: "/TourGuideDashboard", label: "Dashboard" },
               { path: "/AddItinerary", label: "Add Itinerary" },
               { path: "/MyItineraries", label: "My Itineraries" },
+              { path: "/TG_Sales", label: "Sales Report" },
             ])
           );
           if (user.first_time_login) {
@@ -115,6 +116,7 @@ export default function Login() {
             setNavItems([
               { path: "/AddActivity", label: "Create Activity" },
               { path: "/MyActivities", label: "My Activites" },
+              { path: "/Adv_Sales", label: "Sales Report" },
             ])
           );
           if (user.first_time_login) {
@@ -129,6 +131,7 @@ export default function Login() {
               { path: "/SellerDashboard", label: "Dashboard" },
               { path: "/AddNewProduct", label: "Add New Product" },
               { path: "/MyProducts", label: "My Products" },
+              { path: "/S_Sales", label: "Sales Report" },
             ])
           );
           if (user.first_time_login) {
@@ -176,6 +179,7 @@ export default function Login() {
               { path: "/UsersTable", label: "User Managment" },
               { path: "/ChangePasswordForm", label: "Change Password" },
               { path: "/Complaints", label: "Complaints" },
+              { path: "/sales", label: "Sales report" },
             ])
           );
           navigate("/AdminDashboard");

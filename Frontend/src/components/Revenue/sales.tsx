@@ -13,6 +13,7 @@ import SalesService from "../../services/SalesService";
 import "./sales.css";
 import CustomFormGroup from "../FormGroup/FormGroup";
 import { useAppSelector } from "../../store/hooks";
+import { Utils } from "../../utils/utils";
 
 interface Sale {
   _id: string;
@@ -35,11 +36,7 @@ const isValidDate = (date: string): boolean => {
 };
 
 const formatDate = (date: string) => {
-  const d = new Date(date);
-  const day = d.getDate().toString().padStart(2, "0");
-  const month = (d.getMonth() + 1).toString().padStart(2, "0");
-  const year = d.getFullYear();
-  return `${day}/${month}/${year}`;
+  return Utils.formatDateDay(new Date(date));
 };
 
 const Sales: React.FC = () => {

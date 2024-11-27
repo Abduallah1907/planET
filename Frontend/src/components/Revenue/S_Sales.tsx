@@ -15,7 +15,7 @@ import CustomFormGroup from "../FormGroup/FormGroup";
 import { useAppSelector } from "../../store/hooks";
 import { Utils } from "../../utils/utils";
 
-interface TG_Sales {
+interface S_Sales {
   _id: string;
   type: string;
   name: string;
@@ -40,13 +40,12 @@ const formatDate = (date: string) => {
   return Utils.formatDateDay(new Date(date));
 };
 
-const TG_Sales: React.FC = () => {
-  const TG = useAppSelector((state) => state.user);
-  const [sales, setSales] = useState<TG_Sales[]>([]);
+const S_Sales: React.FC = () => {
+  const Seller = useAppSelector((state) => state.user);
+  const [sales, setSales] = useState<S_Sales[]>([]);
   const [filters, setFilters] = useState({
     typeFilter: "",
     nameFilter: "",
-    touristCountFilter: "",
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -61,12 +60,12 @@ const TG_Sales: React.FC = () => {
 
     try {
       // Check if TG.email is available
-      if (!TG.email) {
+      if (!Seller.email) {
         throw new Error("No email found. Please make sure you're logged in.");
       }
 
-      const response = await SalesService.getSalesTG(
-        TG.email,
+      const response = await SalesService.getSalesS(
+        Seller.email,
         startDate,
         endDate
       );
@@ -88,10 +87,10 @@ const TG_Sales: React.FC = () => {
           type: sale.type,
           name: sale.name,
           total_revenue: sale.total_revenue,
-          tourist_count: sale.tourist_count,
           first_buy: formatDate(sale.first_buy),
           last_buy: formatDate(sale.last_buy),
         }));
+
         setSales(formattedData);
       } else {
         throw new Error(
@@ -139,9 +138,7 @@ const TG_Sales: React.FC = () => {
       (filters.typeFilter === "" ||
         sale.type.toLowerCase().includes(filters.typeFilter.toLowerCase())) &&
       (filters.nameFilter === "" ||
-        sale.name.toLowerCase().includes(filters.nameFilter.toLowerCase())) &&
-      (filters.touristCountFilter === "" || // Check the tourist count filter
-        sale.tourist_count === parseInt(filters.touristCountFilter)) // Assuming it's numeric
+        sale.name.toLowerCase().includes(filters.nameFilter.toLowerCase()))
     );
   });
 
@@ -275,41 +272,6 @@ const TG_Sales: React.FC = () => {
             <th>Revenue</th>
             <th>First Buy</th>
             <th>Last Buy</th>
-            <th>
-              Tourist Count
-              <InputGroup>
-                <FormControl
-                  type="text"
-                  name="touristCountFilter"
-                  value={filters.touristCountFilter}
-                  placeholder="Filter by Tourist Count"
-                  onChange={handleFilterChange}
-                  className="filter-input"
-                  style={{ width: "120px" }}
-                />
-                <Dropdown
-                  onSelect={(value) =>
-                    handleDropdownSelect("touristCountFilter", value)
-                  }
-                >
-                  <Dropdown.Toggle variant="outline-secondary">
-                    <FaCaretDown />
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {Array.from(
-                      new Set(sales.map((sale) => sale.tourist_count))
-                    ).map((touristCount, index) => (
-                      <Dropdown.Item
-                        eventKey={touristCount.toString()}
-                        key={index}
-                      >
-                        {touristCount}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </InputGroup>
-            </th>
           </tr>
         </thead>
         <tbody>
@@ -320,7 +282,6 @@ const TG_Sales: React.FC = () => {
               <td>{sale.total_revenue}</td>
               <td>{sale.first_buy}</td>
               <td>{sale.last_buy}</td>
-              <td>{sale.tourist_count}</td>
             </tr>
           ))}
           <tr>
@@ -337,4 +298,4 @@ const TG_Sales: React.FC = () => {
   );
 };
 
-export default TG_Sales;
+export default S_Sales;
