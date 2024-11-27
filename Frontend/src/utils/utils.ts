@@ -173,6 +173,7 @@ export class Utils {
               { path: "/UsersTable", label: "User Managment" },
               { path: "/ChangePasswordForm", label: "Change Password" },
               { path: "/Complaints", label: "Complaints" },
+              { path: "/PromoCode", label: "Create Promo Code"}
             ])
           );
           break;

@@ -78,6 +78,7 @@ import HotelsPage from "./views/ViewingPages/Hotels";
 import BookmarkEvents from "./views/ViewingPages/BookmarkEvents";
 import AddDeliveryAddress from "./views/CreatePages/AddDeliveryAddress";
 import ChooseDeliveryAddress from "./views/ViewingPages/ChooseDeliveryAddress";
+import PromoCode from "./views/PromoCode";
 
 const App: React.FC = () => {
   useToastDispatcher();
@@ -204,6 +205,7 @@ const App: React.FC = () => {
           <Route path="/TourGuidesTable" element={<TourGuidesTable />} />
 
           <Route path="/Complaint" element={<ComplaintForm />} />
+          <Route path="/PromoCode" element={<PromoCode />} />
 
           <Route path="/ChangePasswordForm" element={<ChangePasswordForm />} />
           <Route path="/ChangePasswordG" element={<ChangePasswordG />} />

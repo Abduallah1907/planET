@@ -178,6 +178,7 @@ export default function Login() {
               { path: "/UsersTable", label: "User Managment" },
               { path: "/ChangePasswordForm", label: "Change Password" },
               { path: "/Complaints", label: "Complaints" },
+              { path: "/PromoCode", label: "Create Promo Code" }
             ])
           );
           navigate("/AdminDashboard");
