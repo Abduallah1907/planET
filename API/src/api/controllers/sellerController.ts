@@ -23,7 +23,10 @@ export class SellerController {
     const sellerService: SellerService = Container.get(SellerService);
     const { searchEmail } = req.params;
     const updateSellerData = req.body as ISellerUpdateDTO;
-    const seller = await sellerService.updateSellerService(searchEmail, updateSellerData);
+    const seller = await sellerService.updateSellerService(
+      searchEmail,
+      updateSellerData
+    );
     res.status(seller.status).json(seller);
   }
 
@@ -31,6 +34,17 @@ export class SellerController {
     const { email } = req.params;
     const sellerService: SellerService = Container.get(SellerService);
     const seller = await sellerService.deleteSellerAccountRequest(email);
+    res.status(seller.status).json(seller);
+  }
+  public async getSalesReport(req: Request, res: Response) {
+    const sellerService: SellerService = Container.get(SellerService);
+    const { email } = req.params;
+    const { start_date, end_date } = req.query;
+    const seller = await sellerService.getSalesReportService(
+      email,
+      start_date as string,
+      end_date as string
+    );
     res.status(seller.status).json(seller);
   }
 }

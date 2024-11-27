@@ -332,6 +332,36 @@ paths:
           description: The email was unable to find a tour guide with that email, or the person having that email is not a tour guide.
         "400":
           description: The tour guide still has upcoming itinerary(ies) that are booked by tourists.
+  /api/tourGuide/getSalesReport/{email}:
+    get:
+      tags:
+        - Tour Guide Profile
+      summary: Fetches sales report for a tour guide
+      description: This returns the sales report for a tour guide
+      parameters:
+        - name: email
+          in: path
+          description: The owner of said profile.
+          required: true
+          schema:
+            type: string
+        - name: start_date
+          in: query
+          description: The start date of the sales report
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          description: The end date of the sales report
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful retrieval of sales report
+        404:
+          description: Did not find the tour guide in either the tour_guide table or the user table
+        500:
+          description: Internal server error.        
 components:
   schemas:
     TourGuideOutput:

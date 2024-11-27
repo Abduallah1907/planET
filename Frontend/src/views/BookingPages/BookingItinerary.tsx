@@ -40,6 +40,12 @@ const BookingItinerary: React.FC = () => {
   });
   const navigate = useNavigate();
   const [walletBalance, setWalletBalanceState] = useState<number>(0);
+  const [promoCode, setPromoCode] = useState("");
+  const [isPromoApplied, setIsPromoApplied] = useState(false);
+  const [oldSubtotal, setOldSubtotal] = useState(walletBalance);
+  const [newSubtotal, setNewSubtotal] = useState(walletBalance);
+  const [promoError, setPromoError] = useState("");
+
 
   const getItineraryById = async (id: string) => {
     const itinerary = await ItineraryService.getItineraryById(id);
@@ -97,6 +103,16 @@ const BookingItinerary: React.FC = () => {
       }
     }
   };
+  const handleApplyPromoCode = () => {
+    if (promoCode === "SAVE10") {
+      setNewSubtotal(oldSubtotal - 10); // Example: $10 discount
+      setIsPromoApplied(true);
+      setPromoError(""); // Clear error if the promo code is valid
+    } else {
+      setPromoError("Invalid or Expired Promo Code");
+      setIsPromoApplied(false);
+    }
+  };
 
   const validateCardDetails = () => {
     const newErrors = {
@@ -136,6 +152,7 @@ const BookingItinerary: React.FC = () => {
 
   return (
     <Container>
+      
       <Row className="justify-content-center mt-5">
         <Col sm={12} md={8} lg={6}>
           {itineraryData ? (
@@ -146,6 +163,29 @@ const BookingItinerary: React.FC = () => {
                     {itineraryData.name}
                   </Card.Title>
                   <Card.Text>Price: ${itineraryData.price}</Card.Text>
+              <Row>
+                <Col md={8}>
+                  <input
+                    type="text"
+                    className="form-control my-3 border"
+                    placeholder="Enter Promo Code"
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value)}
+                    aria-label="Promo Code Input"
+                  />
+                  {promoError && <small className="text-danger">{promoError}</small>}
+                </Col>
+                <Col md={4}>
+                  <Button
+                    variant="main"
+                    className="w-75 my-3 border-warning-subtle"
+                    onClick={handleApplyPromoCode}
+                    aria-label="Apply Promo Code"
+                  >
+                    Apply
+                  </Button>
+                </Col>
+              </Row>
                 </Card.Body>
               </Card>
               <h3 className="text-center mb-4">Choose Payment Method</h3>

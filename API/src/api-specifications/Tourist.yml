@@ -1353,9 +1353,26 @@ paths:
             schema:
               type: object
               properties:
-                address:
+                street_name:
                   type: string
-                  example: "ta7t beity"
+                  example: "El sa3ada"
+                apartment_number:
+                  type: string
+                  example: "4B"
+                city:
+                  type: string
+                  example: "Cairo"
+                country:
+                  type: string
+                  example: "om el donia"
+                postal_code:
+                  type: integer
+                  example: 12345
+              required:
+                - street_name
+                - apartment_number
+                - city
+                - country
       responses:
         200:
           description: Successfully added address
@@ -1368,7 +1385,7 @@ paths:
     delete:
       tags:
         - Tourist
-      summary: Removes an address to the tourist. If there are duplicates, deletes the oldest one
+      summary: Removes an address to the tourist.
       parameters:
         - in: path
           name: email
@@ -1385,7 +1402,8 @@ paths:
               properties:
                 address:
                   type: string
-                  example: "ta7t beity"
+                  format: ObjectId
+                  example: "674629207275440660e9541d"
       responses:
         200:
           description: Successfully deleted address
@@ -1419,10 +1437,34 @@ paths:
                   data:
                     type: array
                     items:
-                      type: string
-                    description: A list of addresses
-                    example:
-                      - "fo2 beity"
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          example: "674629207275440660e9541d"
+                        street_name:
+                          type: string
+                          example: "Elm St"
+                        apartment_number:
+                          type: string
+                          example: "4B"
+                        city:
+                          type: string
+                          example: "Alex"
+                        country:
+                          type: string
+                          example: "Masr"
+                        postal_code:
+                          type: integer
+                          example: 12345
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2024-11-26T20:01:36.494Z"
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: "2024-11-26T20:01:36.494Z"
                   message:
                     type: string
                     example: "Returning addresses"

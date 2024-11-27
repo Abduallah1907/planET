@@ -74,7 +74,7 @@
 
 .image-placeholder i {
   /* Adjust the color and width as needed */
-  background-color: #e0a16e;
+  background-color: var(--main-color);
   border-radius: 50%;
   /* Makes the border rounded */
   padding: 0.6rem;

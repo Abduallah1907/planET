@@ -6,10 +6,11 @@ import Rating from "../../components/Rating/Rating";
 import { ActivityService } from "../../services/ActivityService";
 import { IActivity } from "../../types/IActivity";
 import { use } from "i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
 import { Utils } from "../../utils/utils";
 import { useAppContext } from "../../AppContext";
+import { TouristService } from "../../services/TouristService";
 
 interface ActivityCardProps {
   id: string;
@@ -29,15 +30,17 @@ interface ActivityData {
   category: string;
   date: Date;
   time: string;
-  price: number;
+  price: number; 
   booking_flag: boolean;
 }
 
 const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
+  const tourist = useAppSelector((state) => state.user);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [activityData, setActivityData] = useState<IActivity | null>(null);
   const [showAdvertiserModal, setShowAdvertiserModal] = useState(false);
+  const { id: activity_id } = useParams<{ id: string }>(); // Destructure `id` from URL params
   const shareLink = activityData
     ? `${window.location.origin}/activity/${activityData._id}`
     : "";
@@ -80,9 +83,38 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
     }
   };
 
-  const toggleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
+  const toggleBookmark = async () => {
+    if (!activityData?._id) {
+      console.error("Activity ID is undefined.");
+      alert("Activity data is not loaded. Unable to toggle bookmark.");
+      return;
+    }
+  
+    if (!tourist?.email) {
+      console.error("Tourist email is undefined.");
+      alert("Tourist email is not available. Unable to toggle bookmark.");
+      return;
+    }
+  
+    try {
+      const updatedStatus = !isBookmarked;
+      const response = updatedStatus
+        ? await TouristService.bookmarkActivity(tourist.email, activityData._id)
+        : await TouristService.unbookmarkActivity(tourist.email, activityData._id);
+  
+      if (response?.success) {
+        setIsBookmarked(updatedStatus);
+        const action = updatedStatus ? "bookmarked" : "removed from bookmarks";
+      } else {
+        throw new Error(response?.message || "Unexpected error occurred.");
+      }
+    } catch (error) {
+      console.error("Error toggling bookmark:", error);
+      const action = !isBookmarked ? "bookmark" : "unbookmark";
+    }
   };
+  
+  
 
   const handleReserve = () => {
     setShowModal(true);
