@@ -615,14 +615,27 @@ paths:
           description: Could not find the complaint using the complaint_id
         "500":
           description: Internal Server Error.
-  /api/admin/getSalesReport:        
-    get:
+  /api/admin/getSalesReport:
+    put:
       tags:
         - Admin
       summary: Get the sales report of the website
+      parameters:
+        - name: start_date
+          in: query
+          description: The start date of the sales report
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          description: The end date of the sales report
+          schema:
+            type: string
+            format: date
       responses:
         "200":
-          description: Sales report retrieved successfully
+          description: Sales report successfully retrieved
         "500":
           description: Internal Server Error.
 

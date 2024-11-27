@@ -16,7 +16,10 @@ export default (app: Router) => {
   router.get("/getUsers/:page", authorize([]), adminController.getUsers);
 
   router.get("/getUserNumbers", adminController.getUserNumbers);
-  router.get("/getUserNumbersForYear/:year", adminController.getUserNumbersForYear);
+  router.get(
+    "/getUserNumbersForYear/:year",
+    adminController.getUserNumbersForYear
+  );
 
   // This searches by exact username; if no username is found it returns empty data
   // i.e it does not throw an error
@@ -99,7 +102,7 @@ export default (app: Router) => {
   );
   router.put("/replyComplaint/:complaint_id", adminController.replyComplaint);
 
-  router.get("/getSalesReport", adminController.getSalesReport);
+  router.put("/getSalesReport", adminController.getSalesReport);
 
   router.post("/createPromoCode", adminController.createPromoCode);
 
