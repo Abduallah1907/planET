@@ -3,12 +3,14 @@ import MapModal from "../../components/MapModal";
 import { ChangeEvent, useState } from "react";
 import countryData from "../../utils/countryData.json";
 import { Button, Form } from "react-bootstrap";
+import { TouristService } from "../../services/TouristService";
+import { useAppSelector } from "../../store/hooks";
 
 interface FormData {
-  streetName: string;
-  apartmentNum: string;
-  cityName: string;
-  countryName: string;
+  street_name: string;
+  apartment_number: string;
+  city: string;
+  country: string;
   postalCode: string;
   location: {
     lat: number;
@@ -17,12 +19,13 @@ interface FormData {
 }
 
 const AddDeliveryAddress: React.FC = () => {
+  const tourist = useAppSelector((state) => state.user);
   const [showMapModal, setShowMapModal] = useState(false); // State to manage modal visibility
   const [formData, setFormData] = useState<FormData>({
-    streetName: "",
-    apartmentNum: "",
-    cityName: "",
-    countryName: "",
+    street_name: "",
+    apartment_number: "",
+    city: "",
+    country: "",
     postalCode: "",
     location: {
       lat: 0,
@@ -38,11 +41,26 @@ const AddDeliveryAddress: React.FC = () => {
     if (name === "countryName") {
       setCities(
         countryData.filter(
-          (country) => country.country == formData.countryName
+          (country) => country.country == formData.country
         )[0].city
       );
     }
   };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+   
+    const data = {
+      street_name: formData.street_name,
+      apartment_number: formData.apartment_number,
+      city: formData.city,
+      country: formData.country,
+    };
+    await TouristService.addAddress(tourist.email);
+  };
+
+
+
 
   const handleCloseMapModal = () => {
     setShowMapModal(false); // Close the modal
@@ -60,7 +78,7 @@ const AddDeliveryAddress: React.FC = () => {
           disabled={false}
           required={true}
           name={"streetName"}
-          value={formData.streetName}
+          value={formData.street_name}
           onChange={handleChange}
         />
         <CustomFormGroup
@@ -71,7 +89,7 @@ const AddDeliveryAddress: React.FC = () => {
           disabled={false}
           required={true}
           name={"apartmentNum"}
-          value={formData.apartmentNum}
+          value={formData.apartment_number}
           onChange={handleChange}
         />
         <CustomFormGroup
@@ -80,10 +98,10 @@ const AddDeliveryAddress: React.FC = () => {
           placeholder={"City Name"}
           options={cities}
           id={"cityName"}
-          disabled={formData.countryName === ""}
+          disabled={formData.country === ""}
           required={true}
           name={"cityName"}
-          value={formData.cityName}
+          value={formData.city}
           onChange={handleChange}
         />
         <CustomFormGroup
@@ -95,7 +113,7 @@ const AddDeliveryAddress: React.FC = () => {
           disabled={false}
           required={true}
           name={"countryName"}
-          value={formData.countryName}
+          value={formData.country}
           onChange={handleChange}
         />
         <CustomFormGroup
