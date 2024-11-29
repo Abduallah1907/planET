@@ -5,6 +5,8 @@ import countryData from "../../utils/countryData.json";
 import { Button, Form } from "react-bootstrap";
 import { TouristService } from "../../services/TouristService";
 import { useAppSelector } from "../../store/hooks";
+import showToastMessage from "../../utils/showToastMessage";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface FormData {
   street_name: string;
@@ -35,32 +37,39 @@ const AddDeliveryAddress: React.FC = () => {
 
   const [cities, setCities] = useState<string[]>([]);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    if (name === "countryName") {
-      setCities(
-        countryData.filter(
-          (country) => country.country == formData.country
-        )[0].city
-      );
+
+    if (name === "postalCode") {
+      // Allow only positive numbers (including empty or zero values for flexibility)
+      if (!/^\d*$/.test(value)) {
+        showToastMessage("Postal code must be a positive number", ToastTypes.ERROR); // Show error message
+        return;
+      }
+    }
+  
+    if (name === "country") {
+      const selectedCountry = countryData.find((country) => country.country === value);
+      setCities(selectedCountry ? selectedCountry.city : []); // Update cities for the selected country
+      setFormData({ ...formData, country: value, city: "" }); // Reset city if country changes
+    } else {
+      setFormData({ ...formData, [name]: value });
     }
   };
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-   
+
     const data = {
       street_name: formData.street_name,
       apartment_number: formData.apartment_number,
       city: formData.city,
       country: formData.country,
+      postal_code: formData.postalCode,
     };
-    await TouristService.addAddress(tourist.email);
+    await TouristService.addAddress(tourist.email, data);
   };
-
-
-
 
   const handleCloseMapModal = () => {
     setShowMapModal(false); // Close the modal
@@ -74,10 +83,10 @@ const AddDeliveryAddress: React.FC = () => {
           label={"Street Name"}
           type={"text"}
           placeholder={"123 Street Name"}
-          id={"streetName"}
+          id={"street_name"}
           disabled={false}
           required={true}
-          name={"streetName"}
+          name={"street_name"}
           value={formData.street_name}
           onChange={handleChange}
         />
@@ -85,37 +94,38 @@ const AddDeliveryAddress: React.FC = () => {
           label={"Apartment Number"}
           type={"text"}
           placeholder={"123"}
-          id={"apartmentNum"}
+          id={"apartment_number"}
           disabled={false}
           required={true}
-          name={"apartmentNum"}
+          name={"apartment_number"}
           value={formData.apartment_number}
           onChange={handleChange}
         />
-        <CustomFormGroup
-          label={"City"}
-          type={"text"}
-          placeholder={"City Name"}
-          options={cities}
-          id={"cityName"}
-          disabled={formData.country === ""}
-          required={true}
-          name={"cityName"}
-          value={formData.city}
-          onChange={handleChange}
-        />
-        <CustomFormGroup
+         <CustomFormGroup
           label={"Country"}
           type={"select"}
-          placeholder={"Country Name"}
+          placeholder={"Select a country"}
           options={countryData.map((country) => country.country)}
-          id={"countryName"}
+          id={"country"}
           disabled={false}
           required={true}
-          name={"countryName"}
+          name={"country"}
           value={formData.country}
           onChange={handleChange}
         />
+        <CustomFormGroup
+         label={"City"}
+         type={"select"} 
+         placeholder={"Select a city"}
+         options={cities}
+         id={"city"}
+         disabled={!formData.country} 
+         required={true}
+         name={"city"}
+         value={formData.city}
+         onChange={handleChange}
+         />
+
         <CustomFormGroup
           label={"Postal Code"}
           type={"number"}
@@ -131,7 +141,7 @@ const AddDeliveryAddress: React.FC = () => {
         <Button variant="main-inverse" onClick={() => setShowMapModal(true)}>
           Set Location
         </Button>
-        <Button type="submit" variant="main-inverse">
+        <Button type="submit" variant="main-inverse" onClick={handleSubmit}>
           Submit
         </Button>
       </Form>
