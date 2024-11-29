@@ -19,7 +19,7 @@ const BookingItinerary: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const time_to_attend = searchParams.get("time_to_attend");
   const [itineraryData, setItineraryData] = useState<IItinerary | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<string>("wallet");
+  const [paymentMethod, setPaymentMethod] = useState<string>("Wallet");
   const [cardType, setCardType] = useState<string | null>(null);
   const Tourist = useAppSelector((state) => state.user);
   const email = Tourist.email;
@@ -131,10 +131,10 @@ const BookingItinerary: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const handleConfirmPayment = async () => {
-    if (paymentMethod === "wallet") {
+    if (paymentMethod === "Wallet") {
       try {
         if (id && time_to_attend) {
-          await TouristService.bookItinerary(email, id, time_to_attend);
+          await TouristService.bookItinerary(email, id, time_to_attend,paymentMethod);
         } else {
           console.error("Itinerary ID is undefined");
         }
@@ -199,8 +199,8 @@ const BookingItinerary: React.FC = () => {
                     </span>
                   }
                   name="paymentMethod"
-                  value="wallet"
-                  checked={paymentMethod === "wallet"}
+                  value="Wallet"
+                  checked={paymentMethod === "Wallet"}
                   onChange={handlePaymentMethodChange}
                   className="mb-3"
                 />
@@ -212,12 +212,12 @@ const BookingItinerary: React.FC = () => {
                     </span>
                   }
                   name="paymentMethod"
-                  value="bankCard"
-                  checked={paymentMethod === "bankCard"}
+                  value="CreditCard"
+                  checked={paymentMethod === "CreditCard"}
                   onChange={handlePaymentMethodChange}
                   className="mb-3"
                 />
-                {paymentMethod === "bankCard" && (
+                {paymentMethod === "CreditCard" && (
                   <div className="bank-card-details">
                     <Form.Group className="mb-3">
                       <Form.Label>Card Number</Form.Label>
