@@ -43,6 +43,18 @@ const ProductPayemnt: React.FC = () => {
   });
   const navigate = useNavigate();
   const [walletBalance, setWalletBalanceState] = useState<number>(0);
+  const [discountType, setDiscountType] = useState<string>("percentage"); // or "flat"
+const [discountValue, setDiscountValue] = useState<number>(10); // Example: 10% discount
+
+// Calculate discount amount and final total
+const calculateDiscount = (total: number): number => {
+  return discountType === "percentage" ? (total * discountValue) / 100 : discountValue;
+};
+
+const totalBeforeDiscount = Cart.total; // Cart total before applying the discount
+const discountAmount = calculateDiscount(totalBeforeDiscount);
+const totalAfterDiscount = totalBeforeDiscount - discountAmount;
+
 
   useEffect(() => {
     const fetchWalletBalance = async () => {
@@ -108,6 +120,8 @@ const ProductPayemnt: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const handleConfirmPayment = async () => {
+    const finalCost = totalAfterDiscount;
+  
     if (paymentMethod === "Wallet") {
       try {
         const orderData = {
@@ -117,13 +131,13 @@ const ProductPayemnt: React.FC = () => {
               product_id: item.product.id,
               quantity: item.quantity,
             })),
-            cost: Cart.total,
+            cost: totalBeforeDiscount, // Save original total for reference
           },
-          cost: Cart.total,
+          cost: finalCost, // Use discounted cost for the payment
           payment_type: paymentMethod,
         };
         await TouristService.createOrder(orderData);
-        const newBalance = walletBalance - Cart.total;
+        const newBalance = walletBalance - finalCost; // Deduct discounted cost
         setWalletBalanceState(newBalance);
         dispatch(setWalletBalanceAction(newBalance));
         dispatch(clearCart());
@@ -133,40 +147,58 @@ const ProductPayemnt: React.FC = () => {
       }
     }
   };
+  
 
   return (
     <Container>
       <Row className="justify-content-center mt-5">
         <Col sm={12} md={8} lg={6}>
           <Card className="mb-4">
-            <Card.Body>
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Product Name</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Cart.products.map((item: any, index: number) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{item.product.name}</td>
-                      <td>{item.quantity}</td>
-                      <td>${item.product.price.toFixed(2)}</td>
-                    </tr>
-                  ))}
-                  <tr>
-                    <td colSpan={3} className="text-end">
-                      Total
-                    </td>
-                    <td>${Cart.total.toFixed(2)}</td>
-                  </tr>
-                </tbody>
-              </Table>
-            </Card.Body>
+          <Card.Body>
+  <Table striped bordered hover>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Product Name</th>
+        <th>Quantity</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      {Cart.products.map((item, index) => (
+        <tr key={index}>
+          <td>{index + 1}</td>
+          <td>{item.product.name}</td>
+          <td>{item.quantity}</td>
+          <td>${(item.product.price * item.quantity).toFixed(2)}</td>
+        </tr>
+      ))}
+      <tr>
+        <td colSpan={3} className="text-end fw-bold">
+          Total (Before Discount)
+        </td>
+        <td>${totalBeforeDiscount.toFixed(2)}</td>
+      </tr>
+      <tr>
+        <td colSpan={3} className="text-end fw-bold">
+          Discount
+        </td>
+        <td>
+          {discountType === "percentage"
+            ? `-${discountValue}% (-$${discountAmount.toFixed(2)})`
+            : `-$${discountAmount.toFixed(2)}`}
+        </td>
+      </tr>
+      <tr>
+        <td colSpan={3} className="text-end fw-bold">
+          Total (After Discount)
+        </td>
+        <td>${totalAfterDiscount.toFixed(2)}</td>
+      </tr>
+    </tbody>
+  </Table>
+</Card.Body>
+
           </Card>
           <h3 className="text-center mb-4">Choose Payment Method</h3>
           <Form>

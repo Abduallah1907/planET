@@ -310,6 +310,33 @@ class TouristService {
       throw error;
     }
   };
+
+  public static getActiveOrders = async (email: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/tourist/getCurrentOrders/${email}`
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+  
+  public static cancelOrder = async (order_id: string) => {
+    try {
+      const response = await axiosInstance.put(
+        `/tourist/cancelOrder/${order_id}`
+      );
+      if (response.status === 200) {
+        showToast(response.data);
+      }
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
   public static rateAndCommentProduct = async (
     tourist_id: string,
     product_id: string,
@@ -410,6 +437,20 @@ class TouristService {
       throw error;
     }
   };
+
+  public static isValidPromoCode = async (promoCode: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/tourist/isValidPromo/${promoCode}`
+      );
+      if (response.status === 200) {
+        showToast(response.data);
+      }
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export { TouristService };

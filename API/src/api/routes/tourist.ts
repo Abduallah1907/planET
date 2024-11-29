@@ -87,7 +87,7 @@ export default (app: Router) => {
   route.delete("/removeAddress/:email", touristController.removeAddress);
   route.get("/getAddresses/:email", touristController.getAddresses);
 
-  route.get("/isValidCode/:code", touristController.isValidCode);
+  route.get("/isValidPromo/:code", touristController.isValidCode);
 
   route.get("/getCurrentOrders/:email", touristController.getCurrentOrders);
 
