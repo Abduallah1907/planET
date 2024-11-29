@@ -254,7 +254,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
             <strong>Time:</strong> {activityData?.time}
           </p>
           <p>
-            <strong>Price:</strong> ${activityData?.price}
+            <strong>Price:</strong> {convertedPrice}
           </p>
         </Modal.Body>
         <Modal.Footer>
