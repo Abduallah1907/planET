@@ -80,6 +80,7 @@ import BookmarkEvents from "./views/ViewingPages/BookmarkEvents";
 import AddDeliveryAddress from "./views/CreatePages/AddDeliveryAddress";
 import ChooseDeliveryAddress from "./views/ViewingPages/ChooseDeliveryAddress";
 import PromoCode from "./views/PromoCode";
+import Wishlist from "./views/Wishlist";
 
 const App: React.FC = () => {
   useToastDispatcher();
@@ -215,6 +216,7 @@ const App: React.FC = () => {
           <Route path="/Complaints" element={<AllComplaints />} />
           <Route path="/MyComplaints" element={<MyComplaints />} />
           <Route path="/Cart" element={<Cart />} />
+          <Route path="/wishlist" element={<Wishlist />} />
           <Route
             path="/ChooseDeliveryAddress"
             element={<ChooseDeliveryAddress />}
