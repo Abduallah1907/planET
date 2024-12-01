@@ -68,7 +68,7 @@ import BookingItinerary from "./views/BookingPages/BookingItinerary";
 import MyBookings from "./views/MyActivityBookings";
 import MyItineraryBookings from "./views/MyItineraryBookings";
 import TourGuidesTable from "./views/Tables/TourGuidesTable";
-import RecentOrders from "./views/RecentOrders";
+import PastOrders from "./views/PastOrders";
 import ProductPayemnt from "./views/BookingPages/ProductPayemnt";
 import FlightBooking from "./views/BookingPages/FlightBooking";
 import { APIProvider } from "@vis.gl/react-google-maps";
@@ -82,6 +82,8 @@ import BookmarkEvents from "./views/ViewingPages/BookmarkEvents";
 import AddDeliveryAddress from "./views/CreatePages/AddDeliveryAddress";
 import ChooseDeliveryAddress from "./views/ViewingPages/ChooseDeliveryAddress";
 import PromoCode from "./views/PromoCode";
+import ActiveOrders from "./views/ActiveOrders";
+import Orders from "./views/ViewingPages/Orders";
 import Wishlist from "./views/Wishlist";
 
 const App: React.FC = () => {
@@ -225,8 +227,12 @@ const App: React.FC = () => {
             path="/ChooseDeliveryAddress"
             element={<ChooseDeliveryAddress />}
           />
+          <Route path="/Orders" element={<Orders />}>
+            <Route path="Past" element={<PastOrders />} />
+            <Route path="Active" element={<ActiveOrders />} />
+          </Route>
+
           <Route path="/ProductPayment" element={<ProductPayemnt />} />
-          <Route path="/RecentOrders" element={<RecentOrders />} />
           <Route path="/BookmarkEvents" element={<BookmarkEvents />} />
           <Route path="/DeliveryAddress" element={<AddDeliveryAddress />} />
         </Routes>

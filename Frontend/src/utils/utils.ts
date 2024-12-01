@@ -105,7 +105,7 @@ export class Utils {
                 label: "My Itineraries",
               },
               { path: "/TourGuidesTable", label: "View My Tour Guides" },
-              { path: "/RecentOrders", label: "Recent Orders" },
+              { path: "/Orders/Past", label: "Orders" },
               { path: "/BookmarkEvents", label: "View Bookmark Events" },
               { path: "/DeliveryAddress", label: "Add Delivery Address" },
             ])

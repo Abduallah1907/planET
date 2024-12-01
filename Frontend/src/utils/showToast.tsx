@@ -3,7 +3,7 @@ import Response from "../../../API/src/types/responses/response";
 import { addToast } from "../store/toastsSlice";
 import { getToastDispatcher } from "./useToastDispatcher";
 
-const showToast = (p0: string, WARNING: ToastTypes, response: Response) => {
+const showToast = (response: Response) => {
   const { message, status } = response;
   let toastType: ToastTypes = ToastTypes.INFO;
 

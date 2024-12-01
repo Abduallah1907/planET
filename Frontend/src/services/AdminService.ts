@@ -141,5 +141,17 @@ class AdminService {
       throw error;
     }
   };
+
+  public static createPromoCode = async (data: any) => {
+    try {
+      const response = await axiosInstance.post(`/admin/createPromoCode`, data);
+      
+      if (response.status === 200) showToast(response.data);
+      console.log("Test", response.data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 export { AdminService };

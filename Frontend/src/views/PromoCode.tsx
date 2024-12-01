@@ -1,28 +1,21 @@
 import React, { useState } from "react";
 import "../views/CreateAdmin/CreateAdmin.css";
-import { Container, Button, Form } from "react-bootstrap"; 
-import AdminFormGroup from "../components/FormGroup/FormGroup"; 
+import { Container, Button, Form } from "react-bootstrap";
+import AdminFormGroup from "../components/FormGroup/FormGroup";
 import { useAppSelector } from "../store/hooks";
 import { BiChevronDown } from "react-icons/bi";
+import { AdminService } from "../services/AdminService";
 
 interface FormData {
-  title: string;
-  promoCode: string;
-  discountType: "percentage" | "cash";
-  discountValue: string;
-  problem: string;
-  date: string;
+  discount: string;
+  numberOfDays: string;
 }
 
 const PromoCode: React.FC = () => {
   const tourist = useAppSelector((state) => state.user.stakeholder_id);
   const [formData, setFormData] = useState<FormData>({
-    title: "",
-    promoCode: "",
-    discountType: "percentage",
-    discountValue: "",
-    problem: "",
-    date: "",
+    discount: "",
+    numberOfDays: "",
   });
 
   const handleChange = (
@@ -37,14 +30,10 @@ const PromoCode: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const data = {
-      title: formData.title,
-      promoCode: formData.promoCode,
-      discountType: formData.discountType,
-      discountValue: formData.discountValue,
-      body: formData.problem,
-      date: formData.date,
+      discount: formData.discount,
+      numberOfDays: formData.numberOfDays,
     };
-    console.log(data); // Replace this with an actual API call
+    await AdminService.createPromoCode(data);
   };
 
   return (
@@ -54,61 +43,29 @@ const PromoCode: React.FC = () => {
       </div>
       <Container>
         <Form onSubmit={handleSubmit}>
-          {/* Promo Code */}
-          <AdminFormGroup
-            label="Promo Code"
-            type="text"
-            placeholder="Enter promo code"
-            id="promoCode"
-            name="promoCode"
-            disabled={false}
-            required={true}
-            value={formData.promoCode}
-            onChange={handleChange}
-          />
-
-          {/* Discount Type */}
-          <Form.Group className="form-group" controlId="discountType">
-            <Form.Label>Discount Type</Form.Label>
-            <div className="custom-select-container">
-              <Form.Control
-                as="select"
-                name="discountType"
-                value={formData.discountType}
-                onChange={handleChange}
-                className="custom-form-control"
-                required
-              >
-                <option value="percentage">Percentage</option>
-                <option value="cash">Cash</option>
-              </Form.Control>
-              <BiChevronDown className="dropdown-icon" />
-            </div>
-          </Form.Group>
-
           {/* Discount Value */}
           <AdminFormGroup
             label="Discount Value"
             type="number"
             placeholder="Enter discount value"
-            id="discountValue"
-            name="discountValue"
+            id="discount"
+            name="discount"
             disabled={false}
             required={true}
-            value={formData.discountValue}
+            value={formData.discount}
             onChange={handleChange}
           />
 
           {/* Date */}
           <AdminFormGroup
-            label="Expiry Date"
-            type="date"
-            placeholder="Select the date the problem occurred"
-            id="date"
-            name="date"
+            label="Number of Active days"
+            type="number"
+            placeholder="Enter number of active days"
+            id="numberOfDays"
+            name="numberOfDays"
             disabled={false}
             required={true}
-            value={formData.date}
+            value={formData.numberOfDays}
             onChange={handleChange}
           />
 

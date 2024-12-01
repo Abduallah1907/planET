@@ -7,10 +7,13 @@ import {
   Modal,
   Button,
   Image,
+  Nav,
 } from "react-bootstrap";
 import Comment from "../components/Comment"; // Assume you have a Comment component for rating
 import { TouristService } from "../services/TouristService";
 import { useAppSelector } from "../store/hooks";
+import { NavLink } from "react-router-dom";
+import { FaTrashAlt } from "react-icons/fa";
 
 interface Product {
   _id: string;
@@ -43,17 +46,25 @@ interface Order {
   createdAt: string;
 }
 
-const RecentOrders: React.FC = () => {
+const ActiveOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showProductModal, setShowProductModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [deleteOrderId, setDeleteOrderId] = useState<string | null>(null);
+
   const Tourist = useAppSelector((state) => state.user);
 
-  const getPastOrders = async (email: string) => {
-    const orders = await TouristService.getPastOrders(email);
+  const getActiveOrders = async (email: string) => {
+    const orders = await TouristService.getActiveOrders(email);
     return orders;
   };
+
+  const cancelOrder = async (order_id: string) => {
+    await TouristService.cancelOrder(order_id);
+    const updatedOrders = orders.filter((order) => order._id !== order_id);
+    setOrders(updatedOrders);
+  }
 
   const handleOpenOrder = (order: Order) => {
     setSelectedOrder(order);
@@ -82,19 +93,14 @@ const RecentOrders: React.FC = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const orders = await getPastOrders(Tourist.email);
+      const orders = await getActiveOrders(Tourist.email);
       setOrders(orders.data);
     };
     fetchOrders();
   }, [Tourist.email]);
 
   return (
-    <Container className="profile-form-container">
-      <Row className="align-items-center mb-4">
-        <Col xs={12} className="text-center">
-          <h2 className="my-profile-heading">Recent Orders</h2>
-        </Col>
-      </Row>
+    <>
       <Row className="justify-content-center">
         <Col xs={12} md={8} lg={6} style={{ maxWidth: "800px" }}>
           <ListGroup
@@ -115,12 +121,52 @@ const RecentOrders: React.FC = () => {
                     <p>Items: {order.products.items.length}</p>
                     <p>Total: ${order.cost.toFixed(2)}</p>
                   </div>
+                  <div>
+                    <Button
+                      variant="danger"
+                      className="mt-2"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent opening the order details modal
+                        setDeleteOrderId(order._id); // Set the order ID to be deleted
+                      }}
+                    >
+                      Cancel
+                    </Button>
+
+                  </div>
                 </div>
               </ListGroup.Item>
             ))}
           </ListGroup>
         </Col>
       </Row>
+        
+        {/* Modal to confirm order deletion */}
+      <Modal show={!!deleteOrderId} onHide={() => setDeleteOrderId(null)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Delete</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to Cancel this order? This action cannot be undone.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="main" className="border-warning-subtle" onClick={() => setDeleteOrderId(null)}>
+            Cancel
+          </Button>
+          <Button
+            variant="main-inverse"
+            onClick={async () => {
+              if (deleteOrderId) {
+                await cancelOrder(deleteOrderId); // Call your delete logic
+                setDeleteOrderId(null); // Close the modal
+              }
+            }}
+          >
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
 
       {/* Modal to show products in the selected order */}
       {selectedOrder && (
@@ -161,12 +207,6 @@ const RecentOrders: React.FC = () => {
                       <p>${product.product_id.price.toFixed(2)}</p>
                     </div>
                   </div>
-                  <Button
-                    variant="main-inverse"
-                    onClick={() => handleOpenRateModal(product.product_id)}
-                  >
-                    Rate
-                  </Button>
                 </ListGroup.Item>
               ))}
             </ListGroup>
@@ -207,8 +247,8 @@ const RecentOrders: React.FC = () => {
           </Modal.Footer>
         </Modal>
       )}
-    </Container>
+    </>
   );
 };
 
-export default RecentOrders;
+export default ActiveOrders;
