@@ -9,6 +9,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import { useAppContext } from "../../AppContext";
 import { useMemo, useState } from "react";
 import { TouristService } from "../../services/TouristService";
+import { IProduct } from "../../types/IProduct";
 interface WishlistCardProps {
   id: string;
   name: string;
@@ -25,9 +26,7 @@ const WishlistCard = ({
   price,
   description,
   image,
-}: //onAddToCart,
-//onRemoveFromWishlist,
-WishlistCardProps) => {
+}: WishlistCardProps) => {
   // const [currentQuantity, setCurrentQuantity] = useState(quantity);
   const { currency, baseCurrency, getConvertedCurrencyWithSymbol } =
     useAppContext();
@@ -36,6 +35,9 @@ WishlistCardProps) => {
     return getConvertedCurrencyWithSymbol(price, baseCurrency, currency);
   }, [price, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
   const user = useAppSelector((state) => state.user);
+  // const wishlistState = useAppSelector((state) => state.wishlist);
+  // const wishlistItems: WishlistCardProps[] = wishlistState.products;
+  // console.log(wishlistItems);
 
   const dispatch = useAppDispatch();
   const addToCart = (e: any) => {
@@ -49,7 +51,7 @@ WishlistCardProps) => {
       })
     );
   };
-  console.log(id);
+  // console.log(id);
   const removeFromWishlist = async (e: any) => {
     e.stopPropagation();
     e.preventDefault();
@@ -61,7 +63,6 @@ WishlistCardProps) => {
   };
 
   return (
-    // <Container className="d-flex justify-content-center">
     <Card className=" p-3 shadow-sm mb-5" style={{ borderRadius: "10px" }}>
       <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
         {/* Image Section */}

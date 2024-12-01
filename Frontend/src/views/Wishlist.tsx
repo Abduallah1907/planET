@@ -7,31 +7,12 @@ import { TouristService } from "../services/TouristService";
 import { IProduct } from "../types/IProduct";
 import { FileService } from "../services/FileService";
 
-// interface Product {
-//   name: string;
-//   id: string;
-//   average_rating: number;
-//   Reviews: number;
-//   sales: number;
-//   quantity: number;
-//   price: number;
-//   description: string;
-//   isActiveArchive: boolean;
-//   image?: string;
-//   createdAt: Date;
-//   updatedAt: Date;
-//   onChange?: () => void;
-//   onClick?: () => void;
-//   isSeller: boolean;
-//   isAdmin: boolean; // Check if the user is the seller
-// }
-
 const WishlistPage: React.FC = () => {
-  // const wishlist = useAppSelector((state) => state.wishlist); // Adjust to use wishlist state
+  // const wishlistState = useAppSelector((state) => state.wishlist); // Adjust to use wishlist state
   const [wishlist, setWishlist] = useState<IProduct[]>([]);
   const user = useAppSelector((state) => state.user);
   const navigate = useNavigate();
-  // const wishlistItems: Product[] = wishlist.products;
+  // const wishlistItems: IProduct[] = wishlistState.products;
 
   const viewMyWishlist = async () => {
     const wish = await TouristService.viewWishlist(user.email);
