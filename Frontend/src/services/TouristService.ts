@@ -371,11 +371,14 @@ class TouristService {
     }
   };
   
-  public static addAddress = async (email: string) => {
+  public static addAddress = async (email: string, data:any) => {
     try {
       const response = await axiosInstance.put(
-        `/tourist/addAddress/${email}`
+        `/tourist/addAddress/${email}`, data
       );
+      if (response.status === 200) {
+        showToast(response.data);
+      }
 
       return response.data;
     } catch (error) {
@@ -394,7 +397,6 @@ class TouristService {
 
       return response.data;
     } catch (error) {
-        // Rethrow the error to let the calling code handle it with the toast
         throw error;
     }
   };
@@ -404,6 +406,8 @@ class TouristService {
       const response = await axiosInstance.get(
         `/tourist/getAddresses/${email}`
       );
+    
+
 
       return response.data;
     } catch (error) {

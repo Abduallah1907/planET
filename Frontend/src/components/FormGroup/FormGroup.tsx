@@ -17,6 +17,10 @@ interface InputData {
   accept?: string;
   multiple?: boolean;
   options?: string[];
+  optionsSplit?: {
+    label: string;
+    value: string;
+  }[];
   min?: string;
   pattern?: string;
 }
@@ -35,6 +39,7 @@ function CustomFormGroup({
   accept,
   multiple,
   options,
+  optionsSplit,
   min,
   pattern,
 }: InputData) {
@@ -64,6 +69,12 @@ function CustomFormGroup({
             options.map((option, index) => (
               <option key={index} value={option}>
                 {option}
+              </option>
+            ))}
+          {optionsSplit &&
+            optionsSplit.map((option, index) => (
+              <option key={index} value={option.value}>
+                {option.label}
               </option>
             ))}
         </Form.Control>
