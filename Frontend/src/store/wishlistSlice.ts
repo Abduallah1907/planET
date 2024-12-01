@@ -35,6 +35,7 @@ export const wishlistSlice = createSlice({
         (product) => product.id !== action.payload
       );
     },
+    
     clearWishlist: (state) => {
       state.products = [];
     },

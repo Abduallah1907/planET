@@ -20,6 +20,7 @@ import { addProductToWishlist } from "../../store/wishlistSlice";
 import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
 import { FaRegHeart } from "react-icons/fa";
+import { TouristService } from "../../services/TouristService";
 
 interface InputData {
   name: string;
@@ -101,10 +102,12 @@ const ProductCard = ({
     );
   };
 
-  const addToWishlist = (e: any) => {
+  const addToWishlist = async (e: any) => {
     e.stopPropagation();
     e.preventDefault();
     showToastMessage("Product added to Wishlist", ToastTypes.SUCCESS);
+    await TouristService.addProductToWishlist(user.email, id);
+    console.log("Product added successfully to wishlist");
     dispatch(
       addProductToWishlist({
         id,

@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Button, Col, Row, Image, Container } from "react-bootstrap";
-import { useAppDispatch } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
 import { addProduct } from "../../store/cartSlice";
@@ -8,7 +8,7 @@ import { removeProductFromWishlist } from "../../store/wishlistSlice";
 import { FaTrashAlt } from "react-icons/fa";
 import { useAppContext } from "../../AppContext";
 import { useMemo, useState } from "react";
-
+import { TouristService } from "../../services/TouristService";
 interface WishlistCardProps {
   id: string;
   name: string;
@@ -35,6 +35,7 @@ WishlistCardProps) => {
   const convertedPrice = useMemo(() => {
     return getConvertedCurrencyWithSymbol(price, baseCurrency, currency);
   }, [price, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
+  const user = useAppSelector((state) => state.user);
 
   const dispatch = useAppDispatch();
   const addToCart = (e: any) => {
@@ -48,11 +49,14 @@ WishlistCardProps) => {
       })
     );
   };
-
-  const removeFromWishlist = (e: any, id: any) => {
+  console.log(id);
+  const removeFromWishlist = async (e: any) => {
     e.stopPropagation();
     e.preventDefault();
     showToastMessage("Product removed from Wishlist", ToastTypes.INFO);
+    console.log(user.email, id);
+    await TouristService.removeProductFromWishlist(user.email, id);
+    console.log("Product removed from wishlist!!!");
     dispatch(removeProductFromWishlist(id)); // Dispatch the action to remove product by id
   };
 
@@ -95,25 +99,15 @@ WishlistCardProps) => {
           <div className="d-flex align-items-center mb-2"></div>
           <h4 style={{ fontWeight: "bold" }}>{convertedPrice}</h4>
 
-          <div
-            style={{
-              width: "-webkit-fill-available",
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Button
-              className="w-25 "
-              variant="main-inverse"
-              onClick={addToCart}
-            >
+          <div>
+            <Button className="" variant="main-inverse" onClick={addToCart}>
               Add to Cart
             </Button>
             <Button
               variant="main-inverse"
-              className="w-20"
+              className=""
               onClick={(e) => {
-                removeFromWishlist(e, id);
+                removeFromWishlist(e);
               }}
             >
               <FaTrashAlt>Remove</FaTrashAlt>
@@ -126,5 +120,3 @@ WishlistCardProps) => {
 };
 
 export default WishlistCard;
-
-
