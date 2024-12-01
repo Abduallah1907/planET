@@ -157,11 +157,12 @@ class TouristService {
     }
   };
 
-  public static bookActivity = async (email: string, activity_id: string) => {
+  public static bookActivity = async (email: string, activity_id: string,payment_type:string) => {
     try {
       const response = await axiosInstance.post(`/tourist/bookActivity`, {
         email,
         activity_id,
+        payment_type
       });
       if (response.status === 201) {
         showToast(response.data);
@@ -175,13 +176,15 @@ class TouristService {
   public static bookItinerary = async (
     email: string,
     itinerary_id: string,
-    time_to_attend: string
+    time_to_attend: string,
+    payment_type:string
   ) => {
     try {
       const response = await axiosInstance.post(`/tourist/bookItinerary`, {
         email,
         itinerary_id,
         time_to_attend,
+        payment_type
       });
       if (response.status === 201) {
         showToast(response.data);

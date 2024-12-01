@@ -21,7 +21,7 @@ interface BookingPageProps {
 const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
   const { id } = useParams<{ id: string }>();
   const [activityData, setActivityData] = useState<IActivity | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<string>("wallet");
+  const [paymentMethod, setPaymentMethod] = useState<string>("Wallet");
   const [cardType, setCardType] = useState<string | null>(null);
   const Tourist = useAppSelector((state) => state.user);
 
@@ -133,10 +133,10 @@ const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
   const dispatch = useAppDispatch();
 
   const handleConfirmPayment = async () => {
-    if (paymentMethod === "wallet") {
+    if (paymentMethod === "Wallet") {
       try {
         if (id) {
-          await TouristService.bookActivity(email, id);
+          await TouristService.bookActivity(email, id,paymentMethod);
         }
         const newBalance =
           walletBalance -
@@ -198,8 +198,8 @@ const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
                     </span>
                   }
                   name="paymentMethod"
-                  value="wallet"
-                  checked={paymentMethod === "wallet"}
+                  value="Wallet"
+                  checked={paymentMethod === "Wallet"}
                   onChange={handlePaymentMethodChange}
                   className="mb-3"
                 />
@@ -211,12 +211,12 @@ const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
                     </span>
                   }
                   name="paymentMethod"
-                  value="bankCard"
-                  checked={paymentMethod === "bankCard"}
+                  value="CreditCard"
+                  checked={paymentMethod === "CreditCard"}
                   onChange={handlePaymentMethodChange}
                   className="mb-3"
                 />
-                {paymentMethod === "bankCard" && (
+                {paymentMethod === "CreditCard" && (
                   <div className="bank-card-details">
                     <Form.Group className="mb-3">
                       <Form.Label>Card Number</Form.Label>
