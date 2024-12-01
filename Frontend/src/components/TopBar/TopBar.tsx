@@ -24,7 +24,7 @@ import DeutschFlag from "../../assets/Deutsch.webp";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "../../AppContext";
 import { MdHelpOutline } from "react-icons/md";
-import { FaBars, FaShoppingCart } from "react-icons/fa";
+import { FaBars, FaShoppingCart, FaRegHeart } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { toggleSidebar } from "../../store/sidebarSlice";
 import Avatar from "../Avatar/Avatar";
@@ -306,13 +306,25 @@ const TopBar: React.FC = () => {
                     <FaShoppingCart />
                   </Button>
                 )}
-                {User.role === "TOURIST" || User.role === "ADVERTISER" || User.role === "TOUR_GUIDE" || User.role === "ADMIN" || User.role === "SELLER"? (
+                {User.role === "TOURIST" && (
+                  <Button
+                    variant=""
+                    onClick={() => navigate("/wishlist")}
+                    className="btn-help btn-margin me-3"
+                  >
+                    <FaRegHeart />
+                  </Button>
+                )}
+                {User.role === "TOURIST" ||
+                User.role === "ADVERTISER" ||
+                User.role === "TOUR_GUIDE" ||
+                User.role === "ADMIN" ||
+                User.role === "SELLER" ? (
                   <Col>
-                  <Notifications />
-                </Col>
+                    <Notifications />
+                  </Col>
                 ) : null}
 
-                
                 <Row>
                   <Col className="pe-0 d-flex flex-column justify-content-center">
                     <Avatar />

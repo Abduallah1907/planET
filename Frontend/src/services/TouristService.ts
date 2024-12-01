@@ -205,8 +205,8 @@ class TouristService {
 
       return response.data;
     } catch (error) {
-        // Rethrow the error to let the calling code handle it with the toast
-        throw error;
+      // Rethrow the error to let the calling code handle it with the toast
+      throw error;
     }
   };
   public static getUpcomingActivityBookings = async (email: string) => {
@@ -331,7 +331,10 @@ class TouristService {
     }
   };
 
-  public static bookmarkActivity= async (email: string, activity_id: string) => {
+  public static bookmarkActivity = async (
+    email: string,
+    activity_id: string
+  ) => {
     try {
       const response = await axiosInstance.post("/tourist/bookmarkActivity/", {
         email,
@@ -344,11 +347,17 @@ class TouristService {
     }
   };
 
-  public static unbookmarkActivity = async (email: string, activity_id: string) => {
+  public static unbookmarkActivity = async (
+    email: string,
+    activity_id: string
+  ) => {
     try {
-      const response = await axiosInstance.delete("/tourist/unbookmarkActivity/", {
-        data: { email, activity_id }, // Use data to include the request body
-      });
+      const response = await axiosInstance.delete(
+        "/tourist/unbookmarkActivity/",
+        {
+          data: { email, activity_id }, // Use data to include the request body
+        }
+      );
       return response.data;
     } catch (error) {
       console.error("Error unbookmarking activity:", error);
@@ -356,9 +365,6 @@ class TouristService {
     }
   };
 
-  
-
-  
   public static getBookmarkedActivities = async (email: string) => {
     try {
       const response = await axiosInstance.get(
@@ -385,7 +391,7 @@ class TouristService {
       throw error;
     }
   };
-  
+
   public static removeAddress = async (email: string) => {
     try {
       const response = await axiosInstance.delete(
@@ -400,7 +406,7 @@ class TouristService {
         throw error;
     }
   };
-  
+
   public static getAddresses = async (email: string) => {
     try {
       const response = await axiosInstance.get(
@@ -410,6 +416,39 @@ class TouristService {
 
 
       return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static addProductToWishlist = async (email: string) => {
+    try {
+      const response = await axiosInstance.put(
+        `/tourist/addProductToWishlist/${email}`
+      );
+      return response.data; // Return only the product id in object format
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static removeProductFromWishlist = async (email: string) => {
+    try {
+      const response = await axiosInstance.delete(
+        `/tourist/removeProductFromWishlist/${email}`
+      );
+      return response.data; // Return only the product id in object format
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static viewWishlist = async (email: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/tourist/viewWishlist/${email}`
+      );
+      return response.data; // interface of IProduct
     } catch (error) {
       throw error;
     }

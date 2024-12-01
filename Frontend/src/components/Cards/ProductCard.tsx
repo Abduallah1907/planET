@@ -16,8 +16,10 @@ import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { addProduct } from "../../store/cartSlice";
+import { addProductToWishlist } from "../../store/wishlistSlice";
 import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
+import { FaRegHeart } from "react-icons/fa";
 
 interface InputData {
   name: string;
@@ -99,6 +101,21 @@ const ProductCard = ({
     );
   };
 
+  const addToWishlist = (e: any) => {
+    e.stopPropagation();
+    e.preventDefault();
+    showToastMessage("Product added to Wishlist", ToastTypes.SUCCESS);
+    dispatch(
+      addProductToWishlist({
+        id,
+        name,
+        price,
+        description,
+        image,
+      })
+    );
+  };
+
   return (
     <Card
       className="p-3 shadow-sm"
@@ -152,8 +169,8 @@ const ProductCard = ({
                 {updatedAt.toLocaleDateString()}
               </Card.Text>
             )}
-            {user.role === "TOURIST" && (
-              <div className="d-flex justify-content-center">
+            <div className="d-flex justify-content-center">
+              {user.role === "TOURIST" && (
                 <Button
                   className="w-25 "
                   variant="main-inverse"
@@ -161,8 +178,17 @@ const ProductCard = ({
                 >
                   Add to Cart
                 </Button>
-              </div>
-            )}
+              )}
+              {user.role === "TOURIST" && (
+                <Button
+                  className="btn-margin me-3 "
+                  variant=""
+                  onClick={addToWishlist}
+                >
+                  <FaRegHeart />
+                </Button>
+              )}
+            </div>
           </Card.Body>
         </Col>
 
