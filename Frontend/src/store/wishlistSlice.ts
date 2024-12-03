@@ -6,7 +6,7 @@ interface WishlistState {
 }
 
 interface Product {
-  id: any;
+  _id: any;
   name: string;
   price: number;
   description: string;
@@ -22,9 +22,12 @@ export const wishlistSlice = createSlice({
   name: "wishlist",
   initialState,
   reducers: {
+    setWishlist(state, action: PayloadAction<Product[]>) {
+      state.products = action.payload;
+    },
     addProductToWishlist: (state, action: PayloadAction<Product>) => {
       const existingProduct = state.products.find(
-        (product) => product.id === action.payload.id
+        (product) => product._id === action.payload._id
       );
       if (!existingProduct) {
         state.products.push(action.payload);
@@ -32,10 +35,10 @@ export const wishlistSlice = createSlice({
     },
     removeProductFromWishlist: (state, action: PayloadAction<any>) => {
       state.products = state.products.filter(
-        (product) => product.id !== action.payload
+        (product) => product._id !== action.payload
       );
     },
-    
+
     clearWishlist: (state) => {
       state.products = [];
     },
@@ -43,6 +46,7 @@ export const wishlistSlice = createSlice({
 });
 
 export const {
+  setWishlist,
   addProductToWishlist,
   removeProductFromWishlist,
   clearWishlist,

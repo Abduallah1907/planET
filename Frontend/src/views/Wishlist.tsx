@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Card, Button } from "react-bootstrap";
 import WishlistCard from "../components/Cards/WishlistCard"; // Create a WishlistCard component if it doesn't already exist
-import { useAppSelector } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { useNavigate } from "react-router-dom";
 import { TouristService } from "../services/TouristService";
 import { IProduct } from "../types/IProduct";
 import { FileService } from "../services/FileService";
+import { setWishlist } from "../store/wishlistSlice";
 
 const WishlistPage: React.FC = () => {
-  // const wishlistState = useAppSelector((state) => state.wishlist); // Adjust to use wishlist state
-  const [wishlist, setWishlist] = useState<IProduct[]>([]);
   const user = useAppSelector((state) => state.user);
+  const wishlist = useAppSelector((state) => state.wishlist);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   // const wishlistItems: IProduct[] = wishlistState.products;
 
   const viewMyWishlist = async () => {
@@ -27,7 +28,7 @@ const WishlistPage: React.FC = () => {
         return product;
       })
     );
-    setWishlist(productsWithImages);
+    dispatch(setWishlist(productsWithImages));
   };
 
   useEffect(() => {
@@ -45,10 +46,10 @@ const WishlistPage: React.FC = () => {
       </Row>
       <Row className="justify-content-md-center">
         <Col md={10}>
-          {wishlist.map((product: any) => (
+          {wishlist.products.map((product: any) => (
             <WishlistCard
-              key={product.id}
-              id={product.id}
+              key={product._id}
+              id={product._id}
               name={product.name}
               price={product.price}
               description={product.description}

@@ -110,7 +110,7 @@ const ProductCard = ({
     console.log("Product added successfully to wishlist");
     dispatch(
       addProductToWishlist({
-        id,
+        _id: id,
         name,
         price,
         description,
