@@ -2,7 +2,7 @@ import CustomFormGroup from "../../components/FormGroup/FormGroup";
 import MapModal from "../../components/MapModal";
 import { ChangeEvent, useState } from "react";
 import countryData from "../../utils/countryData.json";
-import { Button, Form } from "react-bootstrap";
+import { Button, Container, Form } from "react-bootstrap";
 import { TouristService } from "../../services/TouristService";
 import { useAppSelector } from "../../store/hooks";
 import showToastMessage from "../../utils/showToastMessage";
@@ -76,9 +76,9 @@ const AddDeliveryAddress: React.FC = () => {
   };
 
   return (
-    <>
-      <h1>Add Delivery Address</h1>
-      <Form>
+    <Container>
+      <h2 className="my-profile-heading">Add Delivery Address</h2>
+      <Form className="ms-5 mt-3 w-75">
         <CustomFormGroup
           label={"Street Name"}
           type={"text"}
@@ -138,10 +138,10 @@ const AddDeliveryAddress: React.FC = () => {
           onChange={handleChange}
         />
 
-        <Button variant="main-inverse" onClick={() => setShowMapModal(true)}>
+        <Button variant="main-inverse" className="mb-5" onClick={() => setShowMapModal(true)}>
           Set Location
         </Button>
-        <Button type="submit" variant="main-inverse" onClick={handleSubmit}>
+        <Button type="submit" className="mb-5"  variant="main-inverse" onClick={handleSubmit}>
           Submit
         </Button>
       </Form>
@@ -162,7 +162,7 @@ const AddDeliveryAddress: React.FC = () => {
           }
         }}
       />
-    </>
+    </Container>
   );
 };
 
