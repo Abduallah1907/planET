@@ -2,9 +2,9 @@ import BookingCard from "../components/Cards/BookingCard";
 import { useAppSelector } from "../store/hooks";
 import { TouristService } from "../services/TouristService";
 import { useEffect, useState } from "react";
-import { Button, Col, Modal, Nav, Row } from "react-bootstrap";
+import { Button, Col, Container, Modal, Nav, Row } from "react-bootstrap";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import "./mybookings.css";
+import "./ViewingPages/switch.css"
 
 const MyItineraryBookings: React.FC = () => {
   const Tourist = useAppSelector((state) => state.user);
@@ -68,18 +68,18 @@ const MyItineraryBookings: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className="ms-3">
       <Nav
-        className="bookingTabs"
+        className="custom-tabs"
         defaultActiveKey="/MyItineraryBookings/upcoming"
       >
         <Nav.Item>
-          <Nav.Link as={NavLink} to="/MyItineraryBookings/upcoming">
+          <Nav.Link as={NavLink} to="/MyItineraryBookings/upcoming" className="tab-link">
             Upcoming Itineraries
           </Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          <Nav.Link as={NavLink} to="/MyItineraryBookings/past">
+          <Nav.Link as={NavLink} to="/MyItineraryBookings/past" className="tab-link">
             Past Itineararies
           </Nav.Link>
         </Nav.Item>
@@ -113,6 +113,7 @@ const MyItineraryBookings: React.FC = () => {
               </Col>
             ))}
         </Row>
+        
         
       )}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
