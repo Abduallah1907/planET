@@ -4,7 +4,7 @@ import { TouristService } from "../services/TouristService";
 import { useEffect, useState } from "react";
 import { Button, Col, Modal, Nav, Row } from "react-bootstrap";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import "./mybookings.css";
+import "./ViewingPages/switch.css";
 
 const MyBookings: React.FC = () => {
   const Tourist = useAppSelector((state) => state.user);
@@ -75,19 +75,22 @@ const MyBookings: React.FC = () => {
   }
 
   return (
-    <div>
-      <Nav className="bookingTabs" defaultActiveKey="/upcoming">
-        <Nav.Item>
-          <NavLink to="/MyBookings/upcoming" className="nav-link">
-            Upcoming Activities
-          </NavLink>
-        </Nav.Item>
-        <Nav.Item>
-          <NavLink to="/MyBookings/past" className="nav-link">
-            Past Activities
-          </NavLink>
-        </Nav.Item>
-      </Nav>
+    <div className="ms-3">
+    <Nav
+      className="custom-tabs"
+      defaultActiveKey="/MyBookings/upcoming"
+    >
+      <Nav.Item>
+        <Nav.Link as={NavLink} to="/MyBookings/upcoming" className="tab-link">
+          Upcoming Bookings
+        </Nav.Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Nav.Link as={NavLink} to="/MyBookings/past" className="tab-link">
+          Past Bookings
+        </Nav.Link>
+      </Nav.Item>
+    </Nav>
       {Array.isArray(bookings) && bookings.length === 0 && !loading && (
         <p>No bookings found</p>
       )}
