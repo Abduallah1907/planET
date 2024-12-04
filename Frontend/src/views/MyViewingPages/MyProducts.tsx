@@ -198,8 +198,6 @@ export default function ProductsPage() {
                   }
                   image={product.image}
                   isActiveArchive={product.archieve_flag}
-                  isSeller={true}
-                  isAdmin={true}
                 />
               </Col>
             ))}

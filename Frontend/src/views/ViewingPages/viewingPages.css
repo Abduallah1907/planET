@@ -47,6 +47,7 @@
 .map-price-button.active .map-price-marker {
     background-color: white;
     color: var(--main-color);
+    
 }
 
 .yNHHyP-marker-view:has(.map-price-button.active){

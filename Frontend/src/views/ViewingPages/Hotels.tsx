@@ -213,7 +213,7 @@ export default function HotelsPage() {
                     {!isMediumScreen && (
                         <Col lg={4} className="p-0">
                             {(hotels.length > 0 && !loading) && (
-                                <div className="sticky-top mt-3">
+                                <Card className="sticky-top mt-3 p-2">
                                     <Map
                                         style={{ height: "600px" }}
                                         defaultCenter={center}
@@ -237,7 +237,7 @@ export default function HotelsPage() {
                                             </AdvancedMarker>
                                         ))}
                                     </Map>
-                                </div>
+                                </Card>
                             )}
                         </Col>
                     )}

@@ -463,10 +463,11 @@ class TouristService {
     }
   }
 
-  public static addProductToWishlist = async (email: string) => {
+  public static addProductToWishlist = async (email: string,data: any) => {
     try {
       const response = await axiosInstance.put(
-        `/tourist/addProductToWishlist/${email}`
+        `/tourist/addProductToWishlist/${email}`,
+        data
       );
       return response.data; // Return only the product id in object format
     } catch (error) {
@@ -474,10 +475,11 @@ class TouristService {
     }
   };
 
-  public static removeProductFromWishlist = async (email: string) => {
+  public static removeProductFromWishlist = async (email: string, data: any) => {
     try {
       const response = await axiosInstance.delete(
-        `/tourist/removeProductFromWishlist/${email}`
+        `/tourist/removeProductFromWishlist/${email}`,
+        { data: { product_id: data.product_id } }
       );
       return response.data; // Return only the product id in object format
     } catch (error) {

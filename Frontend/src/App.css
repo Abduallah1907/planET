@@ -234,6 +234,7 @@ body {
   margin-bottom:  1rem;
   background-color: #F7F7F7;
   color: #6c757d;
+  margin-left: calc(var(--bs-gutter-x) * .5);
 }
 
 .sort-btn svg{

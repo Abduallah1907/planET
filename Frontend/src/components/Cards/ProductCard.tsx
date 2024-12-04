@@ -16,10 +16,12 @@ import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { addProduct } from "../../store/cartSlice";
-import { addProductToWishlist } from "../../store/wishlistSlice";
+import { addProductToWishlist, removeProductFromWishlist } from "../../store/wishlistSlice";
 import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
-import { FaRegHeart } from "react-icons/fa";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { setWishlist } from "../../store/userSlice";
+import { TouristService } from "../../services/TouristService";
 
 interface InputData {
   name: string;
@@ -36,8 +38,6 @@ interface InputData {
   updatedAt: Date;
   onChange?: () => void;
   onClick?: () => void;
-  isSeller: boolean;
-  isAdmin: boolean; // Check if the user is the seller
 }
 
 const ProductCard = ({
@@ -55,8 +55,6 @@ const ProductCard = ({
   updatedAt,
   onChange,
   onClick,
-  isSeller,
-  isAdmin,
 }: InputData) => {
   // Determine if the product is active or archived
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -70,6 +68,10 @@ const ProductCard = ({
   // Function to handle edit action
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.user);
+
+  const isAdmin = user.role === "ADMIN";
+  const isSeller = user.role === "SELLER";
+  const wishlisted = user.stakeholder_id.wishlist.includes(id);
 
   const handleEdit = (product_id: string) => {
     navigate(`/EditProduct/${product_id}`); // Navigate to the EditProduct page
@@ -101,10 +103,16 @@ const ProductCard = ({
     );
   };
 
-  const addToWishlist = (e: any) => {
+  const addToWishlist = async(e: any) => {
     e.stopPropagation();
     e.preventDefault();
+    await TouristService.addProductToWishlist(user.email, {
+      product_id: id,
+    })
     showToastMessage("Product added to Wishlist", ToastTypes.SUCCESS);
+
+    const updatedWishlist = [...user.stakeholder_id.wishlist, id];
+
     dispatch(
       addProductToWishlist({
         id,
@@ -114,140 +122,158 @@ const ProductCard = ({
         image,
       })
     );
+    dispatch(setWishlist(updatedWishlist));
   };
+
+  const removeFromWishlist = async (e: any) => {
+    e.stopPropagation();
+    e.preventDefault();
+    await TouristService.removeProductFromWishlist(user.email, {
+      product_id: id,
+    });
+    showToastMessage("Product removed from Wishlist", ToastTypes.SUCCESS);
+
+    const updatedWishlist = user.stakeholder_id.wishlist.filter(
+      (productId: string) => productId !== id
+    );
+
+    dispatch(removeProductFromWishlist(id));
+
+    dispatch(setWishlist(updatedWishlist));
+  }
 
   return (
     <Card
-      className="p-3 shadow-sm"
+      className="shadow-sm position-relative"
       style={{ borderRadius: "10px", height: "100%" }}
     >
-      <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
-        {/* Image Section */}
-        <Col
-          md={2}
-          className="p-0 d-flex align-items-stretch"
-          onClick={onClick}
-        >
-          <Image
-            src={image || "https://via.placeholder.com/250x250"}
-            rounded
-            alt="Product Image"
-            style={{ objectFit: "cover", height: "100%", width: "100%" }}
-          />
-        </Col>
+      <Card.Img
+        variant="top"
+        src={image || "https://via.placeholder.com/250x250"}
+        style={{
+          height: "200px",
+          objectFit: "cover",
+          borderTopLeftRadius: "10px",
+          borderTopRightRadius: "10px",
+        }}
+      />
+      <hr className="m-0" />
+      {user.role === "TOURIST" && (
+        <div className="wishlist-card-btn">
+          <Button
+            className="btn-margin m-0 rounded-circle"
+            variant=""
+            onClick={wishlisted ? removeFromWishlist : addToWishlist}
+          >
+            {wishlisted ? <FaHeart/> : <FaRegHeart />}
+          </Button>
+        </div>
+      )}
 
-        {/* Main Info Section */}
-        <Col
-          md={isSeller || isAdmin ? 6 : 7}
-          className="d-flex align-items-stretch"
-          onClick={onClick}
-        >
-          <Card.Body className="p-0 d-flex flex-column justify-content-between">
-            <div>
-              <div className="d-flex align-items-center mb-1">
-                {/* Product Name */}
-                <Card.Title
-                  className="mb-0"
-                  style={{ fontWeight: "bold", marginRight: "10px" }}
-                >
-                  {name}
-                </Card.Title>
-              </div>
-
-              {/* Product Description */}
-              <Card.Text className="mt-2">Description: {description}</Card.Text>
-              <Card.Text className="text-muted">
-                {isSeller || isAdmin
-                  ? `Sales: ${sales} | Quantity: ${quantity}`
-                  : `Quantity: ${quantity}`}
-              </Card.Text>
+      <Card.Body className="align-content-center d-flex flex-column mt-2">
+        <Row className="justify-content-between m-0">
+          <Col md={"auto"}>
+            {/* Product Name */}
+            <Card.Title>
+              {name}
+            </Card.Title>
+          </Col>
+          <Col md={"auto"} className="p-0">
+            {/* Rating and Reviews */}
+            <div className="d-flex align-items-center justify-content-end me-2">
+              {/* Rating Stars */}
+              <Rating rating={average_rating} readOnly={true} />
+              <Badge
+                className="ms-2 review-badge text-center"
+                style={{ fontSize: "1rem" }}
+              >
+                {average_rating.toFixed(1)}
+              </Badge>
             </div>
-            {/* Created and Updated Date */}
-            {(isSeller || isAdmin) && (
+          </Col>
+        </Row>
+
+        <Row className="m-0">
+          <Col md={8}>
+            {/* Product Description */}
+            <Card.Text className="mt-2">{description}</Card.Text>
+          </Col>
+          <Col md={4} className="d-flex justify-content-end">
+            <p
+              className="text-muted text-right"
+              style={{ fontSize: "1.1rem", fontWeight: "500" }}
+            >
+              {Reviews} Reviews
+            </p>
+
+          </Col>
+        </Row>
+
+        <Row className="mb-2 m-0">
+          <Card.Text className="text-muted">
+            {isSeller || isAdmin
+              ? `Sales: ${sales} | Quantity: ${quantity}`
+              : `Quantity: ${quantity}`}
+          </Card.Text>
+        </Row>
+        {/* Created and Updated Date */}
+        {/* {(isSeller || isAdmin) && (
               <Card.Text className="text-muted">
                 Created: {createdAt.toLocaleDateString()} | Updated:{" "}
                 {updatedAt.toLocaleDateString()}
               </Card.Text>
-            )}
-            <div className="d-flex justify-content-center">
-              {user.role === "TOURIST" && (
-                <Button
-                  className="w-25 "
-                  variant="main-inverse"
-                  onClick={addToCart}
-                >
-                  Add to Cart
-                </Button>
-              )}
-              {user.role === "TOURIST" && (
-                <Button
-                  className="btn-margin me-3 "
-                  variant=""
-                  onClick={addToWishlist}
-                >
-                  <FaRegHeart />
-                </Button>
-              )}
-            </div>
-          </Card.Body>
-        </Col>
-
-        {/* Rating, Reviews, Price Section */}
-        <Col
-          md={3}
-          className="d-flex flex-column justify-content-between align-items-end"
-          onClick={onClick}
-        >
-          {/* Rating and Reviews */}
-          <div className="d-flex align-items-center justify-content-end mb-1">
-            {/* Rating Stars */}
-            <Rating rating={average_rating} readOnly={true} />
-            <Badge
-              className="ms-2 review-badge text-center"
-              style={{ fontSize: "1rem" }}
-            >
-              {average_rating.toFixed(1)}
-            </Badge>
-          </div>
-          <p
-            className="text-muted text-right"
-            style={{ fontSize: "1.1rem", fontWeight: "500" }}
-          >
-            {Reviews} Reviews
-          </p>
-
-          <div className="text-end">
-            <h4 style={{ fontWeight: "bold" }}>{convertedPrice}</h4>
-
+            )} */}
+        <Row className="mt-auto m-0">
+          <Col>
+            <h4 className="m-0" style={{ fontWeight: "bold" }}>{convertedPrice}</h4>
+          </Col>
+          <Col>
             {/* Show Active/Archive button if the user is the seller */}
             {isSeller || isAdmin ? (
-              <Badge
-                bg={!isActiveArchive ? "active" : "inactive"}
-                className="mt-2 custom-status-badge rounded-4 text-center"
-                onClick={onChange}
-                style={{ cursor: "pointer" }}
-              >
-                {!isActiveArchive ? "Active" : "Archived"}
-              </Badge>
-            ) : null}
-          </div>
-        </Col>
-        {isSeller || isAdmin ? (
-          <Col md={1} className="d-flex align-items-baseline">
-            <DropdownButton
-              align="end"
-              title="⋮" // Three-dot symbol
-              variant="light"
-              className="d-flex justify-content-end ms-3 btn-main-inverse"
-            >
-              <Dropdown.Item onClick={() => id && handleEdit(id)}>
-                Edit
-              </Dropdown.Item>
-              <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item>
-            </DropdownButton>
+              <div className="d-flex justify-content-end">
+                <Badge
+                  bg={!isActiveArchive ? "active" : "inactive"}
+                  className="custom-status-badge rounded-4 text-center"
+                  onClick={onChange}
+                  style={{ cursor: "pointer" }}
+                >
+                  {!isActiveArchive ? "Active" : "Archived"}
+                </Badge>
+              </div>
+            ) : (
+              <div className="d-flex justify-content-end">
+                {user.role === "TOURIST" && (
+                  <Button
+                    className="m-0"
+                    variant="main-inverse"
+                    onClick={addToCart}
+                  >
+                    Add to Cart
+                  </Button>
+                )}
+              </div>
+            )}
           </Col>
-        ) : null}
-      </Row>
+        </Row>
+      </Card.Body>
+
+      {/* Rating, Reviews, Price Section */}
+
+      {isSeller || isAdmin ? (
+        <div className="dropdown-card-btn">
+          <DropdownButton
+            align="end"
+            title="⋮" // Three-dot symbol
+            variant="light"
+            className="d-flex justify-content-end ms-3 btn-main-inverse"
+          >
+            <Dropdown.Item onClick={() => id && handleEdit(id)}>
+              Edit
+            </Dropdown.Item>
+            <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item>
+          </DropdownButton>
+        </div>
+      ) : null}
 
       {/* Delete Confirmation Modal */}
       <Modal show={showDeleteModal} onHide={cancelDelete} centered>
