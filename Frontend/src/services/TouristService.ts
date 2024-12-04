@@ -155,12 +155,16 @@ class TouristService {
     }
   };
 
-  public static bookActivity = async (email: string, activity_id: string,payment_type:string) => {
+  public static bookActivity = async (
+    email: string,
+    activity_id: string,
+    payment_type: string
+  ) => {
     try {
       const response = await axiosInstance.post(`/tourist/bookActivity`, {
         email,
         activity_id,
-        payment_type
+        payment_type,
       });
       if (response.status === 201) {
         showToast(response.data);
@@ -175,14 +179,14 @@ class TouristService {
     email: string,
     itinerary_id: string,
     time_to_attend: string,
-    payment_type:string
+    payment_type: string
   ) => {
     try {
       const response = await axiosInstance.post(`/tourist/bookItinerary`, {
         email,
         itinerary_id,
         time_to_attend,
-        payment_type
+        payment_type,
       });
       if (response.status === 201) {
         showToast(response.data);
@@ -323,7 +327,7 @@ class TouristService {
       throw error;
     }
   };
-  
+
   public static cancelOrder = async (order_id: string) => {
     try {
       const response = await axiosInstance.put(
@@ -337,7 +341,7 @@ class TouristService {
     } catch (error) {
       throw error;
     }
-  }
+  };
   public static rateAndCommentProduct = async (
     tourist_id: string,
     product_id: string,
@@ -404,11 +408,12 @@ class TouristService {
       throw error;
     }
   };
-  
-  public static addAddress = async (email: string, data:any) => {
+
+  public static addAddress = async (email: string, data: any) => {
     try {
       const response = await axiosInstance.put(
-        `/tourist/addAddress/${email}`, data
+        `/tourist/addAddress/${email}`,
+        data
       );
       if (response.status === 200) {
         showToast(response.data);
@@ -431,7 +436,7 @@ class TouristService {
 
       return response.data;
     } catch (error) {
-        throw error;
+      throw error;
     }
   };
 
@@ -440,8 +445,6 @@ class TouristService {
       const response = await axiosInstance.get(
         `/tourist/getAddresses/${email}`
       );
-    
-
 
       return response.data;
     } catch (error) {
@@ -461,7 +464,7 @@ class TouristService {
     } catch (error) {
       throw error;
     }
-  }
+  };
 
   public static addProductToWishlist = async (email: string,data: any) => {
     try {
@@ -481,7 +484,7 @@ class TouristService {
         `/tourist/removeProductFromWishlist/${email}`,
         { data: { product_id: data.product_id } }
       );
-      return response.data; // Return only the product id in object format
+      return response; // Return only the product id in object format
     } catch (error) {
       throw error;
     }
