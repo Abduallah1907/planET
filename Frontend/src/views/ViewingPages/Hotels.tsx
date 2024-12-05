@@ -10,6 +10,7 @@ import HotelCard from "../../components/Cards/HotelCard";
 import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
 import { AdvancedMarker, AdvancedMarkerAnchorPoint, Map, Marker } from "@vis.gl/react-google-maps";
+import Services from "../Main Page/Services";
 
 export default function HotelsPage() {
     const navigate = useNavigate();
@@ -242,6 +243,11 @@ export default function HotelsPage() {
                         </Col>
                     )}
                 </Row>
+                    {!loading && progress < 100 && (
+                        <div className="mt-5">
+                           <Services />
+                        </div>
+                    )}
             </Container>
         </>
     )

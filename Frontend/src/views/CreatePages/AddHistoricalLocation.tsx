@@ -9,11 +9,12 @@ import { useNavigate } from "react-router-dom";
 import { set } from "react-datepicker/dist/date_utils";
 import { ToastTypes } from "../../utils/toastTypes";
 import showToastMessage from "../../utils/showToastMessage";
+import { FileService } from "../../services/FileService";
 
 interface FormData {
   name: string;
   description: string;
-  images: string[];
+  images: File[] | null;
   location: string;
   openingDays: string[];
   openingFrom: string;
@@ -55,16 +56,9 @@ const HistoricalPlaceForm: React.FC = () => {
     active_flag: true,
   });
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setFormData((prev) => ({
-          ...prev,
-          images: [...prev.images, reader.result as string],
-        }));
-      };
-      reader.readAsDataURL(e.target.files[0]);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFormData({ ...formData, images: Array.from(e.target.files) });
     }
   };
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -99,11 +93,14 @@ const HistoricalPlaceForm: React.FC = () => {
       acc[tag.id] = tag.value;
       return acc;
     }, {} as { [key: string]: string });
+    const firstImageId = formData.images
+    ? (await FileService.uploadFile(formData.images[0])).data._id
+    : null;
 
     const reqData = {
       name: formData.name,
       location: { latitude: 0, longitude: 0 },
-      images: null,
+      images: firstImageId,
       description: formData.description,
       opening_days: formData.openingDays,
       opening_hours_from: formData.openingFrom,
@@ -205,6 +202,7 @@ const HistoricalPlaceForm: React.FC = () => {
                 <Form.Label>Images</Form.Label>
                 <Form.Control
                   type="file"
+                  multiple
                   className="custom-form-control"
                   onChange={handleFileChange}
                 />

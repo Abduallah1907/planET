@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext";
 import { useAppSelector } from "../../store/hooks";
 import { ItineraryService } from "../../services/ItineraryService";
+import ItineraryImage from '../../assets/itinerary.jpg';
 
 interface InputData {
   id: string;
@@ -137,7 +138,7 @@ const ItineraryCard = ({
           onClick={onClick}
         >
           <Image
-            src="https://via.placeholder.com/250x250"
+            src={ItineraryImage} // Use the default image if no image is provided
             rounded
             alt="Activity Image"
           />

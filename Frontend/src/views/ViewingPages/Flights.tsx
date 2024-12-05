@@ -10,6 +10,7 @@ import { useAppDispatch } from "../../store/hooks";
 import { selectFlightOffer, setFlightSearchQuery } from "../../store/flightSlice";
 import PlaneSVG from "../../assets/PlaneNoBackground.svg";
 import "./viewingPages.css";
+import Destinations from "../Main Page/Destinations";
 
 export default function FlightsPage() {
     const navigate = useNavigate();
@@ -171,6 +172,11 @@ export default function FlightsPage() {
                         </Row>
                     </Col>
                 </Row>
+                {!loading && progress < 100 && (
+                <div className="mt-3">
+                <Destinations />
+                </div>
+                )}
             </Container>
         </>
     )

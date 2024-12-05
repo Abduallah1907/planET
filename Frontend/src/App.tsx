@@ -191,10 +191,6 @@ const App: React.FC = () => {
           <Route path="/TourGuidesTable" element={<TourGuidesTable />} />
 
           <Route path="/PromoCode" element={<PromoCode />} />
-
-          <Route path="/ChangePasswordForm" element={<ChangePasswordForm />} />
-          <Route path="/ChangePasswordG" element={<ChangePasswordG />} />
-
           <Route path="/Complaints" element={<AllComplaints />} />
           <Route path="/MyComplaints" element={<MyComplaints />} />
           <Route path="/Cart" element={<Cart />} />

@@ -130,17 +130,18 @@ const AddNewProduct: React.FC = () => {
 
           <Row>
             <Col>
-              <Form.Group controlId="formFile" className="mb-3">
-                <Form.Label>
-                  <h3>Upload Product Image</h3>
-                </Form.Label>
-                <Form.Control
-                  type="file"
-                  name="logo"
-                  onChange={handleFileChange}
-                  accept="image/*"
+              <AdminFormGroup
+                className="form-group"
+                label="Upload Product Image"
+                type="file"
+                onChange={handleFileChange}
+                accept="image/*"
+                required
+                id="formFile"
+                name="logo" 
+                placeholder={""} 
+                disabled={false}
                 />
-              </Form.Group>
             </Col>
           </Row>
 
@@ -169,7 +170,7 @@ const AddNewProduct: React.FC = () => {
                 value={formData.quantity.toString()}
                 onChange={handleChange}
                 name="quantity"
-                // Ensure only integer values
+              // Ensure only integer values
               />
             </Col>
           </Row>

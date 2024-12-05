@@ -8,11 +8,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
 import DaysModal from "../../components/DaysModals";
+import { FileService } from "../../services/FileService";
 
 interface FormData {
   name: string;
   description: string;
-  images: string[];
+  images: File[] | null;
   location: string;
   openingDays: string[];
   openingFrom: string;
@@ -57,16 +58,9 @@ const HistoricalPlaceForm: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setFormData((prev) => ({
-          ...prev,
-          images: [...prev.images, reader.result as string],
-        }));
-      };
-      reader.readAsDataURL(e.target.files[0]);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFormData({ ...formData, images: Array.from(e.target.files) });
     }
   };
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -82,10 +76,13 @@ const HistoricalPlaceForm: React.FC = () => {
         acc[tag.id] = tag.value;
         return acc;
       }, {} as { [key: string]: string });
+      const firstImageId = formData.images
+    ? (await FileService.uploadFile(formData.images[0])).data._id
+    : null;
       const reqData = {
         name: formData.name,
         description: formData.description,
-        // images: formData.images,
+        images: firstImageId ? [firstImageId] : [],
         // location: formData.location,
         opening_days: formData.openingDays,
         opening_hours_from: formData.openingFrom,
