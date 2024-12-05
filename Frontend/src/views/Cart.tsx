@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Row, Col, Card, Button } from "react-bootstrap";
+import { Row, Col, Card, Button, Container } from "react-bootstrap";
 import CartCard from "../components/Cards/CartCard";
 import { useAppSelector } from "../store/hooks";
 import { useNavigate } from "react-router-dom";
@@ -80,7 +80,7 @@ const CartPage: React.FC = () => {
 
 
   return (
-    <div className="cart-page p-3">
+    <Container className="cart-page p-3">
       <Row className="justify-content-center my-4">
         <Col md={6} className="text-center">
           <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
@@ -151,7 +151,7 @@ const CartPage: React.FC = () => {
           </Card>
         </Col>
       </Row>
-    </div>
+    </Container>
   );
 };
 

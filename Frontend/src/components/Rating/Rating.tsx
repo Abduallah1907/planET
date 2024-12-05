@@ -6,10 +6,11 @@ interface RatingProps {
   totalStars?: number; // Total number of stars, default is 5
   onChange?: (newRating: number) => void; // Callback when rating is changed
   readOnly?: boolean; // Flag to make the rating read-only
-  className?: string
+  className?: string;
+  starSize?: string;
 }
 
-const Rating: React.FC<RatingProps> = ({ rating = 0, totalStars = 5, onChange, readOnly = false, className = '' }) => {
+const Rating: React.FC<RatingProps> = ({ rating = 0, totalStars = 5, onChange, readOnly = false, className = '', starSize }) => {
   const [hoverRating, setHoverRating] = useState<number | null>(null); // For handling hover effect
 
   const handleClick = (index: number, event: React.MouseEvent<HTMLDivElement>) => {
@@ -51,6 +52,7 @@ const Rating: React.FC<RatingProps> = ({ rating = 0, totalStars = 5, onChange, r
           onClick={(event) => !readOnly && handleClick(i, event)} // Disable click if read-only
           onMouseMove={(event) => !readOnly && handleMouseMove(i, event)} // Track mouse movement for hover
           onMouseLeave={() => !readOnly && handleMouseLeave()} // Disable hover if read-only
+          style={{ width: starSize, height: starSize }}
         >
           <div className="star-fill" style={{ width: `${fillPercentage}%` }}></div>
         </div>

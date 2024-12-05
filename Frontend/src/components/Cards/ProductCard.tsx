@@ -71,7 +71,7 @@ const ProductCard = ({
 
   const isAdmin = user.role === "ADMIN";
   const isSeller = user.role === "SELLER";
-  const wishlisted = user.stakeholder_id.wishlist.includes(id);
+  const wishlisted = user?.role === "TOURIST" ? user.stakeholder_id.wishlist.includes(id) : false;
 
   const handleEdit = (product_id: string) => {
     navigate(`/EditProduct/${product_id}`); // Navigate to the EditProduct page
@@ -172,36 +172,30 @@ const ProductCard = ({
 
       <Card.Body className="align-content-center d-flex flex-column mt-2">
         <Row className="justify-content-between m-0">
-          <Col md={"auto"}>
+          <Col xs={6}>
             {/* Product Name */}
             <Card.Title>
               {name}
             </Card.Title>
           </Col>
-          <Col md={"auto"} className="p-0">
+          <Col xs={6} className="p-0">
             {/* Rating and Reviews */}
             <div className="d-flex align-items-center justify-content-end me-2">
               {/* Rating Stars */}
-              <Rating rating={average_rating} readOnly={true} />
-              <Badge
-                className="ms-2 review-badge text-center"
-                style={{ fontSize: "1rem" }}
-              >
-                {average_rating.toFixed(1)}
-              </Badge>
+              <Rating rating={average_rating} readOnly={true} starSize="1rem" />
             </div>
           </Col>
         </Row>
 
         <Row className="m-0">
-          <Col md={8}>
+          <Col xs={8}>
             {/* Product Description */}
             <Card.Text className="mt-2">{description}</Card.Text>
           </Col>
-          <Col md={4} className="d-flex justify-content-end">
+          <Col xs={4} className="d-flex justify-content-end">
             <p
               className="text-muted text-right"
-              style={{ fontSize: "1.1rem", fontWeight: "500" }}
+              style={{ fontSize: "1rem", fontWeight: "500" }}
             >
               {Reviews} Reviews
             </p>

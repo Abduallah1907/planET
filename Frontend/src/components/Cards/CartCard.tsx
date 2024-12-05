@@ -57,7 +57,7 @@ const CartCard = ({
   }
 
   return (
-    <Card className="p-3 shadow-sm mb-1" style={{ borderRadius: "10px"}}>
+    <Card className="p-3 shadow-sm mb-1" style={{ borderRadius: "10px" }}>
       <Row className="h-100 d-flex align-items-stretch justify-content-between ps-2">
         {/* Image Section */}
         <Col md={0} className="p-0 d-flex align-items-stretch m-auto">
@@ -70,7 +70,7 @@ const CartCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={7} className="d-flex align-items-stretch">
+        <Col md={6} className="d-flex align-items-stretch">
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
@@ -95,6 +95,8 @@ const CartCard = ({
             </Button>
           </div>
           <h4 style={{ fontWeight: "bold" }}>{convertedPrice}</h4>
+        </Col>
+        <Col md={1}>
           <Button variant="main-inverse" className="w-20" onClick={() => handleRemoveProduct(index)}>
             <FaTrashAlt >
               Remove

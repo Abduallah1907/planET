@@ -110,7 +110,7 @@ export default function ActivitiesPage() {
   };
 
   return (
-    <Container fluid>
+    <Container>
       <Row className="justify-content-center my-4">
         <Col md={6} className="text-center">
           <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
@@ -162,7 +162,7 @@ export default function ActivitiesPage() {
           />
         </Col>
 
-        <Col md={9} className="p-3">
+        <Col md={9} className="p-3 pt-0">
           <Row>
             {/* Sort By Section */}
             <div className="sort-btn w-auto d-flex align-items-center">
@@ -176,8 +176,7 @@ export default function ActivitiesPage() {
               </Form.Select>
             </div>
             {filteredActivities.map((activity: IActivity, index) => (
-              <Col key={index} xs={12} className="mb-4">
-                {" "}
+              <Col key={index} xs={12} className="mb-4 ps-0">
                 {/* Full-width stacking */}
                 <CustomActivityCard
                   id={activity._id}
