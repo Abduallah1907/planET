@@ -49,6 +49,7 @@ const AddDeliveryAddress: React.FC<AddDeliveryAddressProps> = ({ show, onHide })
     if (name === "postalCode") {
       if (!/^\d*$/.test(value)) {
         showToastMessage("Postal code must be a positive number", ToastTypes.ERROR);
+        showToastMessage("Postal code must be a positive number", ToastTypes.ERROR); 
         return;
       }
     }
