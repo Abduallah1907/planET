@@ -43,7 +43,7 @@ const AddDeliveryAddress: React.FC = () => {
     if (name === "postalCode") {
       // Allow only positive numbers (including empty or zero values for flexibility)
       if (!/^\d*$/.test(value)) {
-        showToastMessage("Postal code must be a positive number", ToastTypes.ERROR); // Show error message
+        showToastMessage("Postal code must be a positive number", ToastTypes.ERROR); 
         return;
       }
     }
