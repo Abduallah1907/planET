@@ -25,13 +25,30 @@
   font-weight: 500 !important;
 }
 
-
 .custom-status-badge {
   font-size: 1rem !important;
   font-weight: 500 !important;
   font-family: Poppins !important;
   padding: 0.5rem 1rem;
   color: rgba(0, 0, 0, 0.5);
+}
+
+.dropdown-card-btn{
+  position: absolute;
+  top: 0.5rem;
+  right: 0;
+}
+
+.wishlist-card-btn {
+  position: absolute;
+  right: 1.25rem;
+  top: 180px; /* Adjust this value based on the height of your image and spacing */
+}
+
+.wishlist-card-btn .btn, .dropdown-card-btn .btn:active {
+  background-color: var(--main-color) !important;
+  color: white !important;
+  border: none !important;
 }
 
 .airline-logo {

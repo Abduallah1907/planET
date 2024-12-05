@@ -3,7 +3,6 @@ import "../CreateAdmin/CreateAdmin.css";
 import AdminFormGroup from "../../components/FormGroup/FormGroup";
 import { Container, Button, Form, Modal } from "react-bootstrap"; // Import Modal
 import { TouristService } from "../../services/TouristService";
-import { useParams } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
 
 interface FormData {
@@ -19,10 +18,11 @@ const ComplaintForm: React.FC = () => {
     problem: "",
     date: "",
   });
+  
+  const [showModal, setShowModal] = useState(false); // State to manage modal visibility
+
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -36,65 +36,75 @@ const ComplaintForm: React.FC = () => {
       date: formData.date,
     };
     await TouristService.fileComplaint(tourist._id, data);
+    setShowModal(false); // Close the modal after submission
   };
 
   return (
-    <div className="profile-form-container">
-      <div className="text-left mb-4">
-        <h2 className="my-profile-heading">Complaint Form</h2>
-      </div>
+    <>
+      {/* Button to open the modal */}
+      <Button variant="primary" onClick={() => setShowModal(true)}>
+        File Complaint
+      </Button>
 
-      <Container>
-        <Form onSubmit={handleSubmit}>
-          <AdminFormGroup
-            label="Title"
-            type="text"
-            placeholder="Enter title"
-            id="title"
-            name="title"
-            disabled={false}
-            required={true}
-            value={formData.title}
-            onChange={handleChange}
-          />
+      {/* Modal for filing a complaint */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Complaint Form</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Container>
+            <Form onSubmit={handleSubmit}>
+              <AdminFormGroup
+                label="Title"
+                type="text"
+                placeholder="Enter title"
+                id="title"
+                name="title"
+                disabled={false}
+                required={true}
+                value={formData.title}
+                onChange={handleChange}
+              />
 
-          <AdminFormGroup
-            label="Problem"
-            type="textarea"
-            placeholder="Describe your problem in detail"
-            id="problem"
-            name="problem"
-            disabled={false}
-            required={true}
-            value={formData.problem}
-            onChange={handleChange}
-          />
+              <AdminFormGroup
+                label="Problem"
+                type="textarea"
+                placeholder="Describe your problem in detail"
+                id="problem"
+                name="problem"
+                disabled={false}
+                required={true}
+                value={formData.problem}
+                onChange={handleChange}
+              />
 
-          <AdminFormGroup
-            label="Date of problem"
-            type="date"
-            placeholder="Select the date the problem occurred"
-            id="date"
-            name="date"
-            disabled={false}
-            required={true}
-            value={formData.date}
-            onChange={handleChange}
-          />
+              <AdminFormGroup
+                label="Date of problem"
+                type="date"
+                placeholder="Select the date the problem occurred"
+                id="date"
+                name="date"
+                disabled={false}
+                required={true}
+                value={formData.date}
+                onChange={handleChange}
+              />
 
-          <div className="form-actions mt-3">
-            <Button
-              type="submit"
-              className="button"
-              variant="main-inverse"
-              style={{ backgroundColor: "#d76f30", borderColor: "#d76f30" }}
-            >
-              Submit
-            </Button>
-          </div>
-        </Form>
-      </Container>
-    </div>
+              <div className="form-actions mt-3">
+                <Button
+                  type="submit"
+                  className="button"
+                  variant="main-inverse"
+                  style={{ backgroundColor: "#d76f30", borderColor: "#d76f30" }}
+                >
+                  Submit
+                </Button>
+              </div>
+            </Form>
+          </Container>
+        </Modal.Body>
+      </Modal>
+    </>
   );
 };
 

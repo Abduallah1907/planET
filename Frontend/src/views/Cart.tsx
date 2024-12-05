@@ -1,10 +1,10 @@
-import React, { useState , useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { Row, Col, Card, Button } from "react-bootstrap";
 import CartCard from "../components/Cards/CartCard";
 import { useAppSelector } from "../store/hooks";
 import { useNavigate } from "react-router-dom";
-import showToastMessage from "@/utils/showToastMessage";
 import { useAppContext } from "../AppContext";
+import { TouristService } from "../services/TouristService";
 
 interface Product {
   id: string;
@@ -34,31 +34,40 @@ const CartPage: React.FC = () => {
     { code: "SAVE10", discountType: "flat", discountValue: 10 },
     { code: "SAVE20", discountType: "percentage", discountValue: 20 },
   ];
-  
 
-  const handleApplyPromoCode = () => {
-    const promo = promoCodes.find((p) => p.code === promoCode);
-  
-    if (promo) {
-      let discountedSubtotal = cart.total;
-  
-      if (promo.discountType === "flat") {
-        discountedSubtotal -= promo.discountValue;
-      } else if (promo.discountType === "percentage") {
-        discountedSubtotal -= (cart.total * promo.discountValue) / 100;
+
+  const handleApplyPromoCode = async () => {
+    try {
+      let promo = await TouristService.isValidPromoCode(promoCode);
+
+      if (promo.status == 200 && promo.data.valid) {
+        promo = promo.data;
+        promo = {
+          ...promo,
+          discountType: "percentage",
+        }
+        let discountedSubtotal = cart.total;
+
+        if (promo.discountType === "flat") {
+          discountedSubtotal -= promo.discountValue;
+        } else if (promo.discountType === "percentage") {
+          discountedSubtotal -= (cart.total * promo.discount_percent) / 100;
+        }
+
+        discountedSubtotal = Math.max(0, discountedSubtotal); // Prevent negative subtotal
+
+        setNewSubtotal(discountedSubtotal);
+        setIsPromoApplied(true);
+        setPromoError("");
+      } else {
+        setPromoError("Invalid or Expired Promo Code");
+        setIsPromoApplied(false);
       }
-  
-      discountedSubtotal = Math.max(0, discountedSubtotal); // Prevent negative subtotal
-  
-      setNewSubtotal(discountedSubtotal);
-      setIsPromoApplied(true);
-      setPromoError("");
-    } else {
-      setPromoError("Invalid or Expired Promo Code");
-      setIsPromoApplied(false);
+    } catch (error) {
+      console.error("Error applying promo code:", error);
     }
   };
-  
+
 
 
   const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
@@ -67,7 +76,7 @@ const CartPage: React.FC = () => {
     const subtotal = isPromoApplied ? newSubtotal : cart.total;
     return getConvertedCurrencyWithSymbol(subtotal, baseCurrency, currency);
   }, [isPromoApplied, newSubtotal, cart.total, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
-  
+
 
 
   return (
@@ -123,18 +132,18 @@ const CartPage: React.FC = () => {
               </Row>
               <h5 className="mt-4">Subtotal</h5>
               {isPromoApplied ? (
-              <div>
-              <h4 style={{ textDecoration: "line-through", color: "gray" }}>
-              {getConvertedCurrencyWithSymbol(cart.total, baseCurrency, currency)}
-              </h4>
-              <h4 style={{ color: "green" }}>
-              {getConvertedCurrencyWithSymbol(newSubtotal, baseCurrency, currency)}
-              </h4>
-              </div>
+                <div>
+                  <h4 style={{ textDecoration: "line-through", color: "gray" }}>
+                    {getConvertedCurrencyWithSymbol(cart.total, baseCurrency, currency)}
+                  </h4>
+                  <h4 style={{ color: "green" }}>
+                    {getConvertedCurrencyWithSymbol(newSubtotal, baseCurrency, currency)}
+                  </h4>
+                </div>
               ) : (
-              <h4>
-              {getConvertedCurrencyWithSymbol(cart.total, baseCurrency, currency)}
-              </h4>
+                <h4>
+                  {getConvertedCurrencyWithSymbol(cart.total, baseCurrency, currency)}
+                </h4>
               )}
               <Button variant="main-inverse" className="w-100 mb-4" onClick={() => navigate("/ChooseDeliveryAddress")}>Confirm Order </Button>
             </Card.Body>

@@ -105,7 +105,7 @@ export class Utils {
                 label: "My Itineraries",
               },
               { path: "/TourGuidesTable", label: "View My Tour Guides" },
-              { path: "/RecentOrders", label: "Recent Orders" },
+              { path: "/Orders/Past", label: "Orders" },
               { path: "/BookmarkEvents", label: "View Bookmark Events" },
               { path: "/DeliveryAddress", label: "Add Delivery Address" },
             ])
@@ -126,6 +126,7 @@ export class Utils {
             setNavItems([
               { path: "/AddActivity", label: "Create Activity" },
               { path: "/MyActivities", label: "My Activites" },
+              { path: "/Adv_Sales", label: "Sales Report" },
             ])
           );
           break;
@@ -135,6 +136,7 @@ export class Utils {
               { path: "/SellerDashboard", label: "Dashboard" },
               { path: "/AddNewProduct", label: "Add New Product" },
               { path: "/MyProducts", label: "My Products" },
+              { path: "/S_Sales", label: "Sales Report" },
             ])
           );
           break;

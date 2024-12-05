@@ -1,0 +1,38 @@
+/* Navigation Container */
+.custom-tabs {
+    display: flex;
+    background-color: #ffe0b3; /* Light orange background */
+    border-radius: 25px; /* Rounded edges */
+    padding: 5px; /* Minimal padding */
+    width: fit-content; /* Fit the size of the content (tabs) */
+    margin-left: 5; /* Align to the left */
+    margin-top: 10px; /* Add slight spacing from the top */
+    height: fit-content; /* Set the height of the navigation */
+}
+
+/* Individual Tab Links */
+.custom-tabs .tab-link {
+    flex: none; /* Prevent tabs from stretching */
+    text-align: center;
+    padding: 10px 20px; /* Adjust padding for better spacing */
+    border-radius: 20px; /* Rounded edges for individual tabs */
+    text-decoration: none;
+    font-weight: 500;
+    color: #5a5a5a; /* Neutral color for inactive tabs */
+    background-color: transparent;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover Effect for Tabs */
+.custom-tabs .tab-link:hover {
+    background-color: #b9dbbc; /* Slightly darker green for hover effect */
+    color: #000; /* Black text on hover */
+}
+
+/* Active Tab */
+.custom-tabs .tab-link.active {
+    background-color: #fff; /* White background for the active tab */
+    color: #000; /* Black text for the active tab */
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for active tab */
+}

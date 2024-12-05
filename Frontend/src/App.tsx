@@ -68,7 +68,7 @@ import BookingItinerary from "./views/BookingPages/BookingItinerary";
 import MyBookings from "./views/MyActivityBookings";
 import MyItineraryBookings from "./views/MyItineraryBookings";
 import TourGuidesTable from "./views/Tables/TourGuidesTable";
-import RecentOrders from "./views/RecentOrders";
+import PastOrders from "./views/PastOrders";
 import ProductPayemnt from "./views/BookingPages/ProductPayemnt";
 import FlightBooking from "./views/BookingPages/FlightBooking";
 import { APIProvider } from "@vis.gl/react-google-maps";
@@ -76,10 +76,15 @@ import ToastComponent from "./components/ToastComponent";
 import { useToastDispatcher } from "./utils/useToastDispatcher";
 import HotelsPage from "./views/ViewingPages/Hotels";
 import TG_Sales from "./components/Revenue/TG_Sales";
+import Adv_Sales from "./components/Revenue/Adv_Sales";
+import S_Sales from "./components/Revenue/S_Sales";
 import BookmarkEvents from "./views/ViewingPages/BookmarkEvents";
 import AddDeliveryAddress from "./views/CreatePages/AddDeliveryAddress";
 import ChooseDeliveryAddress from "./views/ViewingPages/ChooseDeliveryAddress";
 import PromoCode from "./views/PromoCode";
+import ActiveOrders from "./views/ActiveOrders";
+import Orders from "./views/ViewingPages/Orders";
+import Wishlist from "./views/Wishlist";
 
 const App: React.FC = () => {
   useToastDispatcher();
@@ -197,6 +202,8 @@ const App: React.FC = () => {
           <Route path="/MyProducts" element={<MyProducts />} />
           <Route path="/Sales" element={<Sales />} />
           <Route path="/TG_Sales" element={<TG_Sales />} />
+          <Route path="/Adv_Sales" element={<Adv_Sales />} />
+          <Route path="/S_Sales" element={<S_Sales />} />
 
           <Route path="/JoinUs" element={<StakeholderReg />} />
 
@@ -215,12 +222,17 @@ const App: React.FC = () => {
           <Route path="/Complaints" element={<AllComplaints />} />
           <Route path="/MyComplaints" element={<MyComplaints />} />
           <Route path="/Cart" element={<Cart />} />
+          <Route path="/wishlist" element={<Wishlist />} />
           <Route
             path="/ChooseDeliveryAddress"
             element={<ChooseDeliveryAddress />}
           />
+          <Route path="/Orders" element={<Orders />}>
+            <Route path="Past" element={<PastOrders />} />
+            <Route path="Active" element={<ActiveOrders />} />
+          </Route>
+
           <Route path="/ProductPayment" element={<ProductPayemnt />} />
-          <Route path="/RecentOrders" element={<RecentOrders />} />
           <Route path="/BookmarkEvents" element={<BookmarkEvents />} />
           <Route path="/DeliveryAddress" element={<AddDeliveryAddress />} />
         </Routes>

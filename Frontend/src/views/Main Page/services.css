@@ -1,6 +1,7 @@
 .ser-container .card {
   background-color: transparent;
   border: none;
+  height: 90%;
 }
 
 .ser-container .card .card-body {

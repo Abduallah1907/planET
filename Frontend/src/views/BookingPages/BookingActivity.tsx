@@ -13,6 +13,7 @@ import "./bookingPage.css";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { TouristService } from "../../services/TouristService";
 import { setWalletBalance as setWalletBalanceAction } from "../../store/userSlice";
+import { useAppContext } from "../../AppContext";
 
 interface BookingPageProps {
   email: string;
@@ -21,7 +22,7 @@ interface BookingPageProps {
 const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
   const { id } = useParams<{ id: string }>();
   const [activityData, setActivityData] = useState<IActivity | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<string>("wallet");
+  const [paymentMethod, setPaymentMethod] = useState<string>("Wallet");
   const [cardType, setCardType] = useState<string | null>(null);
   const Tourist = useAppSelector((state) => state.user);
 
@@ -45,16 +46,50 @@ const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
   const [isPromoApplied, setIsPromoApplied] = useState(false);
   const [oldSubtotal, setOldSubtotal] = useState(walletBalance);
   const [newSubtotal, setNewSubtotal] = useState(walletBalance);
+  const [discountPercent, setDiscountPercent] = useState<number>(0);
+  const [discountValue, setDiscountValue] = useState<number>(0);
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
+
+  const convertedPrice = (price: number) =>
+    getConvertedCurrencyWithSymbol(price, baseCurrency, currency);
+
   const [promoError, setPromoError] = useState("");
 
-  const handleApplyPromoCode = () => {
-    if (promoCode === "SAVE10") {
-      setNewSubtotal(oldSubtotal - 10); // Example: $10 discount
-      setIsPromoApplied(true);
-      setPromoError(""); // Clear error if the promo code is valid
-    } else {
-      setPromoError("Invalid or Expired Promo Code");
-      setIsPromoApplied(false);
+  const handleApplyPromoCode = async () => {
+    try {
+      let promo = await TouristService.isValidPromoCode(promoCode);
+
+      if (promo.status === 200 && promo.data.valid && activityData?.price !== undefined) {
+        let promoData = promo.data;
+        promoData = {
+          ...promoData,
+          discountType: "percentage",
+        }
+
+        let discountedSubtotal = activityData.price;
+
+        if (promoData.discountType === "flat") {
+          discountedSubtotal -= promoData.discountValue;
+          setDiscountPercent((promoData.discountValue / activityData.price) * 100);
+          setDiscountValue(promoData.discountValue);
+        } else if (promoData.discountType === "percentage") {
+          const discount = (activityData.price * promoData.discount_percent) / 100;
+          discountedSubtotal -= discount;
+          setDiscountPercent(promoData.discount_percent);
+          setDiscountValue(discount);
+        }
+
+        discountedSubtotal = Math.max(0, discountedSubtotal); // Prevent negative subtotal
+
+        setNewSubtotal(discountedSubtotal);
+        setIsPromoApplied(true);
+        setPromoError("");
+      } else {
+        setPromoError("Invalid or Expired Promo Code");
+        setIsPromoApplied(false);
+      }
+    } catch (error) {
+      console.error("Error applying promo code:", error);
     }
   };
 
@@ -133,10 +168,10 @@ const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
   const dispatch = useAppDispatch();
 
   const handleConfirmPayment = async () => {
-    if (paymentMethod === "wallet") {
+    if (paymentMethod === "Wallet") {
       try {
         if (id) {
-          await TouristService.bookActivity(email, id);
+          await TouristService.bookActivity(email, id,paymentMethod);
         }
         const newBalance =
           walletBalance -
@@ -161,30 +196,43 @@ const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
                   <Card.Title className="text-center">
                     {activityData.name}
                   </Card.Title>
-                  <Card.Text>Price: ${activityData.price}</Card.Text>
+                  <Card.Text>
+                    <strong>Original Price:</strong> {activityData?.price? convertedPrice(activityData.price) : "N/A"}
+                  </Card.Text>
+                  {isPromoApplied && (
+                    <>
+                      <Card.Text className="text-success">
+                        <strong>Discount Applied:</strong> {discountPercent.toFixed(2)}% ({convertedPrice(discountValue)})
+                      </Card.Text>
+                      <Card.Text>
+                        <strong>Discounted Price:</strong> {convertedPrice(newSubtotal)}
+                      </Card.Text>
+                    </>
+                  )}
+
                   <Row>
-                <Col md={8}>
-                  <input
-                    type="text"
-                    className="form-control my-3 border"
-                    placeholder="Enter Promo Code"
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
-                    aria-label="Promo Code Input"
-                  />
-                  {promoError && <small className="text-danger">{promoError}</small>}
-                </Col>
-                <Col md={4}>
-                  <Button
-                    variant="main"
-                    className="w-75 my-3 border-warning-subtle"
-                    onClick={handleApplyPromoCode}
-                    aria-label="Apply Promo Code"
-                  >
-                    Apply
-                  </Button>
-                </Col>
-              </Row>
+                    <Col md={8}>
+                      <input
+                        type="text"
+                        className="form-control my-3 border"
+                        placeholder="Enter Promo Code"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value)}
+                        aria-label="Promo Code Input"
+                      />
+                      {promoError && <small className="text-danger">{promoError}</small>}
+                    </Col>
+                    <Col md={4}>
+                      <Button
+                        variant="main"
+                        className="w-75 my-3 border-warning-subtle"
+                        onClick={handleApplyPromoCode}
+                        aria-label="Apply Promo Code"
+                      >
+                        Apply
+                      </Button>
+                    </Col>
+                  </Row>
                 </Card.Body>
               </Card>
               <h3 className="text-center mb-4">Choose Payment Method</h3>
@@ -193,13 +241,13 @@ const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
                   type="radio"
                   label={
                     <span>
-                      <FaWallet className="me-2" /> Wallet (Balance: $
-                      {walletBalance})
+                      <FaWallet className="me-2" /> Wallet (Balance: 
+                      {convertedPrice(walletBalance)})
                     </span>
                   }
                   name="paymentMethod"
-                  value="wallet"
-                  checked={paymentMethod === "wallet"}
+                  value="Wallet"
+                  checked={paymentMethod === "Wallet"}
                   onChange={handlePaymentMethodChange}
                   className="mb-3"
                 />
@@ -211,12 +259,12 @@ const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
                     </span>
                   }
                   name="paymentMethod"
-                  value="bankCard"
-                  checked={paymentMethod === "bankCard"}
+                  value="CreditCard"
+                  checked={paymentMethod === "CreditCard"}
                   onChange={handlePaymentMethodChange}
                   className="mb-3"
                 />
-                {paymentMethod === "bankCard" && (
+                {paymentMethod === "CreditCard" && (
                   <div className="bank-card-details">
                     <Form.Group className="mb-3">
                       <Form.Label>Card Number</Form.Label>

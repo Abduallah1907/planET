@@ -1,0 +1,125 @@
+.activity-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    border: 2px solid #e0a16e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    background-color: #ffffff;
+  }
+  
+  .activity-details {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .image-placeholder {
+    width: 250px;
+    height: 250px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    position: relative;
+  }
+  
+  .details {
+    flex: 1;
+    margin-left: 20px;
+  }
+  
+  .details h2 {
+    font-family: 'Volkhov', serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .details p {
+    color: #6c757d;
+    font-size: 1rem;
+  }
+  
+  .details .category {
+    color: #007bff;
+  }
+  
+  .details .price {
+    font-size: 1.25rem;
+    color: #e0a16e;
+  }
+  
+  .details .rating-stars {
+    display: flex;
+    align-items: center;
+  }
+  
+  .details .review-badge {
+    font-size: 1rem;
+    background-color: #e0a16e;
+    color: white;
+    padding: 0.5rem;
+  }
+  
+  .reserve-button {
+    background-color: var(--main-color);
+    color: white;
+    border: none;
+    padding: 10px 40px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+  }
+  
+  .reserve-button:hover {
+    background-color: var(--secondary-color);
+    color: var(--main-color);
+    border: 2px solid var(--main-color);
+  }
+  
+  .share-button {
+    background-color: var(--main-color);
+    color: white;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-left: 10px;
+  }
+  
+  .share-button:hover {
+    background-color: var(--secondary-color);
+    color: var(--main-color);
+    border: 2px solid var(--main-color);
+  }
+  
+  .table .activity-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-bottom: 1px solid #e0a16e;
+  }
+  
+  .table .activity-row:last-child {
+    border-bottom: none;
+  }
+  
+  .activity-tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .activity-tag {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+  }
+  

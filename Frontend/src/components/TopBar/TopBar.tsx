@@ -1,5 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Navbar, Button, Dropdown, Container, Nav, Row, Col, OverlayTrigger, Tooltip, Modal, Stack, Form } from "react-bootstrap";
+import {
+  Navbar,
+  Button,
+  Dropdown,
+  Container,
+  Nav,
+  Row,
+  Col,
+  OverlayTrigger,
+  Tooltip,
+  Modal,
+  Stack,
+  Form,
+} from "react-bootstrap";
 import "./topbar.css";
 import Logo from "../../assets/LogoNoBackground.svg";
 import LogoGif from "../../assets/LogoNoBackground.gif";
@@ -11,15 +24,15 @@ import DeutschFlag from "../../assets/Deutsch.webp";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "../../AppContext";
 import { MdHelpOutline } from "react-icons/md";
-import { FaBars, FaShoppingCart } from "react-icons/fa";
+import { FaBars, FaShoppingCart, FaRegHeart } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { toggleSidebar } from "../../store/sidebarSlice";
 import Avatar from "../Avatar/Avatar";
 import { SlBadge } from "react-icons/sl";
-import currencyConverter from '../../utils/currencyConverterSingelton';
-import Currencies from '../../utils/currencies.json';
+import currencyConverter from "../../utils/currencyConverterSingelton";
+import Currencies from "../../utils/currencies.json";
 import { IoCheckmarkOutline } from "react-icons/io5";
-
+import Notifications from "../Notifications";
 
 interface Currency {
   name: string;
@@ -41,7 +54,6 @@ interface CurrencyMap {
 }
 
 const TopBar: React.FC = () => {
-
   const navigate = useNavigate();
   const { currentFlag, setCurrentFlag, currency, setCurrency } =
     useAppContext();
@@ -112,25 +124,28 @@ const TopBar: React.FC = () => {
     return chunks;
   };
 
-  const [filteredCurrencies, setFilteredCurrencies] = useState<[string, string][]>(currencies);
+  const [filteredCurrencies, setFilteredCurrencies] =
+    useState<[string, string][]>(currencies);
   useEffect(() => {
     setFilteredCurrencies(
-      currencies.filter(([currencyCode, currencyName]) =>
-        currencyName.toLowerCase().includes(currencySearch.toLowerCase()) || currencyCode.toLowerCase().includes(currencySearch.toLowerCase())
+      currencies.filter(
+        ([currencyCode, currencyName]) =>
+          currencyName.toLowerCase().includes(currencySearch.toLowerCase()) ||
+          currencyCode.toLowerCase().includes(currencySearch.toLowerCase())
       )
     );
   }, [currencySearch]);
   const currencyChunks = chunkArray(filteredCurrencies, 4);
 
-  const sidebarState = useAppSelector((state) => state.sidebar.isActive)
+  const sidebarState = useAppSelector((state) => state.sidebar.isActive);
   const dispatch = useAppDispatch();
   const User = useAppSelector((state) => state.user);
-  const IsLoggedIn = User.isLoggedIn // Assuming you have an auth slice in your Redux store
+  const IsLoggedIn = User.isLoggedIn; // Assuming you have an auth slice in your Redux store
 
   function getBadgeColor(badge: any): string | string {
     switch (badge) {
       case "1":
-        return 'badge-bronze';
+        return "badge-bronze";
       case "2":
         return "badge-silver";
       case "3":
@@ -154,11 +169,14 @@ const TopBar: React.FC = () => {
   return (
     <Navbar expand="lg" className="top-bar" variant="dark">
       <Container fluid>
-        {sidebarState ?
-          <div className="sidebar-toggle-icon" onClick={() => dispatch(toggleSidebar())}>
+        {sidebarState ? (
+          <div
+            className="sidebar-toggle-icon"
+            onClick={() => dispatch(toggleSidebar())}
+          >
             <FaBars size={24} color="white" />
-          </div> : null
-        }
+          </div>
+        ) : null}
         <Navbar.Brand onClick={() => navigate("/")} className="brand-container">
           {gifEnded ? (
             <img
@@ -288,37 +306,67 @@ const TopBar: React.FC = () => {
                     <FaShoppingCart />
                   </Button>
                 )}
+                {User.role === "TOURIST" && (
+                  <Button
+                    variant=""
+                    onClick={() => navigate("/wishlist")}
+                    className="btn-help btn-margin me-3"
+                  >
+                    <FaRegHeart />
+                  </Button>
+                )}
+                {User.role === "TOURIST" ||
+                User.role === "ADVERTISER" ||
+                User.role === "TOUR_GUIDE" ||
+                User.role === "ADMIN" ||
+                User.role === "SELLER" ? (
+                  <Col>
+                    <Notifications />
+                  </Col>
+                ) : null}
+
                 <Row>
                   <Col className="pe-0 d-flex flex-column justify-content-center">
                     <Avatar />
                   </Col>
                   <Col>
-
                     <Row>
                       <h5 className="text-white m-0">{User.username}</h5>
                     </Row>
 
                     {User.role === "TOURIST" ? (
                       <Row>
-                        <OverlayTrigger placement="top" overlay={<Tooltip>{getBadgeText(User.stakeholder_id.badge)}</Tooltip>}>
+                        <OverlayTrigger
+                          placement="top"
+                          overlay={
+                            <Tooltip>
+                              {getBadgeText(User.stakeholder_id.badge)}
+                            </Tooltip>
+                          }
+                        >
                           <span>
-                            <SlBadge className={getBadgeColor(User.stakeholder_id.badge)} />
+                            <SlBadge
+                              className={getBadgeColor(
+                                User.stakeholder_id.badge
+                              )}
+                            />
                           </span>
                         </OverlayTrigger>
                       </Row>
-
-                    ) : (null)}
+                    ) : null}
                   </Col>
-
-
-
-                </Row></>
+                </Row>
+              </>
             ) : (
               <>
                 <Button variant="" className="btn-text" onClick={handleJoinUs}>
                   {t("join_us")}
                 </Button>
-                <Button variant="" onClick={handleRegister} className="btn-main">
+                <Button
+                  variant=""
+                  onClick={handleRegister}
+                  className="btn-main"
+                >
                   {t("register")}
                 </Button>
                 <Button
@@ -330,25 +378,30 @@ const TopBar: React.FC = () => {
                 </Button>
               </>
             )}
-
           </Nav>
         </Navbar.Collapse>
       </Container>
-      <Modal className="currency-modal" show={show} onHide={handleClose} centered>
+      <Modal
+        className="currency-modal"
+        show={show}
+        onHide={handleClose}
+        centered
+      >
         <Modal.Header closeButton>
           <Modal.Title>Select your currency</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Stack gap={3}>
             <Row>
-              <Col sm={12} md={{span: "4", offset: "4"}}>
+              <Col sm={12} md={{ span: "4", offset: "4" }}>
                 <Form.Group className="mb-3 form-group">
                   <Form.Control
                     type="text"
                     className="custom-form-control"
                     placeholder="Search for a currency"
                     value={currencySearch}
-                    onChange={(e) => setCurrencySearch(e.target.value)} />
+                    onChange={(e) => setCurrencySearch(e.target.value)}
+                  />
                 </Form.Group>
               </Col>
             </Row>
@@ -362,14 +415,17 @@ const TopBar: React.FC = () => {
                       handleClose();
                     }}
                     key={currencyObject[1]}
-                    className={`currency-button text-start ${currency === currencyObject[0] ? "active" : ""}`}
+                    className={`currency-button text-start ${
+                      currency === currencyObject[0] ? "active" : ""
+                    }`}
                   >
                     <Row>
                       <Col>
                         <span className="currency-name">
                           {currencyObject[1]}
                           <div className="currency-symbol">
-                            {typedCurrencies[currencyObject[0]]?.symbol ?? currencyObject[0]}
+                            {typedCurrencies[currencyObject[0]]?.symbol ??
+                              currencyObject[0]}
                           </div>
                         </span>
                       </Col>
@@ -385,8 +441,8 @@ const TopBar: React.FC = () => {
             ))}
           </Stack>
         </Modal.Body>
-      </Modal >
-    </Navbar >
+      </Modal>
+    </Navbar>
   );
 };
 

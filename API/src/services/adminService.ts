@@ -25,7 +25,6 @@ import { dir, time } from "console";
 import { ITourist } from "@/interfaces/ITourist";
 import { ISalesReport, ISalesReportTotal } from "@/interfaces/IReport";
 import TicketType from "@/types/enums/ticketType";
-import { last } from "pdf-lib";
 
 // User related services (delete, view, and create users)
 

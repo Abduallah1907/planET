@@ -15,7 +15,7 @@ import CustomFormGroup from "../FormGroup/FormGroup";
 import { useAppSelector } from "../../store/hooks";
 import { Utils } from "../../utils/utils";
 
-interface TG_Sales {
+interface Adv_Sales {
   _id: string;
   type: string;
   name: string;
@@ -40,9 +40,9 @@ const formatDate = (date: string) => {
   return Utils.formatDateDay(new Date(date));
 };
 
-const TG_Sales: React.FC = () => {
-  const TG = useAppSelector((state) => state.user);
-  const [sales, setSales] = useState<TG_Sales[]>([]);
+const Adv_Sales: React.FC = () => {
+  const Adv = useAppSelector((state) => state.user);
+  const [sales, setSales] = useState<Adv_Sales[]>([]);
   const [filters, setFilters] = useState({
     typeFilter: "",
     nameFilter: "",
@@ -61,12 +61,12 @@ const TG_Sales: React.FC = () => {
 
     try {
       // Check if TG.email is available
-      if (!TG.email) {
+      if (!Adv.email) {
         throw new Error("No email found. Please make sure you're logged in.");
       }
 
-      const response = await SalesService.getSalesTG(
-        TG.email,
+      const response = await SalesService.getSalesAdv(
+        Adv.email,
         startDate,
         endDate
       );
@@ -92,6 +92,7 @@ const TG_Sales: React.FC = () => {
           first_buy: formatDate(sale.first_buy),
           last_buy: formatDate(sale.last_buy),
         }));
+
         setSales(formattedData);
       } else {
         throw new Error(
@@ -337,4 +338,4 @@ const TG_Sales: React.FC = () => {
   );
 };
 
-export default TG_Sales;
+export default Adv_Sales;

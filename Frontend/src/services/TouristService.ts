@@ -1,7 +1,5 @@
 import axiosInstance from "../utils/axiosInstance";
-import axios from "axios";
 import showToast from "../../src/utils/showToast";
-import ActivitiesPage from "@/views/ViewingPages/Activities";
 
 class TouristService {
   public static getTouristByemail = async (email: string) => {
@@ -157,11 +155,16 @@ class TouristService {
     }
   };
 
-  public static bookActivity = async (email: string, activity_id: string) => {
+  public static bookActivity = async (
+    email: string,
+    activity_id: string,
+    payment_type: string
+  ) => {
     try {
       const response = await axiosInstance.post(`/tourist/bookActivity`, {
         email,
         activity_id,
+        payment_type,
       });
       if (response.status === 201) {
         showToast(response.data);
@@ -175,13 +178,15 @@ class TouristService {
   public static bookItinerary = async (
     email: string,
     itinerary_id: string,
-    time_to_attend: string
+    time_to_attend: string,
+    payment_type: string
   ) => {
     try {
       const response = await axiosInstance.post(`/tourist/bookItinerary`, {
         email,
         itinerary_id,
         time_to_attend,
+        payment_type,
       });
       if (response.status === 201) {
         showToast(response.data);
@@ -205,8 +210,8 @@ class TouristService {
 
       return response.data;
     } catch (error) {
-        // Rethrow the error to let the calling code handle it with the toast
-        throw error;
+      // Rethrow the error to let the calling code handle it with the toast
+      throw error;
     }
   };
   public static getUpcomingActivityBookings = async (email: string) => {
@@ -310,6 +315,33 @@ class TouristService {
       throw error;
     }
   };
+
+  public static getActiveOrders = async (email: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/tourist/getCurrentOrders/${email}`
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static cancelOrder = async (order_id: string) => {
+    try {
+      const response = await axiosInstance.put(
+        `/tourist/cancelOrder/${order_id}`
+      );
+      if (response.status === 200) {
+        showToast(response.data);
+      }
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
   public static rateAndCommentProduct = async (
     tourist_id: string,
     product_id: string,
@@ -331,7 +363,10 @@ class TouristService {
     }
   };
 
-  public static bookmarkActivity= async (email: string, activity_id: string) => {
+  public static bookmarkActivity = async (
+    email: string,
+    activity_id: string
+  ) => {
     try {
       const response = await axiosInstance.post("/tourist/bookmarkActivity/", {
         email,
@@ -344,11 +379,17 @@ class TouristService {
     }
   };
 
-  public static unbookmarkActivity = async (email: string, activity_id: string) => {
+  public static unbookmarkActivity = async (
+    email: string,
+    activity_id: string
+  ) => {
     try {
-      const response = await axiosInstance.delete("/tourist/unbookmarkActivity/", {
-        data: { email, activity_id }, // Use data to include the request body
-      });
+      const response = await axiosInstance.delete(
+        "/tourist/unbookmarkActivity/",
+        {
+          data: { email, activity_id }, // Use data to include the request body
+        }
+      );
       return response.data;
     } catch (error) {
       console.error("Error unbookmarking activity:", error);
@@ -356,9 +397,6 @@ class TouristService {
     }
   };
 
-  
-
-  
   public static getBookmarkedActivities = async (email: string) => {
     try {
       const response = await axiosInstance.get(
@@ -370,11 +408,12 @@ class TouristService {
       throw error;
     }
   };
-  
-  public static addAddress = async (email: string, data:any) => {
+
+  public static addAddress = async (email: string, data: any) => {
     try {
       const response = await axiosInstance.put(
-        `/tourist/addAddress/${email}`, data
+        `/tourist/addAddress/${email}`,
+        data
       );
       if (response.status === 200) {
         showToast(response.data);
@@ -385,7 +424,7 @@ class TouristService {
       throw error;
     }
   };
-  
+
   public static removeAddress = async (email: string) => {
     try {
       const response = await axiosInstance.delete(
@@ -397,19 +436,66 @@ class TouristService {
 
       return response.data;
     } catch (error) {
-        throw error;
+      throw error;
     }
   };
-  
+
   public static getAddresses = async (email: string) => {
     try {
       const response = await axiosInstance.get(
         `/tourist/getAddresses/${email}`
       );
-    
-
 
       return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static isValidPromoCode = async (promoCode: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/tourist/isValidPromo/${promoCode}`
+      );
+      if (response.status === 200) {
+        showToast(response.data);
+      }
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static addProductToWishlist = async (email: string,data: any) => {
+    try {
+      const response = await axiosInstance.put(
+        `/tourist/addProductToWishlist/${email}`,
+        data
+      );
+      return response.data; // Return only the product id in object format
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static removeProductFromWishlist = async (email: string, data: any) => {
+    try {
+      const response = await axiosInstance.delete(
+        `/tourist/removeProductFromWishlist/${email}`,
+        { data: { product_id: data.product_id } }
+      );
+      return response; // Return only the product id in object format
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static viewWishlist = async (email: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/tourist/viewWishlist/${email}`
+      );
+      return response.data; // interface of IProduct
     } catch (error) {
       throw error;
     }

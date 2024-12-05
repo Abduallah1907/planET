@@ -338,8 +338,6 @@ export default class UserService {
     user.first_time_login = false;
     await user.save();
     //The fuction of upcoming events
-    this.SendNotificationAndEmailforUpcomingEvents();
-    this.SendNotificationAndEmailforBirthday();
     return new response(true, userOutput, "Logged in successfully", 200);
   }
 
