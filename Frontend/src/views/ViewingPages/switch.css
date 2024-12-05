@@ -21,11 +21,12 @@
     color: #5a5a5a; /* Neutral color for inactive tabs */
     background-color: transparent;
     transition: all 0.3s ease-in-out;
+    margin-right: 7px; /* Add space between the tab links */
 }
 
 /* Hover Effect for Tabs */
 .custom-tabs .tab-link:hover {
-    background-color: #b9dbbc; /* Slightly darker green for hover effect */
+    background-color: #ffffff7d; /* Slightly lighter white for hover effect */
     color: #000; /* Black text on hover */
 }
 

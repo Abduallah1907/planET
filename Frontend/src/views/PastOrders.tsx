@@ -14,6 +14,7 @@ import Comment from "../components/Comment"; // Assume you have a Comment compon
 import { TouristService } from "../services/TouristService";
 import { useAppSelector } from "../store/hooks";
 import "./mybookings.css";
+import { useAppContext } from "../AppContext";
 
 interface Product {
   _id: string;
@@ -57,6 +58,7 @@ const RecentOrders: React.FC = () => {
     const orders = await TouristService.getPastOrders(email);
     return orders;
   };
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
 
   const handleOpenOrder = (order: Order) => {
     setSelectedOrder(order);
@@ -93,30 +95,60 @@ const RecentOrders: React.FC = () => {
 
   return (
     <>
-      <Row className="justify-content-center">
-        <Col xs={12} md={8} lg={6} style={{ maxWidth: "800px" }}>
-          <ListGroup
-            className="order-list"
-            style={{ width: "100%", margin: "0 auto" }}
-          >
+      <Row className="justify-content-center mt-3">
+        <Col>
+          <Row>
             {orders.map((order) => (
+              <Col xs={12} md={4} key={order._id} className="mb-4">
               <ListGroup.Item
-                key={order._id}
-                action
-                onClick={() => handleOpenOrder(order)}
-                className="mb-2"
+                className="p-3 order-card d-flex flex-column"
+                style={{
+                  border: "1px solid #ddd",
+                  borderRadius: "8px",
+                  backgroundColor: "#f9f9f9",
+                }}
               >
-                <div className="d-flex justify-content-between align-items-center">
+                <div className="d-flex justify-content-between align-items-center mb-2">
                   <div>
-                    <strong>Order #{order._id}</strong>
-                    <p>Date: {order.date}</p>
-                    <p>Items: {order.products.items.length}</p>
-                    <p>Total: ${order.cost.toFixed(2)}</p>
+                    <p className="mb-1 text-muted">
+                      <small>Order Placed</small>
+                    </p>
+                    <p className="mb-0 fw-bold">{order.date.split('T')[0]} {order.date.split('T')[1].split('.')[0]}</p>
+                  </div>
+                  <p className="mb-0 fw-bold">{getConvertedCurrencyWithSymbol(order.cost, baseCurrency, currency)}</p>
+                </div>
+                <div className="d-flex align-items-center mb-3">
+                  <Image
+                    src={order.products.items[0]?.product_id.image || "path/to/placeholder.jpg"}
+                    alt={order.products.items[0]?.product_id.name}
+                    rounded
+                    style={{
+                      width: "60px",
+                      height: "60px",
+                      objectFit: "cover",
+                      marginRight: "15px",
+                    }}
+                  />
+                  <div>
+                    <p className="mb-0 fw-bold">Order ID: {order._id}</p>
+                    <p className="mb-0 text-muted">
+                      {order.products.items.length} item(s) total
+                    </p>
                   </div>
                 </div>
+                <div className="d-flex justify-content-between">
+                  <Button
+                    variant="main-inverse"
+                    size="sm"
+                    onClick={() => handleOpenOrder(order)}
+                  >
+                    View Details
+                  </Button>
+                </div>
               </ListGroup.Item>
+            </Col>
             ))}
-          </ListGroup>
+          </Row>
         </Col>
       </Row>
 
