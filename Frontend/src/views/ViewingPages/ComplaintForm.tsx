@@ -11,15 +11,18 @@ interface FormData {
   date: string;
 }
 
-const ComplaintForm: React.FC = () => {
+interface ComplaintFormProps {
+  show: boolean;
+  onHide: () => void;
+}
+
+const ComplaintForm: React.FC<ComplaintFormProps> = ({ show, onHide }) => {
   const tourist = useAppSelector((state) => state.user.stakeholder_id);
   const [formData, setFormData] = useState<FormData>({
     title: "",
     problem: "",
     date: "",
   });
-  
-  const [showModal, setShowModal] = useState(false); // State to manage modal visibility
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -36,18 +39,13 @@ const ComplaintForm: React.FC = () => {
       date: formData.date,
     };
     await TouristService.fileComplaint(tourist._id, data);
-    setShowModal(false); // Close the modal after submission
+    onHide(); // Close the modal after submission
   };
 
   return (
     <>
-      {/* Button to open the modal */}
-      <Button variant="primary" onClick={() => setShowModal(true)}>
-        File Complaint
-      </Button>
-
       {/* Modal for filing a complaint */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
+      <Modal show={show} onHide={onHide} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>Complaint Form</Modal.Title>
         </Modal.Header>

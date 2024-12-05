@@ -57,7 +57,6 @@ import CheckOTP from "./views/auth/CheckOTP";
 import ChangePasswordG from "./views/auth/ChangePasswordG";
 import { Utils } from "./utils/utils";
 import FlightsPage from "./views/ViewingPages/Flights";
-import ComplaintForm from "./views/ViewingPages/ComplaintForm";
 import AllComplaints from "./components/Complaints/AllComplaints";
 import MyComplaints from "./components/TouristComplaints/MyComplaints";
 import Cart from "./views/Cart";
@@ -79,7 +78,6 @@ import TG_Sales from "./components/Revenue/TG_Sales";
 import Adv_Sales from "./components/Revenue/Adv_Sales";
 import S_Sales from "./components/Revenue/S_Sales";
 import BookmarkEvents from "./views/ViewingPages/BookmarkEvents";
-import AddDeliveryAddress from "./views/CreatePages/AddDeliveryAddress";
 import ChooseDeliveryAddress from "./views/ViewingPages/ChooseDeliveryAddress";
 import PromoCode from "./views/PromoCode";
 import ActiveOrders from "./views/ActiveOrders";
@@ -138,21 +136,12 @@ const App: React.FC = () => {
           <Route path="/governer" element={<CreateGoverner />} />
           <Route path="/test" element={<BookingLayout />} />
 
-          <Route
-            path="/bookActivity/:id"
-            element={<BookingActivity email={email} />}
-          />
+          <Route path="/bookActivity/:id" element={<BookingActivity email={email} />} />
           <Route path="/bookItinerary/:id" element={<BookingItinerary />} />
           <Route path="/MyBookings/upcoming" element={<MyBookings />} />
           <Route path="/MyBookings/past" element={<MyBookings />} />
-          <Route
-            path="/MyItineraryBookings/upcoming"
-            element={<MyItineraryBookings />}
-          />
-          <Route
-            path="/MyItineraryBookings/past"
-            element={<MyItineraryBookings />}
-          />
+          <Route path="/MyItineraryBookings/upcoming"  element={<MyItineraryBookings />} />
+          <Route path="/MyItineraryBookings/past" element={<MyItineraryBookings />} />
 
           <Route path="/Activity" element={<Activities />} />
           <Route path="/Itinerary" element={<Itinerary />} />
@@ -172,10 +161,7 @@ const App: React.FC = () => {
 
           <Route path="/AddNewProduct" element={<AddNewProduct />} />
           <Route path="/AddActivity" element={<AdvertiserCreate />} />
-          <Route
-            path="/AddHistoricalLocation"
-            element={<AddHistoricalLocation />}
-          />
+          <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
           <Route path="/AddItinerary" element={<AddItinerary />} />
 
           <Route path="/Activity/:id" element={<ActivityDetails />} />
@@ -183,21 +169,12 @@ const App: React.FC = () => {
           <Route path="/Historical/:id" element={<HistoricalDetails />} />
 
           <Route path="/EditActivity/:activity_id" element={<EditActivity />} />
-          <Route
-            path="/EditHistoricalLocation/:historical_location_id"
-            element={<EditHistoricalLocation />}
-          />
-          <Route
-            path="/EditItinerary/:itinerary_id"
-            element={<EditItinerary />}
-          />
+          <Route path="/EditHistoricalLocation/:historical_location_id"  element={<EditHistoricalLocation />} />
+          <Route path="/EditItinerary/:itinerary_id" element={<EditItinerary />} />
           <Route path="/EditProduct/:product_id" element={<EditProduct />} />
 
           <Route path="/MyActivities" element={<MyActivities />} />
-          <Route
-            path="/MyHistoricalLocations"
-            element={<MyHistoricalPlaces />}
-          />
+          <Route path="/MyHistoricalLocations" element={<MyHistoricalPlaces />} />
           <Route path="/MyItineraries" element={<MyItinerary />} />
           <Route path="/MyProducts" element={<MyProducts />} />
           <Route path="/Sales" element={<Sales />} />
@@ -213,7 +190,6 @@ const App: React.FC = () => {
           <Route path="/UsersTable" element={<UsersTable />} />
           <Route path="/TourGuidesTable" element={<TourGuidesTable />} />
 
-          <Route path="/Complaint" element={<ComplaintForm />} />
           <Route path="/PromoCode" element={<PromoCode />} />
 
           <Route path="/ChangePasswordForm" element={<ChangePasswordForm />} />
@@ -223,10 +199,8 @@ const App: React.FC = () => {
           <Route path="/MyComplaints" element={<MyComplaints />} />
           <Route path="/Cart" element={<Cart />} />
           <Route path="/wishlist" element={<Wishlist />} />
-          <Route
-            path="/ChooseDeliveryAddress"
-            element={<ChooseDeliveryAddress />}
-          />
+          <Route path="/ChooseDeliveryAddress" element={<ChooseDeliveryAddress />} />
+
           <Route path="/Orders" element={<Orders />}>
             <Route path="Past" element={<PastOrders />} />
             <Route path="Active" element={<ActiveOrders />} />
@@ -234,7 +208,6 @@ const App: React.FC = () => {
 
           <Route path="/ProductPayment" element={<ProductPayemnt />} />
           <Route path="/BookmarkEvents" element={<BookmarkEvents />} />
-          <Route path="/DeliveryAddress" element={<AddDeliveryAddress />} />
         </Routes>
         <ToastComponent />
       </APIProvider>

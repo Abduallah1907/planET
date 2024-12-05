@@ -68,7 +68,7 @@ const MyItineraryBookings: React.FC = () => {
   }
 
   return (
-    <div className="ms-3">
+    <Container className="mt-4">
       <Nav
         className="custom-tabs"
         defaultActiveKey="/MyItineraryBookings/upcoming"
@@ -140,7 +140,7 @@ const MyItineraryBookings: React.FC = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </Container>
   );
 };
 

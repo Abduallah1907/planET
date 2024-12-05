@@ -20,9 +20,14 @@ interface FormData {
   };
 }
 
-const AddDeliveryAddress: React.FC = () => {
+interface AddDeliveryAddressProps {
+  show: boolean;
+  onHide: () => void;
+}
+
+
+const AddDeliveryAddress: React.FC<AddDeliveryAddressProps> = ({ show, onHide }) => {
   const tourist = useAppSelector((state) => state.user);
-  const [showModal, setShowModal] = useState(false); // Manage modal visibility
   const [showMapModal, setShowMapModal] = useState(false); // State to manage map modal visibility
   const [formData, setFormData] = useState<FormData>({
     street_name: "",
@@ -69,7 +74,7 @@ const AddDeliveryAddress: React.FC = () => {
     };
 
     await TouristService.addAddress(tourist.email, data);
-    setShowModal(false); // Close the modal after submission
+    onHide(); // Close the modal after submission
   };
 
   const handleCloseMapModal = () => {
@@ -78,11 +83,7 @@ const AddDeliveryAddress: React.FC = () => {
 
   return (
     <>
-      <Button variant="primary" onClick={() => setShowModal(true)}>
-        Add Delivery
-      </Button>
-
-      <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
+      <Modal show={show} onHide={onHide} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>Add Delivery Address</Modal.Title>
         </Modal.Header>

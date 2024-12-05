@@ -2,13 +2,13 @@ import BookingCard from "../components/Cards/BookingCard";
 import { useAppSelector } from "../store/hooks";
 import { TouristService } from "../services/TouristService";
 import { useEffect, useState } from "react";
-import { Button, Col, Modal, Nav, Row } from "react-bootstrap";
+import { Button, Col, Container, Modal, Nav, Row } from "react-bootstrap";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import "./ViewingPages/switch.css";
 
 const MyBookings: React.FC = () => {
   const Tourist = useAppSelector((state) => state.user);
-  const [bookings, setBookings] = useState<null | any[]>(null); 
+  const [bookings, setBookings] = useState<null | any[]>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedBooking, setSelectedBooking] = useState<number | null>(null);
@@ -21,7 +21,7 @@ const MyBookings: React.FC = () => {
   const fetchBookings = async (type: "upcoming" | "past") => {
     setLoading(true);
     setError("");
-    setBookings(null); 
+    setBookings(null);
     try {
       const response =
         type === "upcoming"
@@ -75,22 +75,22 @@ const MyBookings: React.FC = () => {
   }
 
   return (
-    <div className="ms-3">
-    <Nav
-      className="custom-tabs"
-      defaultActiveKey="/MyBookings/upcoming"
-    >
-      <Nav.Item>
-        <Nav.Link as={NavLink} to="/MyBookings/upcoming" className="tab-link">
-          Upcoming Bookings
-        </Nav.Link>
-      </Nav.Item>
-      <Nav.Item>
-        <Nav.Link as={NavLink} to="/MyBookings/past" className="tab-link">
-          Past Bookings
-        </Nav.Link>
-      </Nav.Item>
-    </Nav>
+    <Container className="mt-4">
+      <Nav
+        className="custom-tabs"
+        defaultActiveKey="/MyBookings/upcoming"
+      >
+        <Nav.Item>
+          <Nav.Link as={NavLink} to="/MyBookings/upcoming" className="tab-link">
+            Upcoming Bookings
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link as={NavLink} to="/MyBookings/past" className="tab-link">
+            Past Bookings
+          </Nav.Link>
+        </Nav.Item>
+      </Nav>
       {Array.isArray(bookings) && bookings.length === 0 && !loading && (
         <p>No bookings found</p>
       )}
@@ -128,7 +128,7 @@ const MyBookings: React.FC = () => {
           <p>Are you sure you want to cancel this activity?</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="main" className="border-warning-subtle"  onClick={() => setShowModal(false)}>
+          <Button variant="main" className="border-warning-subtle" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
           <Button
@@ -144,7 +144,7 @@ const MyBookings: React.FC = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </Container>
   );
 };
 
