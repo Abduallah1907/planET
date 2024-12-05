@@ -360,6 +360,7 @@ export default class ItineraryService {
         average_rating: itinerary.average_rating,
         locations: itinerary.locations,
         tags: itinerary.tags,
+        image: itinerary.image,
         reviews_count: itinerary.comments.length,
       })
     );
