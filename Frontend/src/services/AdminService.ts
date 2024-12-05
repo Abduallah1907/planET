@@ -121,7 +121,6 @@ class AdminService {
       const response = await axiosInstance.get(
         `/admin/getUserNumbers/`
       );
-      if (response.status === 200) showToast(response.data);
 
       return response.data;
     } catch (error) {
@@ -134,7 +133,6 @@ class AdminService {
       const response = await axiosInstance.get(
         `/admin/getUserNumbersForYear/${year}`
       );
-      if (response.status === 200) showToast(response.data);
 
       return response.data;
     } catch (error) {

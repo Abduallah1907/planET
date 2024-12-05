@@ -7,6 +7,7 @@ import {
   Form,
   Alert,
   Toast,
+  Card,
 } from "react-bootstrap";
 import CustomFormGroup from "../../../components/FormGroup/FormGroup";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -79,34 +80,13 @@ export default function Login() {
         case "APPROVED":
       }
 
+      Utils.setSidebarRoutes(user.role, dispatch, navigate);
+
       switch (user.role) {
         case "TOURIST":
-          dispatch(
-            setNavItems([
-              { path: "/Complaint", label: "File Complaint" },
-              { path: "/MyComplaints", label: "My Complaints" },
-              { path: "/MyBookings/upcoming", label: "My Activities" },
-              {
-                path: "/MyItineraryBookings/upcoming",
-                label: "My Itineraries",
-              },
-              { path: "/TourGuidesTable", label: "View Tour Guides" },
-              { path: "/Orders/Past", label: "Orders" },
-              { path: "/BookmarkEvents", label: "View Bookmark Events" },
-              { path: "/DeliveryAddress", label: "Add Delivery Address" },
-            ])
-          );
           navigate("/tourist/Profile");
           break;
         case "TOUR_GUIDE":
-          dispatch(
-            setNavItems([
-              { path: "/TourGuideDashboard", label: "Dashboard" },
-              { path: "/AddItinerary", label: "Add Itinerary" },
-              { path: "/MyItineraries", label: "My Itineraries" },
-              { path: "/TG_Sales", label: "Sales Report" },
-            ])
-          );
           if (user.first_time_login) {
             navigate("/TourGuideFirst");
           } else {
@@ -114,13 +94,6 @@ export default function Login() {
           }
           break;
         case "ADVERTISER":
-          dispatch(
-            setNavItems([
-              { path: "/AddActivity", label: "Create Activity" },
-              { path: "/MyActivities", label: "My Activites" },
-              { path: "/Adv_Sales", label: "Sales Report" },
-            ])
-          );
           if (user.first_time_login) {
             navigate("/AdvertiserFirst");
           } else {
@@ -128,14 +101,6 @@ export default function Login() {
           }
           break;
         case "SELLER":
-          dispatch(
-            setNavItems([
-              { path: "/SellerDashboard", label: "Dashboard" },
-              { path: "/AddNewProduct", label: "Add New Product" },
-              { path: "/MyProducts", label: "My Products" },
-              { path: "/S_Sales", label: "Sales Report" },
-            ])
-          );
           if (user.first_time_login) {
             navigate("/SellerFirstProfile");
           } else {
@@ -143,48 +108,9 @@ export default function Login() {
           }
           break;
         case "GOVERNOR":
-          dispatch(
-            setNavItems([
-              {
-                path: "/AddHistoricalLocation",
-                label: "Add Historical Location",
-              },
-              {
-                path: "/MyHistoricalLocations",
-                label: "My Historical Locations",
-              },
-              {
-                path: "/HistoricalTags",
-                label: "Historical Tags",
-              },
-              {
-                path: "/ChangePasswordG",
-                label: "Change Password",
-              },
-            ])
-          );
-
           navigate("/MyHistoricalLocations");
-
           break;
         case "ADMIN":
-          dispatch(
-            setNavItems([
-              { path: "/AdminDashboard", label: "Dashboard" },
-              { path: "/AddNewProduct", label: "Add Product" },
-              { path: "/MyProducts", label: " My Products" },
-              { path: "/admin", label: "Create Admin" },
-              { path: "/governer", label: "Create Governer" },
-              { path: "/Categories", label: "Categories" },
-              { path: "/Tags", label: "Tags" },
-              { path: "/HistoricalTags", label: "Historical Tags" },
-              { path: "/UsersTable", label: "User Managment" },
-              { path: "/ChangePasswordForm", label: "Change Password" },
-              { path: "/Complaints", label: "Complaints" },
-              { path: "/sales", label: "Sales report" },
-              { path: "/PromoCode", label: "Create Promo Code" },
-            ])
-          );
           navigate("/AdminDashboard");
           break;
         default:
@@ -204,60 +130,62 @@ export default function Login() {
     <>
       <Container>
         <Row className="justify-content-center mt-5">
-          <Col sm={12} md={6} lg={4}>
-            <h1 className="text-center" style={{ fontWeight: "bold" }}>
-              {t("login_title")}
-            </h1>
-            <h2 className="LOGIN">
-              {t("new_to_planet")}
+          <Col sm={12} md={6} lg={5}>
+            <Card className="shadow-sm p-5">
+              <h1 className="text-center" style={{ fontWeight: "bold" }}>
+                {t("login_title")}
+              </h1>
+              <h2 className="LOGIN">
+                {t("new_to_planet")}
 
-              <NavLink
-                className="orange-text signup-text"
-                to={"/Registeration"}
-              >
-                {" "}
-                {t("signup")}
-              </NavLink>
-            </h2>
-            {showAlert ? (
-              <Alert variant="danger" className="text-center">
-                <p style={{ margin: 0 }}>{error}</p>
-              </Alert>
-            ) : null}
-            <Form className="mt-3">
-              <CustomFormGroup
-                label={t("username_or_email")}
-                type="text"
-                placeholder={t("enter_username_or_email")}
-                id={"usernameOrEmail"}
-                name={"usernameOrEmail"}
-                disabled={false}
-                required={true}
-                value={userData.usernameOrEmail}
-                onChange={handleChange}
-              />
-              <CustomFormGroup
-                label={t("password")}
-                type="password"
-                placeholder={t("enter_password")}
-                id={"password"}
-                name={"password"}
-                disabled={false}
-                required={true}
-                value={userData.password}
-                onChange={handleChange}
-              />
-              <a
-                className="mb-2 orange-text text-decoration-none"
-                style={{ fontWeight: "bold", cursor: "pointer" }}
-                onClick={() => navigate("/forgetPassword")}
-              >
-                {t("forgot_password")}
-              </a>
-              <Button onClick={handleLogin} className="login-btn w-100 mt-1">
-                {t("login")}
-              </Button>
-            </Form>
+                <NavLink
+                  className="orange-text signup-text"
+                  to={"/Registeration"}
+                >
+                  {" "}
+                  {t("signup")}
+                </NavLink>
+              </h2>
+              {showAlert ? (
+                <Alert variant="danger" className="text-center">
+                  <p style={{ margin: 0 }}>{error}</p>
+                </Alert>
+              ) : null}
+              <Form className="mt-3">
+                <CustomFormGroup
+                  label={t("username_or_email")}
+                  type="text"
+                  placeholder={t("enter_username_or_email")}
+                  id={"usernameOrEmail"}
+                  name={"usernameOrEmail"}
+                  disabled={false}
+                  required={true}
+                  value={userData.usernameOrEmail}
+                  onChange={handleChange}
+                />
+                <CustomFormGroup
+                  label={t("password")}
+                  type="password"
+                  placeholder={t("enter_password")}
+                  id={"password"}
+                  name={"password"}
+                  disabled={false}
+                  required={true}
+                  value={userData.password}
+                  onChange={handleChange}
+                />
+                <a
+                  className="mb-2 orange-text text-decoration-none"
+                  style={{ fontWeight: "bold", cursor: "pointer" }}
+                  onClick={() => navigate("/forgetPassword")}
+                >
+                  {t("forgot_password")}
+                </a>
+                <Button onClick={handleLogin} className="login-btn w-100 mt-1">
+                  {t("login")}
+                </Button>
+              </Form>
+            </Card>
           </Col>
         </Row>
       </Container>

@@ -1,10 +1,11 @@
 import { activateSidebar, setNavItems } from "../store/sidebarSlice";
+import AddDeliveryAddress from "../views/CreatePages/AddDeliveryAddress";
+import ComplaintForm from "../views/ViewingPages/ComplaintForm";
 import AuthService from "../services/authService";
 import { login, setUser } from "../store/userSlice";
 import CryptoJS from "crypto-js";
 import showToastMessage from "./showToastMessage";
 import { ToastTypes } from "./toastTypes";
-
 export class Utils {
   private static secretKey = "your_secret_key";
 
@@ -93,103 +94,93 @@ export class Utils {
         case "APPROVED":
       }
 
-      switch (user.role) {
-        case "TOURIST":
-          dispatch(
-            setNavItems([
-              { path: "/Complaint", label: "File Complaint" },
-              { path: "/MyComplaints", label: "My Complaints" },
-              { path: "/MyBookings/upcoming", label: "My Activities" },
-              {
-                path: "/MyItineraryBookings/upcoming",
-                label: "My Itineraries",
-              },
-              { path: "/TourGuidesTable", label: "View My Tour Guides" },
-              { path: "/Orders/Past", label: "Orders" },
-              { path: "/BookmarkEvents", label: "View Bookmark Events" },
-              { path: "/DeliveryAddress", label: "Add Delivery Address" },
-            ])
-          );
-          break;
-        case "TOUR_GUIDE":
-          dispatch(
-            setNavItems([
-              { path: "/TourGuideDashboard", label: "Dashboard" },
-              { path: "/AddItinerary", label: "Add Itinerary" },
-              { path: "/MyItineraries", label: "My Itineraries" },
-              { path: "/TG_Sales", label: "Sales Report" },
-            ])
-          );
-          break;
-        case "ADVERTISER":
-          dispatch(
-            setNavItems([
-              { path: "/AddActivity", label: "Create Activity" },
-              { path: "/MyActivities", label: "My Activites" },
-              { path: "/Adv_Sales", label: "Sales Report" },
-            ])
-          );
-          break;
-        case "SELLER":
-          dispatch(
-            setNavItems([
-              { path: "/SellerDashboard", label: "Dashboard" },
-              { path: "/AddNewProduct", label: "Add New Product" },
-              { path: "/MyProducts", label: "My Products" },
-              { path: "/S_Sales", label: "Sales Report" },
-            ])
-          );
-          break;
-        case "GOVERNOR":
-          dispatch(
-            setNavItems([
-              {
-                path: "/AddHistoricalLocation",
-                label: "Add Historical Location",
-              },
-              {
-                path: "/MyHistoricalLocations",
-                label: "My Historical Locations",
-              },
-              {
-                path: "/HistoricalTags",
-                label: "Historical Tags",
-              },
-              {
-                path: "/ChangePasswordG",
-                label: "Change Password",
-              },
-            ])
-          );
-          break;
-        case "ADMIN":
-          dispatch(
-            setNavItems([
-              { path: "/AdminDashboard", label: "Dashboard" },
-              { path: "/AddNewProduct", label: "Add Product" },
-              { path: "/MyProducts", label: " My Products" },
-              { path: "/admin", label: "Create Admin" },
-              { path: "/governer", label: "Create Governer" },
-              { path: "/Categories", label: "Categories" },
-              { path: "/Tags", label: "Tags" },
-              { path: "/HistoricalTags", label: "Historical Tags" },
-              { path: "/UsersTable", label: "User Managment" },
-              { path: "/ChangePasswordForm", label: "Change Password" },
-              { path: "/Complaints", label: "Complaints" },
-              { path: "/sales", label: "Sales report" },
-              { path: "/PromoCode", label: "Create Promo Code"}
-            ])
-          );
-          break;
-        default:
-          navigate("/");
-          break;
-      }
+      this.setSidebarRoutes(user.role, dispatch, navigate);
+
       dispatch(activateSidebar());
       dispatch(login());
     } catch (err: any) {
       // setError(err.message);
       // setShowAlert(true);
+    }
+  }
+
+  static setSidebarRoutes(role: string, dispatch: any, navigate: any): void {
+    switch (role) {
+      case "TOURIST":
+        dispatch(
+          setNavItems([
+            { label: "File Complaint", isModal: true, modalComponent: ComplaintForm },
+            { path: "/MyComplaints", label: "My Complaints" },
+            { path: "/MyBookings/upcoming", label: "My Activities" },
+            { path: "/MyItineraryBookings/upcoming", label: "My Itineraries"},
+            { path: "/TourGuidesTable", label: "View My Tour Guides" },
+            { path: "/Orders/Past", label: "Orders" },
+            { path: "/BookmarkEvents", label: "View Bookmark Events" },
+            { label: "Add Delivery Address", isModal: true, modalComponent: AddDeliveryAddress },
+          ])
+        );
+        break;
+      case "TOUR_GUIDE":
+        dispatch(
+          setNavItems([
+            { path: "/TourGuideDashboard", label: "Dashboard" },
+            { path: "/AddItinerary", label: "Add Itinerary" },
+            { path: "/MyItineraries", label: "My Itineraries" },
+            { path: "/TG_Sales", label: "Sales Report" },
+          ])
+        );
+        break;
+      case "ADVERTISER":
+        dispatch(
+          setNavItems([
+            { path: "/AddActivity", label: "Create Activity" },
+            { path: "/MyActivities", label: "My Activites" },
+            { path: "/Adv_Sales", label: "Sales Report" },
+          ])
+        );
+        break;
+      case "SELLER":
+        dispatch(
+          setNavItems([
+            { path: "/SellerDashboard", label: "Dashboard" },
+            { path: "/AddNewProduct", label: "Add New Product" },
+            { path: "/MyProducts", label: "My Products" },
+            { path: "/S_Sales", label: "Sales Report" },
+          ])
+        );
+        break;
+      case "GOVERNOR":
+        dispatch(
+          setNavItems([
+            { path: "/AddHistoricalLocation", label: "Add Historical Location" },
+            { path: "/MyHistoricalLocations", label: "My Historical Locations" },
+            { path: "/HistoricalTags", label: "Historical Tags" },
+            { path: "/ChangePasswordG", label: "Change Password" },
+          ])
+        );
+        break;
+      case "ADMIN":
+        dispatch(
+          setNavItems([
+            { path: "/AdminDashboard", label: "Dashboard" },
+            { path: "/AddNewProduct", label: "Add Product" },
+            { path: "/MyProducts", label: " My Products" },
+            { path: "/admin", label: "Create Admin" },
+            { path: "/governer", label: "Create Governer" },
+            { path: "/Categories", label: "Categories" },
+            { path: "/Tags", label: "Tags" },
+            { path: "/HistoricalTags", label: "Historical Tags" },
+            { path: "/UsersTable", label: "User Managment" },
+            { path: "/ChangePasswordForm", label: "Change Password" },
+            { path: "/Complaints", label: "Complaints" },
+            { path: "/sales", label: "Sales report" },
+            { path: "/PromoCode", label: "Create Promo Code" }
+          ])
+        );
+        break;
+      default:
+        navigate("/");
+        break;
     }
   }
 }
