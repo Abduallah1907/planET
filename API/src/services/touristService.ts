@@ -664,7 +664,9 @@ export default class TouristService {
       throw new BadRequestError("Itinerary is inappropriate");
     const timeToAttendDate = new Date(time_to_attend);
     if (timeToAttendDate < new Date()) {
-      throw new BadRequestError("Itinerary date you choose has passed, cannot book");
+      throw new BadRequestError(
+        "Itinerary date you choose has passed, cannot book"
+      );
     }
 
     const findPreviousTicket = await this.ticketModel.findOne({
@@ -1828,31 +1830,43 @@ export default class TouristService {
 
   public async getTicketsInTheNext24hours() {
     const now = new Date();
-    const next24Hours = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
-    const activityTickets = await this.ticketModel.find({
-      time_to_attend: { $gte: now, $lte: next24Hours },
-      cancelled: false,
-      type: TicketType.Activity,
-    }).populate('booking_id');
-    
-    const itineraryTickets = await this.ticketModel.find({
-      time_to_attend: { $gte: now, $lte: next24Hours },
-      cancelled: false,
-      type: TicketType.Itinerary,
-    }).populate('booking_id');
-    
-    const historicalTickets = await this.ticketModel.find({
-      time_to_attend: { $gte: now, $lte: next24Hours },
-      cancelled: false,
-      type: TicketType.Historical_Location,
-    }).populate('booking_id');
-    
-    const tickets = [...activityTickets, ...itineraryTickets, ...historicalTickets];
-    
+    const next24Hours = new Date(
+      now.getTime() - now.getTimezoneOffset() * 60000
+    );
+    const activityTickets = await this.ticketModel
+      .find({
+        time_to_attend: { $gte: now, $lte: next24Hours },
+        cancelled: false,
+        type: TicketType.Activity,
+      })
+      .populate("booking_id");
+
+    const itineraryTickets = await this.ticketModel
+      .find({
+        time_to_attend: { $gte: now, $lte: next24Hours },
+        cancelled: false,
+        type: TicketType.Itinerary,
+      })
+      .populate("booking_id");
+
+    const historicalTickets = await this.ticketModel
+      .find({
+        time_to_attend: { $gte: now, $lte: next24Hours },
+        cancelled: false,
+        type: TicketType.Historical_Location,
+      })
+      .populate("booking_id");
+
+    const tickets = [
+      ...activityTickets,
+      ...itineraryTickets,
+      ...historicalTickets,
+    ];
+
     if (tickets instanceof Error) {
       throw new InternalServerError("Internal server error");
     }
-    
+
     return tickets;
   }
 
@@ -1938,7 +1952,8 @@ export default class TouristService {
         },
         { new: true }
       );
-      if (updatedProduct instanceof Error) throw new InternalServerError("Internal server error");
+      if (updatedProduct instanceof Error)
+        throw new InternalServerError("Internal server error");
       if (updatedProduct == null) throw new NotFoundError("Product not found");
       //check if product is out of stock
       if (updatedProduct.quantity == 0 && product.seller_id) {
@@ -1947,10 +1962,12 @@ export default class TouristService {
         let title = "Product out of stock";
         //get the seller to see if he is Admin or Seller and bl mara get email
         const seller = await this.sellerModel.findById(product.seller_id);
-        if (seller instanceof Error) throw new InternalServerError("Internal server error");
+        if (seller instanceof Error)
+          throw new InternalServerError("Internal server error");
         if (seller == null) throw new NotFoundError("Seller not found");
         const user = await this.userModel.findById(seller.user_id);
-        if (user instanceof Error) throw new InternalServerError("Internal server error");
+        if (user instanceof Error)
+          throw new InternalServerError("Internal server error");
         if (user == null) throw new NotFoundError("User not found");
         //create notification for seller
         const notificationService = Container.get(NotificationService);
@@ -1962,7 +1979,8 @@ export default class TouristService {
               message,
               UserRoles.Seller
             );
-            if (newnotification instanceof Error) throw new InternalServerError("Internal server error");
+            if (newnotification instanceof Error)
+              throw new InternalServerError("Internal server error");
             if (newnotification == null) {
               throw new BadRequestError("Notification not found");
             }
@@ -1973,7 +1991,8 @@ export default class TouristService {
               message,
               UserRoles.Admin
             );
-            if (newnotification instanceof Error) throw new InternalServerError("Internal server error");
+            if (newnotification instanceof Error)
+              throw new InternalServerError("Internal server error");
             if (newnotification == null) {
               throw new BadRequestError("Notification not found");
             }
@@ -1982,8 +2001,13 @@ export default class TouristService {
             throw new BadRequestError("Invalid role");
         }
         //send Email to the seller
-        const mail = notificationService.sendEmailNotificationService(title, user.email, message);
-        if (mail instanceof Error) throw new InternalServerError("Internal server error");
+        const mail = notificationService.sendEmailNotificationService(
+          title,
+          user.email,
+          message
+        );
+        if (mail instanceof Error)
+          throw new InternalServerError("Internal server error");
         if (mail == null) {
           throw new BadRequestError("Email not sent");
         }
@@ -2032,6 +2056,22 @@ export default class TouristService {
     return new response(true, order, "Order placed", 201);
   }
 
+  public async isValidCodeService(code: string): Promise<response> {
+    const promoCode = await this.promoCodeModel.findOne({ code });
+    if (!promoCode)
+      throw new NotFoundError("No such promocode was found with that code");
+    const today = new Date();
+    if (promoCode.expiry_date < today)
+      throw new BadRequestError("Promo code has expired");
+
+    return new response(
+      true,
+      { valid: true, discount_percent: promoCode.discount },
+      "Code is valid!",
+      200
+    );
+  }
+
   public async getPastOrdersService(email: string) {
     const user = await this.userModel.findOne({
       email: email,
@@ -2055,7 +2095,13 @@ export default class TouristService {
         tourist_id: tourist._id,
         status: { $in: [OrderStatus.Delivered, OrderStatus.Cancelled] },
       })
-      .populate("products.items.product_id");
+      .populate({
+        path: "products.items.product_id", // Populate product details
+        populate: {
+          path: "seller_id", // Populate seller details within product
+          select: "logo", // Fetch only the logo field of the seller
+        },
+      });
 
     if (orders instanceof Error) {
       throw new InternalServerError("Internal server error");
@@ -2068,21 +2114,6 @@ export default class TouristService {
     return new response(true, orders, "Past orders found", 200);
   }
 
-  public async isValidCodeService(code: string): Promise<response> {
-    const promoCode = await this.promoCodeModel.findOne({ code });
-    if (!promoCode)
-      throw new NotFoundError("No such promocode was found with that code");
-    const today = new Date();
-    if (promoCode.expiry_date < today)
-      throw new BadRequestError("Promo code has expired");
-
-    return new response(
-      true,
-      { valid: true, discount_percent: promoCode.discount },
-      "Code is valid!",
-      200
-    );
-  }
   public async getCurrentOrdersService(email: string) {
     const user = await this.userModel.findOne({
       email: email,
@@ -2096,7 +2127,8 @@ export default class TouristService {
 
     const tourist = await this.touristModel.findOne({ user_id: user._id });
 
-    if (tourist instanceof Error) throw new InternalServerError("Internal server error");
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
 
     if (tourist == null) throw new NotFoundError("Tourist not found");
 
@@ -2104,10 +2136,20 @@ export default class TouristService {
       .find({
         tourist_id: tourist._id,
         status: {
-          $in: [OrderStatus.Pending, OrderStatus.Processing, OrderStatus.Shipped],
+          $in: [
+            OrderStatus.Pending,
+            OrderStatus.Processing,
+            OrderStatus.Shipped,
+          ],
         },
       })
-      .populate("products.items.product_id");
+      .populate({
+        path: "products.items.product_id", // Populate product details
+        populate: {
+          path: "seller_id", // Populate seller details within product
+          select: "logo", // Fetch only the logo field of the seller
+        },
+      });
 
     if (orders instanceof Error) {
       throw new InternalServerError("Internal server error");
@@ -2128,22 +2170,29 @@ export default class TouristService {
       role: UserRoles.Tourist,
       status: UserStatus.APPROVED,
     });
-    if (user instanceof Error) throw new InternalServerError("Internal server error");
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
     if (user == null) throw new NotFoundError("User not found");
     const tourist = await this.touristModel.findOne({ user_id: user._id });
-    if (tourist instanceof Error) throw new InternalServerError("Internal server error");
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
 
     if (tourist == null) throw new NotFoundError("Tourist not found");
 
     const activity = await this.activityModel.findById(activity_id);
 
-    if (activity instanceof Error) throw new InternalServerError("Internal server error");
+    if (activity instanceof Error)
+      throw new InternalServerError("Internal server error");
 
     if (activity == null) throw new NotFoundError("Activity not found");
 
-    if (activity.active_flag == false) throw new BadRequestError("Activity is not active cannot be bookmarked");
+    if (activity.active_flag == false)
+      throw new BadRequestError("Activity is not active cannot be bookmarked");
 
-    if (activity.inappropriate_flag == true) throw new BadRequestError("Activity is inappropriate cannot be bookmarked");
+    if (activity.inappropriate_flag == true)
+      throw new BadRequestError(
+        "Activity is inappropriate cannot be bookmarked"
+      );
     const activitycheck = await this.bookmark_notifyModel.find({
       activity_id: activity_id,
       tourist_id: tourist._id,
@@ -2157,7 +2206,8 @@ export default class TouristService {
       tourist_id: tourist._id,
     });
     await bookmark.save();
-    if (bookmark instanceof Error) throw new InternalServerError("Internal server error");
+    if (bookmark instanceof Error)
+      throw new InternalServerError("Internal server error");
 
     return new response(true, bookmark, "Activity bookmarked", 201);
   }
@@ -2171,23 +2221,28 @@ export default class TouristService {
       role: UserRoles.Tourist,
       status: UserStatus.APPROVED,
     });
-    if (user instanceof Error) throw new InternalServerError("Internal server error");
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
     if (user == null) throw new NotFoundError("User not found");
 
     const tourist = await this.touristModel.findOne({ user_id: user._id });
-    if (tourist instanceof Error) throw new InternalServerError("Internal server error");
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
     if (tourist == null) throw new NotFoundError("Tourist not found");
 
     const activity = await this.activityModel.findById(activity_id);
-    if (activity instanceof Error) throw new InternalServerError("Internal server error");
+    if (activity instanceof Error)
+      throw new InternalServerError("Internal server error");
     if (activity == null) throw new NotFoundError("Activity is not available");
 
     const bookmark = await this.bookmark_notifyModel.findOneAndDelete({
       activity_id: activity_id,
       tourist_id: tourist._id,
     });
-    if (bookmark instanceof Error) throw new InternalServerError("Internal server error");
-    if (bookmark == null) throw new NotFoundError("Bookmark not found to be unbookmarked");
+    if (bookmark instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (bookmark == null)
+      throw new NotFoundError("Bookmark not found to be unbookmarked");
 
     return new response(true, bookmark, "Activity unbookmarked", 200);
   }
@@ -2198,24 +2253,30 @@ export default class TouristService {
       role: UserRoles.Tourist,
       status: UserStatus.APPROVED,
     });
-    if (user instanceof Error) throw new InternalServerError("Internal server error");
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
     if (user == null) throw new NotFoundError("User not found");
 
     const tourist = await this.touristModel.findOne({ user_id: user._id });
-    if (tourist instanceof Error) throw new InternalServerError("Internal server error");
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
     if (tourist == null) throw new NotFoundError("Tourist not found");
 
     const bookmarks = await this.bookmark_notifyModel.find({
       tourist_id: tourist._id,
     });
-    if (bookmarks instanceof Error) throw new InternalServerError("Internal server error");
+    if (bookmarks instanceof Error)
+      throw new InternalServerError("Internal server error");
     if (bookmarks == null) throw new NotFoundError("Bookmarks not found");
 
     const bookmarks_info = [];
 
     for (let i = 0; i < bookmarks.length; i++) {
-      const activity = await this.activityModel.findById(bookmarks[i].activity_id);
-      if (activity instanceof Error) throw new InternalServerError("Internal server error");
+      const activity = await this.activityModel.findById(
+        bookmarks[i].activity_id
+      );
+      if (activity instanceof Error)
+        throw new InternalServerError("Internal server error");
       if (activity == null) throw new NotFoundError("Activity not found");
 
       bookmarks_info.push({
@@ -2237,7 +2298,12 @@ export default class TouristService {
         tags: activity.tags,
       });
     }
-    return new response(true, bookmarks_info, "Bookmarked activities found", 200);
+    return new response(
+      true,
+      bookmarks_info,
+      "Bookmarked activities found",
+      200
+    );
   }
 
   public async addProductToWishlistService(
@@ -2309,7 +2375,10 @@ export default class TouristService {
     );
   }
 
-  public async addDeliveryAddressService(email: string, addressInfo: IAddress): Promise<response> {
+  public async addDeliveryAddressService(
+    email: string,
+    addressInfo: IAddress
+  ): Promise<response> {
     const userInfo = await this.userModel.findOne({ email });
     if (!userInfo) throw new NotFoundError("Tourist not found");
     const touristInfo = await this.touristModel.findOne({
@@ -2328,7 +2397,10 @@ export default class TouristService {
     return new response(true, {}, "Added address!", 200);
   }
 
-  public async removeDeliveryAddressService(email: string, address: ObjectId): Promise<response> {
+  public async removeDeliveryAddressService(
+    email: string,
+    address: ObjectId
+  ): Promise<response> {
     const userInfo = await this.userModel.findOne({ email });
     if (!userInfo) throw new NotFoundError("Tourist not found");
     const touristInfo = await this.touristModel.findOne({
@@ -2352,7 +2424,9 @@ export default class TouristService {
   public async viewDeliveryAddressesService(email: string): Promise<response> {
     const userInfo = await this.userModel.findOne({ email });
     if (!userInfo) throw new NotFoundError("Tourist not found");
-    const touristInfo = await this.touristModel.findOne({ user_id: userInfo._id }).populate("addresses");
+    const touristInfo = await this.touristModel
+      .findOne({ user_id: userInfo._id })
+      .populate("addresses");
     if (!touristInfo) throw new NotFoundError("Tourist not found");
 
     const addresses = touristInfo.addresses;
