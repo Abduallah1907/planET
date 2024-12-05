@@ -2214,11 +2214,12 @@ export default class TouristService {
     const bookmarks_info = [];
 
     for (let i = 0; i < bookmarks.length; i++) {
-      const activity = await this.activityModel.findById(bookmarks[i].activity_id);
+      const activity = await this.activityModel.findById(bookmarks[i].activity_id).populate("category");
       if (activity instanceof Error) throw new InternalServerError("Internal server error");
       if (activity == null) throw new NotFoundError("Activity not found");
 
       bookmarks_info.push({
+        id: activity._id,
         name: activity.name,
         image: activity.image,
         date: activity.date,
