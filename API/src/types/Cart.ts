@@ -1,6 +1,5 @@
-import { ObjectId, SchemaType } from "mongoose";
-import { Interface } from "readline";
-import { Schema, model, Document } from "mongoose";
+import { ObjectId } from "mongoose";
+import { Schema } from "mongoose";
 
 const Cart_ItemSchema = new Schema({
   product_id: { type: Schema.Types.ObjectId, ref: "Product", required: true },
