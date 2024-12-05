@@ -7,13 +7,10 @@ import {
 } from "@/types/Errors";
 import response from "@/types/responses/response";
 import Container, { Inject, Service } from "typedi";
-import mongoose, { Types } from "mongoose";
+import { Types } from "mongoose";
 import { IFilterComponents } from "@/interfaces/IFilterComponents";
 import { ObjectId } from "mongodb";
 import UserRoles from "@/types/enums/userRoles";
-import User from "@/models/user";
-import Notification from "@/models/Notification";
-import Bookmark_Notify from "@/models/Bookmark_notify";
 import NotificationService from "./notificationService";
 @Service()
 export default class ActivityService {
@@ -49,7 +46,7 @@ export default class ActivityService {
         model: "Advertiser",
         populate: {
           path: "user_id",
-          model: "User", // Ensure this matches the name of your user model
+          model: "User",
         },
       });
 
@@ -60,10 +57,14 @@ export default class ActivityService {
       throw new NotFoundError("No Activities Found");
     }
 
-    const activities = activitiesData.map((activity) => ({
-      ...activity.toObject(),
-      reviews_count: activity.comments ? activity.comments.length : 0,
-    }));
+    const activities = activitiesData.map((activity) => {
+      const activityObject = activity.toObject();
+
+      return {
+        ...activityObject,
+        reviews_count: activity.comments ? activity.comments.length : 0,
+      };
+    });
 
     return new response(true, activities, "All activities are fetched", 200);
   }
@@ -82,6 +83,7 @@ export default class ActivityService {
       booking_flag: activityDatainput.booking_flag,
       active_flag: activityDatainput.active_flag,
       advertiser_id: activityDatainput.advertiser_id,
+      image: activityDatainput.image,
     };
     if (
       activityData.price &&

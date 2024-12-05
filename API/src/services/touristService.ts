@@ -2096,10 +2096,10 @@ export default class TouristService {
         status: { $in: [OrderStatus.Delivered, OrderStatus.Cancelled] },
       })
       .populate({
-        path: "products.items.product_id", // Populate product details
+        path: "products.items.product_id",
         populate: {
-          path: "seller_id", // Populate seller details within product
-          select: "logo", // Fetch only the logo field of the seller
+          path: "seller_id",
+          select: "logo",
         },
       });
 
