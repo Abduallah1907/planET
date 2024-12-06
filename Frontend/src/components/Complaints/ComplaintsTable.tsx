@@ -43,6 +43,7 @@ const headCells: readonly HeadCell[] = [
   { id: "date", numeric: true, label: "Complaint's Date" },
   { id: "createdAt", numeric: true, label: "Filed At" },
   { id: "status", numeric: false, label: "Status" },
+  { id: "actions", numeric: false, label: "Actions" },
 ];
 
 function descendingComparator(
@@ -149,13 +150,17 @@ export default function ComplaintsTable() {
                 padding={headCell.disablePadding ? "none" : "normal"}
                 sortDirection={orderBy === headCell.id ? order : false}
               >
-                <TableSortLabel
-                  active={orderBy === headCell.id}
-                  direction={orderBy === headCell.id ? order : "asc"}
-                  onClick={(event) => handleRequestSort(event, headCell.id)}
-                >
-                  {headCell.label}
-                </TableSortLabel>
+                {headCell.label != "Actions" ? (
+                  <TableSortLabel
+                    active={orderBy === headCell.id}
+                    direction={orderBy === headCell.id ? order : "asc"}
+                    onClick={(event) => handleRequestSort(event, headCell.id)}
+                  >
+                    {headCell.label}
+                  </TableSortLabel>
+                ) : (
+                  headCell.label
+                )}
                 {headCell.label === "Status" && (
                   <>
                     <FilterListIcon

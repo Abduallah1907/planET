@@ -6,6 +6,7 @@ import { login, setUser } from "../store/userSlice";
 import CryptoJS from "crypto-js";
 import showToastMessage from "./showToastMessage";
 import { ToastTypes } from "./toastTypes";
+import PromoCode from "../views/PromoCode";
 export class Utils {
   private static secretKey = "your_secret_key";
 
@@ -165,8 +166,6 @@ export class Utils {
             { path: "/AdminDashboard", label: "Dashboard" },
             { path: "/AddNewProduct", label: "Add Product" },
             { path: "/MyProducts", label: " My Products" },
-            { path: "/admin", label: "Create Admin" },
-            { path: "/governer", label: "Create Governer" },
             { path: "/Categories", label: "Categories" },
             { path: "/Tags", label: "Tags" },
             { path: "/HistoricalTags", label: "Historical Tags" },
@@ -174,7 +173,7 @@ export class Utils {
             { path: "/ChangePasswordForm", label: "Change Password" },
             { path: "/Complaints", label: "Complaints" },
             { path: "/sales", label: "Sales report" },
-            { path: "/PromoCode", label: "Create Promo Code" }
+            { label: "Create Promo Code", isModal: true, modalComponent: PromoCode }
           ])
         );
         break;

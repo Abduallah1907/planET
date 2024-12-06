@@ -9,13 +9,17 @@ interface FormData {
   numberOfDays: string;
 }
 
-const PromoCode: React.FC = () => {
+interface PromoCodeProps {
+  show: boolean;
+  onHide: () => void;
+}
+
+const PromoCode: React.FC<PromoCodeProps> = ({show, onHide}) => {
   const tourist = useAppSelector((state) => state.user.stakeholder_id);
   const [formData, setFormData] = useState<FormData>({
     discount: "",
     numberOfDays: "",
   });
-  const [showModal, setShowModal] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -33,22 +37,13 @@ const PromoCode: React.FC = () => {
       numberOfDays: formData.numberOfDays,
     };
     await AdminService.createPromoCode(data);
-    setShowModal(false); // Close modal after successful submission
+    onHide(); // Close modal after successful submission
   };
 
   return (
     <>
-      {/* Button to trigger the modal */}
-      <Button
-        className="open-modal-button"
-        onClick={() => setShowModal(true)}
-        style={{ backgroundColor: "#d76f30", borderColor: "#d76f30" }}
-      >
-        Create Promo Code
-      </Button>
-
       {/* Modal */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+      <Modal show={show} onHide={onHide} centered>
         <Modal.Header closeButton>
           <Modal.Title>Promo Code Form</Modal.Title>
         </Modal.Header>

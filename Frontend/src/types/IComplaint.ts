@@ -13,6 +13,7 @@ export interface IComplaint {
   date: Date;
   createdAt: Date;
   status: string;
+  actions: "actions";
 }
 
 export interface IComplaintTourist {

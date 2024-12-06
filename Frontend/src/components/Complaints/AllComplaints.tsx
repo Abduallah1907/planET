@@ -3,7 +3,7 @@ import ComplaintsTable from "./ComplaintsTable";
 
 export default function AllComplaints() {
   return (
-    <Container fluid>
+    <Container>
       <Row className="justify-content-center my-4">
         <Col md={6} className="text-center">
           <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
