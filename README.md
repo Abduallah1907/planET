@@ -10,6 +10,12 @@ This project uses the MERN stack.
 - [Code Style](#code-style)
   - [General Coding Guidelines](#general-guidelines)
   - [Front-End (React)](#front-end-react)
+      - [Components](#components)
+      - [Hooks](#hooks)
+      - [Services](#frontend-services)
+      - [Store](#store)
+      - [Utils](#utils)
+      - [Views](#views)
   - [Back-End (Node.js & Express)](#back-end-nodejs--express)
     - [Folder Structure](#folder-structure)
     - [Routing](#routing)
@@ -98,7 +104,152 @@ This project is built using the **MERN** stack, which consists of the following 
 
 ## Front-End (React)
 
-### idk
+│   index.js           # Entry point of the application
+│   App.js             # Main App component that includes routing and global state
+│   App.css            # Global styles for the application
+└───assets             # Static assets like images and fonts
+└───components         # Reusable UI components
+└───hooks              # Custom hooks for reusable logic
+└───services           # API service calls
+└───store              # Redux store and slices
+└───utils              # Utility functions and helpers
+└───views              # Page components
+
+### Components
+
+- Reusable UI Components: All reusable UI components are placed in the components directory. Each component has its own folder containing the component file and its corresponding styles.
+
+- Example:
+
+```ts
+  // components/Header/Header.js
+  import React from 'react';
+  import './Header.css';
+
+  const Header = () => {
+    return (
+      <header className="header">
+        <h1>My App</h1>
+      </header>
+    );
+  };
+
+  export default Header;
+```
+
+### Hooks
+
+- Custom Hooks: Custom hooks for reusable logic are placed in the hooks directory. These hooks encapsulate logic that can be shared across multiple components.
+
+- Example:
+
+```ts
+  // hooks/useFetch.js
+  import { useState, useEffect } from 'react';
+
+  const useFetch = (url) => {
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          setData(data);
+          setLoading(false);
+        });
+    }, [url]);
+
+    return { data, loading };
+  };
+
+  export default useFetch;
+```
+
+### Frontend Services
+
+- API Service Calls: All API service calls are placed in the services directory. These functions handle communication with the back-end API.
+
+- An axios instance is used which has the base url for our backend server & has intercepters and error handlers
+
+- Example:
+
+```ts
+  // services/api.js
+  import axiosInstance from "../utils/axiosInstance";
+
+  export const fetchProducts = async () => {
+    const response = await axiosInstance.get('/products');
+    return response.data;
+  };
+```
+
+### Store
+
+- Redux Store and Slices: The Redux store and slices are placed in the store directory. Each slice manages a specific part of the application state.
+
+- Example:
+
+```ts
+  // store/userSlice.js
+  import { createSlice } from '@reduxjs/toolkit';
+
+  const userSlice = createSlice({
+    name: 'user',
+    initialState: {
+      user: null,
+    },
+    reducers: {
+      setUser(state, action) {
+        state.user = action.payload;
+      },
+    },
+  });
+
+  export const { setUser } = userSlice.actions;
+  export default userSlice.reducer;
+```
+
+### Utils
+
+- Utility Functions and Helpers: Utility functions and helpers are placed in the utils directory. These functions provide common functionality that can be used across the application.
+
+- Example:
+
+```ts
+  // utils/showToastMessage.js
+  import { toast } from 'react-toastify';
+
+  const showToastMessage = (message, type) => {
+    toast[type](message);
+  };
+
+  export default showToastMessage;
+```
+
+### Views
+
+- Page Components: Page components are placed in the views directory. Each page component represents a different route in the application.
+
+- Example: 
+
+```ts
+  // views/Home/Home.js
+  import React from 'react';
+  import ProductCard from '../../components/ProductCard/ProductCard';
+
+  const Home = () => {
+    return (
+      <div className="home">
+        <h1>Home Page</h1>
+        <ProductCard />
+      </div>
+    );
+  };
+
+  export default Home;
+```
+
 
 ## Back-End (Node.js & Express)
 
@@ -106,10 +257,13 @@ This project is built using the **MERN** stack, which consists of the following 
 
 ```src
 │   app.js             # App entry point
-└───api                # Express route controllers for all the
+└───api                # Express route controllers for all the endpoints
+    └───controllers    # Route handlers for different endpoints
+    └───middleware     # Custom middleware for the application
+    └───routes         # Route definitions and configurations
 └───api-specifications # Document any API route here
 └───config             # Environment variables and configuration endpoints of the app
-└───decorators         #
+└───decorators         # Custom decorators for the application
 └───interfaces         #
 related stuff
 └───jobs               # Jobs definitions for agenda.js
@@ -339,7 +493,24 @@ npm i
 The next step is to setup the enviroment file to store all our sensitive variables. Create a new file called `.env` inside the [src](/API/src/) directory. Using the below variable names as reference, replace them with your own keys and links.
 
 ```
-7ot enta el .env 3ashan ana mesh 3aref eh el momken yet7at hena :)
+NODE_ENV = 'development' or 'production'
+
+PORT = 8000
+
+MONGODB_URI = 'your mongodb link'
+
+JWT_SECRET = 'your_secret_key'
+JWT_ALGORITHM = HS256
+
+AGENDA_DB_COLLECTION = 'agendaJobs'
+AGENDA_POOL_TIME = 5000
+AGENDA_CONCURRENCY = 10
+
+MAIL_SERVICE = 'gmail'
+MAIL_HOST = 'smtp.gmail.com'
+MAIL_PORT = 587
+MAIL_USERNAME = 'your email'
+MAIL_PASSWORD = 'your password'
 ```
 
 #### 3. Set Up the Frontend
@@ -355,6 +526,12 @@ Naviagate to the frontend directory and download the needed dependencies:
 ```bash
 cd Frontend
 npm i
+```
+
+The next step is to setup the enviroment file to store all our sensitive variables. Create a new file called `.env` inside the [src](/Frontend) directory. Using the below variable names as reference, replace them with your own keys and links.
+
+```
+REACT_APP_GOOGLE_MAPS_API_KEY='your google api key'
 ```
 
 ## How to Use
@@ -384,6 +561,8 @@ Once the site opens up, then congratulations! You have successfully ran our site
 ## API References
 
 This project uses OpenAPI 3 for generating and maintaining our API documentation. All of the files can be found inside of [api-specifications](/API/src/api-specifications/) folder.
+
+When running the project the swagger page can be reached through this [link](http://localhost:8000/docs)
 
 ## Contributions
 
@@ -420,6 +599,14 @@ And the below videos and blogs for teaching us the MERN stack
 
 - [MERN Stack](https://www.youtube.com/playlist?list=PL4cUxeGkcC9iJ_KkrkBZWZRHVwnzLIoUE)
 - [React useEffect and useState](https://codedamn.com/news/reactjs/usestate-and-useeffect-hooks)
+
+And these apis that where used
+
+- [Amadeus](https://developers.amadeus.com/)
+- [Skyscanner](https://www.partners.skyscanner.net/product/travel-api)
+- [Google](https://developers.google.com/docs/api/reference/rest)
+- [Openexchange](https://openexchangerates.org)
+- [Exhange Api](https://api.exchangerate-api.com)
 
 And for our TAs for being with us throughout the semester <3
 

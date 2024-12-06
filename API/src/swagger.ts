@@ -7,12 +7,12 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Mini Blog API",
-      description: "API endpoints for a mini blog services documented on swagger",
+      title: "PlanET API",
+      description: "API endpoints for planET Trip Advisor system",
       contact: {
-        name: "Desmond Obisi",
-        email: "info@miniblog.com",
-        url: "https://github.com/DesmondSanctity/node-js-swagger",
+        name: "Abdelrahman Tamer",
+        email: "abdelrahmantamer358@gmail.com",
+        url: "https://github.com/Advanced-computer-lab-2024/planET/",
       },
       version: "1.0.0",
     },
