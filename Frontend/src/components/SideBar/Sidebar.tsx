@@ -2,9 +2,10 @@ import React from "react";
 import { Nav } from "react-bootstrap";
 import { Link } from "react-router-dom"; // If you're using react-router for navigation
 import "./Sidebar.css"; // Create a corresponding CSS file for styles
+import { IconType } from "react-icons";
 
 interface NavItem {
-  icon?: React.ReactNode;
+  icon?: IconType;
   path?: string;
   label: string;
   isModal?: boolean;
@@ -31,18 +32,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, navItems }) => {
         {navItems.map((item, index) => (
           <Nav.Item key={index}>
             {item.path ? (
-              <Link to={item.path} className="nav-link" onClick={onClose}>
+              <Link to={item.path} className="nav-link d-flex" onClick={onClose}>
+                {item.icon && <span className="me-2 d-flex align-items-center">{React.createElement(item.icon)}</span>}
                 {item.label}
               </Link>
             ) : item.isModal && item.modalComponent ? (
               <a
                 href="#"
-                className="nav-link"
+                className="nav-link d-flex"
                 onClick={(e) => {
                   e.preventDefault();
                   setActiveModal(() => item.modalComponent || null); // Assigning the component directly
                 }}
               >
+                {item.icon && <span className="me-2 d-flex align-items-center">{React.createElement(item.icon)}</span>}
                 {item.label}
               </a>
             ) : null}

@@ -1,7 +1,7 @@
 import AmadeusService from "../../services/AmadeusService";
 import { useAppContext } from "../../AppContext";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Col, Container, Row, ProgressBar, Card } from "react-bootstrap";
+import { Col, Container, Row, ProgressBar, Card, Placeholder } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import FilterBy from "../../components/FilterBy/FilterBy";
 import { useAppDispatch } from "../../store/hooks";
@@ -154,7 +154,7 @@ export default function HotelsPage() {
                     <HotelsSearchBar onSubmit={handleSearchSubmit} />
                 </Container>
             </div>
-            <Container fluid>
+            <Container>
                 <Row>
                     {/* Filter and sort section */}
                     {/* <Col sm={12} md={12} lg={2} className="px-0">
@@ -196,27 +196,57 @@ export default function HotelsPage() {
                     {/* Hotels results section */}
                     <Col sm={12} md={12} lg={8}>
                         {loading && (
-                            <Row className="mt-3 m-1 d-flex justify-content-center">
-                                <Col sm={12}>
-                                    <ProgressBar variant="main" animated now={progress} />
-                                </Col>
-                            </Row>
+                            <>
+                                <Row className="mt-3 m-1 d-flex justify-content-center">
+                                    <Col sm={12}>
+                                        <ProgressBar variant="main" animated now={progress} />
+                                    </Col>
+                                </Row>
+                                <Row className="mx-1">
+                                    <Col sm={12} className="text-center mt-3">
+                                        <Placeholder as={Card} animation="glow">
+                                            <Placeholder bg="body-secondary" xs={12} size="lg" className="p-5" />
+                                        </Placeholder>
+                                    </Col>
+                                    <Col sm={12} className="text-center mt-3">
+                                        <Placeholder as={Card} animation="glow">
+                                            <Placeholder bg="body-secondary" xs={12} size="lg" className="p-5" />
+                                        </Placeholder>
+                                    </Col>
+                                    <Col sm={12} className="text-center mt-3">
+                                        <Placeholder as={Card} animation="glow">
+                                            <Placeholder bg="body-secondary" xs={12} size="lg" className="p-5" />
+                                        </Placeholder>
+                                    </Col>
+                                    <Col sm={12} className="text-center mt-3">
+                                        <Placeholder as={Card} animation="glow">
+                                            <Placeholder bg="body-secondary" xs={12} size="lg" className="p-5" />
+                                        </Placeholder>
+                                    </Col>
+                                </Row>
+                            </>
                         )} {/* Render progress bar when loading */}
                         <Row className="m-1">
-                            {filteredHotels.map((hotelData: any, index: number) => (
+                            {!loading && filteredHotels.map((hotelData: any, index: number) => (
                                 <Col md={12} className="mt-2" ref={(el: HTMLDivElement | null) => hotelRefs.current[index] = el}>
                                     {/* <FlightCard key={index} flightData={flightData} bookButton={true} onClick={() => handleBookingClick(flightData)} /> */}
                                     <HotelCard key={index} hotelData={hotelData} onClick={handleBookingClick} bookButton={true} />
                                 </Col>
                             ))}
+
+                            {!loading && progress === 100 && filteredHotels.length === 0 && (
+                                <div className="text-center mt-3">
+                                    <h3>No Hotels Found</h3>
+                                </div>
+                            )}
                         </Row>
                     </Col>
                     {!isMediumScreen && (
                         <Col lg={4} className="p-0">
-                            {(hotels.length > 0 && !loading) && (
+                            {(hotels.length > 0 && !loading) ? (
                                 <Card className="sticky-top mt-3 p-2">
                                     <Map
-                                        style={{ height: "600px" }}
+                                        style={{ height: "500px" }}
                                         defaultCenter={center}
                                         defaultZoom={12}
                                         mapId={"HotelMap"}
@@ -239,15 +269,19 @@ export default function HotelsPage() {
                                         ))}
                                     </Map>
                                 </Card>
+                            ) : loading && (
+                                <Placeholder as={Card} className="mt-3 h-75" animation="glow">
+                                    <Placeholder xs={12} bg="body-secondary" className="h-100 rounded-2" />
+                                </Placeholder>
                             )}
                         </Col>
                     )}
                 </Row>
-                    {!loading && progress < 100 && (
-                        <div className="mt-5">
-                           <Services />
-                        </div>
-                    )}
+                {!loading && progress < 100 && (
+                    <div className="mt-5">
+                        <Services />
+                    </div>
+                )}
             </Container>
         </>
     )

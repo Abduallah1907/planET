@@ -42,34 +42,36 @@ export default function ProductsPage() {
   };
   const getProducts = async () => {
     const productsData = await ProductService.getAllProducts(); // Use getAllProducts here
-    const productsWithImages = await Promise.all(
-      productsData.data.map(async (product: IProduct) => {
-        if (product.image) {
-          const file = await FileService.downloadFile(product.image);
-          const url = URL.createObjectURL(file);
-          return { ...product, image: url };
-        }
-        return product;
-      })
-    );
-    setProducts(productsWithImages);
+    setProducts(productsData.data);
+    productsData.data.forEach(async (product: IProduct) => {
+      if (product.image) {
+        const file = await FileService.downloadFile(product.image);
+        const url = URL.createObjectURL(file);
+        setProducts((prevProducts) =>
+          prevProducts.map((p) =>
+            p._id === product._id ? { ...p, image: url } : p
+          )
+        );
+      }
+    });
   };
   const getFilteredProducts = async () => {
     const modifiedFilter = { ...filter };
     const productsData = await ProductService.getFilteredProducts(
       modifiedFilter
     );
-    const productsWithImages = await Promise.all(
-      productsData.data.map(async (product: IProduct) => {
-        if (product.image) {
-          const file = await FileService.downloadFile(product.image);
-          const url = URL.createObjectURL(file);
-          return { ...product, image: url };
-        }
-        return product;
-      })
-    );
-    setProducts(productsWithImages);
+    setProducts(productsData.data);
+    productsData.data.forEach(async (product: IProduct) => {
+      if (product.image) {
+        const file = await FileService.downloadFile(product.image);
+        const url = URL.createObjectURL(file);
+        setProducts((prevProducts) =>
+          prevProducts.map((p) =>
+            p._id === product._id ? { ...p, image: url } : p
+          )
+        );
+      }
+    });
   };
   const handleApplyFilters = () => {
     getFilteredProducts();

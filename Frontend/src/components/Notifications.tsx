@@ -101,15 +101,15 @@ const Notifications = () => {
               )}
             </div>
           </div>
-          <ul className="notification-list">
+          <ul className="notification-list p-0">
             {notifications.length > 0 ? (
               notifications.map((notif) => (
-                <li key={notif._id || Math.random()} className="notification-item">
+                <li key={notif._id || Math.random()} className="notification-item ps-4">
                   {notif.message || "No details available"}
                 </li>
               ))
             ) : (
-              <li className="no-notifications">No notifications</li>
+              <li className="no-notifications text-center mt-2">No notifications</li>
             )}
           </ul>
         </div>

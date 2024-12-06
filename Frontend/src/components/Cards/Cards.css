@@ -51,6 +51,16 @@
   border: none !important;
 }
 
+.img-placeholder{
+  height: 200px;
+}
+
+.img-placeholder span{
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  background-color: #6c757d;
+}
+
 .airline-logo {
   width: 8rem;
   margin-right: 0.5rem;

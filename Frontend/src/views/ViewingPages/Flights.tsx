@@ -2,7 +2,7 @@ import AmadeusService from "../../services/AmadeusService";
 import { useAppContext } from "../../AppContext";
 import FlightsSearchBar from "../../components/SearchBars/FlightsSearchBar";
 import { useEffect, useRef, useState } from "react";
-import { Col, Container, Row, ProgressBar } from "react-bootstrap";
+import { Col, Container, Row, ProgressBar, Placeholder, Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import FlightCard from "../../components/Cards/FlightCard";
 import FilterBy from "../../components/FilterBy/FilterBy";
@@ -39,7 +39,7 @@ export default function FlightsPage() {
                 planeRef.current.style.display = "none";
             }
         };
-        
+
         if (planeRef.current) {
             planeRef.current.addEventListener("animationend", handleAnimationEnd);
         }
@@ -60,7 +60,7 @@ export default function FlightsPage() {
 
     useEffect(() => {
         let interval: NodeJS.Timeout | null = null;
-    
+
         if (loading && progress < 100 && progress >= 10) {
             interval = setInterval(() => {
                 setProgress(prevProgress => {
@@ -73,7 +73,7 @@ export default function FlightsPage() {
                 });
             }, 1000);
         }
-    
+
         return () => {
             if (interval) {
                 clearInterval(interval);
@@ -141,41 +141,75 @@ export default function FlightsPage() {
     return (
         <>
             <div className="bg-main p-4">
-            <img src={PlaneSVG} alt="Plane" className="plane-svg" width={"50"} ref={planeRef} />
+                <img src={PlaneSVG} alt="Plane" className="plane-svg" width={"50"} ref={planeRef} />
                 <Container>
                     <FlightsSearchBar onSubmit={handleSearchSubmit} />
                 </Container>
             </div>
-            <Container fluid>
+            <Container>
                 <Row>
                     {/* Filter and sort section */}
                     <Col sm={12} md={3} lg={3} className="px-0">
                         {(flights.length > 0 && !loading) && (
                             <FilterBy filterOptions={filtercomponent} onFilterChange={handleFilterChange} />
                         )}
+                        {loading && progress < 100 && (
+                            <Placeholder as={Card} className="mt-3 h-25" animation="glow">
+                                <Placeholder xs={12} bg="body-secondary" className="h-100 rounded-2" />
+                            </Placeholder>
+                        )}
                     </Col>
                     {/* Flight results section */}
                     <Col sm={12} md={9} lg={8}>
                         {loading && (
-                            <Row className="mt-3 m-1 d-flex justify-content-center">
-                                <Col sm={12}>
-                                    <ProgressBar variant="main" animated now={progress} />
-                                </Col>
-                            </Row>
+                            <>
+                                <Row className="mt-3 m-1 d-flex justify-content-center">
+                                    <Col sm={12}>
+                                        <ProgressBar variant="main" animated now={progress} />
+                                    </Col>
+                                </Row>
+                                <Row className="mx-1">
+                                    <Col sm={12} className="text-center mt-3">
+                                        <Placeholder as={Card} animation="glow">
+                                            <Placeholder bg="body-secondary" xs={12} size="lg" className="p-5" />
+                                        </Placeholder>
+                                    </Col>
+                                    <Col sm={12} className="text-center mt-3">
+                                        <Placeholder as={Card} animation="glow">
+                                            <Placeholder bg="body-secondary" xs={12} size="lg" className="p-5" />
+                                        </Placeholder>
+                                    </Col>
+                                    <Col sm={12} className="text-center mt-3">
+                                        <Placeholder as={Card} animation="glow">
+                                            <Placeholder bg="body-secondary" xs={12} size="lg" className="p-5" />
+                                        </Placeholder>
+                                    </Col>
+                                    <Col sm={12} className="text-center mt-3">
+                                        <Placeholder as={Card} animation="glow">
+                                            <Placeholder bg="body-secondary" xs={12} size="lg" className="p-5" />
+                                        </Placeholder>
+                                    </Col>
+                                </Row>
+                            </>
                         )} {/* Render progress bar when loading */}
-                        <Row className="m-1">
-                            {filteredFlights.map((flightData: any, index: number) => (
+                        <Row className="m-2">
+                            {!loading && filteredFlights.map((flightData: any, index: number) => (
                                 <Col md={12} className="mt-2">
                                     <FlightCard key={index} flightData={flightData} bookButton={true} onClick={() => handleBookingClick(flightData)} />
                                 </Col>
                             ))}
+                            {!loading && progress === 100 && filteredFlights.length === 0 && (
+                                <div className="text-center mt-3">
+                                    <h3>No Flights Found</h3>
+                                </div>
+                            )}
                         </Row>
                     </Col>
                 </Row>
                 {!loading && progress < 100 && (
-                <div className="mt-3">
-                <Destinations />
-                </div>
+                    <div className="mt-3">
+                        <Destinations />
+                    </div>
                 )}
             </Container>
         </>

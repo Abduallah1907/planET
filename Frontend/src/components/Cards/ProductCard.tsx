@@ -8,6 +8,9 @@ import {
   DropdownButton,
   Dropdown,
   Modal,
+  Placeholder,
+  CardImg,
+  CardImgOverlay,
 } from "react-bootstrap";
 import "./Cards.css";
 import Rating from "../Rating/Rating";
@@ -103,7 +106,7 @@ const ProductCard = ({
     );
   };
 
-  const addToWishlist = async(e: any) => {
+  const addToWishlist = async (e: any) => {
     e.stopPropagation();
     e.preventDefault();
     await TouristService.addProductToWishlist(user.email, {
@@ -142,21 +145,31 @@ const ProductCard = ({
     dispatch(setWishlist(updatedWishlist));
   }
 
+  const isBlobUrl = (url: string) => /^blob:/.test(url);
+
   return (
     <Card
       className="shadow-sm position-relative"
       style={{ borderRadius: "10px", height: "100%" }}
     >
-      <Card.Img
-        variant="top"
-        src={image || "https://via.placeholder.com/250x250"}
-        style={{
-          height: "200px",
-          objectFit: "cover",
-          borderTopLeftRadius: "10px",
-          borderTopRightRadius: "10px",
-        }}
-      />
+      {image && !isBlobUrl(image) ?
+        (
+          <Placeholder as="div" animation="glow" size="lg" className="img-placeholder">
+            <Placeholder xs={12} className="h-100" />
+          </Placeholder>
+        )
+        :
+        (
+          <Card.Img
+            variant="top"
+            src={image || "https://via.placeholder.com/250x250"}
+            style={{
+              height: "200px",
+              objectFit: "cover",
+              borderTopLeftRadius: "10px",
+              borderTopRightRadius: "10px",
+            }}
+          />)}
       <hr className="m-0" />
       {user.role === "TOURIST" && (
         <div className="wishlist-card-btn">
@@ -165,7 +178,7 @@ const ProductCard = ({
             variant=""
             onClick={wishlisted ? removeFromWishlist : addToWishlist}
           >
-            {wishlisted ? <FaHeart/> : <FaRegHeart />}
+            {wishlisted ? <FaHeart /> : <FaRegHeart />}
           </Button>
         </div>
       )}
