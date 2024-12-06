@@ -1,100 +1,112 @@
 .sales-container {
-    margin: 20px;
-    font-family: 'Arial', sans-serif;
-  }
-  
+  margin: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+.sales-table {
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sales-table th,
+.sales-table td {
+  padding: 12px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.sales-table th {
+  background-color: var(--main-color);
+  color: white;
+  font-weight: bold;
+}
+
+.sales-table tbody tr {
+  transition: transform 0.2s ease-in-out;
+}
+
+.sales-table tbody tr:hover {
+  transform: scale(1.02);
+  background-color: #f1f1f1;
+}
+
+.filter-input {
+  font-size: 14px;
+  padding: 6px;
+  margin-top: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  transition: border 0.3s ease;
+  margin-right: 10px;
+}
+
+.filter-input:focus {
+  border-color: #4e73df;
+  outline: none;
+}
+
+.sales-table td {
+  background-color: #fff;
+  color: #333;
+}
+
+.sales-table td,
+.sales-table th {
+  border: 1px solid #ddd;
+}
+
+@media (max-width: 768px) {
   .sales-table {
-    border-collapse: separate;
-    border-spacing: 0 10px;
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
+    width: 100%;
   }
-  
-  .sales-table th, .sales-table td {
-    padding: 12px;
-    text-align: center;
-    vertical-align: middle;
-  }
-  
-  .sales-table th {
-    background-color: var(--main-color);
-    color: white;
-    font-weight: bold;
-  }
-  
-  .sales-table tbody tr {
-    transition: transform 0.2s ease-in-out;
-  }
-  
-  .sales-table tbody tr:hover {
-    transform: scale(1.02);
-    background-color: #f1f1f1;
-  }
-  
+
   .filter-input {
-    font-size: 14px;
-    padding: 6px;
-    margin-top: 5px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    transition: border 0.3s ease;
-    margin-right: 10px;
+    width: 90%;
+    margin-right: 0;
   }
-  
-  .filter-input:focus {
-    border-color: #4e73df;
-    outline: none;
-  }
-  
-  .sales-table td {
-    background-color: #fff;
-    color: #333;
-  }
-  
-  .sales-table td, .sales-table th {
-    border: 1px solid #ddd;
-  }
-  
-  input[type="text"], input[type="date"] {
-    font-size: 14px;
-    width: 100px;
-  }
-  
-  @media (max-width: 768px) {
-    .sales-table {
-      width: 100%;
-    }
-    .filter-input {
-      width: 90%;
-      margin-right: 0;
-    }
-  }
-  .sales-form-container {
-    width: 20%; /* Adjust as needed */
-    margin: 0 auto; /* Center the form horizontally */
-  }
-  .form-row {
-    display: flex;
-    align-items: center; /* Align items vertically */
-    justify-content: center; /* Center items horizontally */
-    gap: 15px; /* Space between elements */
-    
-    
-  }
-  .apply-dates-btn {
-    margin-top: 20px;
-    background-color: var(--main-color); /* Button background color */
-    color: white; /* Text color inside the button */
-    border: none; /* Remove border */
-    padding: 5px 15px; /* Decrease padding to reduce the size */
-    font-size: 14px; /* Reduce font size for smaller text */
-    border-radius: 4px; /* Slightly smaller border radius for a more compact look */
-  }
-  
-  .apply-dates-btn:hover {
-    background-color: var(--main-color); /* Change color on hover */
-    color: black; /* Text color stays white */
-  }
-  
-  
+}
+
+.sales-form-container {
+  width: 20%;
+  /* Adjust as needed */
+  margin: 0 auto;
+  /* Center the form horizontally */
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  /* Align items vertically */
+  justify-content: center;
+  /* Center items horizontally */
+  gap: 15px;
+  /* Space between elements */
+
+
+}
+
+.apply-dates-btn {
+  margin-top: 20px;
+  background-color: var(--main-color);
+  /* Button background color */
+  color: white;
+  /* Text color inside the button */
+  border: none;
+  /* Remove border */
+  padding: 5px 15px;
+  /* Decrease padding to reduce the size */
+  font-size: 14px;
+  /* Reduce font size for smaller text */
+  border-radius: 4px;
+  /* Slightly smaller border radius for a more compact look */
+}
+
+.apply-dates-btn:hover {
+  background-color: var(--main-color);
+  /* Change color on hover */
+  color: black;
+  /* Text color stays white */
+}

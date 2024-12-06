@@ -149,7 +149,16 @@ export class ProductService {
   }
 
   public async getProductsBySellerIdService(seller_id: string) {
-    const products = await this.productModel.find({ seller_id: seller_id });
+    const productCriteria: any = {};
+    productCriteria.seller_id = seller_id;
+    const products = await this.productModel.aggregate([
+      { $match: productCriteria },
+      {
+        $addFields: {
+          reviews_count: { $size: "$comments" },
+        },
+      },
+    ]);
     if (products instanceof Error) throw new InternalServerError("Internal Server Error");
 
     return new response(true, products, "Products are fetched", 200);

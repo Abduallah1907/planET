@@ -50,8 +50,12 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   max-height: 400px;
-  overflow-y: auto;
   animation: fadeIn 0.3s ease-in-out;
+}
+
+.notification-list{
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 @keyframes fadeIn {

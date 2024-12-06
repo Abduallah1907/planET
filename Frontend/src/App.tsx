@@ -130,21 +130,12 @@ const App: React.FC = () => {
 
           <Route path="/test" element={<BookingLayout />} />
 
-          <Route
-            path="/bookActivity/:id"
-            element={<BookingActivity email={email} />}
-          />
+          <Route path="/bookActivity/:id" element={<BookingActivity email={email} />} />
           <Route path="/bookItinerary/:id" element={<BookingItinerary />} />
           <Route path="/MyBookings/upcoming" element={<MyBookings />} />
           <Route path="/MyBookings/past" element={<MyBookings />} />
-          <Route
-            path="/MyItineraryBookings/upcoming"
-            element={<MyItineraryBookings />}
-          />
-          <Route
-            path="/MyItineraryBookings/past"
-            element={<MyItineraryBookings />}
-          />
+          <Route path="/MyItineraryBookings/upcoming" element={<MyItineraryBookings />} />
+          <Route path="/MyItineraryBookings/past" element={<MyItineraryBookings />} />
 
           <Route path="/Activity" element={<Activities />} />
           <Route path="/Itinerary" element={<Itinerary />} />
@@ -162,10 +153,7 @@ const App: React.FC = () => {
           <Route path="/Tourist/Profile" element={<TouristProfile />} />
           <Route path="/Seller/Profile" element={<SellerProfile />} />
           <Route path="/AddActivity" element={<AdvertiserCreate />} />
-          <Route
-            path="/AddHistoricalLocation"
-            element={<AddHistoricalLocation />}
-          />
+          <Route path="/AddHistoricalLocation" element={<AddHistoricalLocation />} />
           <Route path="/AddItinerary" element={<AddItinerary />} />
 
           <Route path="/Activity/:id" element={<ActivityDetails />} />
@@ -173,21 +161,12 @@ const App: React.FC = () => {
           <Route path="/Historical/:id" element={<HistoricalDetails />} />
 
           <Route path="/EditActivity/:activity_id" element={<EditActivity />} />
-          <Route
-            path="/EditHistoricalLocation/:historical_location_id"
-            element={<EditHistoricalLocation />}
-          />
-          <Route
-            path="/EditItinerary/:itinerary_id"
-            element={<EditItinerary />}
-          />
+          <Route path="/EditHistoricalLocation/:historical_location_id" element={<EditHistoricalLocation />} />
+          <Route path="/EditItinerary/:itinerary_id" element={<EditItinerary />} />
           <Route path="/EditProduct/:product_id" element={<EditProduct />} />
 
           <Route path="/MyActivities" element={<MyActivities />} />
-          <Route
-            path="/MyHistoricalLocations"
-            element={<MyHistoricalPlaces />}
-          />
+          <Route path="/MyHistoricalLocations" element={<MyHistoricalPlaces />} />
           <Route path="/MyItineraries" element={<MyItinerary />} />
           <Route path="/MyProducts" element={<MyProducts />} />
           <Route path="/Sales" element={<Sales />} />
@@ -207,10 +186,7 @@ const App: React.FC = () => {
           <Route path="/MyComplaints" element={<MyComplaints />} />
           <Route path="/Cart" element={<Cart />} />
           <Route path="/wishlist" element={<Wishlist />} />
-          <Route
-            path="/ChooseDeliveryAddress"
-            element={<ChooseDeliveryAddress />}
-          />
+          <Route path="/ChooseDeliveryAddress" element={<ChooseDeliveryAddress />} />
 
           <Route path="/Orders" element={<Orders />}>
             <Route path="Past" element={<PastOrders />} />

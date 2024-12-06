@@ -51,18 +51,18 @@ export default function ProductsPage() {
     const productsData = await ProductService.getProductsBySellerId(
       Seller.stakeholder_id._id
     );
-    const productsWithImages = await Promise.all(
-      productsData.data.map(async (product: IProduct) => {
-        if (product.image) {
-          const file = await FileService.downloadFile(product.image); // Download the image
-          const url = URL.createObjectURL(file);
-          return { ...product, image: url }; // Set the image URL
-        }
-        return product;
-      })
-    );
-
-    setProducts(productsWithImages);
+    setProducts(productsData.data);
+    productsData.data.forEach(async (product: IProduct) => {
+      if (product.image) {
+        const file = await FileService.downloadFile(product.image);
+        const url = URL.createObjectURL(file);
+        setProducts((prevProducts) =>
+          prevProducts.map((p) =>
+            p._id === product._id ? { ...p, image: url } : p
+          )
+        );
+      }
+    });
   };
 
   const getFilteredProducts = async () => {
@@ -75,18 +75,18 @@ export default function ProductsPage() {
     const productsData = await ProductService.getFilteredProducts(
       modifiedFilter
     );
-    const productsWithImages = await Promise.all(
-      productsData.data.map(async (product: IProduct) => {
-        if (product.image) {
-          const file = await FileService.downloadFile(product.image); // Download the image
-          const url = URL.createObjectURL(file);
-          return { ...product, image: url }; // Set the image URL
-        }
-        return product;
-      })
-    );
-
-    setProducts(productsWithImages);
+    setProducts(productsData.data);
+    productsData.data.forEach(async (product: IProduct) => {
+      if (product.image) {
+        const file = await FileService.downloadFile(product.image);
+        const url = URL.createObjectURL(file);
+        setProducts((prevProducts) =>
+          prevProducts.map((p) =>
+            p._id === product._id ? { ...p, image: url } : p
+          )
+        );
+      }
+    });
   };
 
   const handleApplyFilters = () => {

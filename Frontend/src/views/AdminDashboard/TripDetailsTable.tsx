@@ -1,6 +1,7 @@
 import React from 'react';
 import '../TourGuideDashboard/TourGuidedashboard.css';
 import { useTranslation } from 'react-i18next';
+import { Badge } from 'react-bootstrap';
 const trips = [
   { flight: 'MS731', destination: 'Cairo-Egypt', date: '12.09.2019', time: '12:53 PM', piece: 423, duration: '3 Hrs', status: 'Arrived' },
   { flight: 'MS732', destination: 'Berlin-Germany', date: '12.09.2019', time: '12:53 PM', piece: 423, duration: '6 Hrs', status: 'Boarding' },
@@ -31,7 +32,12 @@ const TripDetailsTable = () => {
               <td>{trip.date} - {trip.time}</td>
               <td>{trip.piece}</td>
               <td>{trip.duration}</td>
-              <td className={`status-label ${trip.status.toLowerCase()}`}>{trip.status}</td>
+              <td>
+                <Badge
+                  bg=""
+                  className={`status-label p-2 px-3 rounded-5 ${trip.status.toLowerCase()}`}
+                >{trip.status}</Badge>
+              </td>
             </tr>
           ))}
         </tbody>

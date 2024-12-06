@@ -20,13 +20,10 @@ export const sidebarSlice = createSlice({
         setNavItems(state, action: PayloadAction<any>) {
             state.navItems = action.payload;
         },
-        getNavItems(state) {
-            return state.navItems;
-        },
-        activateSidebar(state){
+        activateSidebar(state) {
             state.isActive = true
         },
-        disableSidebar(state){
+        disableSidebar(state) {
             state.isActive = false
         },
         toggleSidebar(state) {
@@ -40,8 +37,7 @@ export const sidebarSlice = createSlice({
         },
     },
 });
-
-export const { activateSidebar, disableSidebar, toggleSidebar, openSidebar, closeSidebar,setNavItems,getNavItems } = sidebarSlice.actions;
+export const { activateSidebar, disableSidebar, toggleSidebar, openSidebar, closeSidebar, setNavItems } = sidebarSlice.actions;
 
 export const sidebarState = (state: RootState) => state.sidebar.isOpen
 

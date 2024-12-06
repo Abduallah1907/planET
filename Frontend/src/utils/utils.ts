@@ -9,6 +9,7 @@ import { ToastTypes } from "./toastTypes";
 import ChangePasswordForm from "../views/auth/ChangePasswordForm";
 import ChangePasswordG from "../views/auth/ChangePasswordG";
 import PromoCode from "../views/PromoCode";
+import { FaTachometerAlt, FaPlus, FaBox, FaList, FaTags, FaHistory, FaUsers, FaKey, FaExclamationCircle, FaChartLine, FaClipboardList, FaMapMarkerAlt, FaShoppingCart, FaBookmark, FaTruck, FaClipboardCheck, FaUserShield, FaSuitcase, FaFileAlt } from 'react-icons/fa';
 import AddNewProduct from "../views/CreatePages/AddNewProduct";
 export class Utils {
   private static secretKey = "your_secret_key";
@@ -113,70 +114,70 @@ export class Utils {
       case "TOURIST":
         dispatch(
           setNavItems([
-            { label: "File Complaint", isModal: true, modalComponent: ComplaintForm },
-            { path: "/MyComplaints", label: "My Complaints" },
-            { path: "/MyBookings/upcoming", label: "My Activities" },
-            { path: "/MyItineraryBookings/upcoming", label: "My Itineraries"},
-            { path: "/TourGuidesTable", label: "View My Tour Guides" },
-            { path: "/Orders/Past", label: "Orders" },
-            { path: "/BookmarkEvents", label: "View Bookmark Events" },
-            { label: "Add Delivery Address", isModal: true, modalComponent: AddDeliveryAddress },
+            { label: "File Complaint", isModal: true, modalComponent: ComplaintForm, icon: FaExclamationCircle },
+            { path: "/MyComplaints", label: "My Complaints", icon: FaClipboardList },
+            { path: "/MyBookings/upcoming", label: "My Activities", icon: FaSuitcase },
+            { path: "/MyItineraryBookings/upcoming", label: "My Itineraries", icon: FaClipboardCheck },
+            { path: "/TourGuidesTable", label: "View My Tour Guides", icon: FaUserShield },
+            { path: "/Orders/Past", label: "Orders", icon: FaShoppingCart },
+            { path: "/BookmarkEvents", label: "View Bookmark Events", icon: FaBookmark },
+            { label: "Add Delivery Address", isModal: true, modalComponent: AddDeliveryAddress, icon: FaTruck },
           ])
         );
         break;
       case "TOUR_GUIDE":
         dispatch(
           setNavItems([
-            { path: "/TourGuideDashboard", label: "Dashboard" },
-            { path: "/AddItinerary", label: "Add Itinerary" },
-            { path: "/MyItineraries", label: "My Itineraries" },
-            { path: "/TG_Sales", label: "Sales Report" },
+            { path: "/TourGuideDashboard", label: "Dashboard", icon: FaTachometerAlt },
+            { path: "/AddItinerary", label: "Add Itinerary", icon: FaPlus },
+            { path: "/MyItineraries", label: "My Itineraries", icon: FaClipboardCheck },
+            { path: "/TG_Sales", label: "Sales Report", icon: FaChartLine },
           ])
         );
         break;
       case "ADVERTISER":
         dispatch(
           setNavItems([
-            { path: "/AddActivity", label: "Create Activity" },
-            { path: "/MyActivities", label: "My Activites" },
-            { path: "/Adv_Sales", label: "Sales Report" },
+            { path: "/AddActivity", label: "Create Activity", icon: FaPlus },
+            { path: "/MyActivities", label: "My Activities", icon: FaClipboardList },
+            { path: "/Adv_Sales", label: "Sales Report", icon: FaChartLine },
           ])
         );
         break;
       case "SELLER":
         dispatch(
           setNavItems([
-            { path: "/SellerDashboard", label: "Dashboard" },
-            { label: "Add New Product", isModal: true, modalComponent: AddNewProduct },
-            { path: "/MyProducts", label: "My Products" },
-            { path: "/S_Sales", label: "Sales Report" },
+            { path: "/SellerDashboard", label: "Dashboard", icon: FaTachometerAlt },
+            { path: "/AddNewProduct", label: "Add New Product", icon: FaPlus },
+            { path: "/MyProducts", label: "My Products", icon: FaBox },
+            { path: "/S_Sales", label: "Sales Report", icon: FaChartLine },
           ])
         );
         break;
       case "GOVERNOR":
         dispatch(
           setNavItems([
-            { path: "/AddHistoricalLocation", label: "Add Historical Location" },
-            { path: "/MyHistoricalLocations", label: "My Historical Locations" },
-            { path: "/HistoricalTags", label: "Historical Tags" },
-            { label: "Change Password", isModal: true, modalComponent: ChangePasswordG },
+            { path: "/AddHistoricalLocation", label: "Add Historical Location", icon: FaMapMarkerAlt },
+            { path: "/MyHistoricalLocations", label: "My Historical Locations", icon: FaMapMarkerAlt },
+            { path: "/HistoricalTags", label: "Historical Tags", icon: FaTags },
+            { label: "Change Password", isModal: true, modalComponent: ChangePasswordG, icon: FaKey },
           ])
         );
         break;
       case "ADMIN":
         dispatch(
           setNavItems([
-            { path: "/AdminDashboard", label: "Dashboard" },
-            { label: "Add New Product", isModal: true, modalComponent: AddNewProduct },
-            { path: "/MyProducts", label: " My Products" },
-            { path: "/Categories", label: "Categories" },
-            { path: "/Tags", label: "Tags" },
-            { path: "/HistoricalTags", label: "Historical Tags" },
-            { path: "/UsersTable", label: "User Managment" },
-            { label: "Change Password", isModal: true, modalComponent: ChangePasswordForm },
-            { path: "/Complaints", label: "Complaints" },
-            { path: "/sales", label: "Sales report" },
-            { label: "Create Promo Code", isModal: true, modalComponent: PromoCode }
+            { path: "/AdminDashboard", label: "Dashboard", icon: FaTachometerAlt },
+            { label: "Add New Product", isModal: true, modalComponent: AddNewProduct,icon : FaPlus },
+            { path: "/MyProducts", label: "My Products", icon: FaBox },
+            { path: "/Categories", label: "Categories", icon: FaList },
+            { path: "/Tags", label: "Tags", icon: FaTags },
+            { path: "/HistoricalTags", label: "Historical Tags", icon: FaHistory },
+            { path: "/UsersTable", label: "User Management", icon: FaUsers },
+            { label: "Change Password", isModal: true, modalComponent: ChangePasswordForm, icon: FaKey },
+            { path: "/Complaints", label: "Complaints", icon: FaExclamationCircle },
+            { path: "/sales", label: "Sales Report", icon: FaChartLine },
+            { label: "Create Promo Code", isModal: true, modalComponent: PromoCode, icon: FaFileAlt },
           ])
         );
         break;
