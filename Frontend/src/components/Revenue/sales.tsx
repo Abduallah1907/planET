@@ -199,9 +199,19 @@ const Sales: React.FC = () => {
           fullWidth
         />
         <Button
+          variant="contained"
           onClick={handleDateChange}
-          type="submit"
-          className="btn-main-inverse "
+          className="btn-main-inverse"
+          sx={{
+            minWidth: "150px",
+            backgroundColor: "#d76f30;",
+            "&:hover": {
+              backgroundColor: "#d76f30;",
+            },
+            "&:focus": {
+              backgroundColor: "#d76f30;",
+            },
+          }}
         >
           Apply Dates
         </Button>
