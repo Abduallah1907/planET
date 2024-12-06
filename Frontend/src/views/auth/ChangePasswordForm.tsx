@@ -1,22 +1,28 @@
 import React, { useEffect, useState } from "react";
 import CustomFormGroup from "../../components/FormGroup/FormGroup";
-import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import { Container, Row, Col, Button, Form, Modal } from "react-bootstrap";
 import { useAppSelector } from "../../store/hooks";
 import { AdminService } from "../../services/AdminService";
 import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
+import { on } from "events";
 
 interface FormData {
   changePassword: string;
   retypePassword: string;
 }
+interface ChangeFormProps {
+  show: boolean;
+  onHide: () => void;
+}
 
-const ChangePasswordForm: React.FC = () => {
+const ChangePasswordForm: React.FC<ChangeFormProps> = ({ show, onHide }) => {
   const [formData, setFormData] = useState<FormData>({
     changePassword: "",
     retypePassword: "",
   });
 
+  
   const Admin = useAppSelector((state) => state.user);
 
   useEffect(() => {
@@ -57,6 +63,7 @@ const ChangePasswordForm: React.FC = () => {
 
       if (response.status === 200) {
         showToastMessage("Password changed successfully", ToastTypes.SUCCESS);
+        onHide();
       } else {
         showToastMessage("Error changing password", ToastTypes.ERROR);
       }
@@ -73,55 +80,62 @@ const ChangePasswordForm: React.FC = () => {
       changePassword: "",
       retypePassword: "",
     });
+    onHide();
   };
 
   return (
-    <div className="profile-form-container mt-5">
-      <Container>
-        <Form onSubmit={handleSubmit}>
-          <Row>
-            <Col>
-              <CustomFormGroup
-                label="Change Password"
-                type="password"
-                placeholder="Enter your password"
-                id="changePassword"
-                name="changePassword"
-                required={true}
-                value={formData.changePassword}
-                onChange={handleChange}
-                disabled={false}
-              />
-            </Col>
-            <Col>
-              <CustomFormGroup
-                label="Retype Password"
-                type="password"
-                placeholder="Retype your password"
-                id="retypePassword"
-                name="retypePassword"
-                required={true}
-                value={formData.retypePassword}
-                onChange={handleChange}
-                disabled={false}
-              />
-            </Col>
-          </Row>
-
-          <Button type="submit" variant="main-inverse" className="mt-4">
-            Update Profile
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            className="mt-4 ms-2"
-            onClick={handleCancel}
-          >
-            Cancel
-          </Button>
-        </Form>
-      </Container>
-    </div>
+    <>
+      <Modal show={show} onHide={onHide} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Change Password</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Container>
+            <Form onSubmit={handleSubmit}>
+              <Row>
+                <Col>
+                  <CustomFormGroup
+                    label="Change Password"
+                    type="password"
+                    placeholder="Enter your password"
+                    id="changePassword"
+                    name="changePassword"
+                    required={true}
+                    value={formData.changePassword}
+                    onChange={handleChange}
+                    disabled={false}
+                  />
+                </Col>
+                <Col>
+                  <CustomFormGroup
+                    label="Retype Password"
+                    type="password"
+                    placeholder="Retype your password"
+                    id="retypePassword"
+                    name="retypePassword"
+                    required={true}
+                    value={formData.retypePassword}
+                    onChange={handleChange}
+                    disabled={false}
+                  />
+                </Col>
+              </Row>
+              <Button type="submit" variant="main-inverse" className="mt-4">
+                Update Profile
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                className="mt-4 ms-2"
+                onClick={handleCancel}
+              >
+                Cancel
+              </Button>
+            </Form>
+          </Container>
+        </Modal.Body>
+      </Modal>
+    </>
   );
 };
 

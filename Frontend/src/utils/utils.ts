@@ -6,6 +6,8 @@ import { login, setUser } from "../store/userSlice";
 import CryptoJS from "crypto-js";
 import showToastMessage from "./showToastMessage";
 import { ToastTypes } from "./toastTypes";
+import ChangePasswordForm from "../views/auth/ChangePasswordForm";
+import ChangePasswordG from "../views/auth/ChangePasswordG";
 import PromoCode from "../views/PromoCode";
 export class Utils {
   private static secretKey = "your_secret_key";
@@ -156,7 +158,7 @@ export class Utils {
             { path: "/AddHistoricalLocation", label: "Add Historical Location" },
             { path: "/MyHistoricalLocations", label: "My Historical Locations" },
             { path: "/HistoricalTags", label: "Historical Tags" },
-            { path: "/ChangePasswordG", label: "Change Password" },
+            { label: "Change Password", isModal: true, modalComponent: ChangePasswordG },
           ])
         );
         break;
@@ -170,7 +172,7 @@ export class Utils {
             { path: "/Tags", label: "Tags" },
             { path: "/HistoricalTags", label: "Historical Tags" },
             { path: "/UsersTable", label: "User Managment" },
-            { path: "/ChangePasswordForm", label: "Change Password" },
+            { label: "Change Password", isModal: true, modalComponent: ChangePasswordForm },
             { path: "/Complaints", label: "Complaints" },
             { path: "/sales", label: "Sales report" },
             { label: "Create Promo Code", isModal: true, modalComponent: PromoCode }

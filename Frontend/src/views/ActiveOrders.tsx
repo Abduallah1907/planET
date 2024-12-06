@@ -11,13 +11,19 @@ import { useAppSelector } from "../store/hooks";
 import { TouristService } from "../services/TouristService";
 import "./mybookings.css";
 import { useAppContext } from "../AppContext";
+import { FileService } from "../services/FileService";
 
 interface Product {
   _id: string;
+  seller_id: {
+    _id: string;
+    logo: string;
+  };
   name: string;
   description: string;
   image: string;
   price: number;
+  average_rating: number;
 }
 
 interface CartItem {
@@ -32,9 +38,13 @@ interface Cart {
 
 interface Order {
   _id: string;
+  tourist_id: string;
+  products: Cart;
   date: string;
   cost: number;
-  products: Cart;
+  status: string;
+  payment_type: string;
+  createdAt: string;
 }
 
 const ActiveOrders: React.FC = () => {
@@ -47,7 +57,17 @@ const ActiveOrders: React.FC = () => {
 
   const getActiveOrders = async (email: string) => {
     const orders = await TouristService.getActiveOrders(email);
-    return orders.data;
+    const ordersWithImages = await Promise.all(
+      orders.data.map(async (order: Order) => {
+        if (order.products.items[0]?.product_id.seller_id.logo) {
+          const file = await FileService.downloadFile(order.products.items[0]?.product_id.seller_id.logo);
+          const url = URL.createObjectURL(file);
+          order.products.items[0].product_id.seller_id.logo = url;
+        }
+        return order;
+      })
+    );
+    return ordersWithImages;
   };
   const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
 
@@ -94,10 +114,10 @@ const ActiveOrders: React.FC = () => {
                   <div className="d-flex align-items-center mb-3">
                     <Image
                       src={
-                        order.products.items[0]?.product_id.image ||
+                        order.products.items[0]?.product_id.seller_id.logo ||
                         "path/to/placeholder.jpg"
                       }
-                      alt={order.products.items[0]?.product_id.name}
+                      alt={order.products.items[0]?.product_id.seller_id.logo}
                       rounded
                       style={{
                         width: "60px",

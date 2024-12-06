@@ -15,10 +15,14 @@ import { TouristService } from "../services/TouristService";
 import { useAppSelector } from "../store/hooks";
 import "./mybookings.css";
 import { useAppContext } from "../AppContext";
+import { FileService } from "../services/FileService";
 
 interface Product {
   _id: string;
-  seller_id: string;
+  seller_id: {
+    _id: string;
+    logo: string;
+  };
   name: string;
   description: string;
   image: string;
@@ -56,7 +60,17 @@ const RecentOrders: React.FC = () => {
 
   const getPastOrders = async (email: string) => {
     const orders = await TouristService.getPastOrders(email);
-    return orders;
+    const ordersWithImages = await Promise.all(
+      orders.data.map(async (order: Order) => {
+        if (order.products.items[0]?.product_id.seller_id.logo) {
+          const file = await FileService.downloadFile(order.products.items[0]?.product_id.seller_id.logo);
+          const url = URL.createObjectURL(file);
+          order.products.items[0].product_id.seller_id.logo = url;
+        }
+        return order;
+      })
+    );
+    return ordersWithImages;
   };
   const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
 
@@ -88,7 +102,7 @@ const RecentOrders: React.FC = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       const orders = await getPastOrders(Tourist.email);
-      setOrders(orders.data);
+      setOrders(orders);
     };
     fetchOrders();
   }, [Tourist.email]);
@@ -119,8 +133,8 @@ const RecentOrders: React.FC = () => {
                 </div>
                 <div className="d-flex align-items-center mb-3">
                   <Image
-                    src={order.products.items[0]?.product_id.image || "path/to/placeholder.jpg"}
-                    alt={order.products.items[0]?.product_id.name}
+                    src={order.products.items[0]?.product_id.seller_id.logo || "path/to/placeholder.jpg"}
+                    alt={order.products.items[0]?.product_id.seller_id.logo}
                     rounded
                     style={{
                       width: "60px",
