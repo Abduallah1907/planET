@@ -528,7 +528,7 @@ cd Frontend
 npm i
 ```
 
-The next step is to setup the enviroment file to store all our sensitive variables. Create a new file called `.env` inside the [src](/Frontend) directory. Using the below variable names as reference, replace them with your own keys and links.
+The next step is to setup the enviroment file to store all our sensitive variables. Create a new file called `.env` inside the [Frontend](/Frontend) directory. Using the below variable names as reference, replace them with your own keys and links.
 
 ```
 REACT_APP_GOOGLE_MAPS_API_KEY='your google api key'
