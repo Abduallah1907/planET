@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent } from "react";
-import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import { Container, Row, Col, Button, Form, Modal } from "react-bootstrap";
 import AdminFormGroup from "../../components/FormGroup/FormGroup"; // Reuse the form group component
 import { useAppSelector } from "../../store/hooks";
 import { ProductService } from "../../services/ProductService";
@@ -17,7 +17,12 @@ interface FormData {
   archive_flag: boolean;
 }
 
-const AddNewProduct: React.FC = () => {
+interface AddNewProductModalProps {
+  show: boolean;
+  onHide: () => void;
+}
+
+const AddNewProduct: React.FC<AddNewProductModalProps> = ({ show, onHide }) => {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     description: "",
@@ -30,19 +35,13 @@ const AddNewProduct: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
 
-    // Check if the field is Price or Quantity
-    if (name === "price" || name === "quantity") {
-      const numericalValue = parseFloat(value); // Use parseFloat for Price
-
-      // Validate for negative values
-      if (numericalValue < 0) {
-        showToastMessage(`${name} cannot be negative`, ToastTypes.ERROR); //Show error message not API
-        setFormData({ ...formData, [name]: "0" }); // Reset to 0 if negative
-        return;
-      }
+    // Validate numeric fields for negative values
+    if ((name === "price" || name === "quantity") && parseFloat(value) < 0) {
+      showToastMessage(`${name} cannot be negative`, ToastTypes.ERROR);
+      setFormData({ ...formData, [name]: 0 });
+      return;
     }
 
-    // Update formData based on the input type
     setFormData({
       ...formData,
       [name]: type === "checkbox" ? checked : value,
@@ -54,11 +53,13 @@ const AddNewProduct: React.FC = () => {
       setFormData({ ...formData, image: e.target.files[0] });
     }
   };
+
   const seller_id = useAppSelector((state) => state.user.stakeholder_id?._id);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const productData = {
       name: formData.name,
       description: formData.description,
@@ -66,140 +67,149 @@ const AddNewProduct: React.FC = () => {
       quantity: formData.quantity,
       archive_flag: formData.archive_flag,
     };
-    if (formData.image && seller_id) {
-      const file = await FileService.uploadFile(formData.image);
-      await ProductService.createProduct(seller_id, {
-        name: formData.name,
-        description: formData.description,
-        price: formData.price,
-        image: file.data._id,
-        quantity: formData.quantity,
-        archive_flag: formData.archive_flag,
-      });
+
+    try {
+      if (formData.image && seller_id) {
+        const file = await FileService.uploadFile(formData.image);
+        await ProductService.createProduct(seller_id, {
+          ...productData,
+          image: file.data._id,
+        });
+        showToastMessage("Product added successfully", ToastTypes.SUCCESS);
+      } else if (seller_id) {
+        await ProductService.createProduct(seller_id, productData);
+        showToastMessage("Product added successfully", ToastTypes.SUCCESS);
+      } else {
+        console.error("Seller ID is undefined");
+      }
+      onHide(); // Close modal upon success
       navigate("/MyProducts");
-    }
-    if (seller_id && !formData.image) {
-      await ProductService.createProduct(seller_id, productData);
-      navigate("/MyProducts");
-    } else {
-      console.error("Seller ID is undefined");
+    } catch (error) {
+      showToastMessage("Failed to add product", ToastTypes.ERROR);
     }
   };
 
+  const handleCancel = () => {
+    setFormData({
+      name: "",
+      description: "",
+      image: null,
+      price: 0,
+      quantity: 0,
+      archive_flag: false,
+    });
+    onHide();
+  };
+
   return (
-    <div className="profile-form-container">
-      <Row className="align-items-center mb-4">
-        <Col xs={7} className="text-left">
-          <h2 className="my-profile-heading">Add New Product</h2>
-        </Col>
-      </Row>
-
-      <Container>
-        <Form onSubmit={handleSubmit}>
-          <Row>
-            <Col>
-              <AdminFormGroup
-                label="Product Name"
-                type="textarea"
-                placeholder="Enter Product Name"
-                id="name"
-                disabled={false}
-                required={true}
-                value={formData.name}
-                onChange={handleChange}
-                name="name"
-              />
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <AdminFormGroup
-                label="Description"
-                type="textarea"
-                placeholder="Enter Product Description"
-                id="description"
-                disabled={false}
-                required={true}
-                value={formData.description}
-                onChange={handleChange}
-                name="description"
-              />
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <AdminFormGroup
-                className="form-group"
-                label="Upload Product Image"
-                type="file"
-                onChange={handleFileChange}
-                accept="image/*"
-                required
-                id="formFile"
-                name="logo" 
-                placeholder={""} 
-                disabled={false}
-                />
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <AdminFormGroup
-                label="Price"
-                type="number"
-                placeholder="Enter Product Price"
-                id="price"
-                disabled={false}
-                required={true}
-                value={formData.price.toString()}
-                onChange={handleChange}
-                name="price"
-              />
-            </Col>
-            <Col>
-              <AdminFormGroup
-                label="Quantity"
-                type="number"
-                placeholder="Enter Product Quantity"
-                id="quantity"
-                disabled={false}
-                required={true}
-                value={formData.quantity.toString()}
-                onChange={handleChange}
-                name="quantity"
-              // Ensure only integer values
-              />
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <Form.Group controlId="is-archived">
-                <Form.Check
-                  type="checkbox"
-                  label="Archived"
-                  name="archive_flag"
-                  checked={formData.archive_flag}
+    <Modal show={show} onHide={onHide} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Add New Product</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Container>
+          <Form onSubmit={handleSubmit}>
+            <Row>
+              <Col>
+                <AdminFormGroup
+                  label="Product Name"
+                  type="textarea"
+                  placeholder="Enter Product Name"
+                  id="name"
+                  disabled={false}
+                  required={true}
+                  value={formData.name}
                   onChange={handleChange}
+                  name="name"
                 />
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <Button
-            variant="main-inverse"
-            type="submit"
-            className="mt-3"
-            onClick={handleSubmit}
-          >
-            Add Product
-          </Button>
-        </Form>
-      </Container>
-    </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <AdminFormGroup
+                  label="Description"
+                  type="textarea"
+                  placeholder="Enter Product Description"
+                  id="description"
+                  disabled={false}
+                  required={true}
+                  value={formData.description}
+                  onChange={handleChange}
+                  name="description"
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <AdminFormGroup
+                  label="Upload Product Image"
+                  type="file"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  required
+                  id="formFile"
+                  name="logo"
+                  placeholder={""}
+                  disabled={false}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <AdminFormGroup
+                  label="Price"
+                  type="number"
+                  placeholder="Enter Product Price"
+                  id="price"
+                  disabled={false}
+                  required={true}
+                  value={formData.price.toString()}
+                  onChange={handleChange}
+                  name="price"
+                />
+              </Col>
+              <Col>
+                <AdminFormGroup
+                  label="Quantity"
+                  type="number"
+                  placeholder="Enter Product Quantity"
+                  id="quantity"
+                  disabled={false}
+                  required={true}
+                  value={formData.quantity.toString()}
+                  onChange={handleChange}
+                  name="quantity"
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Form.Group controlId="is-archived">
+                  <Form.Check
+                    type="checkbox"
+                    label="Archived"
+                    name="archive_flag"
+                    checked={formData.archive_flag}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Button variant="main-inverse" type="submit" className="mt-3">
+              Add Product
+            </Button>
+            <Button
+              variant="secondary"
+              type="button"
+              className="mt-3 ms-2"
+              onClick={handleCancel}
+            >
+              Cancel
+            </Button>
+          </Form>
+        </Container>
+      </Modal.Body>
+    </Modal>
   );
 };
 

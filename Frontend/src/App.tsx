@@ -25,7 +25,6 @@ import TourGuideFirst from "./components/ProfileForm/TourGuideFirst";
 import AdvertiserFirst from "./components/ProfileForm/AdvertiserFirst";
 import AdvertiserCreate from "./views/CreatePages/AddActivity";
 import EditActivity from "./views/EditPages/EditActivity";
-import AddNewProduct from "./views/CreatePages/AddNewProduct";
 import AddHistoricalLocation from "./views/CreatePages/AddHistoricalLocation";
 import AddItinerary from "./views/CreatePages/AddItinerary";
 import Itinerary from "./views/ViewingPages/Itinerary";
@@ -162,8 +161,6 @@ const App: React.FC = () => {
           <Route path="/Advertiser/profile" element={<AdvertiserProfile />} />
           <Route path="/Tourist/Profile" element={<TouristProfile />} />
           <Route path="/Seller/Profile" element={<SellerProfile />} />
-
-          <Route path="/AddNewProduct" element={<AddNewProduct />} />
           <Route path="/AddActivity" element={<AdvertiserCreate />} />
           <Route
             path="/AddHistoricalLocation"

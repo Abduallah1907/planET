@@ -116,7 +116,9 @@ const HistoricalTagsTable: React.FC = () => {
 
     return (
         <Container className='mt-3'>
-            <h1>Tags Table</h1>
+            <h1 className="fw-bold mb-3" style={{ fontFamily: "Poppins" }}>
+                Historical Tags
+          </h1>
             <Button variant="main-inverse" onClick={handleShowCreateModal}>Create Tag</Button>
             <Table striped bordered hover className='mt-3'>
                 <thead>

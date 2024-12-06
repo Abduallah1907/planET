@@ -9,6 +9,7 @@ import { ToastTypes } from "./toastTypes";
 import ChangePasswordForm from "../views/auth/ChangePasswordForm";
 import ChangePasswordG from "../views/auth/ChangePasswordG";
 import PromoCode from "../views/PromoCode";
+import AddNewProduct from "../views/CreatePages/AddNewProduct";
 export class Utils {
   private static secretKey = "your_secret_key";
 
@@ -146,7 +147,7 @@ export class Utils {
         dispatch(
           setNavItems([
             { path: "/SellerDashboard", label: "Dashboard" },
-            { path: "/AddNewProduct", label: "Add New Product" },
+            { label: "Add New Product", isModal: true, modalComponent: AddNewProduct },
             { path: "/MyProducts", label: "My Products" },
             { path: "/S_Sales", label: "Sales Report" },
           ])
@@ -166,7 +167,7 @@ export class Utils {
         dispatch(
           setNavItems([
             { path: "/AdminDashboard", label: "Dashboard" },
-            { path: "/AddNewProduct", label: "Add Product" },
+            { label: "Add New Product", isModal: true, modalComponent: AddNewProduct },
             { path: "/MyProducts", label: " My Products" },
             { path: "/Categories", label: "Categories" },
             { path: "/Tags", label: "Tags" },
