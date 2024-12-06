@@ -1,6 +1,6 @@
 h2.my-profile-heading {
     text-indent: 5rem;
-    text-align: left;
+    text-align: right;
     margin-bottom: 0rem;
     font-weight: bold;
     margin-top: 30px;
@@ -9,7 +9,7 @@ h2.my-profile-heading {
 
 h3.my-profile-heading {
     text-indent: 15rem;
-    text-align: left;
+    text-align: right;
     margin-bottom: 0rem;
     margin-top: 0px;
     font-size: 20px;

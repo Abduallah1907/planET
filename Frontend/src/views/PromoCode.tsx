@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import "../views/CreateAdmin/CreateAdmin.css";
-import { Container, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, Container } from "react-bootstrap";
 import AdminFormGroup from "../components/FormGroup/FormGroup";
 import { useAppSelector } from "../store/hooks";
-import { BiChevronDown } from "react-icons/bi";
 import { AdminService } from "../services/AdminService";
 
 interface FormData {
@@ -11,7 +9,12 @@ interface FormData {
   numberOfDays: string;
 }
 
-const PromoCode: React.FC = () => {
+interface PromoCodeProps {
+  show: boolean;
+  onHide: () => void;
+}
+
+const PromoCode: React.FC<PromoCodeProps> = ({show, onHide}) => {
   const tourist = useAppSelector((state) => state.user.stakeholder_id);
   const [formData, setFormData] = useState<FormData>({
     discount: "",
@@ -34,55 +37,60 @@ const PromoCode: React.FC = () => {
       numberOfDays: formData.numberOfDays,
     };
     await AdminService.createPromoCode(data);
+    onHide(); // Close modal after successful submission
   };
 
   return (
-    <div className="profile-form-container">
-      <div className="text-left mb-4">
-        <h2 className="my-profile-heading">PromoCode Form</h2>
-      </div>
-      <Container>
-        <Form onSubmit={handleSubmit}>
-          {/* Discount Value */}
-          <AdminFormGroup
-            label="Discount Value"
-            type="number"
-            placeholder="Enter discount value"
-            id="discount"
-            name="discount"
-            disabled={false}
-            required={true}
-            value={formData.discount}
-            onChange={handleChange}
-          />
+    <>
+      {/* Modal */}
+      <Modal show={show} onHide={onHide} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Promo Code Form</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Container>
+            <Form onSubmit={handleSubmit}>
+              {/* Discount Value */}
+              <AdminFormGroup
+                label="Discount Value"
+                type="number"
+                placeholder="Enter discount value"
+                id="discount"
+                name="discount"
+                disabled={false}
+                required={true}
+                value={formData.discount}
+                onChange={handleChange}
+              />
 
-          {/* Date */}
-          <AdminFormGroup
-            label="Number of Active days"
-            type="number"
-            placeholder="Enter number of active days"
-            id="numberOfDays"
-            name="numberOfDays"
-            disabled={false}
-            required={true}
-            value={formData.numberOfDays}
-            onChange={handleChange}
-          />
+              {/* Number of Active Days */}
+              <AdminFormGroup
+                label="Number of Active Days"
+                type="number"
+                placeholder="Enter number of active days"
+                id="numberOfDays"
+                name="numberOfDays"
+                disabled={false}
+                required={true}
+                value={formData.numberOfDays}
+                onChange={handleChange}
+              />
 
-          {/* Submit Button */}
-          <div className="form-actions mt-3">
-            <Button
-              type="submit"
-              className="button"
-              variant="main-inverse"
-              style={{ backgroundColor: "#d76f30", borderColor: "#d76f30" }}
-            >
-              Create
-            </Button>
-          </div>
-        </Form>
-      </Container>
-    </div>
+              {/* Submit Button */}
+              <div className="form-actions mt-3">
+                <Button
+                  type="submit"
+                  className="button"
+                  style={{ backgroundColor: "#d76f30", borderColor: "#d76f30" }}
+                >
+                  Create
+                </Button>
+              </div>
+            </Form>
+          </Container>
+        </Modal.Body>
+      </Modal>
+    </>
   );
 };
 

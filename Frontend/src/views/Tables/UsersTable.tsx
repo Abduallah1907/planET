@@ -4,6 +4,7 @@ import {
   Button,
   Col,
   Container,
+  Form,
   Modal,
   Pagination,
   Row,
@@ -16,6 +17,7 @@ import { FileService } from "../../services/FileService";
 import UserService from "../../services/UserService";
 import UserStatus from "../../types/userStatus";
 import { FaTrashAlt } from "react-icons/fa";
+import CustomFormGroup from "../../components/FormGroup/FormGroup";
 
 const UsersTable = () => {
   const [users, setUsers] = useState<Map<number, IUserManagmentDTO[]>>(
@@ -31,6 +33,15 @@ const UsersTable = () => {
 
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [documentUrls, setDocumentUrls] = useState<string[]>([]); // Array to hold document URLs
+
+  const [createUserModal, setCreateUserModal] = useState(false);
+  const [formData, setFormData] = useState({
+    user_type: "",
+    username: "",
+    email: "",
+    password: "",
+    retypePassword: "",
+  });
 
   const handleDelete = (email: string) => {
     setUserToDelete(email);
@@ -164,11 +175,71 @@ const UsersTable = () => {
     }
   };
 
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (formData.password !== formData.retypePassword) {
+      alert("Passwords don't match!");
+      return;
+    }
+    if (formData.user_type === "Admin") {
+      const data = {
+        email: formData.email,
+        name: "",
+        phone_number: "",
+        username: formData.username,
+        password: formData.password,
+      };
+      await AdminService.createAdmin(data);
+    } else if (formData.user_type === "Governer") {
+      const data = {
+        email: formData.email,
+        name: "",
+        phone_number: "",
+        username: formData.username,
+        password: formData.password,
+        nation: "",
+      };
+      await AdminService.createGovernor(data);
+    }
+    setCreateUserModal(false);
+  };
+
+  const handleCancel = () => {
+    setFormData({
+      user_type: "",
+      email: "",
+      password: "",
+      retypePassword: "",
+      username: "",
+    });
+  };
+
   return (
     <Container className="profile-form-container">
       <Row className="align-items-center mb-4">
         <Col xs={7} className="text-left">
           <h2 className="my-profile-heading">Users Table</h2>
+        </Col>
+        <Col xs={10} className="text-right">
+          <Button
+            variant="main-inverse"
+            style={{
+              backgroundColor: "#d76f30",
+              borderColor: "#d76f30",
+            }}
+            onClick={() => setCreateUserModal(true)}
+          >
+            Add User
+          </Button>
         </Col>
       </Row>
       <div className="table-container">
@@ -289,8 +360,8 @@ const UsersTable = () => {
                 Accept
               </Button>
               <Button
-                 variant="main" 
-                 className="border-warning-subtle"
+                variant="main"
+                className="border-warning-subtle"
                 onClick={() => handleReject(selectedUser)}
               >
                 Reject
@@ -320,6 +391,116 @@ const UsersTable = () => {
             Close
           </Button>
         </Modal.Footer>
+      </Modal>
+
+      {/* Modal */}
+      <Modal
+        show={createUserModal}
+        onHide={() => setCreateUserModal(false)}
+        size="lg"
+        centered
+        backdrop="static"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Create Account</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Container>
+            <Form onSubmit={handleSubmit}>
+              <Row>
+                <Col>
+                  <CustomFormGroup
+                    label={"Type"}
+                    type={"select"}
+                    placeholder={"Select your type "}
+                    optionsSplit={[
+                      { label: "Admin", value: "Admin" },
+                      { label: "Governor", value: "Governor" },
+                    ]}
+                    id="user_type"
+                    name="user_type"
+                    disabled={false}
+                    required={true}
+                    value={formData.user_type}
+                    onChange={handleChange}
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <CustomFormGroup
+                    label="Email"
+                    type="email"
+                    placeholder="Enter your email"
+                    id="email"
+                    name="email"
+                    disabled={false}
+                    required={true}
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                </Col>
+              </Row>
+
+              <Row>
+                <Col>
+                  <CustomFormGroup
+                    label="Username"
+                    type="text"
+                    placeholder="Enter your username"
+                    id="username"
+                    name="username"
+                    disabled={false}
+                    required={true}
+                    value={formData.username}
+                    onChange={handleChange}
+                  />
+                </Col>
+              </Row>
+
+              <Row>
+                <Col>
+                  <CustomFormGroup
+                    label="Password"
+                    type="password"
+                    placeholder="Enter your password"
+                    id="password"
+                    name="password"
+                    disabled={false}
+                    required={true}
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                </Col>
+                <Col>
+                  <CustomFormGroup
+                    label="Confirm Password"
+                    type="password"
+                    placeholder="Retype your password"
+                    id="retypePassword"
+                    name="retypePassword"
+                    disabled={false}
+                    required={true}
+                    value={formData.retypePassword}
+                    onChange={handleChange}
+                  />
+                </Col>
+              </Row>
+              <div className="form-actions">
+                <Button type="submit" variant="main-inverse">
+                  Create User
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={handleCancel}
+                  className="ms-2"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </Form>
+          </Container>
+        </Modal.Body>
       </Modal>
     </Container>
   );

@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from "react";
 import {
-  Container,
   Row,
   Col,
   ListGroup,
   Modal,
   Button,
   Image,
-  Nav,
 } from "react-bootstrap";
-import Comment from "../components/Comment"; // Assume you have a Comment component for rating
-import { TouristService } from "../services/TouristService";
 import { useAppSelector } from "../store/hooks";
-import { NavLink } from "react-router-dom";
-import { FaTrashAlt } from "react-icons/fa";
+import { TouristService } from "../services/TouristService";
+import "./mybookings.css";
+import { useAppContext } from "../AppContext";
+import { FileService } from "../services/FileService";
 
 interface Product {
   _id: string;
-  seller_id: string;
+  seller_id: {
+    _id: string;
+    logo: string;
+  };
   name: string;
   description: string;
   image: string;
@@ -50,199 +51,131 @@ const ActiveOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showProductModal, setShowProductModal] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [deleteOrderId, setDeleteOrderId] = useState<string | null>(null);
 
   const Tourist = useAppSelector((state) => state.user);
 
   const getActiveOrders = async (email: string) => {
     const orders = await TouristService.getActiveOrders(email);
-    return orders;
+    const ordersWithImages = await Promise.all(
+      orders.data.map(async (order: Order) => {
+        if (order.products.items[0]?.product_id.seller_id.logo) {
+          const file = await FileService.downloadFile(order.products.items[0]?.product_id.seller_id.logo);
+          const url = URL.createObjectURL(file);
+          order.products.items[0].product_id.seller_id.logo = url;
+        }
+        return order;
+      })
+    );
+    return ordersWithImages;
   };
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
 
   const cancelOrder = async (order_id: string) => {
     await TouristService.cancelOrder(order_id);
     const updatedOrders = orders.filter((order) => order._id !== order_id);
     setOrders(updatedOrders);
-  }
-
-  const handleOpenOrder = (order: Order) => {
-    setSelectedOrder(order);
-    setShowProductModal(true);
-  };
-
-  const handleOpenRateModal = (product: Product) => {
-    setSelectedProduct(product);
-  };
-
-  const handleCommentSubmit = async (sentData: {
-    comment: string;
-    rating: number;
-  }) => {
-    if (selectedProduct) {
-      await TouristService.rateAndCommentProduct(
-        Tourist.stakeholder_id._id,
-        selectedProduct._id,
-        sentData.comment,
-        sentData.rating
-      );
-    }
-    setShowProductModal(false);
-    setSelectedProduct(null);
   };
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const orders = await getActiveOrders(Tourist.email);
-      setOrders(orders.data);
+      const fetchedOrders = await getActiveOrders(Tourist.email);
+      setOrders(fetchedOrders);
     };
     fetchOrders();
   }, [Tourist.email]);
 
   return (
     <>
-      <Row className="justify-content-center">
-        <Col xs={12} md={8} lg={6} style={{ maxWidth: "800px" }}>
-          <ListGroup
-            className="order-list"
-            style={{ width: "100%", margin: "0 auto" }}
-          >
+      <Row className="justify-content-center mt-3">
+        <Col>
+          <Row>
             {orders.map((order) => (
-              <ListGroup.Item
-                key={order._id}
-                action
-                onClick={() => handleOpenOrder(order)}
-                className="mb-2"
-              >
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>
-                    <strong>Order #{order._id}</strong>
-                    <p>Date: {order.date}</p>
-                    <p>Items: {order.products.items.length}</p>
-                    <p>Total: ${order.cost.toFixed(2)}</p>
-                  </div>
-                  <div>
-                    <Button
-                      variant="danger"
-                      className="mt-2"
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent opening the order details modal
-                        setDeleteOrderId(order._id); // Set the order ID to be deleted
-                      }}
-                    >
-                      Cancel
-                    </Button>
-
-                  </div>
-                </div>
-              </ListGroup.Item>
-            ))}
-          </ListGroup>
-        </Col>
-      </Row>
-        
-        {/* Modal to confirm order deletion */}
-      <Modal show={!!deleteOrderId} onHide={() => setDeleteOrderId(null)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Delete</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to Cancel this order? This action cannot be undone.
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="main" className="border-warning-subtle" onClick={() => setDeleteOrderId(null)}>
-            Cancel
-          </Button>
-          <Button
-            variant="main-inverse"
-            onClick={async () => {
-              if (deleteOrderId) {
-                await cancelOrder(deleteOrderId); // Call your delete logic
-                setDeleteOrderId(null); // Close the modal
-              }
-            }}
-          >
-            Yes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-
-      {/* Modal to show products in the selected order */}
-      {selectedOrder && (
-        <Modal
-          show={showProductModal}
-          onHide={() => setShowProductModal(false)}
-          centered
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>Order #{selectedOrder._id} - Products</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <ListGroup>
-              {selectedOrder.products.items.map((product) => (
+              <Col xs={12} md={4} key={order._id} className="mb-4">
                 <ListGroup.Item
-                  key={product.product_id._id}
-                  className="d-flex justify-content-between align-items-center"
+                  className="p-3 order-card d-flex flex-column"
+                  style={{
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    backgroundColor: "#f9f9f9",
+                  }}
                 >
-                  <div className="d-flex align-items-center">
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                      <p className="mb-1 text-muted">
+                        <small>Order Placed</small>
+                      </p>
+                      <p className="mb-0 fw-bold">
+                        {order.date.split("T")[0]}
+                      </p>
+                    </div>
+                    <p className="mb-0 fw-bold">{getConvertedCurrencyWithSymbol(order.cost, baseCurrency, currency)}</p>
+                  </div>
+                  <div className="d-flex align-items-center mb-3">
                     <Image
                       src={
-                        product.product_id.image || "path/to/placeholder.jpg"
-                      } // Placeholder image path
-                      alt={product.product_id.name}
-                      thumbnail
+                        order.products.items[0]?.product_id.seller_id.logo ||
+                        "path/to/placeholder.jpg"
+                      }
+                      alt={order.products.items[0]?.product_id.seller_id.logo}
+                      rounded
                       style={{
-                        width: "50px",
-                        height: "50px",
+                        width: "60px",
+                        height: "60px",
                         objectFit: "cover",
-                        marginRight: "10px",
+                        marginRight: "15px",
                       }}
                     />
                     <div>
-                      <p className="mb-1">
-                        <strong>{product.product_id.name}</strong>
+                      <p className="mb-0 fw-bold">Order ID: {order._id}</p>
+                      <p className="mb-0 text-muted">
+                        {order.products.items.length} item(s)
                       </p>
-                      <p className="mb-1">{product.product_id.description}</p>
-                      <p>${product.product_id.price.toFixed(2)}</p>
                     </div>
                   </div>
+                  <div className="d-flex justify-content-between">
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => setDeleteOrderId(order._id)}
+                    >
+                      Cancel Order
+                    </Button>
+                  </div>
                 </ListGroup.Item>
-              ))}
-            </ListGroup>
+              </Col>
+            ))}
+          </Row>
+        </Col>
+      </Row>
+
+      {/* Cancel Order Confirmation Modal */}
+      {deleteOrderId && (
+        <Modal show onHide={() => setDeleteOrderId(null)} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Cancel Order</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Are you sure you want to cancel this order? This action cannot be
+            undone.
           </Modal.Body>
           <Modal.Footer>
             <Button
-              variant="main"
-              className="border-warning-subtle"
-              onClick={() => setShowProductModal(false)}
+              variant="secondary"
+              onClick={() => setDeleteOrderId(null)}
             >
               Close
             </Button>
-          </Modal.Footer>
-        </Modal>
-      )}
-
-      {/* Modal for rating a specific product */}
-      {selectedProduct && (
-        <Modal
-          show={!!selectedProduct}
-          onHide={() => setSelectedProduct(null)}
-          centered
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>Rate {selectedProduct.name}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Comment onSubmit={handleCommentSubmit} />
-          </Modal.Body>
-          <Modal.Footer>
             <Button
-              variant="main"
-              className="border-warning-subtle"
-              onClick={() => setSelectedProduct(null)}
+              variant="danger"
+              onClick={async () => {
+                if (deleteOrderId) {
+                  await cancelOrder(deleteOrderId);
+                  setDeleteOrderId(null);
+                }
+              }}
             >
-              Close
+              Confirm Cancel
             </Button>
           </Modal.Footer>
         </Modal>

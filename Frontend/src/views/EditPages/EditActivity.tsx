@@ -10,6 +10,7 @@ import { AdminService } from "../../services/AdminService";
 import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
 import MapModal from "../../components/MapModal";
+import { FileService } from "../../services/FileService";
 
 interface FormData {
   name: string;
@@ -21,6 +22,7 @@ interface FormData {
   category: string;
   special_discount: number;
   booking: boolean;
+  image: File | null;
 }
 
 interface Tag {
@@ -45,6 +47,7 @@ const AdvertiserCreate: React.FC = () => {
     category: "",
     special_discount: 0,
     booking: false,
+    image: null,
   });
   const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
@@ -59,6 +62,11 @@ const AdvertiserCreate: React.FC = () => {
 
   const handleAddLocation = () => {
     setShowMapModal(true); // Show the modal
+  };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFormData({ ...formData, image: e.target.files[0] });
+    }
   };
 
   const handleCloseMapModal = () => {
@@ -161,6 +169,7 @@ const AdvertiserCreate: React.FC = () => {
           special_discount: activity.special_discount,
           booking: activity.booking_flag,
           suggestions: "",
+          image: null,
         });
         setSelectedTags(activity.tags);
         setCenter({
@@ -210,6 +219,7 @@ const AdvertiserCreate: React.FC = () => {
       category: formData.category,
       active_flag: formData.active_flag,
       booking_flag: formData.booking,
+      image: formData.image ? (await FileService.uploadFile(formData.image)).data._id : null,
     };
     if (activity_id) {
       await ActivityService.updateActivity(activity_id, activityData);
@@ -383,6 +393,22 @@ const AdvertiserCreate: React.FC = () => {
                     ))}
                   </ul>
                 )}
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Form.Group controlId="formFile" className="mb-3">
+                <Form.Label>
+                  <h3>Upload Image Activity</h3>
+                </Form.Label>
+                <Form.Control
+                  type="file"
+                  name="image"
+                  onChange={handleFileChange}
+                  className="custom-form-control"
+                  accept="image/*"
+                />
               </Form.Group>
             </Col>
           </Row>

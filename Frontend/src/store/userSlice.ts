@@ -50,6 +50,9 @@ export const userSlice = createSlice({
             state.token = token;
             state.stakeholder_id = stakeholder_id;
         },
+        setWishlist: (state, action: PayloadAction<any>) => {
+            state.stakeholder_id.wishlist = action.payload;
+        },
         getUser: (state) => {
             return state;
         },
@@ -76,7 +79,7 @@ export const userSlice = createSlice({
     },
 });
 
-export const { setUser, getUser, logout, login, setLoginState, setStakeholder, setWalletBalance } = userSlice.actions;
+export const { setUser, getUser, setWishlist, logout, login, setLoginState, setStakeholder, setWalletBalance } = userSlice.actions;
 
 export const userState = (state: RootState) => state.sidebar;
 

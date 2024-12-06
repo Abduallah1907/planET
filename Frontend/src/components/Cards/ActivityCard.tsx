@@ -12,12 +12,13 @@ import {
 import "./Cards.css";
 import Rating from "../Rating/Rating";
 import { useNavigate } from "react-router-dom";
-import { act, useMemo, useState } from "react";
+import { act, MouseEventHandler, useMemo, useState, MouseEvent as ReactMouseEvent } from "react";
 import { useAppContext } from "../../AppContext";
 import { useAppSelector } from "../../store/hooks";
 import { ActivityService } from "../../services/ActivityService";
 import { ToastTypes } from "../../utils/toastTypes";
 import { Utils } from "../../utils/utils";
+import MapModal from "../MapModal";
 
 interface InputData {
   Name: string;
@@ -59,6 +60,7 @@ const CustomActivityCard = ({
   isAdvertiser,
   onFlag,
 }: InputData) => {
+  const [showMapModal, setShowMapModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showFlagModal, setShowFlagModal] = useState(false); // State for flag confirmation modal
   const { currency, baseCurrency, getConvertedCurrencyWithSymbol } =
@@ -110,6 +112,15 @@ const CustomActivityCard = ({
 
   const date = Date_Time.toLocaleDateString();
   const time = Date_Time.toLocaleTimeString();
+
+  const openMapModal = (e: ReactMouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.stopPropagation();
+    setShowMapModal(true);
+  }
+
+  const closeMapModal = () => {
+    setShowMapModal(false);
+  }
 
   return (
     <Card
@@ -165,6 +176,7 @@ const CustomActivityCard = ({
                   href="#"
                   className="text-danger"
                   style={{ fontSize: "0.9rem" }}
+                  onClick={openMapModal}
                 >
                   {location} • Show on map
                 </a>
@@ -289,6 +301,14 @@ const CustomActivityCard = ({
           </Button>
         </Modal.Footer>
       </Modal>
+
+      <MapModal
+        open={showMapModal}
+        handleClose={closeMapModal}
+        center={latLng}
+        onMapClick={() => {}}
+        viewingMode={true}
+      />
     </Card>
   );
 };

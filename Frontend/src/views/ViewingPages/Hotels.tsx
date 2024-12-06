@@ -10,6 +10,7 @@ import HotelCard from "../../components/Cards/HotelCard";
 import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
 import { AdvancedMarker, AdvancedMarkerAnchorPoint, Map, Marker } from "@vis.gl/react-google-maps";
+import Services from "../Main Page/Services";
 
 export default function HotelsPage() {
     const navigate = useNavigate();
@@ -213,7 +214,7 @@ export default function HotelsPage() {
                     {!isMediumScreen && (
                         <Col lg={4} className="p-0">
                             {(hotels.length > 0 && !loading) && (
-                                <div className="sticky-top mt-3">
+                                <Card className="sticky-top mt-3 p-2">
                                     <Map
                                         style={{ height: "600px" }}
                                         defaultCenter={center}
@@ -237,11 +238,16 @@ export default function HotelsPage() {
                                             </AdvancedMarker>
                                         ))}
                                     </Map>
-                                </div>
+                                </Card>
                             )}
                         </Col>
                     )}
                 </Row>
+                    {!loading && progress < 100 && (
+                        <div className="mt-5">
+                           <Services />
+                        </div>
+                    )}
             </Container>
         </>
     )

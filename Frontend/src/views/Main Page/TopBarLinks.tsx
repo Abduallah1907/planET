@@ -72,7 +72,7 @@ const TopBarLinks: React.FC = () => {
     return (
         <div className="top-bar-links">
             <Row className="links-bar">
-                <Col>
+                <Col className="d-flex justify-content-center">
                     <button
                         className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Activities' ? 'active' : ''}`}
                         onClick={() => handleButtonClick('Activities')}
@@ -80,7 +80,7 @@ const TopBarLinks: React.FC = () => {
                         {t('activities')}
                     </button>
                 </Col>
-                <Col>
+                <Col className="d-flex justify-content-center">
                     <button
                         className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Itineraries' ? 'active' : ''}`}
                         onClick={() => handleButtonClick('Itineraries')}
@@ -88,7 +88,7 @@ const TopBarLinks: React.FC = () => {
                         {t('itineraries')}
                     </button>
                 </Col>
-                <Col>
+                <Col className="d-flex justify-content-center">
                     <button
                         className={`btn-custom-primary btn-rounded text-nowrap mx-2 ${activeButton === 'Historical_Locations' ? 'active' : ''}`}
                         onClick={() => handleButtonClick('Historical_Locations')}
@@ -98,7 +98,7 @@ const TopBarLinks: React.FC = () => {
                 </Col>
 
                 {(userRole === UserRoles.Admin || userRole === UserRoles.Seller || userRole === UserRoles.Tourist) && (
-                    <Col>
+                    <Col className="d-flex justify-content-center">
                         <button
                             className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Products' ? 'active' : ''}`}
                             onClick={() => handleButtonClick('Products')}
@@ -107,7 +107,7 @@ const TopBarLinks: React.FC = () => {
                         </button>
                     </Col>
                 )}
-                <Col>
+                <Col className="d-flex justify-content-center">
                     <button
                         className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Flights' ? 'active' : ''}`}
                         onClick={() => handleButtonClick('Flights')}
@@ -115,7 +115,7 @@ const TopBarLinks: React.FC = () => {
                         {t('flights')}
                     </button>
                 </Col>
-                <Col>
+                <Col className="d-flex justify-content-center">
                     <button
                         className={`btn-custom-primary btn-rounded mx-2 ${activeButton === 'Hotels' ? 'active' : ''}`}
                         onClick={() => handleButtonClick('Hotels')}

@@ -93,7 +93,7 @@ export default function ProductsPage() {
   );
 
   return (
-    <Container fluid>
+    <Container>
       <Row className="justify-content-center my-4">
         <Col md={6} className="text-center">
           <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
@@ -145,7 +145,7 @@ export default function ProductsPage() {
           />
         </Col>
 
-        <Col md={9} className="p-3">
+        <Col md={9} className="p-3 pt-0">
           <Row>
             {/* Sort By Section */}
             <div className="sort-btn w-auto d-flex align-items-center">
@@ -158,8 +158,10 @@ export default function ProductsPage() {
                 <option value="ratingLowToHigh">Rating: Low to High</option>
               </Form.Select>
             </div>
+          </Row>
+          <Row>
             {filteredProducts.map((product: IProduct, index) => (
-              <Col key={index} xs={12} className="mb-4 ps-0">
+              <Col key={index} xs={12} md={6} lg={4} className="mb-4 ps-0">
                 <ProductCard
                   id={product._id}
                   name={product.name}
@@ -176,9 +178,8 @@ export default function ProductsPage() {
                     product.updatedAt ? new Date(product.updatedAt) : new Date()
                   }
                   image={product.image}
+
                   isActiveArchive={product.archieve_flag}
-                  isSeller={false}
-                  isAdmin={false}
                 />
               </Col>
             ))}

@@ -1,12 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { Container, Card, Alert } from "react-bootstrap";
+import React, { useEffect, useMemo, useState } from "react";
+import { Container, Table, Badge, Alert, Row, Col } from "react-bootstrap";
 import { TouristService } from "../../services/TouristService";
 import { useAppSelector } from "../../store/hooks";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
+import Rating from "../../components/Rating/Rating"; // Assuming Rating is imported from a separate component
+import ActivityCard from "../DetailsPages/ActivityCard";
+import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../AppContext";
+//import "./Cards.css";
 
 const BookmarkEvents: React.FC = () => {
+  const navigate = useNavigate();
   const tourist = useAppSelector((state) => state.user);
   const [bookmarkedEvents, setBookmarkedEvents] = useState<any[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } =
+    useAppContext();
 
   const fetchBookmarkedEvents = async () => {
     try {
@@ -18,7 +29,6 @@ const BookmarkEvents: React.FC = () => {
       const response = await TouristService.getBookmarkedActivities(
         tourist.email
       );
-      console.log(response.data);
 
       if (response?.data && response.data.length > 0) {
         setBookmarkedEvents(response.data);
@@ -38,38 +48,87 @@ const BookmarkEvents: React.FC = () => {
     fetchBookmarkedEvents();
   }, [tourist]);
 
-  return (
-    <Container
-      className="d-flex flex-column align-items-center justify-content-start"
-      style={{ minHeight: "100vh", paddingTop: "2rem" }}
-    >
-      <h1 style={{ fontSize: "2rem", fontWeight: "bold", color: "#495057" }}>
-        Bookmark Events
-      </h1>
+  const handleBookmarkToggle = (eventId: string) => {
+    setIsBookmarked(!isBookmarked);
+    // Handle bookmark toggle logic for individual events
+  };
 
-      {errorMessage && (
-        <Alert variant="danger" className="w-100 text-center">
-          {errorMessage}
-        </Alert>
-      )}
+  return (
+    <Container className="mt-5">
+      <Row className="justify-content-center my-4">
+        <Col md={6} className="text-center">
+          <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
+            Bookmarked Events
+          </h1>
+        </Col>
+      </Row>
+
+      {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
 
       {bookmarkedEvents.length > 0 ? (
-        bookmarkedEvents.map((event) => (
-          <Card
-            key={event.id}
-            className="mb-3 p-3 shadow-sm"
-            style={{ borderRadius: "10px", width: "80%" }}
-          >
-            <Card.Body>
-              <h5>{event.name}</h5>
-              <p className="text-muted">{event.location._id}</p>
-              <p className="text-muted">{event.date}</p>
-              <p>{event.description}</p>
-            </Card.Body>
-          </Card>
-        ))
+        <div
+          className="d-flex flex-wrap justify-content-center" // Flexbox container for wrapping
+          style={{
+            gap: "15px", // Space between the cards
+          }}
+        >
+          {bookmarkedEvents.map((event) => {
+            const convertedPrice = getConvertedCurrencyWithSymbol(
+              event.price,
+              baseCurrency,
+              currency
+            );
+            return (
+              <div
+                onClick={() => navigate(`/Activity/${event.id}`)} // Use the event's ID to navigate to the details page
+                className="activity-card"
+                key={event.id}
+                style={{
+                  width: "450px", // Adjust width for smaller cards
+                  margin: "10px", // Space between cards
+                  padding: "15px", // Add some padding
+                  border: "1px solid #ddd", // Add a border
+                  borderRadius: "8px", // Round the corners
+                  boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)", // Add a subtle shadow
+                  fontFamily: "Poppins", // Use the Poppins font
+                }}
+              >
+                <div className="activity-details">
+                  <div
+                    className="image-placeholder"
+                    style={{
+                      width: "150px", // Placeholder width
+                      height: "150px", // Placeholder height
+                      backgroundColor: "#f0f0f0", // Light gray background
+                      margin: "0 auto 10px", // Center align with spacing below
+                      borderRadius: "8px", // Rounded corners
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      fontSize: "12px",
+                      color: "#888",
+                    }}
+                  >
+                    Image Placeholder
+                  </div>
+
+                  <div className="details">
+                    <h2 className="fw-bold" style={{ fontFamily: "Poppins" }}>
+                      {event.name}
+                    </h2>
+                    <p className="category">{event.category.type}</p>
+                    <p className="date">
+                      {new Date(event.date).toLocaleDateString()}
+                    </p>
+                    <p className="price">{convertedPrice}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       ) : (
-        <p className="text-center text-muted">No bookmarked events found.</p>
+        <p className="text-center">No bookmarked events found.</p>
       )}
     </Container>
   );
