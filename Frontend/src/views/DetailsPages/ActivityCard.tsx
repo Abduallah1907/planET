@@ -5,12 +5,12 @@ import { FaShareAlt, FaBookmark, FaRegBookmark } from "react-icons/fa";
 import Rating from "../../components/Rating/Rating";
 import { ActivityService } from "../../services/ActivityService";
 import { IActivity } from "../../types/IActivity";
-import { use } from "i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { Utils } from "../../utils/utils";
 import { useAppContext } from "../../AppContext";
 import { TouristService } from "../../services/TouristService";
+import { setStakeholder } from "../../store/userSlice";
 
 interface ActivityCardProps {
   id: string;
@@ -36,7 +36,7 @@ interface ActivityData {
 
 const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
   const tourist = useAppSelector((state) => state.user);
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(tourist?.stakeholder_id?.bookmarks?.includes(id) ?? false);
   const [showModal, setShowModal] = useState(false);
   const [activityData, setActivityData] = useState<IActivity | null>(null);
   const [showAdvertiserModal, setShowAdvertiserModal] = useState(false);
@@ -83,10 +83,18 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
     }
   };
 
+  const dispatch = useAppDispatch();
+
   const toggleBookmark = async () => {
     if (!activityData?._id) {
       console.error("Activity ID is undefined.");
       alert("Activity data is not loaded. Unable to toggle bookmark.");
+      return;
+    }
+
+    if (tourist.role !== "TOURIST") {
+      console.error("User is not a tourist.");
+      alert("You must be a tourist to bookmark activities.");
       return;
     }
   
@@ -104,6 +112,13 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
   
       if (response?.success) {
         setIsBookmarked(updatedStatus);
+        const newStakeholder = {
+            ...tourist.stakeholder_id,
+            bookmarks: updatedStatus
+              ? [...tourist.stakeholder_id.bookmarks, activityData._id]
+              : tourist.stakeholder_id.bookmarks.filter((bookmark: string) => bookmark !== activityData._id),
+        }
+        dispatch(setStakeholder(newStakeholder));
         const action = updatedStatus ? "bookmarked" : "removed from bookmarks";
       } else {
         throw new Error(response?.message || "Unexpected error occurred.");

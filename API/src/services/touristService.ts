@@ -25,7 +25,7 @@ import {
 } from "@/interfaces/IComment_rating";
 import Historical_locationService from "./Historical_locationService";
 import TouristBadge from "@/types/enums/touristBadge";
-import { ObjectId, Document, Schema, Types } from "mongoose";
+import mongoose, { ObjectId, Document, Schema, Types } from "mongoose";
 import { IComplaintCreateDTO } from "@/interfaces/IComplaint";
 import { ITicketBooking } from "@/interfaces/ITicket";
 import TicketType from "@/types/enums/ticketType";
@@ -43,6 +43,7 @@ import category from "@/api/routes/category";
 import advertiser from "@/api/routes/advertiser";
 import NotificationService from "./notificationService";
 import { IAddress } from "@/interfaces/IAddress";
+import moongose from "@/loaders/moongose";
 
 // comment and ratings
 // complaint
@@ -72,7 +73,7 @@ export default class TouristService {
     private notificationModel: Models.NotificationModel,
     @Inject("sellerModel") private sellerModel: Models.SellerModel,
     @Inject("addressModel") private addressModel: Models.AddressModel
-  ) {}
+  ) { }
 
   public async getTouristService(email: string) {
     const user = await this.userModel.findOne({
@@ -599,15 +600,12 @@ export default class TouristService {
     if (updatedTourist == null) throw new NotFoundError("Tourist not found");
     //Send the receipt to the tourist email
     const notificationService = Container.get(NotificationService);
-    const receiptMessage = `Dear ${user.name},\n\nYour Activity booking for ${
-      activity.name
-    } has been confirmed. Here are the details:\n\nActivity: ${
-      activity.name
-    }\nDate: ${activity.date.toDateString()}\n${
-      activity.price != undefined
+    const receiptMessage = `Dear ${user.name},\n\nYour Activity booking for ${activity.name
+      } has been confirmed. Here are the details:\n\nActivity: ${activity.name
+      }\nDate: ${activity.date.toDateString()}\n${activity.price != undefined
         ? `Price: ${activity.price}`
         : `Price Range: ${activity.price_range?.min} - ${activity.price_range?.max}`
-    }\nID: ${activity._id}
+      }\nID: ${activity._id}
         \n\nThank you for booking with us!\n\nBest regards,\nYour Favourite Travel Team`;
 
     const emailSent = await notificationService.sendEmailNotificationService(
@@ -823,8 +821,7 @@ export default class TouristService {
       points_received: points_received,
       payment_type: payment_type,
       time_to_attend: new Date(
-        `${historical_location.date.toISOString().split("T")[0]}T${
-          historical_location.time
+        `${historical_location.date.toISOString().split("T")[0]}T${historical_location.time
         }`
       ), // Combine date and time
     });
@@ -2193,23 +2190,24 @@ export default class TouristService {
       throw new BadRequestError(
         "Activity is inappropriate cannot be bookmarked"
       );
-    const activitycheck = await this.bookmark_notifyModel.find({
-      activity_id: activity_id,
-      tourist_id: tourist._id,
-    });
-    if (activitycheck.length > 0) {
+
+    // Cast activity_id to ObjectId
+    const activityObjectId = new mongoose.Types.ObjectId(activity_id);
+
+    // Check if the activity is already bookmarked
+    const isBookmarked = tourist.bookmarks.some(
+      (bookmark) => bookmark.toString() === activityObjectId.toString()
+    );
+
+    if (isBookmarked) {
       throw new BadRequestError("Activity already bookmarked");
     }
-    //These checks can be removed because i only want to bookmark the activity to view it later
-    const bookmark = new this.bookmark_notifyModel({
-      activity_id: activity_id,
-      tourist_id: tourist._id,
-    });
-    await bookmark.save();
-    if (bookmark instanceof Error)
-      throw new InternalServerError("Internal server error");
 
-    return new response(true, bookmark, "Activity bookmarked", 201);
+    // Add the activity to bookmarks and save
+    tourist.bookmarks.push(activityObjectId as any); // Explicit cast to avoid TypeScript errors
+    await tourist.save();
+
+    return new response(true, tourist.bookmarks, "Activity bookmarked", 201);
   }
 
   public async unbookmarkActivityService(email: string, activity_id: string) {
@@ -2235,16 +2233,23 @@ export default class TouristService {
       throw new InternalServerError("Internal server error");
     if (activity == null) throw new NotFoundError("Activity is not available");
 
-    const bookmark = await this.bookmark_notifyModel.findOneAndDelete({
-      activity_id: activity_id,
-      tourist_id: tourist._id,
-    });
-    if (bookmark instanceof Error)
-      throw new InternalServerError("Internal server error");
-    if (bookmark == null)
-      throw new NotFoundError("Bookmark not found to be unbookmarked");
+    // Cast activity_id to ObjectId
+    const activityObjectId = new mongoose.Types.ObjectId(activity_id);
 
-    return new response(true, bookmark, "Activity unbookmarked", 200);
+    // Check if the activity exists in bookmarks
+    const bookmarkIndex = tourist.bookmarks.findIndex(
+      (bookmark) => bookmark.toString() === activityObjectId.toString()
+    );
+
+    if (bookmarkIndex === -1) {
+      throw new BadRequestError("Activity is not bookmarked");
+    }
+
+    // Remove the activity from bookmarks
+    tourist.bookmarks.splice(bookmarkIndex, 1);
+    await tourist.save();
+
+    return new response(true, tourist.bookmarks, "Activity unbookmarked", 200);
   }
 
   public async getBookmarkedActivitiesService(email: string) {
@@ -2257,48 +2262,15 @@ export default class TouristService {
       throw new InternalServerError("Internal server error");
     if (user == null) throw new NotFoundError("User not found");
 
-    const tourist = await this.touristModel.findOne({ user_id: user._id });
+    const tourist = await this.touristModel.findOne({ user_id: user._id }).populate("bookmarks");
     if (tourist instanceof Error)
       throw new InternalServerError("Internal server error");
     if (tourist == null) throw new NotFoundError("Tourist not found");
 
-    const bookmarks = await this.bookmark_notifyModel.find({
-      tourist_id: tourist._id,
-    });
-    if (bookmarks instanceof Error)
-      throw new InternalServerError("Internal server error");
-    if (bookmarks == null) throw new NotFoundError("Bookmarks not found");
 
-    const bookmarks_info = [];
-
-    for (let i = 0; i < bookmarks.length; i++) {
-      const activity = await this.activityModel.findById(bookmarks[i].activity_id).populate("category");
-      if (activity instanceof Error) throw new InternalServerError("Internal server error");
-      if (activity == null) throw new NotFoundError("Activity not found");
-
-      bookmarks_info.push({
-        id: activity._id,
-        name: activity.name,
-        image: activity.image,
-        date: activity.date,
-        time: activity.time,
-        price: activity.price,
-        price_range: activity.price_range,
-        special_discount: activity.special_discount,
-        active_flag: activity.active_flag,
-        inappropriate_flag: activity.inappropriate_flag,
-        booking_flag: activity.booking_flag,
-        average_rating: activity.average_rating,
-        advertiser_id: activity.advertiser_id,
-        category: activity.category,
-        comments: activity.comments,
-        location: activity.location,
-        tags: activity.tags,
-      });
-    }
     return new response(
       true,
-      bookmarks_info,
+      tourist.bookmarks,
       "Bookmarked activities found",
       200
     );

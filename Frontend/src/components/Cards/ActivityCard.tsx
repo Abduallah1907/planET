@@ -12,13 +12,15 @@ import {
 import "./Cards.css";
 import Rating from "../Rating/Rating";
 import { useNavigate } from "react-router-dom";
-import { act, MouseEventHandler, useMemo, useState, MouseEvent as ReactMouseEvent } from "react";
+import { useMemo, useState, MouseEvent as ReactMouseEvent } from "react";
 import { useAppContext } from "../../AppContext";
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { ActivityService } from "../../services/ActivityService";
-import { ToastTypes } from "../../utils/toastTypes";
 import { Utils } from "../../utils/utils";
 import MapModal from "../MapModal";
+import { TouristService } from "../../services/TouristService";
+import { setStakeholder } from "../../store/userSlice";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 
 interface InputData {
   Name: string;
@@ -69,6 +71,9 @@ const CustomActivityCard = ({
   const convertedPrice = useMemo(() => {
     return getConvertedCurrencyWithSymbol(Price, baseCurrency, currency);
   }, [Price, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
+
+  const tourist = useAppSelector((state) => state.user);
+  const [isBookmarked, setIsBookmarked] = useState(tourist?.stakeholder_id?.bookmarks?.includes(id) ?? false);
 
   const user = useAppSelector((state) => state.user);
   const isAdmin = user?.role === "ADMIN";
@@ -122,6 +127,53 @@ const CustomActivityCard = ({
     setShowMapModal(false);
   }
 
+  const dispatch = useAppDispatch();
+
+  const toggleBookmark = async (e: ReactMouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    if (!id) {
+      console.error("Activity ID is undefined.");
+      alert("Activity data is not loaded. Unable to toggle bookmark.");
+      return;
+    }
+
+    if (tourist.role !== "TOURIST") {
+      console.error("User is not a tourist.");
+      alert("You must be a tourist to bookmark activities.");
+      return;
+    }
+  
+    if (!tourist?.email) {
+      console.error("Tourist email is undefined.");
+      alert("Tourist email is not available. Unable to toggle bookmark.");
+      return;
+    }
+  
+    try {
+      const updatedStatus = !isBookmarked;
+      const response = updatedStatus
+        ? await TouristService.bookmarkActivity(tourist.email, id)
+        : await TouristService.unbookmarkActivity(tourist.email, id);
+  
+      if (response?.success) {
+        setIsBookmarked(updatedStatus);
+        const newStakeholder = {
+            ...tourist.stakeholder_id,
+            bookmarks: updatedStatus
+              ? [...tourist.stakeholder_id.bookmarks, id]
+              : tourist.stakeholder_id.bookmarks.filter((bookmark: string) => bookmark !== id),
+        }
+        dispatch(setStakeholder(newStakeholder));
+        const action = updatedStatus ? "bookmarked" : "removed from bookmarks";
+      } else {
+        throw new Error(response?.message || "Unexpected error occurred.");
+      }
+    } catch (error) {
+      console.error("Error toggling bookmark:", error);
+      const action = !isBookmarked ? "bookmark" : "unbookmark";
+    }
+  };
+
   return (
     <Card
       className="p-3 shadow-sm"
@@ -140,6 +192,17 @@ const CustomActivityCard = ({
             alt="Activity Image"
             style={{ objectFit: "cover", height: "100%", width: "100%" }}
           />
+          <div className="activity-bookmark">
+            <div className="mt-3">
+              <i onClick={toggleBookmark} style={{ cursor: "pointer" }}>
+                {isBookmarked ? (
+                  <FaBookmark color="white" />
+                ) : (
+                  <FaRegBookmark color="white" />
+                )}
+              </i>
+            </div>
+          </div>
         </Col>
 
         {/* Main Info Section */}
