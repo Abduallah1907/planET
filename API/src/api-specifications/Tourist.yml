@@ -1477,3 +1477,53 @@ paths:
           description: Could not find tourist using the email
         500:
           description: Internal server error
+  /api/tourist/addPreference/{email}:
+    post:
+      tags:
+        - Tourist
+      summary: Adds a preference to the tourist.
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+        - in: query
+          name: preference_id
+          required: true
+          description: ID of the preference
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Successfully added preference or preference already exists
+        "404":
+          description: Could not find tourist using the email
+        "500":
+          description: Internal server error
+  /api/tourist/removePreference/{email}:
+    delete:
+      tags:
+        - Tourist
+      summary: Removes a preference from the tourist.
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: Email of the tourist
+          schema:
+            type: string
+        - in: query
+          name: preference_id
+          required: true
+          description: ID of the preference
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Successfully removed preference or preference already removed
+        "404":
+          description: Could not find tourist using the email
+        "500":
+          description: Internal server error
