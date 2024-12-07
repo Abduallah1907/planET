@@ -20,6 +20,7 @@ export interface ITouristOutputDTO {
   badge: TouristBadge;
   addresses: mongoose.Schema.Types.ObjectId[];
   logo?: mongoose.Schema.Types.ObjectId;
+  preferences?: mongoose.Schema.Types.ObjectId[];
   // cart: Cart;
   // wishlist: ObjectId[];
 }
@@ -40,6 +41,7 @@ export interface ITourist extends Document {
   total_loyality_points: number;
   createdAt?: Date;
   updatedAt?: Date;
+  preferences?: mongoose.Schema.Types.ObjectId[];
 }
 
 export interface ITouristCreateDTO {
@@ -52,6 +54,7 @@ export interface ITouristCreateDTO {
   nation: string;
   date_of_birth: Date;
   logo?: mongoose.Schema.Types.ObjectId;
+  preferences?: mongoose.Schema.Types.ObjectId[];
 }
 
 export interface ITouristNewUserDTO {
@@ -71,6 +74,7 @@ export interface ITouristUpdateDTO {
   nation?: string;
   addresses?: mongoose.Schema.Types.ObjectId[];
   logo?: mongoose.Schema.Types.ObjectId;
+  preferences?: mongoose.Schema.Types.ObjectId[];
 }
 
 // for some reason, the original ITourist does not have user_id
