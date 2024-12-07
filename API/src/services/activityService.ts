@@ -7,7 +7,7 @@ import {
 } from "@/types/Errors";
 import response from "@/types/responses/response";
 import Container, { Inject, Service } from "typedi";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { IFilterComponents } from "@/interfaces/IFilterComponents";
 import { ObjectId } from "mongodb";
 import UserRoles from "@/types/enums/userRoles";
@@ -650,13 +650,37 @@ export default class ActivityService {
   public async flagActivityInappropriateService(
     activity_id: Types.ObjectId
   ): Promise<response> {
+    // Fetch the activity
     const activity = await this.activityModel.findById(activity_id);
     if (!activity) throw new NotFoundError("Activity not found");
     if (activity.inappropriate_flag === true)
-      throw new ForbiddenError("Itinerary is already flagged");
+      throw new BadRequestError("Itinerary is already flagged");
 
+    // Set inappropriate flag to true
     activity.inappropriate_flag = true;
     await activity.save();
+
+    // Fetch all tourists
+    const tourists = await this.touristModel.find();
+    if (!tourists || tourists.length === 0)
+      throw new NotFoundError("No tourists found");
+
+    for (const tourist of tourists) {
+      const bookmarks = tourist.bookmarks;
+      if (
+        bookmarks.some(
+          (bookmarkId: mongoose.Schema.Types.ObjectId) =>
+            bookmarkId.toString() === activity_id.toString()
+        )
+      ) {
+        tourist.bookmarks = bookmarks.filter(
+          (bookmarkId: mongoose.Schema.Types.ObjectId) =>
+            bookmarkId.toString() !== activity_id.toString()
+        );
+        await tourist.save();
+      }
+    }
+
     return new response(true, { activity_id }, "Activity flagged", 200);
   }
 }
