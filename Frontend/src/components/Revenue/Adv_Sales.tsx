@@ -1,19 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Table,
-  InputGroup,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TextField,
+  Select,
+  MenuItem,
   FormControl,
-  Dropdown,
-  Spinner,
-  Alert,
+  InputLabel,
   Button,
-} from "react-bootstrap";
-import { FaCaretDown } from "react-icons/fa";
-import SalesService from "../../services/SalesService";
-import "./sales.css";
-import CustomFormGroup from "../FormGroup/FormGroup";
+  Box,
+  CircularProgress,
+  Alert,
+  TableSortLabel,
+  Container,
+} from "@mui/material";
 import { useAppSelector } from "../../store/hooks";
+import SalesService from "../../services/SalesService";
 import { Utils } from "../../utils/utils";
+import { useAppContext } from "../../AppContext";
+import { Spinner } from "react-bootstrap";
 
 interface Adv_Sales {
   _id: string;
@@ -54,6 +64,10 @@ const Adv_Sales: React.FC = () => {
   // State for start and end dates
   const [startDate, setStartDate] = useState<string>(""); // Default start date
   const [endDate, setEndDate] = useState<string>(""); // Default end date
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [orderBy, setOrderBy] = useState<keyof Adv_Sales>("total_revenue");
+  const { currency, baseCurrency, getConvertedCurrencyWithSymbol } =
+    useAppContext();
 
   const fetchSales = async () => {
     setLoading(true);
@@ -135,6 +149,33 @@ const Adv_Sales: React.FC = () => {
     }
   };
 
+  const handleRequestSort = (property: keyof Adv_Sales) => {
+    const isAsc = orderBy === property && sortDirection === "asc";
+    setSortDirection(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
+
+  const sortData = (data: Adv_Sales[]) => {
+    return data.sort((a, b) => {
+      if (orderBy === "total_revenue") {
+        return sortDirection === "asc"
+          ? a.total_revenue - b.total_revenue
+          : b.total_revenue - a.total_revenue;
+      }
+      if (orderBy === "type") {
+        return sortDirection === "asc"
+          ? a.type.localeCompare(b.type)
+          : b.type.localeCompare(a.type);
+      }
+      if (orderBy === "name") {
+        return sortDirection === "asc"
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
+      }
+      return 0;
+    });
+  };
+
   const filteredSales = sales.filter((sale) => {
     return (
       (filters.typeFilter === "" ||
@@ -146,10 +187,15 @@ const Adv_Sales: React.FC = () => {
     );
   });
 
-  const totalRevenue = filteredSales.reduce(
+  const sortedSales = sortData(filteredSales);
+
+  const totalRevenue = sortedSales.reduce(
     (total, sale) => total + sale.total_revenue,
     0
   );
+  const convertedPrice = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(totalRevenue, baseCurrency, currency);
+  }, [baseCurrency, currency, getConvertedCurrencyWithSymbol]);
 
   if (loading) {
     return (
@@ -161,180 +207,152 @@ const Adv_Sales: React.FC = () => {
     );
   }
 
-  if (error) {
-    return <Alert variant="danger">{error}</Alert>;
-  }
-
   return (
-    <div className="sales-container">
+    <Container className="mt-3">
       <h2 className="mb-4 text-center">Sales Report</h2>
 
-      <div className="form-row">
-        {/* Start Date */}
-        <CustomFormGroup
-          label="Start Date "
-          type="text"
-          id="startDate"
-          value={startDate}
-          placeholder="Enter Start Date (dd/mm/yyyy)"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setStartDate(e.target.value)
-          }
-          disabled={false}
-          required={false}
-          name={""}
-        />
-        {/* End Date */}
-        <CustomFormGroup
-          label="End Date"
-          type="text"
-          id="endDate"
-          value={endDate}
-          placeholder="Enter End Date (dd/mm/yyyy)"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setEndDate(e.target.value)
-          }
-          disabled={false}
-          required={false}
-          name={""}
-        />
-        {/* Button */}
-        <Button onClick={handleDateChange} className="apply-dates-btn">
-          Apply Dates
-        </Button>
-        {dateError && <Alert variant="danger">{dateError}</Alert>}{" "}
-        {/* Show error */}
-      </div>
+      <Box display="flex" flexDirection="column" gap="16px" className="mb-4">
+        <Box display="flex" justifyContent="space-between" gap="16px">
+          <TextField
+            label="Start Date (dd/mm/yyyy)"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            fullWidth
+          />
+          <TextField
+            label="End Date (dd/mm/yyyy)"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            fullWidth
+          />
+          <Button
+            variant="contained"
+            onClick={handleDateChange}
+            className="btn-main-inverse"
+            sx={{
+              minWidth: "150px",
+              backgroundColor: "#d76f30;",
+              "&:hover": {
+                backgroundColor: "#d76f30;",
+              },
+              "&:focus": {
+                backgroundColor: "#d76f30;",
+              },
+            }}
+          >
+            Apply Dates
+          </Button>
+        </Box>
+        {dateError && <Alert severity="error">{dateError}</Alert>}
+      </Box>
 
-      <Table striped bordered hover responsive className="sales-table">
-        <thead>
-          <tr>
-            <th>
-              Type
-              <InputGroup>
-                <FormControl
-                  type="text"
-                  name="typeFilter"
-                  value={filters.typeFilter}
-                  placeholder="Filter by Type"
-                  onChange={handleFilterChange}
-                  className="filter-input"
-                  style={{ width: "120px" }}
-                />
-                <Dropdown
-                  onSelect={(value) =>
-                    handleDropdownSelect("typeFilter", value)
-                  }
+      <TableContainer component={Paper} className="mt-2">
+        <Table aria-label="sales report table">
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === "type"}
+                  direction={sortDirection}
+                  onClick={() => handleRequestSort("type")}
                 >
-                  <Dropdown.Toggle variant="outline-secondary">
-                    <FaCaretDown />
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
+                  Type
+                </TableSortLabel>
+                <FormControl variant="standard" sx={{ minWidth: 120 }}>
+                  <Select
+                    value={filters.typeFilter}
+                    onChange={(e) =>
+                      handleDropdownSelect("typeFilter", e.target.value)
+                    }
+                    displayEmpty
+                    sx={{ fontSize: "0.875rem", width: "100px" }}
+                  >
+                    <MenuItem value="">Select Type</MenuItem>
                     {Array.from(new Set(sales.map((sale) => sale.type))).map(
                       (type, index) => (
-                        <Dropdown.Item eventKey={type} key={index}>
+                        <MenuItem value={type} key={index}>
                           {type}
-                        </Dropdown.Item>
+                        </MenuItem>
                       )
                     )}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </InputGroup>
-            </th>
-            <th>
-              Name
-              <InputGroup>
-                <FormControl
-                  type="text"
-                  name="nameFilter"
-                  value={filters.nameFilter}
-                  placeholder="Filter by Name"
-                  onChange={handleFilterChange}
-                  className="filter-input"
-                  style={{ width: "120px" }}
-                />
-                <Dropdown
-                  onSelect={(value) =>
-                    handleDropdownSelect("nameFilter", value)
-                  }
+                  </Select>
+                </FormControl>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === "name"}
+                  direction={sortDirection}
+                  onClick={() => handleRequestSort("name")}
                 >
-                  <Dropdown.Toggle variant="outline-secondary">
-                    <FaCaretDown />
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
+                  Name
+                </TableSortLabel>
+                <FormControl variant="standard" sx={{ minWidth: 120 }}>
+                  <Select
+                    value={filters.nameFilter}
+                    onChange={(e) =>
+                      handleDropdownSelect("nameFilter", e.target.value)
+                    }
+                    displayEmpty
+                    sx={{ fontSize: "0.875rem", width: "100px" }}
+                  >
+                    <MenuItem value="">Select Name</MenuItem>
                     {Array.from(new Set(sales.map((sale) => sale.name))).map(
                       (name, index) => (
-                        <Dropdown.Item eventKey={name} key={index}>
+                        <MenuItem value={name} key={index}>
                           {name}
-                        </Dropdown.Item>
+                        </MenuItem>
                       )
                     )}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </InputGroup>
-            </th>
-            <th>Revenue</th>
-            <th>First Buy</th>
-            <th>Last Buy</th>
-            <th>
-              Tourist Count
-              <InputGroup>
-                <FormControl
-                  type="text"
-                  name="touristCountFilter"
-                  value={filters.touristCountFilter}
-                  placeholder="Filter by Tourist Count"
-                  onChange={handleFilterChange}
-                  className="filter-input"
-                  style={{ width: "120px" }}
-                />
-                <Dropdown
-                  onSelect={(value) =>
-                    handleDropdownSelect("touristCountFilter", value)
-                  }
+                  </Select>
+                </FormControl>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === "total_revenue"}
+                  direction={sortDirection}
+                  onClick={() => handleRequestSort("total_revenue")}
                 >
-                  <Dropdown.Toggle variant="outline-secondary">
-                    <FaCaretDown />
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {Array.from(
-                      new Set(sales.map((sale) => sale.tourist_count))
-                    ).map((touristCount, index) => (
-                      <Dropdown.Item
-                        eventKey={touristCount.toString()}
-                        key={index}
-                      >
-                        {touristCount}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </InputGroup>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredSales.map((sale) => (
-            <tr key={sale._id}>
-              <td>{sale.type}</td>
-              <td>{sale.name}</td>
-              <td>{sale.total_revenue}</td>
-              <td>{sale.first_buy}</td>
-              <td>{sale.last_buy}</td>
-              <td>{sale.tourist_count}</td>
-            </tr>
-          ))}
-          <tr>
-            <td colSpan={2}>
-              <strong>Total Revenue</strong>
-            </td>
-            <td colSpan={3}>
-              <strong>{totalRevenue}</strong>
-            </td>
-          </tr>
-        </tbody>
-      </Table>
-    </div>
+                  Revenue
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>First Buy</TableCell>
+              <TableCell>Last Buy</TableCell>
+              <TableCell>
+                <TableSortLabel>Tourist Count</TableSortLabel>
+                <TextField
+                  label="Filter by Count"
+                  value={filters.touristCountFilter}
+                  onChange={(e) =>
+                    handleDropdownSelect("touristCountFilter", e.target.value)
+                  }
+                  fullWidth
+                />
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredSales.map((sale) => (
+              <TableRow key={sale._id}>
+                <TableCell>{sale.type}</TableCell>
+                <TableCell>{sale.name}</TableCell>
+                <TableCell>{sale.total_revenue}</TableCell>
+                <TableCell>{sale.first_buy}</TableCell>
+                <TableCell>{sale.last_buy}</TableCell>
+                <TableCell>{sale.tourist_count}</TableCell>
+              </TableRow>
+            ))}
+            <TableRow>
+              <TableCell colSpan={2}>
+                <strong>Total Revenue</strong>
+              </TableCell>
+              <TableCell colSpan={4}>
+                <strong>{convertedPrice}</strong>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Container>
   );
 };
 
