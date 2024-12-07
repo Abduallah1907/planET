@@ -48,6 +48,7 @@
     "pdf-lib": "^1.17.1",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.1",
+    "stripe": "^17.5.0-beta.2",
     "ts-jest": "^29.2.5",
     "typedi": "^0.10.0",
     "winston": "^3.15.0"
