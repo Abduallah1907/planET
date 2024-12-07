@@ -10,6 +10,7 @@ import ChangePasswordForm from "../views/auth/ChangePasswordForm";
 import ChangePasswordG from "../views/auth/ChangePasswordG";
 import PromoCode from "../views/PromoCode";
 import { FaTachometerAlt, FaPlus, FaBox, FaList, FaTags, FaHistory, FaUsers, FaKey, FaExclamationCircle, FaChartLine, FaClipboardList, FaMapMarkerAlt, FaShoppingCart, FaBookmark, FaTruck, FaClipboardCheck, FaUserShield, FaSuitcase, FaFileAlt } from 'react-icons/fa';
+import AddNewProduct from "../views/CreatePages/AddNewProduct";
 export class Utils {
   private static secretKey = "your_secret_key";
 
@@ -167,7 +168,7 @@ export class Utils {
         dispatch(
           setNavItems([
             { path: "/AdminDashboard", label: "Dashboard", icon: FaTachometerAlt },
-            { path: "/AddNewProduct", label: "Add Product", icon: FaPlus },
+            { label: "Add New Product", isModal: true, modalComponent: AddNewProduct,icon : FaPlus },
             { path: "/MyProducts", label: "My Products", icon: FaBox },
             { path: "/Categories", label: "Categories", icon: FaList },
             { path: "/Tags", label: "Tags", icon: FaTags },

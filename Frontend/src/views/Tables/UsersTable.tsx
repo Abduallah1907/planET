@@ -224,12 +224,16 @@ const UsersTable = () => {
   };
 
   return (
-    <Container className="profile-form-container">
+    <Container className="profile-form-container mt-3">
       <Row className="align-items-center mb-4">
-        <Col xs={7} className="text-left">
-          <h2 className="my-profile-heading">Users Table</h2>
+        <Col xs={12} className="text-center">
+          <h1 className="fw-bold my-profile-heading" style={{ fontFamily: "Poppins" }}>
+            Users
+          </h1>
         </Col>
-        <Col xs={10} className="text-right">
+      </Row>
+      <Row className="align-items-center">
+        <Col xs={12} className="text-right">
           <Button
             variant="main-inverse"
             style={{
@@ -272,8 +276,8 @@ const UsersTable = () => {
                       user.status === UserStatus.APPROVED
                         ? "success"
                         : user.status === UserStatus.REJECTED
-                        ? "danger"
-                        : "warning"
+                          ? "danger"
+                          : "warning"
                     }
                     className="mt-2 custom-status-badge rounded-4 text-center"
                   >
@@ -495,7 +499,7 @@ const UsersTable = () => {
                   onClick={handleCancel}
                   className="ms-2"
                 >
-                  Cancel
+                  Reset
                 </Button>
               </div>
             </Form>

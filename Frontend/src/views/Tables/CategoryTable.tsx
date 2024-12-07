@@ -83,7 +83,7 @@ const CategoryTable: React.FC = () => {
 
     return (
         <Container className='mt-3'>
-            <h1 className="fw-bold" style={{ fontFamily: "Poppins" }}>
+            <h1 className="fw-bold mb-3" style={{ fontFamily: "Poppins" }}>
                 Categories
           </h1>
             <Button variant="main-inverse" onClick={handleShowCreateModal}>Create Category</Button>
