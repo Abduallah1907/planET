@@ -70,7 +70,7 @@ const TopBarLinks: React.FC = () => {
     };
 
     return (
-        <div className="top-bar-links">
+        <div className="top-bar-links sticky-topbar-links ">
             <Row className="links-bar">
                 <Col className="d-flex justify-content-center">
                     <button

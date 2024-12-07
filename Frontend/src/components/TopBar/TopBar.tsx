@@ -167,7 +167,7 @@ const TopBar: React.FC = () => {
     }
   };
   return (
-    <Navbar expand="lg" className="top-bar" variant="dark">
+    <Navbar expand="lg" className="top-bar sticky-top" variant="dark">
       <Container fluid>
         {sidebarState ? (
           <div

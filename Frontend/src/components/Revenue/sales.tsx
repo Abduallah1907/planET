@@ -56,6 +56,7 @@ const Sales: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
+  const [totalRevenue, setTotalRevenue] = useState<number>(0);
 
   const [dateError, setDateError] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
@@ -82,6 +83,7 @@ const Sales: React.FC = () => {
           last_buy: formatDate(sale.last_buy),
         }));
         setSales(formattedData);
+        setTotalRevenue(response.data.totalRevenue);
       } else {
         throw new Error("Unexpected API response format.");
       }
@@ -150,14 +152,10 @@ const Sales: React.FC = () => {
   });
 
   const sortedSales = sortData(filteredSales);
-  const totalRevenue = sortedSales.reduce(
-    (total, sale) => total + sale.total_revenue,
-    0
-  );
 
   const convertedPrice = useMemo(() => {
     return getConvertedCurrencyWithSymbol(totalRevenue, baseCurrency, currency);
-  }, [baseCurrency, currency, getConvertedCurrencyWithSymbol]);
+  }, [totalRevenue,baseCurrency, currency, getConvertedCurrencyWithSymbol]);
 
   if (loading) {
     return (
@@ -175,46 +173,41 @@ const Sales: React.FC = () => {
     <Container className="mt-3">
       <h2 className="mb-4 text-center">Sales Report</h2>
 
-      <Box className="form-row" display="flex" justifyContent="space-between">
-        <TextField
-          label="Start Date (dd/mm/yyyy)"
-          type="text"
-          id="startDate"
-          value={startDate}
-          placeholder="Start Date "
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setStartDate(e.target.value)
-          }
-          fullWidth
-        />
-        <TextField
-          label="End Date (dd/mm/yyyy)"
-          type="text"
-          id="endDate"
-          value={endDate}
-          placeholder="End Date"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setEndDate(e.target.value)
-          }
-          fullWidth
-        />
-        <Button
-          variant="contained"
-          onClick={handleDateChange}
-          className="btn-main-inverse"
-          sx={{
-            minWidth: "150px",
-            backgroundColor: "#d76f30;",
-            "&:hover": {
+      <h5>Order/Ticket Creation Date:</h5>
+      <Box display="flex" flexDirection="column" gap="16px" className="mb-4" width="60%">
+        <Box display="flex" justifyContent="space-between" gap="16px">
+          <TextField
+            label="Start Date (dd/mm/yyyy)"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            size="small"
+            fullWidth
+          />
+          <TextField
+            label="End Date (dd/mm/yyyy)"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            size="small"
+            fullWidth
+          />
+          <Button
+            variant="contained"
+            onClick={handleDateChange}
+            className="btn-main-inverse"
+            sx={{
+              minWidth: "150px",
               backgroundColor: "#d76f30;",
-            },
-            "&:focus": {
-              backgroundColor: "#d76f30;",
-            },
-          }}
-        >
-          Apply Dates
-        </Button>
+              "&:hover": {
+                backgroundColor: "#d76f30;",
+              },
+              "&:focus": {
+                backgroundColor: "#d76f30;",
+              },
+            }}
+          >
+            Apply Dates
+          </Button>
+        </Box>
         {dateError && <Alert severity="error">{dateError}</Alert>}
       </Box>
 
@@ -296,7 +289,7 @@ const Sales: React.FC = () => {
               <TableRow key={sale._id}>
                 <TableCell>{sale.type}</TableCell>
                 <TableCell>{sale.name}</TableCell>
-                <TableCell>{sale.total_revenue}</TableCell>
+                <TableCell>{getConvertedCurrencyWithSymbol(sale.total_revenue, baseCurrency, currency)}</TableCell>
                 <TableCell>{sale.first_buy}</TableCell>
                 <TableCell>{sale.last_buy}</TableCell>
               </TableRow>

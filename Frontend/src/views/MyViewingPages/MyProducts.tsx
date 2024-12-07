@@ -51,6 +51,7 @@ export default function ProductsPage() {
     const productsData = await ProductService.getProductsBySellerId(
       Seller.stakeholder_id._id
     );
+    console.log(productsData.data);
     setProducts(productsData.data);
     productsData.data.forEach(async (product: IProduct) => {
       if (product.image) {

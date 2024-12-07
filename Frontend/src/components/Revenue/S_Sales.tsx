@@ -52,6 +52,7 @@ const S_Sales: React.FC = () => {
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [dateError, setDateError] = useState<string | null>(null);
+  const [totalRevenue, setTotalRevenue] = useState<number>(0);
 
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = useState<keyof S_Sales>("total_revenue");
@@ -78,6 +79,7 @@ const S_Sales: React.FC = () => {
           last_buy: formatDate(sale.last_buy),
         }));
         setSales(formattedData);
+        setTotalRevenue(response.data.totalRevenue);
       } else {
         throw new Error("Unexpected API response format.");
       }
@@ -141,14 +143,9 @@ const S_Sales: React.FC = () => {
 
   const sortedSales = sortData(filteredSales);
 
-  const totalRevenue = sortedSales.reduce(
-    (total, sale) => total + sale.total_revenue,
-    0
-  );
-
   const convertedPrice = useMemo(() => {
-    return getConvertedCurrencyWithSymbol(totalRevenue, baseCurrency, currency);
-  }, [baseCurrency, currency, getConvertedCurrencyWithSymbol]);
+    return getConvertedCurrencyWithSymbol(Number(totalRevenue), baseCurrency, currency);
+  }, [totalRevenue,baseCurrency, currency, getConvertedCurrencyWithSymbol]);
 
   useEffect(() => {
     fetchSales();
@@ -175,18 +172,21 @@ const S_Sales: React.FC = () => {
     <Container className="mt-3">
       <h2 className="mb-4 text-center">Sales Report</h2>
 
-      <Box display="flex" flexDirection="column" gap="16px" className="mb-4">
+      <h5>Order Creation Date:</h5>
+      <Box display="flex" flexDirection="column" gap="16px" className="mb-4" width="60%">
         <Box display="flex" justifyContent="space-between" gap="16px">
           <TextField
             label="Start Date (dd/mm/yyyy)"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
+            size="small"
             fullWidth
           />
           <TextField
             label="End Date (dd/mm/yyyy)"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
+            size="small"
             fullWidth
           />
           <Button
@@ -288,7 +288,7 @@ const S_Sales: React.FC = () => {
               <TableRow key={sale._id}>
                 <TableCell>{sale.type}</TableCell>
                 <TableCell>{sale.name}</TableCell>
-                <TableCell>{sale.total_revenue}</TableCell>
+                <TableCell>{getConvertedCurrencyWithSymbol(sale.total_revenue, baseCurrency, currency)}</TableCell>
                 <TableCell>{sale.first_buy}</TableCell>
                 <TableCell>{sale.last_buy}</TableCell>
               </TableRow>

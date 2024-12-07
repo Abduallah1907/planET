@@ -1,6 +1,7 @@
 import React from 'react';
 import '../TourGuideDashboard/TourGuidedashboard.css';
 import './OrdersTable.css';
+import { Badge } from 'react-bootstrap';
 
 const trips = [
   { Product_Number: 'MS731', Description: 'IPHONE 4', Date_Time: '12:53 PM_12.09.2009', Price: '5000EGP', status: 'Arrived' },
@@ -35,7 +36,12 @@ const TripDetailsTable = () => {
               <td>{trip.Description}</td>
               <td>{trip.Date_Time}</td>
               <td>{trip.Price}</td>
-              <td className={`text-center stat-label ${trip.status.toLowerCase()}`}>{trip.status}</td>
+              <td className='text-center'>
+                <Badge
+                  bg=""
+                  className={`stat-label p-2 px-3 rounded-5 ${trip.status.toLowerCase()}`}
+                >{trip.status}</Badge>
+              </td>
             </tr>
           ))}
         </tbody>

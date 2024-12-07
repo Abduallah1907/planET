@@ -79,6 +79,7 @@ import ChooseDeliveryAddress from "./views/ViewingPages/ChooseDeliveryAddress";
 import ActiveOrders from "./views/ActiveOrders";
 import Orders from "./views/ViewingPages/Orders";
 import Wishlist from "./views/Wishlist";
+import { Spinner } from "react-bootstrap";
 
 const App: React.FC = () => {
   useToastDispatcher();
@@ -88,10 +89,10 @@ const App: React.FC = () => {
   const navigate = useNavigate();
   const navItems = useAppSelector((state) => state.sidebar.navItems);
   useEffect(() => {
-    const handleLogin = () => {
+    const handleLogin = async () => {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       if (user && user.usernameOrEmail && user.password) {
-        Utils.handleLogin(user, dispatch, navigate);
+        await Utils.handleLogin(user, dispatch, navigate);
       }
       setIsLoginComplete(true);
     };
@@ -100,7 +101,13 @@ const App: React.FC = () => {
   const email = useAppSelector((state) => state.user.email);
 
   if (!isLoginComplete) {
-    return <div>Loading...</div>;
+    return (
+      <div className="vh-100 w-100 d-flex justify-content-center align-items-center">
+        <Spinner animation="border" role="status" className="main-spinner">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    );
   }
 
   return (

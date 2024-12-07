@@ -18,7 +18,9 @@ import {
   Alert,
   TableSortLabel,
   Container,
+  Popover,
 } from "@mui/material";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import { useAppSelector } from "../../store/hooks";
 import SalesService from "../../services/SalesService";
 import { Utils } from "../../utils/utils";
@@ -66,6 +68,7 @@ const Adv_Sales: React.FC = () => {
   const [endDate, setEndDate] = useState<string>(""); // Default end date
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = useState<keyof Adv_Sales>("total_revenue");
+  const [totalRevenue, setTotalRevenue] = useState<number>(0);
   const { currency, baseCurrency, getConvertedCurrencyWithSymbol } =
     useAppContext();
 
@@ -106,8 +109,8 @@ const Adv_Sales: React.FC = () => {
           first_buy: formatDate(sale.first_buy),
           last_buy: formatDate(sale.last_buy),
         }));
-
         setSales(formattedData);
+        setTotalRevenue(response.data.totalRevenue);
       } else {
         throw new Error(
           "Unexpected API response format: salesReports is not an array."
@@ -138,14 +141,14 @@ const Adv_Sales: React.FC = () => {
     fetchSales();
   }, []);
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
 
   const handleDropdownSelect = (name: string, value: string | null) => {
     if (value) {
-      setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+      setFilters((prevFilters) => ({ ...prevFilters, [name]: value || "" }));
     }
   };
 
@@ -189,21 +192,33 @@ const Adv_Sales: React.FC = () => {
 
   const sortedSales = sortData(filteredSales);
 
-  const totalRevenue = sortedSales.reduce(
-    (total, sale) => total + sale.total_revenue,
-    0
-  );
   const convertedPrice = useMemo(() => {
     return getConvertedCurrencyWithSymbol(totalRevenue, baseCurrency, currency);
-  }, [baseCurrency, currency, getConvertedCurrencyWithSymbol]);
+  }, [totalRevenue,baseCurrency, currency, getConvertedCurrencyWithSymbol]);
+
+  const [anchorEl, setAnchorEl] = useState<null | SVGSVGElement>(null);
+
+  const handleClick = (event: React.MouseEvent<SVGSVGElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
 
   if (loading) {
     return (
-      <Spinner
-        animation="border"
-        variant="primary"
-        className="loading-spinner"
-      />
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Box>
     );
   }
 
@@ -211,18 +226,21 @@ const Adv_Sales: React.FC = () => {
     <Container className="mt-3">
       <h2 className="mb-4 text-center">Sales Report</h2>
 
-      <Box display="flex" flexDirection="column" gap="16px" className="mb-4">
+      <h5>Ticket Creation Date:</h5>
+      <Box display="flex" flexDirection="column" gap="16px" className="mb-4" width="60%">
         <Box display="flex" justifyContent="space-between" gap="16px">
           <TextField
             label="Start Date (dd/mm/yyyy)"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
+            size="small"
             fullWidth
           />
           <TextField
             label="End Date (dd/mm/yyyy)"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
+            size="small"
             fullWidth
           />
           <Button
@@ -319,14 +337,38 @@ const Adv_Sales: React.FC = () => {
               <TableCell>Last Buy</TableCell>
               <TableCell>
                 <TableSortLabel>Tourist Count</TableSortLabel>
-                <TextField
-                  label="Filter by Count"
-                  value={filters.touristCountFilter}
-                  onChange={(e) =>
-                    handleDropdownSelect("touristCountFilter", e.target.value)
-                  }
-                  fullWidth
+                <FilterListIcon
+                  style={{ marginRight: "4px", cursor: "pointer" }}
+                  onClick={(event: React.MouseEvent<SVGSVGElement>) => handleClick(event)}
+                  aria-label="Filter" // Optional for accessibility
                 />
+                <Popover
+                  id={id}
+                  open={open}
+                  anchorEl={anchorEl}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                >
+                  <Box p={2}>
+                    <TextField
+                      label="Tourist Count"
+                      name="touristCountFilter"
+                      type="number"
+                      value={filters.touristCountFilter}
+                      onChange={(e) => handleFilterChange(e)}
+                      size="small"
+                      margin="none"
+                      sx={{ width: "150px" }}
+                    />
+                  </Box>
+                </Popover>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -335,10 +377,10 @@ const Adv_Sales: React.FC = () => {
               <TableRow key={sale._id}>
                 <TableCell>{sale.type}</TableCell>
                 <TableCell>{sale.name}</TableCell>
-                <TableCell>{sale.total_revenue}</TableCell>
+                <TableCell>{getConvertedCurrencyWithSymbol(sale.total_revenue, baseCurrency, currency)}</TableCell>
                 <TableCell>{sale.first_buy}</TableCell>
                 <TableCell>{sale.last_buy}</TableCell>
-                <TableCell>{sale.tourist_count}</TableCell>
+                <TableCell align="center">{sale.tourist_count}</TableCell>
               </TableRow>
             ))}
             <TableRow>
@@ -352,7 +394,7 @@ const Adv_Sales: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-    </Container>
+    </Container >
   );
 };
 

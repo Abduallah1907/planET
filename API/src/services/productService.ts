@@ -150,7 +150,7 @@ export class ProductService {
 
   public async getProductsBySellerIdService(seller_id: string) {
     const productCriteria: any = {};
-    productCriteria.seller_id = seller_id;
+    productCriteria.seller_id = new MongoObjectID(seller_id);
     const products = await this.productModel.aggregate([
       { $match: productCriteria },
       {

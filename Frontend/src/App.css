@@ -62,6 +62,11 @@ body {
   color: #61dafb;
 }
 
+.main-spinner{
+  border-color: var(--main-color);
+  border-right-color: transparent;
+}
+
 .btn-main {
   background-color: var(--secondary-color);
   color: var(--main-color);
