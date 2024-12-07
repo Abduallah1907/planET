@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal, Container, Form } from 'react-bootstrap';
 import TagService from '../services/TagService';
+import { TouristService } from '../services/TouristService';
 import { FaTrashAlt } from 'react-icons/fa';
 import "./Preferences.css";
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { setStakeholder } from '../store/userSlice';
 interface TagsTableProps {
     show: boolean;
     onHide: () => void;
@@ -10,14 +13,9 @@ interface TagsTableProps {
 
 const TagsTable: React.FC<TagsTableProps> = ({ show, onHide }) => {
     const [tags, setTags] = useState([]);
-    const [showUpdateModal, setShowUpdateModal] = useState(false);
-    const [showCreateModal, setShowCreateModal] = useState(false);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [selectedTag, setSelectedTag] = useState<{ _id: string; type: string } | null>(null);
-    const [newType, setNewType] = useState("");
-    const [newTagType, setNewTagType] = useState("");
-    const [deletedType, setDeletedType] = useState("");
-
+    const user = useAppSelector((state) => state.user);
+    const dispatch = useAppDispatch();
+    
     useEffect(() => {
         fetchTags();
     }, []);
@@ -27,63 +25,18 @@ const TagsTable: React.FC<TagsTableProps> = ({ show, onHide }) => {
         setTags(tags.data);
     };
 
-    const handleUpdate = async (oldType: string, newType: string) => {
-        await TagService.update({ oldType: oldType, newType: newType });
-        fetchTags();
-    };
-
-    const handleCreate = async (type: string) => {
-        await TagService.create({ type: type });
-        fetchTags();
-    };
-
-    const handleShowUpdateModal = (tag: any) => {
-        setSelectedTag(tag);
-        setNewType(tag.type);
-        setShowUpdateModal(true);
-    };
-
-    const handleCloseUpdateModal = () => {
-        setShowUpdateModal(false);
-        setSelectedTag(null);
-        setNewType("");
-    };
-
-    const handleShowCreateModal = () => {
-        setShowCreateModal(true);
-    };
-
-    const handleCloseCreateModal = () => {
-        setShowCreateModal(false);
-        setNewTagType("");
-    };
-
-    const handleSaveUpdateChanges = () => {
-        if (selectedTag) {
-            handleUpdate(selectedTag.type, newType);
-            handleCloseUpdateModal();
+    const handleCheckboxChange = async (tagId: string, checked: boolean) => {
+        if (checked) {
+            await TouristService.addPreferences(user.email,tagId);
+            const stakeholder_id = { ...user.stakeholder_id, preferences: [...user.stakeholder_id.preferences, tagId] };
+            dispatch(setStakeholder(stakeholder_id));
+        } else {
+            await TouristService.removePreferences(user.email,tagId);
+            const stakeholder_id = { ...user.stakeholder_id, preferences: user.stakeholder_id.preferences.filter((id: string) => id !== tagId) };
+            dispatch(setStakeholder(stakeholder_id));
         }
     };
 
-    const handleSaveCreateChanges = () => {
-        handleCreate(newTagType);
-        handleCloseCreateModal();
-    };
-
-    const handleDelete = (type: string) => {
-        setDeletedType(type);
-        setShowDeleteModal(true);
-    };
-
-    const confirmDelete = async () => {
-        await TagService.delete(deletedType);
-        fetchTags();
-        setShowDeleteModal(false);
-    };
-
-    const cancelDelete = () => {
-        setShowDeleteModal(false);
-    };
 
     return (
         <Modal show={show} onHide={onHide} centered className="custom-modal">
@@ -107,6 +60,8 @@ const TagsTable: React.FC<TagsTableProps> = ({ show, onHide }) => {
                                         <Form.Check
                                             type="checkbox"
                                             className="custom-checkbox d-flex justify-content-center"
+                                            onChange={(e) => handleCheckboxChange(tag._id, e.target.checked)}
+                                            checked={user?.stakeholder_id?.preferences?.includes(tag._id)}
                                         />
                                     </td>
                                 </tr>

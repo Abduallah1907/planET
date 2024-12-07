@@ -500,6 +500,29 @@ class TouristService {
       throw error;
     }
   };
-}
 
+  public static addPreferences = async (email:string,preference_id:string ) =>{
+    try {
+      const response = await axiosInstance.post(
+        `/tourist/addPreference/${email}?preference_id=${preference_id}`
+      );
+      return response.data; // interface of IProduct
+    } catch (error) {
+      throw error
+    }
+  };
+
+  public static removePreferences = async (email:string , preference_id:string) =>{
+    try {
+      const response = await axiosInstance.delete(
+        `/tourist/removePreference/${email}?preference_id=${preference_id}`
+      );
+      return response.data; // interface of IProduct
+    } catch (error) {
+      throw error
+    }
+  };
+
+
+}
 export { TouristService };
