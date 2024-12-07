@@ -11,6 +11,7 @@ import ChangePasswordG from "../views/auth/ChangePasswordG";
 import PromoCode from "../views/PromoCode";
 import { FaTachometerAlt, FaPlus, FaBox, FaList, FaTags, FaHistory, FaUsers, FaKey, FaExclamationCircle, FaChartLine, FaClipboardList, FaMapMarkerAlt, FaShoppingCart, FaBookmark, FaTruck, FaClipboardCheck, FaUserShield, FaSuitcase, FaFileAlt } from 'react-icons/fa';
 import AddNewProduct from "../views/CreatePages/AddNewProduct";
+import Preferences from "../views/Preferences";
 export class Utils {
   private static secretKey = "your_secret_key";
 
@@ -122,6 +123,7 @@ export class Utils {
             { path: "/Orders/Past", label: "Orders", icon: FaShoppingCart },
             { path: "/BookmarkEvents", label: "View Bookmark Events", icon: FaBookmark },
             { label: "Add Delivery Address", isModal: true, modalComponent: AddDeliveryAddress, icon: FaTruck },
+            { label: "Preferences", isModal: true, modalComponent: Preferences, icon: FaPlus },
           ])
         );
         break;
@@ -148,7 +150,7 @@ export class Utils {
         dispatch(
           setNavItems([
             { path: "/SellerDashboard", label: "Dashboard", icon: FaTachometerAlt },
-            { path: "/AddNewProduct", label: "Add New Product", icon: FaPlus },
+            { label: "Add New Product", isModal: true, modalComponent: AddNewProduct,icon : FaPlus },
             { path: "/MyProducts", label: "My Products", icon: FaBox },
             { path: "/S_Sales", label: "Sales Report", icon: FaChartLine },
           ])
