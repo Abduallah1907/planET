@@ -32,20 +32,24 @@ This project uses the MERN stack.
 - [Screenshots](#screenshots)
 - [Features](#features)
   - [Features For Tourists](#features-for-tourists)
+  - [Features For Admins](#features-for-admins)
   - [Features For Advertisers](#features-for-advertisers)
   - [Features For Tour Guide](#features-for-tour-guides)
   - [Features For Sellers](#features-for-sellers)
   - [Features For Tourism Governor](#features-for-tourism-governor)
 - [Installation](#installation)
 - [How to Use](#how-to-use)
-- [API References](#api-reference)
+- [API References](#api-references)
 - [Contributions](#contributions)
 - [Credits](#credits)
 - [License](#license)
 
 ## Build Status
 
-yes
+
+![Build Status](https://github.com/Advanced-computer-lab-2024/planET/actions/workflows/frontend.yml/badge.svg?branch=main)
+![Build Status](https://github.com/Advanced-computer-lab-2024/planET/actions/workflows/backend.yml/badge.svg?branch=main)
+This project uses GitHub Actions for continuous integration. The badges above reflect the current build status of the frontend and backend respectively in the `main` branch.
 
 ## Tech Stack
 
@@ -423,8 +427,40 @@ export interface ITour_Guide extends Document {
 
 ## Testing
 
-- Use Postman to test APIs.
+This project uses Postman to test the API endpoints of the backend. Postman helps with manual testing of the RESTful API, including sending requests and checking responses.
 
+### Backend Testing (Postman)
+1. **Install Postman**:
+  If you haven't already, download and install Postman from the [official website](https://www.postman.com/downloads/).
+
+2. **Run the Server**:
+  Follow the instructions in the [installation process](#installation) in order to run the backend server.
+
+3. **Create Postman Requests** 
+  For each API endpoint, you can create GET, POST, PUT, DELETE, or PATCH requests in Postman, depending on the functionality being tested. You can check out our [documentation](#api-references)
+
+   - Example:
+    GET /api/getUsers:
+        Method: GET
+        URL: http://localhost:5000/api/users
+        Expected Status Code: 200 OK
+        Response Body: List of users (JSON format)
+
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
+
+Expected Status Code: 201 Created
+Response Body: Created user object
+
+### Example Postman Request (Postman)
+Let us test one of our POST requests using postman.
+
+### Backend Testing (Jest)
 ## Screenshots
 
 ![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
@@ -439,14 +475,23 @@ export interface ITour_Guide extends Document {
 - Bookmark your favorite activities.
 - Browse through an endless shop containing all types of souveniers.
 - Wishlist your most wanted products.
-- Receive loyalty points for every payment done
-- Use your loyalty points to recieve cash inside your wallet
-- Get promocodes, and apply them to whatever you want
+- Receive loyalty points for every payment done.
+- Use your loyalty points to recieve cash inside your wallet.
+- Get promocodes, and apply them to whatever you want.
+
+### Features For Tourists
+
+- Check out the number of users per month.
+- View a report of total revenue from all the different events, itineraries, and products, and be able to filter them based on date.
+- Be able to view complaints and be able to filter, sort, and reply to them.
+- Recieve notifactions for any out of stock products via email and site.
+- Create tourism governors and other admins.
 
 ### Features For Advertisers
 
 - Create activities for tourists to book and enjoy through the site.
-- Track your earnings overall or for a specific activity
+- Customize your profile according to your needs, including your website, hotline, and much more.
+- Track your earnings overall or for a specific activity.
 
 ### Features For Tour Guides
 
