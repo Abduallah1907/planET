@@ -17,7 +17,6 @@ import UserService from "./userService";
 import bcrypt from "bcryptjs";
 
 import {
-  IComment_Rating,
   IComment_RatingCreateDTOforActivity,
   IComment_RatingCreateDTOforItinerary,
   IComment_RatingCreateDTOforProduct,
@@ -29,21 +28,17 @@ import mongoose, { ObjectId, Document, Schema, Types } from "mongoose";
 import { IComplaintCreateDTO } from "@/interfaces/IComplaint";
 import { ITicketBooking } from "@/interfaces/ITicket";
 import TicketType from "@/types/enums/ticketType";
-import { time } from "console";
 import { ITourGuideInfoOutputDTO } from "@/interfaces/ITour_guide";
-import { IUser } from "@/interfaces/IUser";
-import itinerary from "@/api/routes/itinerary";
 import { IOrderCartDTO } from "@/interfaces/IOrder";
 import PaymentType from "@/types/enums/paymentType";
 import OrderStatus from "@/types/enums/orderStatus";
 import UserStatus from "@/types/enums/userStatus";
-import Ticket from "@/models/Ticket";
-import { IBookmarkActivity } from "@/interfaces/IBookmark_notify";
-import category from "@/api/routes/category";
-import advertiser from "@/api/routes/advertiser";
 import NotificationService from "./notificationService";
 import { IAddress } from "@/interfaces/IAddress";
-import moongose from "@/loaders/moongose";
+import Stripe from "stripe";
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2024-11-20.acacia",
+});
 
 // comment and ratings
 // complaint
@@ -73,7 +68,35 @@ export default class TouristService {
     private notificationModel: Models.NotificationModel,
     @Inject("sellerModel") private sellerModel: Models.SellerModel,
     @Inject("addressModel") private addressModel: Models.AddressModel
-  ) { }
+  ) {}
+
+  public async stripeWebhookService(event: Stripe.Event) {
+    const paymentIntentId = (event.data.object as Stripe.PaymentIntent).id;
+
+    switch (event.type) {
+      case "payment_intent.succeeded":
+        await this.handlePaymentSuccess(paymentIntentId);
+        break;
+
+      case "payment_intent.payment_failed":
+        await this.handlePaymentFailure(paymentIntentId);
+        break;
+
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+  }
+
+  // Helper methods for success and failure handling
+  public async handlePaymentSuccess(paymentId: string) {
+    console.log(`Payment succeeded: ${paymentId}`);
+    return new response(true, paymentId, "Payment succeeded", 200);
+  }
+
+  public async handlePaymentFailure(paymentId: string) {
+    console.log(`Payment failed: ${paymentId}`);
+    return new response(false, paymentId, "Payment failed", 400);
+  }
 
   public async getTouristService(email: string) {
     const user = await this.userModel.findOne({
@@ -526,9 +549,10 @@ export default class TouristService {
     if (activity.date < new Date()) {
       throw new BadRequestError("Activity date has passed cannot book");
     }
+    let priceToPay = activity.price || 0;
     if (activity.price !== undefined) {
       if (activity.special_discount) {
-        activity.price =
+        priceToPay =
           activity.price - activity.price * (activity.special_discount / 100);
       }
       if (promoCode) {
@@ -537,7 +561,7 @@ export default class TouristService {
           throw new BadRequestError(
             "There was an issue when tyring to check the promo code"
           );
-        activity.price =
+        priceToPay =
           activity.price -
           activity.price * (validPromo.data.discount_percent / 100);
       }
@@ -556,7 +580,7 @@ export default class TouristService {
     if (activity.price !== undefined) {
       points_received = await this.recievePointsService(
         tourist_id as Types.ObjectId,
-        activity.price
+        priceToPay
       );
     } else {
       throw new BadRequestError("Activity price is undefined");
@@ -565,14 +589,30 @@ export default class TouristService {
       tourist_id as Types.ObjectId,
       tourist.total_loyality_points
     );
-    if (tourist.wallet < activity.price) {
-      throw new BadRequestError("Insufficient balance");
+    if (payment_type === PaymentType.CreditCard) {
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(activity.price * 100),
+        currency: "egp",
+        automatic_payment_methods: { enabled: true },
+      });
+
+      if (
+        !paymentIntent ||
+        paymentIntent.status !== "requires_payment_method"
+      ) {
+        throw new InternalServerError("Failed to create payment intent");
+      }
+      //Save paymentIntent.id in the ticket
+    } else {
+      if (tourist.wallet < priceToPay) {
+        throw new BadRequestError("Insufficient balance");
+      }
     }
 
     const ticket = new this.ticketModel({
       tourist_id: tourist_id as ObjectId,
       type: TicketType.Activity,
-      price: activity.price,
+      price: priceToPay,
       booking_id: activity_id,
       cancelled: false,
       points_received: points_received,
@@ -585,31 +625,44 @@ export default class TouristService {
     await ticket.save();
     if (ticket instanceof Error)
       throw new InternalServerError("Internal server error in saving ticket");
+    let updatedTourist;
+    if (payment_type === PaymentType.Wallet) {
+      const newWallet = tourist.wallet - priceToPay;
+      updatedTourist = await this.touristModel.findByIdAndUpdate(
+        tourist_id,
+        { wallet: newWallet, $push: { tickets: ticket._id } },
+        { new: true }
+      );
+    } else {
+      updatedTourist = await this.touristModel.findByIdAndUpdate(
+        tourist_id,
+        { $push: { tickets: ticket._id } },
+        { new: true }
+      );
+    }
 
-    const newWallet = tourist.wallet - activity.price;
-    const updatedTourist = await this.touristModel.findByIdAndUpdate(
-      tourist_id,
-      { wallet: newWallet, $push: { tickets: ticket._id } },
-      { new: true }
-    );
     if (updatedTourist instanceof Error)
       throw new InternalServerError(
         "Internal server error in updating tourist"
       );
 
     if (updatedTourist == null) throw new NotFoundError("Tourist not found");
+
     //Send the receipt to the tourist email
     const notificationService = Container.get(NotificationService);
-    const receiptMessage = `Dear ${user.name},\n\nYour Activity booking for ${activity.name
-      } has been confirmed. Here are the details:\n\nActivity: ${activity.name
-      }\nDate: ${activity.date.toDateString()}\n${activity.price != undefined
-        ? `Price: ${activity.price}`
+    const receiptMessage = `Dear ${user.name},\n\nYour Activity booking for ${
+      activity.name
+    } has been confirmed. Here are the details:\n\nActivity: ${
+      activity.name
+    }\nDate: ${activity.date.toDateString()}\n${
+      activity.price != undefined
+        ? `Price: ${priceToPay}`
         : `Price Range: ${activity.price_range?.min} - ${activity.price_range?.max}`
-      }\nID: ${activity._id}
+    }\nID: ${activity._id}
         \n\nThank you for booking with us!\n\nBest regards,\nYour Favourite Travel Team`;
 
     const emailSent = await notificationService.sendEmailNotificationService(
-      "Itinerary Booking Confirmation",
+      "Activity Booking Confirmation",
       user.email,
       receiptMessage
     );
@@ -821,7 +874,8 @@ export default class TouristService {
       points_received: points_received,
       payment_type: payment_type,
       time_to_attend: new Date(
-        `${historical_location.date.toISOString().split("T")[0]}T${historical_location.time
+        `${historical_location.date.toISOString().split("T")[0]}T${
+          historical_location.time
         }`
       ), // Combine date and time
     });
@@ -2262,11 +2316,12 @@ export default class TouristService {
       throw new InternalServerError("Internal server error");
     if (user == null) throw new NotFoundError("User not found");
 
-    const tourist = await this.touristModel.findOne({ user_id: user._id }).populate("bookmarks");
+    const tourist = await this.touristModel
+      .findOne({ user_id: user._id })
+      .populate("bookmarks");
     if (tourist instanceof Error)
       throw new InternalServerError("Internal server error");
     if (tourist == null) throw new NotFoundError("Tourist not found");
-
 
     return new response(
       true,
