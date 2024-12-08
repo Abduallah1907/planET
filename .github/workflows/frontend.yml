@@ -30,7 +30,7 @@ jobs:
         run: |
           cd Frontend
           nohup npm start &  # Runs the server in the background
-          sleep: 120
+          sleep 120
 
       - name: Check if port 3000 is open
         run: |

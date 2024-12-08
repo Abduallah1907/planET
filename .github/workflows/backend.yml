@@ -38,7 +38,7 @@ jobs:
       run: |
         cd API/src
         nohup npx nodemon ./app.ts &
-        sleep: 60
+        sleep 60
 
     - name: Check if port 8000 is open
       run: |
