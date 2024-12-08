@@ -26,33 +26,48 @@ jobs:
           cd Frontend
           npm install
 
-      - name: Start the application
+      - name: Start React server in the background
         run: |
-          cd Frontend
-          npm start &
-      
-      - name: Wait for server to be ready
+          # Start the server in the background (this assumes you use npm start for React)
+          nohup npm start &  # Runs the server in the background
+          # Capture the process ID of the last command to potentially kill it later
+          echo $! > server.pid
+
+      - name: Wait for the server to be up
         run: |
-          echo "Waiting for the server to be ready..."
-          $serverUp = $false
-          $maxRetries = 50
-          $retries = 0
-          while ($serverUp -eq $false -and $retries -lt $maxRetries) {
-            $retries++
-            try {
-              $response = Invoke-WebRequest -Uri http://localhost:3000 -TimeoutSec 20
-              echo "server is $response"
-              if ($response.StatusCode -eq 200) {
-                $serverUp = $true
-                echo "Server is up!"
-                exit 0
-              }
-            } catch {
-              echo "Server not up yet... Retrying ($retries/$maxRetries)"
-              Start-Sleep -Seconds 20
-            }
-          }
-          if (-not $serverUp) {
-            echo "Server did not start in time!"
-            exit 1
-          }
+          # Define server URL and number of retries
+          SERVER_URL="http://localhost:3000"
+          MAX_RETRIES=30
+          WAIT_TIME=20  # in seconds
+
+          # Try checking if the server is up 30 times
+          for ((i=1; i<=MAX_RETRIES; i++)); do
+              echo "Checking if the server is up (Attempt $i of $MAX_RETRIES)..."
+              
+              # Get the HTTP status code
+              RESPONSE=$(curl --write-out "%{http_code}" --silent --output /dev/null $SERVER_URL)
+              echo "Server testing! Status code: $RESPONSE"
+              
+              # If server is up (HTTP 200), exit loop
+              if [ "$RESPONSE" -eq 200 ]; then
+                  echo "Server is up! Status code: $RESPONSE"
+                  break
+              else
+                  echo "Server is down. Status code: $RESPONSE"
+              fi
+
+              # Wait for the defined time before retrying
+              sleep $WAIT_TIME
+          done
+
+      - name: Kill the server process if not up
+        run: |
+          # If the server did not respond successfully after retries, kill the process
+          if [ "$RESPONSE" -ne 200 ]; then
+              echo "Server did not start successfully after $MAX_RETRIES attempts."
+              kill $(cat server.pid)
+              exit 1
+          else
+              echo "Server is running successfully."
+              exit 0
+          fi
