@@ -1,16 +1,16 @@
-name: Build and Test Backend (API) Only
+name: Build and Test Backend
 
 on:
   push:
     branches:
-      - main  # Trigger build on push to the main branch
+      - main  
   pull_request:
     branches:
-      - main  # Trigger build on pull requests to the main branch
+      - main 
 
 jobs:
   build:
-    runs-on: windows-latest  # Use Windows as the runner
+    runs-on: ubuntu-latest  # Use Windows as the runner
 
     steps:
     - name: Checkout code
@@ -20,12 +20,20 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '20'  # Specify the Node.js version you want to use
+    
 
     - name: Install dependencies for API
       run: |
         cd API
         npm install
 
+    - name: Create .env file
+      run: |
+        cd API/src
+        touch .env
+        echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
+        cat .env
+      
     - name: Run backend using nodemon
       run: |
         cd API/src
