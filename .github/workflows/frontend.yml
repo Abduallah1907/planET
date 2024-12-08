@@ -28,6 +28,7 @@ jobs:
 
       - name: Start React server in the background
         run: |
+          cd Frontend
           nohup npm start &  # Runs the server in the background
           sleep 150 
 
