@@ -1,6 +1,10 @@
 import { IFilterComponents } from "@/interfaces/IFilterComponents";
 import { IProduct, IProductInputDTO } from "@/interfaces/IProduct";
-import { BadRequestError, InternalServerError, NotFoundError } from "@/types/Errors";
+import {
+  BadRequestError,
+  InternalServerError,
+  NotFoundError,
+} from "@/types/Errors";
 import response from "@/types/responses/response";
 import { Service, Inject } from "typedi";
 import { ObjectId, Types } from "mongoose";
@@ -14,10 +18,14 @@ export class ProductService {
   constructor(
     @Inject("productModel") private productModel: Models.ProductModel,
     @Inject("sellerModel") private sellerModel: Models.SellerModel,
-    @Inject("userModel") private userModel: Models.UserModel
+    @Inject("userModel") private userModel: Models.UserModel,
+    @Inject("touristModel") private touristModel: Models.TouristModel
   ) {}
 
-  public async createProductService(seller_id: Types.ObjectId, product: IProductInputDTO) {
+  public async createProductService(
+    seller_id: Types.ObjectId,
+    product: IProductInputDTO
+  ) {
     const newProduct = new this.productModel({
       name: product.name,
       description: product.description,
@@ -31,27 +39,68 @@ export class ProductService {
 
     const resultProduct = await newProduct.save();
 
-    if (resultProduct instanceof Error) throw new InternalServerError("Internal Server Error cannot save product");
+    if (resultProduct instanceof Error)
+      throw new InternalServerError(
+        "Internal Server Error cannot save product"
+      );
 
     const product_id = resultProduct._id as ObjectId;
 
     const seller = await this.sellerModel.findById(seller_id);
 
     if (!seller) throw new Error("Seller is not found");
-    if (seller instanceof Error) throw new InternalServerError("Internal Server Error cannot find seller");
+    if (seller instanceof Error)
+      throw new InternalServerError("Internal Server Error cannot find seller");
 
     seller.products.push(product_id);
     const newSeller = await seller.save();
-    if (newSeller instanceof Error) throw new InternalServerError("Internal Server Error cannot save seller");
+    if (newSeller instanceof Error)
+      throw new InternalServerError("Internal Server Error cannot save seller");
 
     return new response(true, resultProduct, "Product is created", 201);
   }
 
-  public async updateProductService(product_id: string, product: IProductInputDTO) {
-    const updatedProduct = await this.productModel.findByIdAndUpdate(product_id, { ...product }, { new: true });
-    if (updatedProduct instanceof Error) throw new InternalServerError("Internal Server Error");
+  public async updateProductService(
+    product_id: string,
+    product: IProductInputDTO
+  ) {
+    // Update the product
+    const updatedProduct = await this.productModel.findByIdAndUpdate(
+      product_id,
+      { ...product },
+      { new: true }
+    );
+
+    // Error handling
+    if (updatedProduct instanceof Error)
+      throw new InternalServerError("Internal Server Error");
 
     if (!updatedProduct) throw new NotFoundError("Product not found");
+
+    // Check if the product is archived
+    if (updatedProduct.archieve_flag) {
+      const tourist_ids = updatedProduct.tourist_id;
+      if (tourist_ids) {
+        for (const tourist_id of tourist_ids) {
+          const tourist = await this.touristModel.findById(tourist_id);
+
+          if (tourist instanceof Error)
+            throw new InternalServerError("Internal Server Error");
+
+          if (!tourist) throw new NotFoundError("Tourist not found");
+
+          const wishlistProducts = tourist.wishlist;
+          const updatedWishlist = wishlistProducts.filter(
+            (wishlistProduct: ObjectId) =>
+              wishlistProduct.toString() !== product_id
+          );
+
+          // Update the tourist's wishlist
+          tourist.wishlist = updatedWishlist;
+          await tourist.save(); // Save the updated tourist document
+        }
+      }
+    }
 
     return new response(true, updatedProduct, "Product is updated", 200);
   }
@@ -66,7 +115,11 @@ export class ProductService {
     },
     role: string
   ) {
-    if (!filters || Object.keys(filters).length === 0 || (filters.seller_id && Object.keys(filters).length === 1)) {
+    if (
+      !filters ||
+      Object.keys(filters).length === 0 ||
+      (filters.seller_id && Object.keys(filters).length === 1)
+    ) {
       const checks: any = {};
       if (filters.seller_id) {
         checks.seller_id = filters.seller_id;
@@ -103,17 +156,27 @@ export class ProductService {
         },
       },
     ]);
-    if (products instanceof Error) throw new InternalServerError("Internal Server Error");
+    if (products instanceof Error)
+      throw new InternalServerError("Internal Server Error");
     return new response(true, products, "Filtered products are fetched", 200);
   }
-  public async getSortedProductsService(sort: string, direction: string, role: string) {
+  public async getSortedProductsService(
+    sort: string,
+    direction: string,
+    role: string
+  ) {
     const sortCriteria: any = {};
     if (role !== UserRoles.Admin) {
       sortCriteria.archieve_flag = false;
     }
     if (!sort && !direction) {
       const products = await this.productModel.find();
-      return new response(true, products, "Products with no sort provided", 200);
+      return new response(
+        true,
+        products,
+        "Products with no sort provided",
+        200
+      );
     }
     if (sort === "ratings") {
       sortCriteria.average_rating = parseInt(direction);
@@ -123,7 +186,8 @@ export class ProductService {
       throw new BadRequestError("Invalid sort criteria");
     }
     const products = await this.productModel.find().sort(sortCriteria);
-    if (products instanceof Error) throw new InternalServerError("Internal Server Error");
+    if (products instanceof Error)
+      throw new InternalServerError("Internal Server Error");
 
     return new response(true, products, "Sorted products are fetched", 200);
   }
@@ -143,7 +207,8 @@ export class ProductService {
       },
     ]);
 
-    if (products instanceof Error) throw new InternalServerError("Internal Server Error");
+    if (products instanceof Error)
+      throw new InternalServerError("Internal Server Error");
 
     return new response(true, products, "All products are fetched", 200);
   }
@@ -159,20 +224,23 @@ export class ProductService {
         },
       },
     ]);
-    if (products instanceof Error) throw new InternalServerError("Internal Server Error");
+    if (products instanceof Error)
+      throw new InternalServerError("Internal Server Error");
 
     return new response(true, products, "Products are fetched", 200);
   }
 
   public async getProductByIdService(product_id: Types.ObjectId) {
     const product = await this.productModel.findById(product_id);
-    if (product instanceof Error) throw new InternalServerError("Internal Server Error");
+    if (product instanceof Error)
+      throw new InternalServerError("Internal Server Error");
     if (!product) throw new NotFoundError("Product not found");
     return new response(true, product, "Product is fetched", 200);
   }
   public async getProductByNameService(product_name: string) {
     const product = await this.productModel.findOne({ name: product_name });
-    if (product instanceof Error) throw new InternalServerError("Internal Server Error");
+    if (product instanceof Error)
+      throw new InternalServerError("Internal Server Error");
     if (!product) throw new NotFoundError("Product not found");
     return new response(true, product, "Product is fetched", 200);
   }
@@ -181,11 +249,25 @@ export class ProductService {
     if (role !== UserRoles.Admin) {
       productCriteria.archieve_flag = false;
     }
-    const cheapestProduct = await this.productModel.findOne(productCriteria).sort({ price: 1 }).limit(1).select("price");
-    if (cheapestProduct instanceof Error) throw new InternalServerError("Internal Server Error fetching cheapest product");
+    const cheapestProduct = await this.productModel
+      .findOne(productCriteria)
+      .sort({ price: 1 })
+      .limit(1)
+      .select("price");
+    if (cheapestProduct instanceof Error)
+      throw new InternalServerError(
+        "Internal Server Error fetching cheapest product"
+      );
 
-    const highestProduct = await this.productModel.findOne(productCriteria).sort({ price: -1 }).limit(1).select("price");
-    if (highestProduct instanceof Error) throw new InternalServerError("Internal Server Error fetching highest product");
+    const highestProduct = await this.productModel
+      .findOne(productCriteria)
+      .sort({ price: -1 })
+      .limit(1)
+      .select("price");
+    if (highestProduct instanceof Error)
+      throw new InternalServerError(
+        "Internal Server Error fetching highest product"
+      );
 
     if (!cheapestProduct) throw new NotFoundError("Cheapest product not found");
     if (!highestProduct) throw new NotFoundError("Highest product not found");
@@ -197,6 +279,11 @@ export class ProductService {
         type: "slider",
       },
     };
-    return new response(true, filterComponents, "Cheapest and highest products are fetched", 200);
+    return new response(
+      true,
+      filterComponents,
+      "Cheapest and highest products are fetched",
+      200
+    );
   }
 }

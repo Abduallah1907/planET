@@ -19,8 +19,37 @@ import { Types } from "mongoose";
 import { IComplaintCreateDTO } from "@/interfaces/IComplaint";
 import { IOrderCartDTO } from "@/interfaces/IOrder";
 import { IAddress } from "@/interfaces/IAddress";
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2024-11-20.acacia",
+});
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+
+let event: Stripe.Event;
 @Service()
 export class TouristController {
+  public async stripeWebhookController(req: any, res: any) {
+    const touristService: TouristService = Container.get(TouristService);
+
+    const sig = req.headers["stripe-signature"]!;
+
+    try {
+      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    } catch (err) {
+      console.error(`Webhook signature verification failed: ${err}`);
+      return res.status(400).send(`Webhook Error: ${err}`);
+    }
+
+    try {
+      await touristService.stripeWebhookService(event);
+      res.json({ received: true });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Error processing webhook");
+    }
+  }
+
   public async getTourist(req: any, res: any) {
     const { email } = req.params;
     const touristService: TouristService = Container.get(TouristService);

@@ -9,6 +9,7 @@ export default (app: Router) => {
   const touristController: TouristController = Container.get(TouristController);
 
   app.use("/tourist", route);
+  route.post("/StripeWebhook", touristController.stripeWebhookController);
   route.get(
     "/getTourist/:email",
     authorize([UserRoles.Tourist]),
