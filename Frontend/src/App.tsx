@@ -80,6 +80,7 @@ import ActiveOrders from "./views/ActiveOrders";
 import Orders from "./views/ViewingPages/Orders";
 import Wishlist from "./views/Wishlist";
 import { Spinner } from "react-bootstrap";
+import Demo from "./views/Demo/Demo";
 
 const App: React.FC = () => {
   useToastDispatcher();
@@ -202,6 +203,7 @@ const App: React.FC = () => {
 
           <Route path="/ProductPayment" element={<ProductPayemnt />} />
           <Route path="/BookmarkEvents" element={<BookmarkEvents />} />
+          <Route path="/Demo" element={<Demo />} />
         </Routes>
         <ToastComponent />
       </APIProvider>

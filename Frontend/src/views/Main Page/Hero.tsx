@@ -7,9 +7,15 @@ import Plane from '../../assets/Plane.svg';
 import { useTranslation } from 'react-i18next';
 import { IoMdPlay } from 'react-icons/io';
 import { IoPlaySharp } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom';
 
 const Hero: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const handleButtonClick = () => {
+    navigate('/demo'); 
+  };
   return (
     <>
 
@@ -30,11 +36,11 @@ const Hero: React.FC = () => {
                   {t("built_wicket_longer_admire_do_barton_vanity_itself_do_in_it_._preferred_to_sportsmen_it_engrossed_listening")}.
                 </p>
                 <div className="hero-buttons d-flex flex-row align-items-center">
-                  <Button variant="warning" className="me-3 text-white shadow">{t("find_out_more")}</Button>
-                  <Button variant="play-demo" className='rounded-circle shadow'>
+                  <Button variant="warning" className="me-3 text-white shadow" >{t("find_out_more")}</Button>
+                  <Button variant="play-demo" className='rounded-circle shadow' onClick={handleButtonClick}>
                     <IoPlaySharp />
                   </Button>
-                  <p className='m-0'>{t("play_demo")}</p>
+                  <p className='m-0'>{t("open demo")}</p>
                 </div>
               </div>
             </Col>
