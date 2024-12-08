@@ -1,0 +1,32 @@
+name: Build and Test Backend (API) Only
+
+on:
+  push:
+    branches:
+      - main  # Trigger build on push to the main branch
+  pull_request:
+    branches:
+      - main  # Trigger build on pull requests to the main branch
+
+jobs:
+  build:
+    runs-on: windows-latest  # Use Windows as the runner
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'  # Specify the Node.js version you want to use
+
+    - name: Install dependencies for API
+      run: |
+        cd API
+        npm install
+
+    - name: Run backend using nodemon
+      run: |
+        cd API/src
+        npx nodemon ./app.ts
