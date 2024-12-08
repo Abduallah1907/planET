@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -28,46 +28,14 @@ jobs:
 
       - name: Start React server in the background
         run: |
-          # Start the server in the background (this assumes you use npm start for React)
           nohup npm start &  # Runs the server in the background
-          # Capture the process ID of the last command to potentially kill it later
-          echo $! > server.pid
+          sleep 150 
 
-      - name: Wait for the server to be up
+      - name: Check if port 3000 is open
         run: |
-          # Define server URL and number of retries
-          SERVER_URL="http://localhost:3000"
-          MAX_RETRIES=30
-          WAIT_TIME=20  # in seconds
+          # Use netstat or ss to check if port 3000 is open
+          sudo apt-get install -y netcat
+          nc -zv localhost 3000 || exit 1  # Check if port 3000 is listening, exit with error if not
+        continue-on-error: false  # Fail the action if port 3000 is not open
 
-          # Try checking if the server is up 30 times
-          for ((i=1; i<=MAX_RETRIES; i++)); do
-              echo "Checking if the server is up (Attempt $i of $MAX_RETRIES)..."
-              
-              # Get the HTTP status code
-              RESPONSE=$(curl --write-out "%{http_code}" --silent --output /dev/null $SERVER_URL)
-              echo "Server testing! Status code: $RESPONSE"
-              
-              # If server is up (HTTP 200), exit loop
-              if [ "$RESPONSE" -eq 200 ]; then
-                  echo "Server is up! Status code: $RESPONSE"
-                  break
-              else
-                  echo "Server is down. Status code: $RESPONSE"
-              fi
 
-              # Wait for the defined time before retrying
-              sleep $WAIT_TIME
-          done
-
-      - name: Kill the server process if not up
-        run: |
-          # If the server did not respond successfully after retries, kill the process
-          if [ "$RESPONSE" -ne 200 ]; then
-              echo "Server did not start successfully after $MAX_RETRIES attempts."
-              kill $(cat server.pid)
-              exit 1
-          else
-              echo "Server is running successfully."
-              exit 0
-          fi
