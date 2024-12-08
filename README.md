@@ -29,6 +29,8 @@ This project uses the MERN stack.
     - [Schema Design](#schema-design)
     - [Queries & Aggregations](#queries--aggregations)
 - [Testing](#testing)
+  - [Backend Testing (Postman)](#backend-testing-postman)
+  - [Backend Testing (Jest)](#backend-testing-jest)
 - [Screenshots](#screenshots)
 - [Features](#features)
   - [Features For Tourists](#features-for-tourists)
@@ -48,7 +50,10 @@ This project uses the MERN stack.
 
 
 ![Build Status](https://github.com/Advanced-computer-lab-2024/planET/actions/workflows/frontend.yml/badge.svg?branch=main)
+
 ![Build Status](https://github.com/Advanced-computer-lab-2024/planET/actions/workflows/backend.yml/badge.svg?branch=main)
+
+
 This project uses GitHub Actions for continuous integration. The badges above reflect the current build status of the frontend and backend respectively in the `main` branch.
 
 ## Tech Stack
@@ -437,30 +442,35 @@ This project uses Postman to test the API endpoints of the backend. Postman help
   Follow the instructions in the [installation process](#installation) in order to run the backend server.
 
 3. **Create Postman Requests** 
-  For each API endpoint, you can create GET, POST, PUT, DELETE, or PATCH requests in Postman, depending on the functionality being tested. You can check out our [documentation](#api-references)
-
-   - Example:
-    GET /api/getUsers:
-        Method: GET
-        URL: http://localhost:5000/api/users
-        Expected Status Code: 200 OK
-        Response Body: List of users (JSON format)
-
-```json
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "password123"
-}
-```
-
-Expected Status Code: 201 Created
-Response Body: Created user object
+  For each API endpoint, you can create GET, POST, PUT, DELETE, or PATCH requests in Postman, depending on the functionality being tested. You can check out our [documentation](#api-references) for the APIs we currently use. In order to get full coverage, we would ideally like to test each response atleast once, as seen in the example below.
 
 ### Example Postman Request (Postman)
-Let us test one of our POST requests using postman.
+Let us test one of our POST requests using postman. This request is used to book an activity at our site, and according to our documentation, takes email, itinerary_id, time to attend, payment type, and promo code, all of which are string, and all are required but promocode. We see that there are 3 possible responses, we can test, so we create three different requeust bodies to test each one.
 
-### Backend Testing (Jest)
+`/api/tourist/bookItinerary` is the api we would like to test, with the request body being
+```json
+{
+  "email": "testman@gmail.com",
+  "itinerary_id": "63f4d9b8c3f7f220a888ca02",
+  "time_to_attend": "2/2/2024",
+  "payment_type": "Cash",
+  "promoCode": "ipw0o29eugf"
+}
+```
+Using the above request, we test the first response, 200, and see it does return 200.
+
+The next thing to request is reponse 400, which can be achieved by sending an empty request body. Doing this gives us the response 400 indeed.
+
+The last thing to test is 404, for a bad promocode. We can do this by taking the above request body and changing the promocode to a dash
+```json
+  "email": "testman@gmail.com",
+  "itinerary_id": "63f4d9b8c3f7f220a888ca02",
+  "time_to_attend": "2/2/2024",
+  "payment_type": "Cash",
+  "promoCode": "---"
+```
+giving us a 404 as a result, giving us the result we expected.
+
 ## Screenshots
 
 ![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
