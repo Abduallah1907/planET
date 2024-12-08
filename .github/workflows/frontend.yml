@@ -29,5 +29,28 @@ jobs:
       - name: Start the application
         run: |
           cd Frontend
-          npm start
-        # Depending on your setup, this step could potentially be replaced with `npm run start` or other commands.
+          start /B npm start
+      
+      - name: Wait for server to be ready
+        run: |
+          echo "Waiting for the server to be ready..."
+          $serverUp = $false
+          $maxRetries = 3
+          $retries = 0
+          while ($serverUp -eq $false -and $retries -lt $maxRetries) {
+            $retries++
+            try {
+              $response = Invoke-WebRequest -Uri http://localhost:3000 -TimeoutSec 120
+              if ($response.StatusCode -eq 200) {
+                $serverUp = $true
+                echo "Server is up!"
+              }
+            } catch {
+              echo "Server not up yet... Retrying ($retries/$maxRetries)"
+              Start-Sleep -Seconds 120
+            }
+          }
+          if (-not $serverUp) {
+            echo "Server did not start in time!"
+            exit 1
+          }
