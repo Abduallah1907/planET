@@ -9,6 +9,8 @@ import { FaSearch } from "react-icons/fa";
 import { HistoricalService } from "../../services/HistoricalService";
 import { IHistorical_location_tourist } from "../../types/IHistoricalLocation";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../store/hooks";
+import { FileService } from "../../services/FileService";
 
 export default function HistoricalLocationsPage() {
   const navigate = useNavigate();
@@ -27,12 +29,45 @@ export default function HistoricalLocationsPage() {
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value);
   };
+
+  const user = useAppSelector((state) => state.user);
+  let nation = "masry";
+  let job = "engineer";
+  if (user.role === "TOURIST") {
+    nation = user.stakeholder_id?.nation;
+    job = user.stakeholder_id?.job;
+  }
+
   const getHistorical = async () => {
     const HistoricalData = await HistoricalService.getAllHistorical_Location(
-      "masry",
-      "engineer"
+      nation,
+      job
     );
     setHistorical(HistoricalData.data);
+    HistoricalData.data.forEach(async (location: IHistorical_location_tourist) => {
+      if (location.images?.[0]) {
+        try {
+          const file = await FileService.downloadFile(location.images[0]);
+          if (file) {
+            const url = URL.createObjectURL(file);
+            setHistorical((prevHistorical) =>
+              prevHistorical.map((p) =>
+                p._id === location._id ? { ...p, images: [url] } : p
+              )
+            );
+          } else {
+            console.error("Downloaded file is not a Blob");
+            setHistorical((prevHistorical) =>
+              prevHistorical.map((p) =>
+                p._id === location._id ? { ...p, images: [] } : p
+              )
+            );
+          }
+        } catch (error) {
+          console.error("Error downloading file:", error);
+        }
+      }
+    });
   };
   const getFilteredHistorical = async () => {
     const modifiedFilter = Object.fromEntries(
@@ -40,11 +75,35 @@ export default function HistoricalLocationsPage() {
         Array.isArray(value) ? [key, value.join(",")] : [key, value]
       )
     );
-    modifiedFilter.nation = "masry";
-    modifiedFilter.job = "student";
+    modifiedFilter.nation = nation;
+    modifiedFilter.job = job;
     const HistoricalData =
       await HistoricalService.getFilteredHistorical_Location(modifiedFilter);
     setHistorical(HistoricalData.data);
+    HistoricalData.data.forEach(async (location: IHistorical_location_tourist) => {
+      if (location.images?.[0]) {
+        try {
+          const file = await FileService.downloadFile(location.images[0]);
+          if (file) {
+            const url = URL.createObjectURL(file);
+            setHistorical((prevHistorical) =>
+              prevHistorical.map((p) =>
+                p._id === location._id ? { ...p, images: [url] } : p
+              )
+            );
+          } else {
+            console.error("Downloaded file is not a Blob");
+            setHistorical((prevHistorical) =>
+              prevHistorical.map((p) =>
+                p._id === location._id ? { ...p, images: [] } : p
+              )
+            );
+          }
+        } catch (error) {
+          console.error("Error downloading file:", error);
+        }
+      }
+    });
   };
   const handleApplyFilters = () => {
     getFilteredHistorical();
@@ -158,7 +217,7 @@ export default function HistoricalLocationsPage() {
                     id={location._id}
                     Name={location.name}
                     location={"cairo"}
-                    image={""}
+                    image={location.images?.[0] ?? ""}
                     RatingVal={location.average_rating}
                     Reviews={location.reviewsCount ?? 0}
                     Description={location.description}

@@ -1,10 +1,13 @@
 import React, { useState, useMemo } from "react";
-import { Row, Col, Card, Button, Container } from "react-bootstrap";
+import { Row, Col, Card, Button, Container, Image, Modal } from "react-bootstrap";
 import CartCard from "../components/Cards/CartCard";
-import { useAppSelector } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../AppContext";
 import { TouristService } from "../services/TouristService";
+import { addPromoCode } from "../store/cartSlice";
+import './cart.css'
+import { set } from "date-fns";
 
 interface Product {
   id: string;
@@ -30,11 +33,9 @@ const CartPage: React.FC = () => {
   const [newSubtotal, setNewSubtotal] = useState(cart.total);
   const [promoError, setPromoError] = useState("");
 
-  const promoCodes = [
-    { code: "SAVE10", discountType: "flat", discountValue: 10 },
-    { code: "SAVE20", discountType: "percentage", discountValue: 20 },
-  ];
+  const [productsModal, setProductsModal] = useState(false);
 
+  const dispatch = useAppDispatch();
 
   const handleApplyPromoCode = async () => {
     try {
@@ -52,6 +53,10 @@ const CartPage: React.FC = () => {
           discountedSubtotal -= promo.discountValue;
         } else if (promo.discountType === "percentage") {
           discountedSubtotal -= (cart.total * promo.discount_percent) / 100;
+          dispatch(addPromoCode({
+            promoCode,
+            discountPercent: promo.discount_percent,
+          }));
         }
 
         discountedSubtotal = Math.max(0, discountedSubtotal); // Prevent negative subtotal
@@ -68,8 +73,6 @@ const CartPage: React.FC = () => {
     }
   };
 
-
-
   const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
 
   const convertedPrice = useMemo(() => {
@@ -77,7 +80,15 @@ const CartPage: React.FC = () => {
     return getConvertedCurrencyWithSymbol(subtotal, baseCurrency, currency);
   }, [isPromoApplied, newSubtotal, cart.total, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
 
+  const [havePromoCode, setHavePromoCode] = useState(false);
 
+  const handleGoToCheckout = () => {
+    if (cartItems.length === 0) {
+      setProductsModal(true);
+      return;
+    }
+    navigate("/ProductPayment");
+  }
 
   return (
     <Container className="cart-page p-3">
@@ -88,9 +99,9 @@ const CartPage: React.FC = () => {
           </h1>
         </Col>
       </Row>
-      <Row>
+      <Row className="justify-content-center">
         <Col md={8}>
-          {cartItems.map((item, index) => (
+          {cartItems.length > 0 && cartItems.map((item, index) => (
             <CartCard
               key={item.product.id}
               index={index}
@@ -102,55 +113,102 @@ const CartPage: React.FC = () => {
               image={item.product.image}
             />
           ))}
+          {cartItems.length === 0 && (
+            <Card className="shadow-sm p-3">
+              <Card.Body>
+                <h4 className="text-center">Your cart is empty</h4>
+              </Card.Body>
+            </Card>
+          )}
         </Col>
         <Col md={4}>
-          <Card className="p-3 shadow-sm">
-            <Card.Body>
-              <h5>Enter Promo Code</h5>
-              <Row>
-                <Col md={8}>
-                  <input
-                    type="text"
-                    className="form-control my-3 border"
-                    placeholder="Enter Promo Code"
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
-                    aria-label="Promo Code Input"
-                  />
-                  {promoError && <small className="text-danger">{promoError}</small>}
-                </Col>
-                <Col md={4}>
-                  <Button
-                    variant="main"
-                    className="w-75 my-3 border-warning-subtle"
-                    onClick={handleApplyPromoCode}
-                    aria-label="Apply Promo Code"
-                  >
-                    Apply
-                  </Button>
-                </Col>
-              </Row>
-              <h5 className="mt-4">Subtotal</h5>
-              {isPromoApplied ? (
-                <div>
-                  <h4 style={{ textDecoration: "line-through", color: "gray" }}>
-                    {getConvertedCurrencyWithSymbol(cart.total, baseCurrency, currency)}
-                  </h4>
-                  <h4 style={{ color: "green" }}>
-                    {getConvertedCurrencyWithSymbol(newSubtotal, baseCurrency, currency)}
-                  </h4>
-                </div>
-              ) : (
-                <h4>
-                  {getConvertedCurrencyWithSymbol(cart.total, baseCurrency, currency)}
-                </h4>
-              )}
-              <Button variant="main-inverse" className="w-100 mb-4" onClick={() => navigate("/ChooseDeliveryAddress")}>Confirm Order </Button>
+          <Card className="shadow-sm cart-summary">
+            <Card.Header className="bg-white mt-2">
+              <h4 className="fw-bold">Order Summary</h4>
+            </Card.Header>
+            <Card.Body className="p-0 pt-3">
+              <Container className="px-4">
+                <Row onClick={() => setHavePromoCode(!havePromoCode)}>
+                  <Col xs={10}>
+                    <span className="have-promo-code">Do you have a Promo Code?</span>
+                  </Col>
+                  <Col xs={2}>
+                    <span className={`promo-accordian ${havePromoCode ? 'active' : ''}`}>
+                      <i className="fas fa-chevron-down"></i>
+                    </span>
+                  </Col>
+                </Row>
+                <Row className={`mt-1 ${havePromoCode ? '' : 'd-none'}`}>
+                  <Col md={8} className="pe-0">
+                    <input
+                      type="text"
+                      className="form-control my-3 mt-1 border"
+                      placeholder="Enter Promo Code"
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value)}
+                      aria-label="Promo Code Input"
+                    />
+                    {promoError && <small className="text-danger">{promoError}</small>}
+                  </Col>
+                  <Col md={4}>
+                    <Button
+                      variant="main-inverse"
+                      className="w-100 my-3 mt-1 rounded-5"
+                      onClick={handleApplyPromoCode}
+                      aria-label="Apply Promo Code"
+                    >
+                      Apply
+                    </Button>
+                  </Col>
+                </Row>
+                <ul className="mt-3">
+                  <li className="d-flex justify-content-between">
+                    <span>Subtotal</span>
+                    <span>
+                      {getConvertedCurrencyWithSymbol(cart.total, baseCurrency, currency)}
+                    </span>
+                  </li>
+                  <li className="d-flex justify-content-between discount-row">
+                    <span>Discount</span>
+                    <span>
+                      {"- " + getConvertedCurrencyWithSymbol(isPromoApplied ? oldSubtotal - newSubtotal : 0, baseCurrency, currency)}
+                    </span>
+                  </li>
+                  <li className="d-flex justify-content-between">
+                    <span>Shipping</span>
+                    <span>Included</span>
+                  </li>
+                </ul>
+              </Container>
+              <hr />
+              <Container className="px-4">
+                <ul>
+                  <li className="d-flex justify-content-between">
+                    <span>Total</span>
+                    <span>{convertedPrice}</span>
+                  </li>
+                </ul>
+              </Container>
+              <Container className="px-4 mt-4">
+                <Button variant="main-inverse" className="w-100 mb-4" onClick={handleGoToCheckout}>Checkout</Button>
+              </Container>
             </Card.Body>
 
           </Card>
         </Col>
       </Row>
+      <Modal show={productsModal} onHide={()=>setProductsModal(false)} centered>
+        <Modal.Header>
+          <Modal.Title>Checkout Our Products</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>It seems like your cart is empty. Checkout our products and add them to your cart.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="main-border" onClick={() =>setProductsModal(false)}>Close</Button>
+          <Button variant="main-inverse" onClick={() => navigate('/Products')}>Go to Products</Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

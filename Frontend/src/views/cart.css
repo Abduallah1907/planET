@@ -1,0 +1,29 @@
+.have-promo-code{
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.promo-accordian i{
+    transition: transform 0.3s;
+}
+
+.promo-accordian.active i{
+    transform: rotate(180deg);
+}
+
+.cart-summary ul{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cart-summary ul li{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.discount-row span:last-child, .discount-row h6{
+    color: #FB3D3F;
+}

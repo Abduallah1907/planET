@@ -218,7 +218,7 @@ const ProductCard = ({
 
         <Row className="mb-2 m-0">
           <Card.Text className="text-muted">
-            {isSeller || isAdmin
+            {(isSeller || isAdmin) && (user.stakeholder_id?.products.includes(id))
               ? `Sales: ${sales} | Quantity: ${quantity}`
               : `Quantity: ${quantity}`}
           </Card.Text>
@@ -236,7 +236,7 @@ const ProductCard = ({
           </Col>
           <Col>
             {/* Show Active/Archive button if the user is the seller */}
-            {isSeller || isAdmin ? (
+            {(isSeller || isAdmin) && (user.stakeholder_id?.products.includes(id)) ? (
               <div className="d-flex justify-content-end">
                 <Badge
                   bg={!isActiveArchive ? "active" : "inactive"}
@@ -266,7 +266,7 @@ const ProductCard = ({
 
       {/* Rating, Reviews, Price Section */}
 
-      {isSeller || isAdmin ? (
+      {(isSeller || isAdmin) && (user.stakeholder_id?.products.includes(id)) ? (
         <div className="dropdown-card-btn">
           <DropdownButton
             align="end"

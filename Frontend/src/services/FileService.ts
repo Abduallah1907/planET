@@ -1,5 +1,4 @@
 import axiosInstance from "../utils/axiosInstance";
-import showToast from "../../src/utils/showToast";
 class FileService {
   public static uploadFile = async (file: File) => {
     try {

@@ -8,6 +8,7 @@ import {
   Dropdown,
   Modal,
   Button,
+  Placeholder,
 } from "react-bootstrap";
 import Rating from "../Rating/Rating";
 import "./Cards.css";
@@ -99,6 +100,7 @@ export const HistoricalLocationCard = ({
   };
 
   // Manage the state for the rating
+  const isBlobUrl = (url: string) => /^blob:/.test(url);
 
   return (
     <Card
@@ -112,11 +114,20 @@ export const HistoricalLocationCard = ({
           className="p-0 d-flex align-items-stretch"
           onClick={onClick}
         >
-          <Image
-            src="https://via.placeholder.com/250x250"
-            rounded
-            alt="Activity Image"
-          />
+          {image && !isBlobUrl(image) ?
+            (
+              <Placeholder as="div" animation="glow" size="lg" className="w-100">
+                <Placeholder xs={12} className="h-100 rounded" />
+              </Placeholder>
+            )
+            :
+            (
+              <Image
+                src={image || "https://via.placeholder.com/250x250"}
+                rounded
+                alt="Historical location Image"
+              />
+            )}
         </Col>
 
         {/* Main Info Section */}

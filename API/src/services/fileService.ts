@@ -131,7 +131,7 @@ export class FileService {
 
       const files = await gfs.find({ _id: new ObjectId(id) }).toArray();
       if (!files || files.length === 0) {
-        return res.status(404).json({ message: "File not found" });
+        return res.status(404).json({ status: 404, message: "File not found" });
       }
       const file = files[0];
 
@@ -142,7 +142,7 @@ export class FileService {
       downloadStream.on("error", (error) => {
         return res
           .status(404)
-          .json({ message: "File not found", error: error.message });
+          .json({ status: 404, message: "File not found", error: error.message });
       });
 
       // Set the response headers

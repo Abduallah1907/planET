@@ -7,6 +7,10 @@ const showToast = (response: Response) => {
   const { message, status } = response;
   let toastType: ToastTypes = ToastTypes.INFO;
 
+  if (!message || message === "") {
+    return;
+  }
+
   switch (status) {
     case 200:
       toastType = ToastTypes.SUCCESS; //Great success

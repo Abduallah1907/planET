@@ -23,10 +23,11 @@ interface FormData {
 interface AddDeliveryAddressProps {
   show: boolean;
   onHide: () => void;
+  onSubmit?: (address: any) => void;
 }
 
 
-const AddDeliveryAddress: React.FC<AddDeliveryAddressProps> = ({ show, onHide }) => {
+const AddDeliveryAddress: React.FC<AddDeliveryAddressProps> = ({ show, onHide, onSubmit }) => {
   const tourist = useAppSelector((state) => state.user);
   const [showMapModal, setShowMapModal] = useState(false); // State to manage map modal visibility
   const [formData, setFormData] = useState<FormData>({
@@ -74,7 +75,8 @@ const AddDeliveryAddress: React.FC<AddDeliveryAddressProps> = ({ show, onHide })
       postal_code: formData.postalCode,
     };
 
-    await TouristService.addAddress(tourist.email, data);
+    const response = await TouristService.addAddress(tourist.email, data);
+    onSubmit && onSubmit(response.data.address);
     onHide(); // Close the modal after submission
   };
 
@@ -90,7 +92,7 @@ const AddDeliveryAddress: React.FC<AddDeliveryAddressProps> = ({ show, onHide })
         </Modal.Header>
         <Modal.Body>
           <Container>
-            <Form className="mt-3">
+            <Form className="mt-1">
               <CustomFormGroup
                 label={"Street Name"}
                 type={"text"}

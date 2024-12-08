@@ -32,7 +32,6 @@ const redirectToLogin = () => {
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    // showToastMessage(error.response.data.message, ToastTypes.ERROR); //make showToast of abdo for messages i want
     showToast(error.response.data);
     if (error.response && error.response?.status === 401) {
       redirectToLogin();

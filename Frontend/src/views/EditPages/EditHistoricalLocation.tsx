@@ -9,12 +9,14 @@ import showToastMessage from "../../utils/showToastMessage";
 import { ToastTypes } from "../../utils/toastTypes";
 import DaysModal from "../../components/DaysModals";
 import { FileService } from "../../services/FileService";
+import MapModal from "../../components/MapModal";
+import { MapMouseEvent } from "@vis.gl/react-google-maps";
+import { reverseGeoCode } from "../../utils/geoCoder";
 
 interface FormData {
   name: string;
   description: string;
   images: File[] | null;
-  location: string;
   openingDays: string[];
   openingFrom: string;
   openingTo: string;
@@ -42,12 +44,12 @@ const HistoricalPlaceForm: React.FC = () => {
   const [showDaysModal, setShowDaysModal] = useState(false); // State to manage modal visibility
   const [selectedDays, setSelectedDays] = useState<string[]>([]); // State to manage selected days
 
+  const [images, setImages] = useState<string[]>([]);
   const [formData, setFormData] = useState<FormData>({
     name: "",
     openingDays: [],
     description: "",
     images: [],
-    location: "",
     openingFrom: "",
     openingTo: "",
     nativePrice: 0,
@@ -55,8 +57,22 @@ const HistoricalPlaceForm: React.FC = () => {
     studentPrice: 0,
     active_flag: true,
   });
+  const [showMapModal, setShowMapModal] = useState(false); // State to manage modal visibility
+  const [center, setCenter] = React.useState({
+    lat: 29.98732507495249,
+    lng: 31.435660077332482,
+    address: "",
+  });
 
   const navigate = useNavigate();
+
+  const handleOpenMapModal = () => {
+    setShowMapModal(true); // Show the modal
+  };
+
+  const handleCloseMapModal = () => {
+    setShowMapModal(false); // Close the modal
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -76,14 +92,15 @@ const HistoricalPlaceForm: React.FC = () => {
         acc[tag.id] = tag.value;
         return acc;
       }, {} as { [key: string]: string });
-      const firstImageId = formData.images
-    ? (await FileService.uploadFile(formData.images[0])).data._id
-    : null;
+      const firstImageId = formData.images && formData.images.length > 0
+        ? (await FileService.uploadFile(formData.images[0])).data._id
+        : null;
+      
       const reqData = {
         name: formData.name,
         description: formData.description,
-        images: firstImageId ? [firstImageId] : [],
-        // location: formData.location,
+        images: firstImageId ? [firstImageId] : images,
+        location: { longitude: center.lng, latitude: center.lat },
         opening_days: formData.openingDays,
         opening_hours_from: formData.openingFrom,
         opening_hours_to: formData.openingTo,
@@ -130,8 +147,7 @@ const HistoricalPlaceForm: React.FC = () => {
         name: locationData.name,
         openingDays: locationData.opening_days,
         description: locationData.description,
-        images: locationData.images,
-        location: locationData.location.toString(),
+        images: [],
         openingFrom: locationData.opening_hours_from,
         openingTo: locationData.opening_hours_to,
         nativePrice: locationData.native_price,
@@ -139,12 +155,19 @@ const HistoricalPlaceForm: React.FC = () => {
         studentPrice: locationData.student_price,
         active_flag: locationData.active_flag,
       });
+      setImages(locationData.images);
       setSelectedTags(
         Object.entries(locationData.tags).map(([key, value]) => ({
           id: key,
           value: value as string,
         }))
       );
+      const address = await reverseGeoCode(locationData.location.latitude, locationData.location.longitude)
+      setCenter({
+        lat: locationData.location.latitude,
+        lng: locationData.location.longitude,
+        address: (address as { formatted_address: string }[])[0]?.formatted_address || "",
+      });
     } else {
       console.error("Historical location ID is undefined");
     }
@@ -257,8 +280,9 @@ const HistoricalPlaceForm: React.FC = () => {
                 label="Location"
                 type="text"
                 placeholder="Enter Location"
-                value={formData.location}
-                onChange={handleInputChange}
+                value={center.address}
+                onChange={handleOpenMapModal}
+                onClick={handleOpenMapModal}
                 required
                 id={"location"}
                 disabled={false}
@@ -455,6 +479,25 @@ const HistoricalPlaceForm: React.FC = () => {
           </Button>
         </Form>
       </Container>
+      <MapModal
+        open={showMapModal}
+        handleClose={handleCloseMapModal}
+        center={center}
+        onMapClick={async (e: MapMouseEvent) => {
+          if (e.detail.latLng) {
+            const address = await reverseGeoCode(e.detail.latLng.lat, e.detail.latLng.lng);
+            if (address && Array.isArray(address) && address[0]) {
+              const location = {
+                lat: e.detail.latLng.lat,
+                lng: e.detail.latLng.lng,
+                address: address[0].formatted_address,
+              };
+              setCenter(location);
+            }
+          }
+        }
+        }
+      />
       <DaysModal
         show={showDaysModal}
         handleClose={handleDaysModalClose}

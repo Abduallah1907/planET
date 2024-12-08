@@ -2364,7 +2364,9 @@ export default class TouristService {
     touristInfo.addresses.push(address._id as ObjectId);
     await touristInfo.save();
 
-    return new response(true, {}, "Added address!", 200);
+    return new response(true, {
+      address: address,
+    }, "Added address!", 200);
   }
 
   public async removeDeliveryAddressService(
@@ -2388,7 +2390,9 @@ export default class TouristService {
     touristInfo.addresses.splice(index, 1);
     await touristInfo.save();
 
-    return new response(true, {}, "Removed address!", 200);
+    return new response(true, {
+      address: address,
+    }, "Removed address!", 200);
   }
 
   public async viewDeliveryAddressesService(email: string): Promise<response> {

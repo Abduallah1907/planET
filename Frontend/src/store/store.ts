@@ -15,6 +15,11 @@ const store = configureStore({
     flight: flightSlice,
     toasts: toastsSlice,
   },
+  middleware(getDefaultMiddleware) {
+    return getDefaultMiddleware({
+      serializableCheck: false,
+    });
+  },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

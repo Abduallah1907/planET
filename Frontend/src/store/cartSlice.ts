@@ -3,10 +3,6 @@ import { AppThunk, RootState } from './store';
 import { useNavigate } from 'react-router-dom';
 import { clear } from 'console';
 
-interface CartState {
-    products: CartItem[];
-    total: number;
-}
 interface Product {
     id: any;
     name: string;
@@ -21,9 +17,18 @@ interface CartItem {
     quantity: number;
 }
 
+interface CartState {
+    products: CartItem[];
+    total: number;
+    promoCode: string;
+    discountPercent: number;
+}
+
 const initialState: CartState = {
     products: [],
     total: 0,
+    promoCode: "",
+    discountPercent: 0,
 };
 export const cartSlice = createSlice({
     name: 'cart',
@@ -52,10 +57,14 @@ export const cartSlice = createSlice({
             state.products = [];
             state.total = 0;
         },
+        addPromoCode: (state, action: PayloadAction<{ promoCode: string; discountPercent: number }>) => {
+            state.promoCode = action.payload.promoCode;
+            state.discountPercent = action.payload.discountPercent;
+        }
     }
 });
 
-export const { addProduct, removeProduct, updateQuantity, clearCart } = cartSlice.actions;
+export const { addProduct, removeProduct, updateQuantity, clearCart, addPromoCode } = cartSlice.actions;
 
 export const cartState = (state: RootState) => state.cart;
 

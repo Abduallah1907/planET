@@ -6,16 +6,17 @@ import { HistoricalService } from "../../services/HistoricalService";
 import DaysModal from "../../components/DaysModals";
 import { useAppSelector } from "../../store/hooks";
 import { useNavigate } from "react-router-dom";
-import { set } from "react-datepicker/dist/date_utils";
 import { ToastTypes } from "../../utils/toastTypes";
 import showToastMessage from "../../utils/showToastMessage";
 import { FileService } from "../../services/FileService";
+import MapModal from "../../components/MapModal";
+import { MapMouseEvent } from "@vis.gl/react-google-maps";
+import { reverseGeoCode } from "../../utils/geoCoder";
 
 interface FormData {
   name: string;
   description: string;
   images: File[] | null;
-  location: string;
   openingDays: string[];
   openingFrom: string;
   openingTo: string;
@@ -47,7 +48,6 @@ const HistoricalPlaceForm: React.FC = () => {
     openingDays: [],
     description: "",
     images: [],
-    location: "",
     openingFrom: "",
     openingTo: "",
     nativePrice: 0,
@@ -83,8 +83,22 @@ const HistoricalPlaceForm: React.FC = () => {
   };
 
   const Governer = useAppSelector((state) => state.user);
+  const [showMapModal, setShowMapModal] = useState(false); // State to manage modal visibility
+  const [center, setCenter] = React.useState({
+    lat: 29.98732507495249,
+    lng: 31.435660077332482,
+    address: "",
+  });
 
   const navigate = useNavigate();
+
+  const handleOpenMapModal = () => {
+    setShowMapModal(true); // Show the modal
+  };
+
+  const handleCloseMapModal = () => {
+    setShowMapModal(false); // Close the modal
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -93,14 +107,14 @@ const HistoricalPlaceForm: React.FC = () => {
       acc[tag.id] = tag.value;
       return acc;
     }, {} as { [key: string]: string });
-    const firstImageId = formData.images
+    const firstImageId = formData.images && formData.images.length > 0
     ? (await FileService.uploadFile(formData.images[0])).data._id
     : null;
 
     const reqData = {
       name: formData.name,
-      location: { latitude: 0, longitude: 0 },
-      images: firstImageId,
+      location: { latitude: center.lat, longitude: center.lng },
+      images: firstImageId ? [firstImageId] : [],
       description: formData.description,
       opening_days: formData.openingDays,
       opening_hours_from: formData.openingFrom,
@@ -229,13 +243,14 @@ const HistoricalPlaceForm: React.FC = () => {
 
           <Row>
             <Col>
-              <AdminFormGroup
+            <AdminFormGroup
                 className="form-group"
                 label="Location"
                 type="text"
                 placeholder="Enter Location"
-                value={formData.location}
-                onChange={handleInputChange}
+                value={center.address}
+                onChange={handleOpenMapModal}
+                onClick={handleOpenMapModal}
                 required
                 id={"location"}
                 disabled={false}
@@ -432,6 +447,25 @@ const HistoricalPlaceForm: React.FC = () => {
           </Button>
         </Form>
       </Container>
+      <MapModal
+        open={showMapModal}
+        handleClose={handleCloseMapModal}
+        center={center}
+        onMapClick={async (e: MapMouseEvent) => {
+          if (e.detail.latLng) {
+            const address = await reverseGeoCode(e.detail.latLng.lat, e.detail.latLng.lng);
+            if (address && Array.isArray(address) && address[0]) {
+              const location = {
+                lat: e.detail.latLng.lat,
+                lng: e.detail.latLng.lng,
+                address: address[0].formatted_address,
+              };
+              setCenter(location);
+            }
+          }
+        }
+        }
+      />
       <DaysModal
         show={showDaysModal}
         handleClose={handleDaysModalClose}

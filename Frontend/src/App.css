@@ -256,3 +256,8 @@ body {
 .sort-btn select:focus{
   box-shadow: none;
 }
+
+.bank-card-details{
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
