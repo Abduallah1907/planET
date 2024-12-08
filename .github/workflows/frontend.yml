@@ -1,0 +1,33 @@
+name: Frontend CI Workflow
+
+on:
+  push:
+    branches:
+      - main 
+  pull_request:
+    branches:
+      - main 
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          cd Frontend
+          npm install
+
+      - name: Start the application
+        run: |
+          cd Frontend
+          npm start
+        # Depending on your setup, this step could potentially be replaced with `npm run start` or other commands.
