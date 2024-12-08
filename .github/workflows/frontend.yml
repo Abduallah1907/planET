@@ -35,19 +35,21 @@ jobs:
         run: |
           echo "Waiting for the server to be ready..."
           $serverUp = $false
-          $maxRetries = 3
+          $maxRetries = 50
           $retries = 0
           while ($serverUp -eq $false -and $retries -lt $maxRetries) {
             $retries++
             try {
-              $response = Invoke-WebRequest -Uri http://localhost:3000 -TimeoutSec 120
+              $response = Invoke-WebRequest -Uri http://localhost:3000 -TimeoutSec 20
+              echo "server is $serverUp"
               if ($response.StatusCode -eq 200) {
                 $serverUp = $true
                 echo "Server is up!"
+                exit 0
               }
             } catch {
               echo "Server not up yet... Retrying ($retries/$maxRetries)"
-              Start-Sleep -Seconds 120
+              Start-Sleep -Seconds 20
             }
           }
           if (-not $serverUp) {
