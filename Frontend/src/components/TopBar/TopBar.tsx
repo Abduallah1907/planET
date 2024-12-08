@@ -141,7 +141,9 @@ const TopBar: React.FC = () => {
   const dispatch = useAppDispatch();
   const User = useAppSelector((state) => state.user);
   const IsLoggedIn = User.isLoggedIn; // Assuming you have an auth slice in your Redux store
-
+   const handleButtonClick = () => {
+    navigate('/demo'); 
+  };
   function getBadgeColor(badge: any): string | string {
     switch (badge) {
       case "1":
@@ -289,7 +291,7 @@ const TopBar: React.FC = () => {
 
             <Button
               variant=""
-              onClick={handleHelp}
+              onClick={handleButtonClick}
               className="btn-help btn-margin me-1"
             >
               <MdHelpOutline />

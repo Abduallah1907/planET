@@ -1,0 +1,22 @@
+/* Style for the custom checkbox */
+.custom-checkbox .form-check-input {
+    width: 20px; /* Adjust the size */
+    height: 20px;
+    appearance: none; /* Remove default checkbox styling */
+    border: 2px solid #ccc; /* Border color */
+    border-radius: 4px; /* Rounded edges */
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.custom-checkbox .form-check-input:checked {
+    background-color: #ffb347; /* Darker orange background for checked state */
+}
+
+.custom-checkbox .form-check-input:checked::before {
+    color: white;
+    font-size: 14px;
+    position: absolute;
+    left: 4px;
+    top: 2px;
+}

@@ -7,8 +7,6 @@ import {
   Modal,
   Button,
   Image,
-  NavLink,
-  Nav,
 } from "react-bootstrap";
 import Comment from "../components/Comment"; // Assume you have a Comment component for rating
 import { TouristService } from "../services/TouristService";
@@ -62,16 +60,30 @@ const RecentOrders: React.FC = () => {
     const orders = await TouristService.getPastOrders(email);
     const ordersWithImages = await Promise.all(
       orders.data.map(async (order: Order) => {
+        // Handle seller logo
         if (order.products.items[0]?.product_id.seller_id.logo) {
           const file = await FileService.downloadFile(order.products.items[0]?.product_id.seller_id.logo);
           const url = URL.createObjectURL(file);
           order.products.items[0].product_id.seller_id.logo = url;
         }
+
+        // Handle product images
+        await Promise.all(
+          order.products.items.map(async (item) => {
+            if (item.product_id.image) {
+              const file = await FileService.downloadFile(item.product_id.image);
+              const url = URL.createObjectURL(file);
+              item.product_id.image = url;
+            }
+          })
+        );
+
         return order;
       })
     );
     return ordersWithImages;
   };
+
   const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
 
   const handleOpenOrder = (order: Order) => {
@@ -114,53 +126,53 @@ const RecentOrders: React.FC = () => {
           <Row>
             {orders.map((order) => (
               <Col xs={12} md={4} key={order._id} className="mb-4">
-              <ListGroup.Item
-                className="p-3 order-card d-flex flex-column"
-                style={{
-                  border: "1px solid #ddd",
-                  borderRadius: "8px",
-                  backgroundColor: "#f9f9f9",
-                }}
-              >
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <div>
-                    <p className="mb-1 text-muted">
-                      <small>Order Placed</small>
-                    </p>
-                    <p className="mb-0 fw-bold">{order.date.split('T')[0]} {order.date.split('T')[1].split('.')[0]}</p>
+                <ListGroup.Item
+                  className="p-3 order-card d-flex flex-column"
+                  style={{
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    backgroundColor: "#f9f9f9",
+                  }}
+                >
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                      <p className="mb-1 text-muted">
+                        <small>Order Placed</small>
+                      </p>
+                      <p className="mb-0 fw-bold">{order.date.split('T')[0]} {order.date.split('T')[1].split('.')[0]}</p>
+                    </div>
+                    <p className="mb-0 fw-bold">{getConvertedCurrencyWithSymbol(order.cost, baseCurrency, currency)}</p>
                   </div>
-                  <p className="mb-0 fw-bold">{getConvertedCurrencyWithSymbol(order.cost, baseCurrency, currency)}</p>
-                </div>
-                <div className="d-flex align-items-center mb-3">
-                  <Image
-                    src={order.products.items[0]?.product_id.seller_id.logo || "path/to/placeholder.jpg"}
-                    alt={order.products.items[0]?.product_id.seller_id.logo}
-                    rounded
-                    style={{
-                      width: "60px",
-                      height: "60px",
-                      objectFit: "cover",
-                      marginRight: "15px",
-                    }}
-                  />
-                  <div>
-                    <p className="mb-0 fw-bold">Order ID: {order._id}</p>
-                    <p className="mb-0 text-muted">
-                      {order.products.items.length} item(s) total
-                    </p>
+                  <div className="d-flex align-items-center mb-3">
+                    <Image
+                      src={order.products.items[0]?.product_id.seller_id.logo || "path/to/placeholder.jpg"}
+                      alt={order.products.items[0]?.product_id.seller_id.logo}
+                      rounded
+                      style={{
+                        width: "60px",
+                        height: "60px",
+                        objectFit: "cover",
+                        marginRight: "15px",
+                      }}
+                    />
+                    <div>
+                      <p className="mb-0 fw-bold">Order ID: {order._id}</p>
+                      <p className="mb-0 text-muted">
+                        {order.products.items.length} item(s) total
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="d-flex justify-content-between">
-                  <Button
-                    variant="main-inverse"
-                    size="sm"
-                    onClick={() => handleOpenOrder(order)}
-                  >
-                    View Details
-                  </Button>
-                </div>
-              </ListGroup.Item>
-            </Col>
+                  <div className="d-flex justify-content-between">
+                    <Button
+                      variant="main-inverse"
+                      size="sm"
+                      onClick={() => handleOpenOrder(order)}
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </ListGroup.Item>
+              </Col>
             ))}
           </Row>
         </Col>
@@ -185,9 +197,7 @@ const RecentOrders: React.FC = () => {
                 >
                   <div className="d-flex align-items-center">
                     <Image
-                      src={
-                        product.product_id.image || "path/to/placeholder.jpg"
-                      } // Placeholder image path
+                      src={product.product_id.image || "path/to/placeholder.jpg"} // Placeholder image path
                       alt={product.product_id.name}
                       thumbnail
                       style={{
