@@ -41,7 +41,7 @@ jobs:
             $retries++
             try {
               $response = Invoke-WebRequest -Uri http://localhost:3000 -TimeoutSec 20
-              echo "server is $serverUp"
+              echo "server is $response"
               if ($response.StatusCode -eq 200) {
                 $serverUp = $true
                 echo "Server is up!"
