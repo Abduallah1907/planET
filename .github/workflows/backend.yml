@@ -37,4 +37,11 @@ jobs:
     - name: Run backend using nodemon
       run: |
         cd API/src
-        npx nodemon ./app.ts
+        nohup npx nodemon ./app.ts &
+        sleep: 60
+
+    - name: Check if port 8000 is open
+      run: |
+        sudo apt-get install -y netcat
+        nc -zv localhost 8000 || exit 1  
+        continue-on-error: false  
