@@ -30,7 +30,7 @@ This project uses the MERN stack.
     - [Queries & Aggregations](#queries--aggregations)
 - [Testing](#testing)
   - [Backend Testing (Postman)](#backend-testing-postman)
-  - [Backend Testing (Jest)](#backend-testing-jest)
+  - [Example of Postman Request](#example-postman-request-postman)
 - [Screenshots](#screenshots)
 - [Features](#features)
   - [Features For Tourists](#features-for-tourists)
@@ -433,6 +433,9 @@ export interface ITour_Guide extends Document {
 ## Testing
 
 This project uses Postman to test the API endpoints of the backend. Postman helps with manual testing of the RESTful API, including sending requests and checking responses.
+
+
+We’ve included a Postman collection that contains pre-configured requests to test the API endpoints of the backend, which can be found [here](API/src/postman-test-collections/). To run these, follow steps 1 and 2 below then import the collection by clicking the import button in the top left corner, then choose the upload files collection and navigate to the .json file. Once imported, you'll find a collection of tests for that specific section. In order to create your own postman requests, we would suggest to continue on reading.
 
 ### Backend Testing (Postman)
 1. **Install Postman**:

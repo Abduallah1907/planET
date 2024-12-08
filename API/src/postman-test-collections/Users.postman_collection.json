@@ -1,0 +1,192 @@
+{
+	"info": {
+		"_postman_id": "961295d3-6258-4880-89f9-02ccfa0e45ad",
+		"name": "Users",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38434417",
+		"_collection_link": "https://www.postman.com/gatlinggun/workspace/my-workspace/collection/38434417-961295d3-6258-4880-89f9-02ccfa0e45ad?action=share&source=collection_link&creator=38434417"
+	},
+	"item": [
+		{
+			"name": "View all users",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/admin/getUsers/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"admin",
+						"getUsers",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search for user by username",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"mo\",\n    \"_id\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/admin/searchUser/test",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"admin",
+						"searchUser",
+						"test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/admin/deleteUser/66f938e334b53f13d6cfefb4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"admin",
+						"deleteUser",
+						"66f938e334b53f13d6cfefb4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Governor User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "   {\n      \"username\": \"test\",\n      \"email\": \"boab.saferrt@example.com\",\n      \"name\": \"Bob Builder\",\n      \"phone_number\": \"+0987654321\",\n      \"nation\": \"masr\",\n      \"password\": \"anotherSecurePassword456\"\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/admin/createGovernor",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"admin",
+						"createGovernor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Admin User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "   {\n      \"username\": \"link\",\n      \"email\": \"ana esh 3arefny@example.com\",\n      \"name\": \"3antel\",\n      \"phone_number\": \"1111111\",\n      \"password\": \"passwordsecuremoot\"\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/admin/createAdmin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"admin",
+						"createAdmin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delere Request Tourist",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/tourist/deleteTouristAccountRequest/nichole.thiel@hotmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"tourist",
+						"deleteTouristAccountRequest",
+						"nichole.thiel@hotmail.com"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

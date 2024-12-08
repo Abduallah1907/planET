@@ -1,0 +1,105 @@
+{
+	"info": {
+		"_postman_id": "0b9ab127-3e9d-4e10-a5a2-b4015dc8390e",
+		"name": "Tour Guide",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38434417",
+		"_collection_link": "https://www.postman.com/gatlinggun/workspace/my-workspace/collection/38434417-0b9ab127-3e9d-4e10-a5a2-b4015dc8390e?action=share&source=collection_link&creator=38434417"
+	},
+	"item": [
+		{
+			"name": "View profile",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"_id\":\"66fa7be0d5ed9e556db109bb\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/tourGuide/getProfile/66f9386e34b53f13d6cfefaa",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"tourGuide",
+						"getProfile",
+						"66f9386e34b53f13d6cfefaa"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Profile",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"user2\",\n    \"phone_number\":\"01111\",\n    \"email\":\"user@gm2sails.com\",\n    \"password\":\"pass\",\n    \"name\":\"user2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/tourGuide/createProfile",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"tourGuide",
+						"createProfile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update profile",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"tour_guide_user_id\":\"66f9386e34b53f13d6cfefaa\",\n    \"years_of_experience\": 20,\n    \"photo\": \"link.png\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/tourGuide/updateProfile",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"tourGuide",
+						"updateProfile"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
