@@ -73,10 +73,20 @@ const touristSchema = new mongoose.Schema(
         ref: "Order",
       },
     ],
+    preferences: [
+      //for tags
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
+      },
+    ],
   },
   { timestamps: true }
 );
 
-const Tourist = mongoose.model<ITourist & mongoose.Document>("Tourist", touristSchema);
+const Tourist = mongoose.model<ITourist & mongoose.Document>(
+  "Tourist",
+  touristSchema
+);
 
 export default Tourist;

@@ -72,8 +72,9 @@ export default class TouristService {
     @Inject("notificationModel")
     private notificationModel: Models.NotificationModel,
     @Inject("sellerModel") private sellerModel: Models.SellerModel,
-    @Inject("addressModel") private addressModel: Models.AddressModel
-  ) { }
+    @Inject("addressModel") private addressModel: Models.AddressModel,
+    @Inject("tagModel") private tagModel: Models.TagModel
+  ) {}
 
   public async getTouristService(email: string) {
     const user = await this.userModel.findOne({
@@ -600,12 +601,15 @@ export default class TouristService {
     if (updatedTourist == null) throw new NotFoundError("Tourist not found");
     //Send the receipt to the tourist email
     const notificationService = Container.get(NotificationService);
-    const receiptMessage = `Dear ${user.name},\n\nYour Activity booking for ${activity.name
-      } has been confirmed. Here are the details:\n\nActivity: ${activity.name
-      }\nDate: ${activity.date.toDateString()}\n${activity.price != undefined
+    const receiptMessage = `Dear ${user.name},\n\nYour Activity booking for ${
+      activity.name
+    } has been confirmed. Here are the details:\n\nActivity: ${
+      activity.name
+    }\nDate: ${activity.date.toDateString()}\n${
+      activity.price != undefined
         ? `Price: ${activity.price}`
         : `Price Range: ${activity.price_range?.min} - ${activity.price_range?.max}`
-      }\nID: ${activity._id}
+    }\nID: ${activity._id}
         \n\nThank you for booking with us!\n\nBest regards,\nYour Favourite Travel Team`;
 
     const emailSent = await notificationService.sendEmailNotificationService(
@@ -821,7 +825,8 @@ export default class TouristService {
       points_received: points_received,
       payment_type: payment_type,
       time_to_attend: new Date(
-        `${historical_location.date.toISOString().split("T")[0]}T${historical_location.time
+        `${historical_location.date.toISOString().split("T")[0]}T${
+          historical_location.time
         }`
       ), // Combine date and time
     });
@@ -2262,11 +2267,12 @@ export default class TouristService {
       throw new InternalServerError("Internal server error");
     if (user == null) throw new NotFoundError("User not found");
 
-    const tourist = await this.touristModel.findOne({ user_id: user._id }).populate("bookmarks");
+    const tourist = await this.touristModel
+      .findOne({ user_id: user._id })
+      .populate("bookmarks");
     if (tourist instanceof Error)
       throw new InternalServerError("Internal server error");
     if (tourist == null) throw new NotFoundError("Tourist not found");
-
 
     return new response(
       true,
@@ -2458,5 +2464,87 @@ export default class TouristService {
       throw new InternalServerError("Internal server error");
     if (updatedTourist == null) throw new NotFoundError("Tourist not found");
     return new response(true, updatedorder, "Order cancelled", 200);
+  }
+  //Add preferences
+  public async AddPreferencesService(email: string, preferences: string) {
+    if (!Types.ObjectId.isValid(preferences))
+      throw new BadRequestError("Invalid Tag");
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+    });
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (user == null) throw new NotFoundError("User not found");
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+    const tag = await this.tagModel.findById(preferences);
+    if (tag instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tag == null) throw new NotFoundError("Tag not found");
+    if (!tourist.preferences) {
+      tourist.preferences = [];
+    }
+    //check if the preferences already exist in the array
+    if (!tourist.preferences.includes(new Types.ObjectId(preferences) as any)) {
+      tourist.preferences.push(new Types.ObjectId(preferences) as any);
+      tourist.save();
+      return new response(
+        true,
+        tourist.preferences,
+        "Preference is added",
+        201
+      );
+    }
+    return new response(
+      true,
+      tourist.preferences,
+      "Preference is already added",
+      201
+    );
+  }
+  //remove preferences
+  public async RemovePreferencesService(email: string, preferences: string) {
+    if (!Types.ObjectId.isValid(preferences))
+      throw new BadRequestError("Invalid Tag");
+    const user = await this.userModel.findOne({
+      email: email,
+      role: UserRoles.Tourist,
+    });
+    if (user instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (user == null) throw new NotFoundError("User not found");
+    const tourist = await this.touristModel.findOne({ user_id: user._id });
+    if (tourist instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tourist == null) throw new NotFoundError("Tourist not found");
+    const tag = await this.tagModel.findById(preferences);
+    if (tag instanceof Error)
+      throw new InternalServerError("Internal server error");
+    if (tag == null) throw new NotFoundError("Tag not found");
+    if (!tourist.preferences) {
+      tourist.preferences = [];
+    }
+    const index = tourist.preferences.indexOf(
+      new Types.ObjectId(preferences) as any
+    );
+    if (index == -1) {
+      return new response(
+        true,
+        tourist.preferences,
+        "Preference is already removed",
+        201
+      );
+    }
+    tourist.preferences.splice(index, 1);
+    tourist.save();
+    return new response(
+      true,
+      tourist.preferences,
+      "Preference is removed",
+      201
+    );
   }
 }
