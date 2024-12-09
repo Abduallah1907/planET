@@ -41,6 +41,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
   const [activityData, setActivityData] = useState<IActivity | null>(null);
   const [showAdvertiserModal, setShowAdvertiserModal] = useState(false);
   const { id: activity_id } = useParams<{ id: string }>(); // Destructure `id` from URL params
+  const [comments, setComments] = useState<any[]>([]);
+  
   const shareLink = activityData
     ? `${window.location.origin}/activity/${activityData._id}`
     : "";
@@ -163,6 +165,12 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ id }) => {
   const handleBookNow = () => {
     navigate(`/bookActivity/${activityData?._id}`);
   };
+
+  const getComments = async () => {
+    const comments = await ActivityService.getComments(id);
+    setComments(comments.data);
+  };
+
   return (
     <Container className="activity-card-container mt-5">
       <div className="activity-card">

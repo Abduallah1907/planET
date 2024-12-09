@@ -112,6 +112,15 @@ class ActivityService {
       throw error;
     }
   };
+  public static getComments = async (id:string) => {
+    try {
+      const response = await axiosInstance.get(`/activity/getComments/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
 }
 
 export { ActivityService };

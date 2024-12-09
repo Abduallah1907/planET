@@ -5,10 +5,12 @@ import Comment from "../../components/Comment";
 import ItineraryCard from "./ItineraryCard";
 import { useAppSelector } from "../../store/hooks";
 import { TouristService } from "../../services/TouristService";
+import { ItineraryService } from "../../services/ItineraryService";
 
 const ItineraryDetails: React.FC = () => {
   const { id = "" } = useParams<{ id: string }>();
   const tourist = useAppSelector((state) => state.user);
+  const [comments, setComments] = useState<any[]>([]);
 
   const [canComment, setCanComment] = useState(false); // To track if commenting is allowed
 
@@ -26,13 +28,20 @@ const ItineraryDetails: React.FC = () => {
     if (tourist.role === "TOURIST") {
       checkItinerary(); // Call checkItinerary when component mounts
     }
+    getComments();
   }, [id, tourist]);
+
+  const getComments = async () => {
+    const comments = await ItineraryService.getComments(id);
+    setComments(comments.data);
+  }
+    
 
   return (
     <div>
       <ItineraryCard id={id} />
       {canComment && <Comment onSubmit={handleCommentSubmit} />}
-      <LatestReviews />
+      <LatestReviews comments = {comments} />
     </div>
   );
 };

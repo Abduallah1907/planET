@@ -689,7 +689,16 @@ export default class ActivityService {
   ): Promise<response> {
     const activity = await this.activityModel
       .findById(activity_id)
-      .populate("comments");
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'tourist_id',
+          populate: {
+            path: 'user_id'
+          }
+        }
+      });
+
     if (!activity) throw new NotFoundError("Activity not found");
     return new response(true, activity.comments, "Comments fetched", 200);
   }
