@@ -1,0 +1,333 @@
+{
+	"info": {
+		"_postman_id": "b01714c1-7b2e-4249-9de7-d72f33662ef8",
+		"name": "Itinerary",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38434417",
+		"_collection_link": "https://www.postman.com/gatlinggun/workspace/my-workspace/collection/38434417-b01714c1-7b2e-4249-9de7-d72f33662ef8?action=share&source=collection_link&creator=38434417"
+	},
+	"item": [
+		{
+			"name": "Create itinerary",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"tour_guide_id\": \"670d69c8ae89dd3da4a3a1e6\",\n  \"name\": \"The real Paris City Tour\",\n  \"category\": \"60c72b2f9b1d4c2e88f6f6a7\",\n  \"activities\": [\n    \"60c72b2f9b1d4c2e88f6f6a5\",\n    \"60c72b2f9b1d4c2e88f6f6a6\"\n  ],\n  \"timeline\": [\n    \"60c72b2f9b1d4c2e88f6f6a7\",\n    \"60c72b2f9b1d4c2e88f6f6a8\"\n  ],\n  \"locations\": [\n    {\n      \"latitude\": 48.8584,\n      \"longitude\": 2.2945\n    },\n    {\n      \"latitude\": 48.8606,\n      \"longitude\": 2.3376\n    }\n  ],\n  \"duration\": \"3 hours\",\n  \"languages\": [\"English\", \"French\"],\n  \"price\": 150,\n  \"available_dates\": [\n    \"2024-10-10T00:00:00Z\",\n    \"2024-10-15T00:00:00Z\"\n  ],\n  \"accessibility\": true,\n  \"pickup_loc\":     {\n      \"latitude\": 48.8606,\n      \"longitude\": 2.3376\n    },\n  \"drop_off_loc\":     {\n      \"latitude\": 48.8606,\n      \"longitude\": 2.3376\n    },\n  \"tags\": [\"60c72b2f9b1d4c2e88f6f6a7\", \"60c72b2f9b1d4c2e88f6f6a7\"]\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/itinerary/createItinerary",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"itinerary",
+						"createItinerary"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get specific itinerary by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/itinerary/getItineraryByID/671286d04c77c5e194efeeca",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"itinerary",
+						"getItineraryByID",
+						"671286d04c77c5e194efeeca"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all itineraries",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "jwt",
+					"jwt": [
+						{
+							"key": "payload",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "isSecretBase64Encoded",
+							"value": true,
+							"type": "boolean"
+						},
+						{
+							"key": "algorithm",
+							"value": "HS256",
+							"type": "string"
+						},
+						{
+							"key": "secret",
+							"value": "your_secret_key",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "headerPrefix",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "queryParamKey",
+							"value": "token",
+							"type": "string"
+						},
+						{
+							"key": "header",
+							"value": "{}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/itinerary/getAllItineraries/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"itinerary",
+						"getAllItineraries",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deactivate Itinerary",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/itinerary/deactivateItinerary/671286d04c77c5e194efeeca",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"itinerary",
+						"deactivateItinerary",
+						"671286d04c77c5e194efeeca"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Flag Itinerary",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/itinerary/flagItinenrary/671286d04c77c5e194efeeca",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"itinerary",
+						"flagItinenrary",
+						"671286d04c77c5e194efeeca"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Activate Itinerary",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/itinerary/activateItinerary/671286d04c77c5e194efeeca",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"itinerary",
+						"activateItinerary",
+						"671286d04c77c5e194efeeca"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all itineraries for specific tour guide",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"mo\",\n    \"_id\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/itinerary/getAllItinerariesByTourGuideID/670246d0fe08b9a3f6556e9f",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"itinerary",
+						"getAllItinerariesByTourGuideID",
+						"670246d0fe08b9a3f6556e9f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update itinerary",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"itinerary_id\":\"6702a364831597d306eeb85b\",\n    \"name\": \"Paris Underground Tour\",\n    \"category\": \"60c72b2f9b1d4c2e88f6f6a7\",\n    \"activities\": [\n        \"60c72b2f9b1d4c2e88f6f6a5\",\n        \"60c72b2f9b1d4c2e88f6f6a6\"\n    ],\n    \"timeline\": [\n        \"60c72b2f9b1d4c2e88f6f6a7\",\n        \"60c72b2f9b1d4c2e88f6f6a8\"\n    ],\n    \"locations\": [\n        {\n            \"lat\": 48.8584,\n            \"long\": 2.2945\n        },\n        {\n            \"lat\": 48.8606,\n            \"long\": 2.3376\n        }\n    ],\n    \"duration\": \"3 hours\",\n    \"languages\": [\"English\"],\n    \"price\": 150,\n    \"available_dates\": [\n        \"2024-10-10T00:00:00Z\",\n        \"2024-10-15T00:00:00Z\"\n    ],\n    \"accessibility\": true,\n    \"pickup_loc\":        {\n            \"lat\": 48.8584,\n            \"long\": 2.2945\n        },\n    \"drop_off_loc\":        {\n            \"lat\": 48.8584,\n            \"long\": 2.2945\n        },\n    \"tags\": [\"60c72b2f9b1d4c2e88f6f6a6\"]\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/itinerary/updateItinerary/6702a3bf831597d306eeb8a2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"itinerary",
+						"updateItinerary",
+						"6702a3bf831597d306eeb8a2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete itinerary",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "   {\n      \"username\": \"bob_builder\",\n      \"email\": \"bob.builder@example.com\",\n      \"name\": \"Bob Builder\",\n      \"phone_number\": \"+0987654321\",\n      \"password\": \"anotherSecurePassword456\"\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/itinerary/deleteItinerary/66f9386e34b53f13d6cfefaa/itinerary/6702a364831597d306eeb85b",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"itinerary",
+						"deleteItinerary",
+						"66f9386e34b53f13d6cfefaa",
+						"itinerary",
+						"6702a364831597d306eeb85b"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -29,23 +29,32 @@ This project uses the MERN stack.
     - [Schema Design](#schema-design)
     - [Queries & Aggregations](#queries--aggregations)
 - [Testing](#testing)
+  - [Backend Testing (Postman)](#backend-testing-postman)
+  - [Example of Postman Request](#example-postman-request-postman)
 - [Screenshots](#screenshots)
 - [Features](#features)
   - [Features For Tourists](#features-for-tourists)
+  - [Features For Admins](#features-for-admins)
   - [Features For Advertisers](#features-for-advertisers)
   - [Features For Tour Guide](#features-for-tour-guides)
   - [Features For Sellers](#features-for-sellers)
   - [Features For Tourism Governor](#features-for-tourism-governor)
 - [Installation](#installation)
 - [How to Use](#how-to-use)
-- [API References](#api-reference)
+- [API References](#api-references)
 - [Contributions](#contributions)
 - [Credits](#credits)
 - [License](#license)
 
 ## Build Status
 
-yes
+
+![Build Status](https://github.com/Advanced-computer-lab-2024/planET/actions/workflows/frontend.yml/badge.svg?branch=main)
+
+![Build Status](https://github.com/Advanced-computer-lab-2024/planET/actions/workflows/backend.yml/badge.svg?branch=main)
+
+
+This project uses GitHub Actions for continuous integration. The badges above reflect the current build status of the frontend and backend respectively in the `main` branch.
 
 ## Tech Stack
 
@@ -423,7 +432,47 @@ export interface ITour_Guide extends Document {
 
 ## Testing
 
-- Use Postman to test APIs.
+This project uses Postman to test the API endpoints of the backend. Postman helps with manual testing of the RESTful API, including sending requests and checking responses.
+
+
+We’ve included a Postman collection that contains pre-configured requests to test the API endpoints of the backend, which can be found [here](API/src/postman-test-collections/). To run these, follow steps 1 and 2 below then import the collection by clicking the import button in the top left corner, then choose the upload files collection and navigate to the .json file. Once imported, you'll find a collection of tests for that specific section. In order to create your own postman requests, we would suggest to continue on reading.
+
+### Backend Testing (Postman)
+1. **Install Postman**:
+  If you haven't already, download and install Postman from the [official website](https://www.postman.com/downloads/).
+
+2. **Run the Server**:
+  Follow the instructions in the [installation process](#installation) in order to run the backend server.
+
+3. **Create Postman Requests** 
+  For each API endpoint, you can create GET, POST, PUT, DELETE, or PATCH requests in Postman, depending on the functionality being tested. You can check out our [documentation](#api-references) for the APIs we currently use. In order to get full coverage, we would ideally like to test each response atleast once, as seen in the example below.
+
+### Example Postman Request (Postman)
+Let us test one of our POST requests using postman. This request is used to book an activity at our site, and according to our documentation, takes email, itinerary_id, time to attend, payment type, and promo code, all of which are string, and all are required but promocode. We see that there are 3 possible responses, we can test, so we create three different requeust bodies to test each one.
+
+`/api/tourist/bookItinerary` is the api we would like to test, with the request body being
+```json
+{
+  "email": "testman@gmail.com",
+  "itinerary_id": "63f4d9b8c3f7f220a888ca02",
+  "time_to_attend": "2/2/2024",
+  "payment_type": "Cash",
+  "promoCode": "ipw0o29eugf"
+}
+```
+Using the above request, we test the first response, 200, and see it does return 200.
+
+The next thing to request is reponse 400, which can be achieved by sending an empty request body. Doing this gives us the response 400 indeed.
+
+The last thing to test is 404, for a bad promocode. We can do this by taking the above request body and changing the promocode to a dash
+```json
+  "email": "testman@gmail.com",
+  "itinerary_id": "63f4d9b8c3f7f220a888ca02",
+  "time_to_attend": "2/2/2024",
+  "payment_type": "Cash",
+  "promoCode": "---"
+```
+giving us a 404 as a result, giving us the result we expected.
 
 ## Screenshots
 
@@ -439,14 +488,23 @@ export interface ITour_Guide extends Document {
 - Bookmark your favorite activities.
 - Browse through an endless shop containing all types of souveniers.
 - Wishlist your most wanted products.
-- Receive loyalty points for every payment done
-- Use your loyalty points to recieve cash inside your wallet
-- Get promocodes, and apply them to whatever you want
+- Receive loyalty points for every payment done.
+- Use your loyalty points to recieve cash inside your wallet.
+- Get promocodes, and apply them to whatever you want.
+
+### Features For Tourists
+
+- Check out the number of users per month.
+- View a report of total revenue from all the different events, itineraries, and products, and be able to filter them based on date.
+- Be able to view complaints and be able to filter, sort, and reply to them.
+- Recieve notifactions for any out of stock products via email and site.
+- Create tourism governors and other admins.
 
 ### Features For Advertisers
 
 - Create activities for tourists to book and enjoy through the site.
-- Track your earnings overall or for a specific activity
+- Customize your profile according to your needs, including your website, hotline, and much more.
+- Track your earnings overall or for a specific activity.
 
 ### Features For Tour Guides
 

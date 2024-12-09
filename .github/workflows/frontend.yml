@@ -1,0 +1,42 @@
+name: Frontend CI Workflow
+
+on:
+  push:
+    branches:
+      - main 
+  pull_request:
+    branches:
+      - main 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          cd Frontend
+          npm install
+
+      - name: Start React server in the background
+        run: |
+          cd Frontend
+          nohup npm start &  # Runs the server in the background
+          sleep 120
+
+      - name: Check if port 3000 is open
+        run: |
+          # Use netstat or ss to check if port 3000 is open
+          sudo apt-get install -y netcat
+          nc -zv localhost 3000 || exit 1  # Check if port 3000 is listening, exit with error if not
+        continue-on-error: false  # Fail the action if port 3000 is not open
+
+

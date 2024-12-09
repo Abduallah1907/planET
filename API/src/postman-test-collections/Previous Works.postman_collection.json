@@ -1,0 +1,104 @@
+{
+	"info": {
+		"_postman_id": "3c504582-ecb0-4abb-b440-1f854a3fb484",
+		"name": "Previous Works",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38434417",
+		"_collection_link": "https://www.postman.com/gatlinggun/workspace/my-workspace/collection/38434417-3c504582-ecb0-4abb-b440-1f854a3fb484?action=share&source=collection_link&creator=38434417"
+	},
+	"item": [
+		{
+			"name": "Create Previous Work",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"tommrow 2024\",\n    \"place\": \"siiiuuuu\",\n    \"from\": \"2024-05-15\",\n    \"to\": \"2024-05-17\",\n    \"tour_guide_user_id\": \"66f9386e34b53f13d6cfefaa\"\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/tourGuide/createPreviousWork",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"tourGuide",
+						"createPreviousWork"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Previous Work",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Meeting 2024\",\n    \"place\": \"ta7t beity\",\n    \"from\": \"2024-09-15T09:00:00Z\",\n    \"to\": \"2024-02-20T17:00:00Z\",\n    \"previous_work_id\":\"6701336a4619a8a929277630\"\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/tourGuide/updatePreviousWork",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"tourGuide",
+						"updatePreviousWork"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Previous Work",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/tourGuide/deletePreviousWork/66f9386e34b53f13d6cfefaa/previousWork/6701336a4619a8a929277630",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"tourGuide",
+						"deletePreviousWork",
+						"66f9386e34b53f13d6cfefaa",
+						"previousWork",
+						"6701336a4619a8a929277630"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

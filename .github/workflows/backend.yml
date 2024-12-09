@@ -1,0 +1,47 @@
+name: Build and Test Backend
+
+on:
+  push:
+    branches:
+      - main  
+  pull_request:
+    branches:
+      - main 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'  
+    
+
+    - name: Install dependencies for API
+      run: |
+        cd API
+        npm install
+
+    - name: Create .env file
+      run: |
+        cd API/src
+        touch .env
+        echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
+        cat .env
+      
+    - name: Run backend using nodemon
+      run: |
+        cd API/src
+        nohup npx nodemon ./app.ts &
+        sleep 60
+
+    - name: Check if port 8000 is open
+      run: |
+        sudo apt-get install -y netcat
+        nc -zv localhost 8000 || exit 1  
+      continue-on-error: false  
