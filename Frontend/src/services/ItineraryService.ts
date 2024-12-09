@@ -137,6 +137,16 @@ class ItineraryService {
       throw error;
     }
   };
+  public static getComments = async (id: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/itinerary/getComments/${id}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 export { ItineraryService };

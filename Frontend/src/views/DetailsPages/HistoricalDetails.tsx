@@ -9,7 +9,7 @@ const HistoricalDetails: React.FC = () => {
   return (
     <div>
         <HistoricalCard id={id}/> 
-      <LatestReviews />
+      <LatestReviews comments = {[]}/>
     </div>
   );
 };

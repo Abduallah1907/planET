@@ -669,12 +669,22 @@ export default class ItineraryService {
       200
     );
   }
-  public async getCommentsService(itinerary_id: Types.ObjectId) {
+  public async getCommentsService(
+    itinerary_id: Types.ObjectId
+  ): Promise<response> {
     const itinerary = await this.itineraryModel
       .findById(itinerary_id)
-      .populate("comments");
-    if (!itinerary) throw new NotFoundError("Itinerary not found");
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'tourist_id',
+          populate: {
+            path: 'user_id'
+          }
+        }
+      });
 
+    if (!itinerary) throw new NotFoundError("Itinerary not found");
     return new response(true, itinerary.comments, "Comments fetched", 200);
   }
 }
