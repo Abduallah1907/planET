@@ -9,10 +9,6 @@
     transition: all 0.2s ease-in-out;
 }
 
-.custom-checkbox .form-check-input:checked {
-    background-color: #ffb347; /* Darker orange background for checked state */
-}
-
 .custom-checkbox .form-check-input:checked::before {
     color: white;
     font-size: 14px;

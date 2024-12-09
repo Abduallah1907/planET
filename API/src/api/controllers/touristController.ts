@@ -50,6 +50,16 @@ export class TouristController {
     }
   }
 
+  public async createPaymentIntent(req: any, res: any) {
+    const touristService: TouristService = Container.get(TouristService);
+    const { amount, currency } = req.body;
+    const paymentIntent = await touristService.createPaymentIntentService(
+      amount,
+      currency
+    );
+    res.status(paymentIntent.status).json(paymentIntent);
+  }
+
   public async getTourist(req: any, res: any) {
     const { email } = req.params;
     const touristService: TouristService = Container.get(TouristService);

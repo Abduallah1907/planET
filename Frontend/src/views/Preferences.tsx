@@ -61,7 +61,7 @@ const TagsTable: React.FC<TagsTableProps> = ({ show, onHide }) => {
                                             type="checkbox"
                                             className="custom-checkbox d-flex justify-content-center"
                                             onChange={(e) => handleCheckboxChange(tag._id, e.target.checked)}
-                                            checked={user?.stakeholder_id?.preferences?.includes(tag._id)}
+                                            checked={user?.stakeholder_id?.preferences?.some((preference: { _id: any; }) => preference._id === tag._id)}
                                         />
                                     </td>
                                 </tr>

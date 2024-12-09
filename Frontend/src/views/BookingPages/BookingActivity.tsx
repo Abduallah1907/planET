@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Row, Col, Button, Form, Card } from "react-bootstrap";
 import {
   FaWallet,
   FaCreditCard,
-  FaCcVisa,
-  FaCcMastercard,
 } from "react-icons/fa";
 import { ActivityService } from "../../services/ActivityService";
 import { IActivity } from "../../types/IActivity";
@@ -14,41 +12,32 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { TouristService } from "../../services/TouristService";
 import { setWalletBalance as setWalletBalanceAction } from "../../store/userSlice";
 import { useAppContext } from "../../AppContext";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import PaymentForm from "../../components/paymentForm";
+import { FileService } from "../../services/FileService";
+import showToastMessage from "../../utils/showToastMessage";
+import { ToastTypes } from "../../utils/toastTypes";
 
-interface BookingPageProps {
-  email: string;
-}
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY!);
 
-const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
+const BookingActivity: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [activityData, setActivityData] = useState<IActivity | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<string>("Wallet");
-  const [cardType, setCardType] = useState<string | null>(null);
   const Tourist = useAppSelector((state) => state.user);
 
-  const [cardDetails, setCardDetails] = useState({
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
-    firstName: "",
-    lastName: "",
-  });
-  const [errors, setErrors] = useState({
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
-    firstName: "",
-    lastName: "",
-  });
   const navigate = useNavigate();
   const [walletBalance, setWalletBalanceState] = useState<number>(0);
   const [promoCode, setPromoCode] = useState("");
   const [isPromoApplied, setIsPromoApplied] = useState(false);
   const [oldSubtotal, setOldSubtotal] = useState(walletBalance);
   const [newSubtotal, setNewSubtotal] = useState(walletBalance);
-  const [discountPercent, setDiscountPercent] = useState<number>(0);
-  const [discountValue, setDiscountValue] = useState<number>(0);
+  const [havePromoCode, setHavePromoCode] = useState(false);
+
   const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
+  const [clientSecret, setClientSecret] = useState(''); // Add state for clientSecret
+  const stripeFormRef = useRef<any>(null);
 
   const convertedPrice = (price: number) =>
     getConvertedCurrencyWithSymbol(price, baseCurrency, currency);
@@ -70,13 +59,9 @@ const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
 
         if (promoData.discountType === "flat") {
           discountedSubtotal -= promoData.discountValue;
-          setDiscountPercent((promoData.discountValue / activityData.price) * 100);
-          setDiscountValue(promoData.discountValue);
         } else if (promoData.discountType === "percentage") {
           const discount = (activityData.price * promoData.discount_percent) / 100;
           discountedSubtotal -= discount;
-          setDiscountPercent(promoData.discount_percent);
-          setDiscountValue(discount);
         }
 
         discountedSubtotal = Math.max(0, discountedSubtotal); // Prevent negative subtotal
@@ -96,6 +81,16 @@ const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
   const getActivityById = async (id: string) => {
     const activity = await ActivityService.getActivityById(id);
     setActivityData(activity.data);
+    setOldSubtotal(activity.data.price);
+    setNewSubtotal(activity.data.price);
+    if (activity.data.image) {
+      const image = await FileService.downloadFile(activity.data.image);
+      const url = URL.createObjectURL(image);
+      setActivityData((prevActivityData) => prevActivityData ? {
+        ...prevActivityData,
+        image: url,
+      } : null);
+    }
   };
 
   useEffect(() => {
@@ -115,54 +110,30 @@ const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
       }
     };
     fetchWalletBalance();
-  }, [id, email]);
+  }, [id, Tourist]);
+
+  useEffect(() => {
+    const fetchClientSecret = async () => {
+      try {
+        if (paymentMethod !== "CreditCard") return;
+        const response = await TouristService.createPaymentIntent(currency, newSubtotal);
+        console.log(response.data);
+        setClientSecret(response.data.client_secret);
+      } catch (error) {
+        console.error("Error fetching client secret:", error);
+      }
+    };
+    fetchClientSecret();
+  }, [paymentMethod]);
+
+  const convertedWallet = useMemo(() => {
+    return getConvertedCurrencyWithSymbol(walletBalance, baseCurrency, currency);
+  }, [walletBalance, baseCurrency, currency, getConvertedCurrencyWithSymbol]);
 
   const handlePaymentMethodChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     setPaymentMethod(e.target.value);
-  };
-
-  const handleCardDetailsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    setCardDetails((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
-    }));
-
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: value ? "" : `Please enter your ${name}`,
-    }));
-
-    if (name === "cardNumber") {
-      // Determine card type
-      if (value.startsWith("4")) {
-        setCardType("Visa");
-      } else if (
-        /^5[1-5]/.test(value) ||
-        /^2(2[2-9]|[3-6]|7[0-1]|720)/.test(value)
-      ) {
-        setCardType("MasterCard");
-      } else {
-        setCardType(null); // Reset if card type is not recognized
-      }
-    }
-  };
-
-  const validateCardDetails = () => {
-    const newErrors = {
-      cardNumber: cardDetails.cardNumber ? "" : "Please enter your card number",
-      expiryDate: cardDetails.expiryDate
-        ? ""
-        : "Please enter your expiration date",
-      cvv: cardDetails.cvv ? "" : "Please enter your CVV",
-      firstName: cardDetails.firstName ? "" : "Please enter your first name",
-      lastName: cardDetails.lastName ? "" : "Please enter your last name",
-    };
-    setErrors(newErrors);
-    return !newErrors.cardNumber && !newErrors.expiryDate && !newErrors.cvv;
   };
 
   const dispatch = useAppDispatch();
@@ -171,7 +142,7 @@ const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
     if (paymentMethod === "Wallet") {
       try {
         if (id) {
-          await TouristService.bookActivity(email, id,paymentMethod);
+          await TouristService.bookActivity(Tourist.email, id, paymentMethod);
         }
         const newBalance =
           walletBalance -
@@ -182,173 +153,194 @@ const BookingActivity: React.FC<BookingPageProps> = ({ email }) => {
       } catch (error) {
         console.error("Error booking activity:", error);
       }
+    } else if (paymentMethod === "CreditCard") {
+      if (stripeFormRef.current) {
+        const { success, error } = await stripeFormRef.current.submit();
+
+        if (success) {
+          showToastMessage("Payment was successful!", ToastTypes.SUCCESS);
+          try {
+            if (id) {
+              await TouristService.bookActivity(Tourist.email, id, paymentMethod);
+            }
+            const newBalance =
+              walletBalance -
+              (activityData && activityData.price ? activityData.price : 0);
+            setWalletBalanceState(newBalance);
+            dispatch(setWalletBalanceAction(newBalance));
+            navigate("/tourist/Profile");
+          } catch (error) {
+            console.error("Error booking activity:", error);
+          }
+          navigate("/MyBookings/upcoming");
+        }
+      }
+
     }
   };
+
+  // Manage the state for the rating
+  const isBlobUrl = (url: string) => /^blob:/.test(url);
 
   return (
     <Container>
       <Row className="justify-content-center mt-5">
-        <Col sm={12} md={8} lg={6}>
-          {activityData ? (
-            <>
-              <Card className="mb-4">
-                <Card.Body>
-                  <Card.Title className="text-center">
-                    {activityData.name}
-                  </Card.Title>
-                  <Card.Text>
-                    <strong>Original Price:</strong> {activityData?.price? convertedPrice(activityData.price) : "N/A"}
-                  </Card.Text>
-                  {isPromoApplied && (
-                    <>
-                      <Card.Text className="text-success">
-                        <strong>Discount Applied:</strong> {discountPercent.toFixed(2)}% ({convertedPrice(discountValue)})
-                      </Card.Text>
-                      <Card.Text>
-                        <strong>Discounted Price:</strong> {convertedPrice(newSubtotal)}
-                      </Card.Text>
-                    </>
-                  )}
-
-                  <Row>
-                    <Col md={8}>
-                      <input
-                        type="text"
-                        className="form-control my-3 border"
-                        placeholder="Enter Promo Code"
-                        value={promoCode}
-                        onChange={(e) => setPromoCode(e.target.value)}
-                        aria-label="Promo Code Input"
-                      />
-                      {promoError && <small className="text-danger">{promoError}</small>}
-                    </Col>
-                    <Col md={4}>
-                      <Button
-                        variant="main"
-                        className="w-75 my-3 border-warning-subtle"
-                        onClick={handleApplyPromoCode}
-                        aria-label="Apply Promo Code"
-                      >
-                        Apply
-                      </Button>
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card>
-              <h3 className="text-center mb-4">Choose Payment Method</h3>
-              <Form>
-                <Form.Check
-                  type="radio"
-                  label={
-                    <span>
-                      <FaWallet className="me-2" /> Wallet (Balance: 
-                      {convertedPrice(walletBalance)})
-                    </span>
-                  }
-                  name="paymentMethod"
-                  value="Wallet"
-                  checked={paymentMethod === "Wallet"}
-                  onChange={handlePaymentMethodChange}
-                  className="mb-3"
-                />
-                <Form.Check
-                  type="radio"
-                  label={
-                    <span>
-                      <FaCreditCard className="me-2" /> Bank Card
-                    </span>
-                  }
-                  name="paymentMethod"
-                  value="CreditCard"
-                  checked={paymentMethod === "CreditCard"}
-                  onChange={handlePaymentMethodChange}
-                  className="mb-3"
-                />
+        <Col md={7}>
+          <Card>
+            <Card.Header className="pt-2 pb-0 bg-transparent">
+              <h3 className="fw-bold">Confirm Your Order</h3>
+            </Card.Header>
+            <Card.Body>
+              <Row>
+                <h4 className="fw-bold">Contact Information</h4>
+                <Form.Group>
+                  <Form.Control
+                    type="email"
+                    className="custom-form-control"
+                    value={Tourist.email}
+                    readOnly
+                  />
+                </Form.Group>
+              </Row>
+              <Row className="mt-4">
+                <h4 className="fw-bold">Payment Method</h4>
+                <Form.Group className="mt-2">
+                  <Form.Check
+                    type="radio"
+                    label={
+                      <span>
+                        <FaWallet className="me-2" /> Wallet (Balance: {convertedWallet})
+                      </span>
+                    }
+                    name="paymentMethod"
+                    value="Wallet"
+                    checked={paymentMethod === "Wallet"}
+                    onChange={handlePaymentMethodChange}
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Check
+                    type="radio"
+                    label={
+                      <span>
+                        <FaCreditCard className="me-2" /> Bank Card
+                      </span>
+                    }
+                    name="paymentMethod"
+                    value="CreditCard"
+                    checked={paymentMethod === "CreditCard"}
+                    onChange={handlePaymentMethodChange}
+                  />
+                </Form.Group>
                 {paymentMethod === "CreditCard" && (
                   <div className="bank-card-details">
-                    <Form.Group className="mb-3">
-                      <Form.Label>Card Number</Form.Label>
-                      <div className="d-flex align-items-center">
-                        <Form.Control
-                          type="text"
-                          name="cardNumber"
-                          value={cardDetails.cardNumber}
-                          onChange={handleCardDetailsChange}
-                          placeholder="Enter card number"
-                        />
-                        {/* Display icon based on card type */}
-                        {cardType === "Visa" && (
-                          <FaCcVisa className="ms-2 text-primary" />
-                        )}
-                        {cardType === "MasterCard" && (
-                          <FaCcMastercard className="ms-2 text-danger" />
-                        )}
-                      </div>
-                      {errors.cardNumber && (
-                        <div className="text-danger">{errors.cardNumber}</div>
-                      )}
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Expiry Date</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="expiryDate"
-                        value={cardDetails.expiryDate}
-                        onChange={handleCardDetailsChange}
-                        placeholder="MM/YY"
-                      />
-                      {errors.expiryDate && (
-                        <div className="text-danger">{errors.expiryDate}</div>
-                      )}
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>CVV</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="cvv"
-                        value={cardDetails.cvv}
-                        onChange={handleCardDetailsChange}
-                        placeholder="Enter CVV"
-                      />
-                      {errors.cvv && (
-                        <div className="text-danger">{errors.cvv}</div>
-                      )}
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>First Name</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="firstName"
-                        value={cardDetails.firstName}
-                        onChange={handleCardDetailsChange}
-                        placeholder="Enter first name"
-                      />
-                      {errors.firstName && (
-                        <div className="text-danger">{errors.firstName}</div>
-                      )}
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Last Name</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="lastName"
-                        value={cardDetails.lastName}
-                        onChange={handleCardDetailsChange}
-                        placeholder="Enter last name"
-                      />
-                      {errors.lastName && (
-                        <div className="text-danger">{errors.lastName}</div>
-                      )}
-                    </Form.Group>
+                    {clientSecret && (
+                      <Elements stripe={stripePromise} options={{ clientSecret }}>
+                        <PaymentForm ref={stripeFormRef} />
+                      </Elements>
+                    )}
                   </div>
                 )}
-                <Button
-                  className="Confirm-button w-100"
-                  onClick={handleConfirmPayment}
-                >
-                  Confirm Payment
-                </Button>
-              </Form>
+              </Row>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={4}>
+          {activityData ? (
+            <>
+              <Card className="shadow-sm cart-summary">
+                <Card.Header className="bg-white mt-2">
+                  <h4 className="fw-bold">Order Summary</h4>
+                </Card.Header>
+                <Card.Body className="p-0 pt-3">
+                  <Container className="px-4">
+                    <Row className="mb-3">
+                      <Col xs={3}>
+                        <img
+                          src={typeof activityData.image === 'string' && isBlobUrl(activityData.image) ? activityData.image : "https://via.placeholder.com/150"}
+                          alt={activityData.name}
+                          className="img-fluid rounded-3"
+                        />
+                      </Col>
+                      <Col xs={9} className="ps-0">
+                        <div className="d-flex justify-content-between h-100">
+                          <div>
+                            <span>{activityData.name}</span>
+                            <p className="text-muted">{activityData.category.type}</p>
+                          </div>
+                          <div className="d-flex align-items-center">
+                            <span>{activityData.price !== undefined ? convertedPrice(activityData.price) : "N/A"}</span>
+                          </div>
+                        </div>
+                      </Col>
+                    </Row>
+                  </Container>
+                </Card.Body>
+                <Card.Footer className="p-0 pt-3 bg-transparent">
+                  <Container className="px-4">
+                    <Row onClick={() => setHavePromoCode(!havePromoCode)}>
+                      <Col xs={10}>
+                        <span className="have-promo-code">Do you have a Promo Code?</span>
+                      </Col>
+                      <Col xs={2}>
+                        <span className={`promo-accordian ${havePromoCode ? 'active' : ''}`}>
+                          <i className="fas fa-chevron-down"></i>
+                        </span>
+                      </Col>
+                    </Row>
+                    <Row className={`mt-1 ${havePromoCode ? '' : 'd-none'}`}>
+                      <Col md={8} className="pe-0">
+                        <input
+                          type="text"
+                          className="form-control my-3 mt-1 border"
+                          placeholder="Enter Promo Code"
+                          value={promoCode}
+                          onChange={(e) => setPromoCode(e.target.value)}
+                          aria-label="Promo Code Input"
+                        />
+                        {promoError && <small className="text-danger">{promoError}</small>}
+                      </Col>
+                      <Col md={4}>
+                        <Button
+                          variant="main-inverse"
+                          className="w-100 my-3 mt-1 rounded-5"
+                          onClick={handleApplyPromoCode}
+                          aria-label="Apply Promo Code"
+                        >
+                          Apply
+                        </Button>
+                      </Col>
+                    </Row>
+                    <ul className="mt-3">
+                      <li className="d-flex justify-content-between">
+                        <span>Subtotal</span>
+                        <span>
+                          {getConvertedCurrencyWithSymbol(oldSubtotal, baseCurrency, currency)}
+                        </span>
+                      </li>
+                      <li className="d-flex justify-content-between discount-row">
+                        <span>Discount</span>
+                        <span>
+                          {"- " + getConvertedCurrencyWithSymbol(isPromoApplied ? oldSubtotal - newSubtotal : 0, baseCurrency, currency)}
+                        </span>
+                      </li>
+                    </ul>
+                  </Container>
+                  <hr />
+                  <Container className="px-4">
+                    <ul>
+                      <li className="d-flex justify-content-between">
+                        <span>Total</span>
+                        <span>{convertedPrice(newSubtotal)}</span>
+                      </li>
+                    </ul>
+                  </Container>
+                  <Container className="px-4 mt-4">
+                    <Button variant="main-inverse" className="w-100 mb-4" onClick={handleConfirmPayment}>Confirm Order</Button>
+                  </Container>
+                </Card.Footer>
+
+              </Card>
             </>
           ) : (
             <p>Loading activity details...</p>

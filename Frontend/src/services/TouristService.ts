@@ -466,7 +466,7 @@ class TouristService {
     }
   };
 
-  public static addProductToWishlist = async (email: string,data: any) => {
+  public static addProductToWishlist = async (email: string, data: any) => {
     try {
       const response = await axiosInstance.put(
         `/tourist/addProductToWishlist/${email}`,
@@ -501,7 +501,7 @@ class TouristService {
     }
   };
 
-  public static addPreferences = async (email:string,preference_id:string ) =>{
+  public static addPreferences = async (email: string, preference_id: string) => {
     try {
       const response = await axiosInstance.post(
         `/tourist/addPreference/${email}?preference_id=${preference_id}`
@@ -512,7 +512,7 @@ class TouristService {
     }
   };
 
-  public static removePreferences = async (email:string , preference_id:string) =>{
+  public static removePreferences = async (email: string, preference_id: string) => {
     try {
       const response = await axiosInstance.delete(
         `/tourist/removePreference/${email}?preference_id=${preference_id}`
@@ -522,6 +522,18 @@ class TouristService {
       throw error
     }
   };
+
+  public static createPaymentIntent = async (currency: string, amount: number) => {
+    try {
+      const response = await axiosInstance.post("/tourist/createPaymentIntent", {
+        currency,
+        amount,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 
 
 }

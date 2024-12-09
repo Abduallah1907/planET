@@ -19,7 +19,7 @@ export interface IItinerary {
   inappropriate_flag: boolean;
   tour_guide_id: string;
   name: string;
-  category: string;
+  category: any;
   createdAt?: Date;
   updatedAt?: Date;
   reviews_count?: number;

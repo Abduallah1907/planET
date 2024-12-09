@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { Container, Row, Col, Button, Form, Card } from 'react-bootstrap';
 import { FaWallet, FaCreditCard } from 'react-icons/fa';
@@ -8,11 +8,14 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { TouristService } from '../../services/TouristService';
 import { setWalletBalance as setWalletBalanceAction } from '../../store/userSlice';
 import { ItineraryService } from '../../services/ItineraryService';
-// Import Visa and MasterCard icons
-import { FaCcVisa, FaCcMastercard } from 'react-icons/fa';
-import showToast from '../../utils/showToast';
-import { ToastTypes } from '../../utils/toastTypes';
 import { useAppContext } from "../../AppContext";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import PaymentForm from "../../components/paymentForm";
+import showToastMessage from "../../utils/showToastMessage";
+import { ToastTypes } from "../../utils/toastTypes";
+
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY!);
 
 
 const BookingItinerary: React.FC = () => {
@@ -23,7 +26,6 @@ const BookingItinerary: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState<string>("Wallet");
   const [cardType, setCardType] = useState<string | null>(null);
   const Tourist = useAppSelector((state) => state.user);
-  const email = Tourist.email;
 
   const [cardDetails, setCardDetails] = useState({
     cardNumber: "",
@@ -45,8 +47,10 @@ const BookingItinerary: React.FC = () => {
   const [isPromoApplied, setIsPromoApplied] = useState(false);
   const [oldSubtotal, setOldSubtotal] = useState(walletBalance);
   const [newSubtotal, setNewSubtotal] = useState(walletBalance);
-  const [discountPercent, setDiscountPercent] = useState<number>(0);
-  const [discountValue, setDiscountValue] = useState<number>(0);
+  const [havePromoCode, setHavePromoCode] = useState(false);
+
+  const [clientSecret, setClientSecret] = useState(''); // Add state for clientSecret
+  const stripeFormRef = useRef<any>(null);
   const { currency, baseCurrency, getConvertedCurrencyWithSymbol } = useAppContext();
   const [promoError, setPromoError] = useState("");
   const convertedPrice = (price: number) =>
@@ -75,7 +79,21 @@ const BookingItinerary: React.FC = () => {
       }
     };
     fetchWalletBalance();
-  }, [id, email]);
+  }, [id, Tourist]);
+
+  useEffect(() => {
+    const fetchClientSecret = async () => {
+      try {
+        if (paymentMethod !== "CreditCard") return;
+        const response = await TouristService.createPaymentIntent(currency, newSubtotal);
+        console.log(response.data);
+        setClientSecret(response.data.client_secret);
+      } catch (error) {
+        console.error("Error fetching client secret:", error);
+      }
+    };
+    fetchClientSecret();
+  }, [paymentMethod]);
 
   const handlePaymentMethodChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -83,32 +101,6 @@ const BookingItinerary: React.FC = () => {
     setPaymentMethod(e.target.value);
   };
 
-  const handleCardDetailsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    setCardDetails((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
-    }));
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: value ? "" : `Please enter your ${name}`,
-    }));
-
-    if (name === "cardNumber") {
-      // Determine card type
-      if (value.startsWith("4")) {
-        setCardType("Visa");
-      } else if (
-        /^5[1-5]/.test(value) ||
-        /^2(2[2-9]|[3-6]|7[0-1]|720)/.test(value)
-      ) {
-        setCardType("MasterCard");
-      } else {
-        setCardType(null); // Reset if card type is not recognized
-      }
-    }
-  };
   const handleApplyPromoCode = async () => {
     try {
       let promo = await TouristService.isValidPromoCode(promoCode);
@@ -119,18 +111,14 @@ const BookingItinerary: React.FC = () => {
           ...promoData,
           discountType: "percentage",
         }
-        
+
         let discountedSubtotal = itineraryData?.price ?? 0;
 
         if (promoData.discountType === "flat") {
           discountedSubtotal -= promoData.discountValue;
-          setDiscountPercent((promoData.discountValue / itineraryData.price) * 100);
-          setDiscountValue(promoData.discountValue);
         } else if (promoData.discountType === "percentage") {
           const discount = (itineraryData.price * promoData.discount_percent) / 100;
           discountedSubtotal -= discount;
-          setDiscountPercent(promoData.discount_percent);
-          setDiscountValue(discount);
         }
 
         discountedSubtotal = Math.max(0, discountedSubtotal); // Prevent negative subtotal
@@ -147,27 +135,13 @@ const BookingItinerary: React.FC = () => {
     }
   };
 
-  const validateCardDetails = () => {
-    const newErrors = {
-      cardNumber: cardDetails.cardNumber ? "" : "Please enter your card number",
-      expiryDate: cardDetails.expiryDate
-        ? ""
-        : "Please enter your expiration date",
-      cvv: cardDetails.cvv ? "" : "Please enter your CVV",
-      firstName: cardDetails.firstName ? "" : "Please enter your first name",
-      lastName: cardDetails.lastName ? "" : "Please enter your last name",
-    };
-    setErrors(newErrors);
-    return !newErrors.cardNumber && !newErrors.expiryDate && !newErrors.cvv;
-  };
-
   const dispatch = useAppDispatch();
 
   const handleConfirmPayment = async () => {
     if (paymentMethod === "Wallet") {
       try {
         if (id && time_to_attend) {
-          await TouristService.bookItinerary(email, id, time_to_attend,paymentMethod);
+          await TouristService.bookItinerary(Tourist.email, id, time_to_attend, paymentMethod);
         } else {
           console.error("Itinerary ID is undefined");
         }
@@ -180,176 +154,189 @@ const BookingItinerary: React.FC = () => {
       } catch (error) {
         console.error("Error booking itinerary:", error);
       }
+    } else if (paymentMethod === "CreditCard") {
+      if (stripeFormRef.current) {
+        const { success, error } = await stripeFormRef.current.submit();
+        if (success) {
+          try {
+            if (id && time_to_attend) {
+              await TouristService.bookItinerary(Tourist.email, id, time_to_attend, paymentMethod);
+            } else {
+              console.error("Itinerary ID is undefined");
+            }
+            navigate("/MyItineraryBookings/upcoming");
+          } catch (error) {
+            console.error("Error booking itinerary:", error);
+          }
+        } else {
+          showToastMessage("Error processing payment", ToastTypes.ERROR);
+        }
+      }
     }
   };
 
   return (
     <Container>
-
       <Row className="justify-content-center mt-5">
-        <Col sm={12} md={8} lg={6}>
-          {itineraryData ? (
-            <>
-              <Card className="mb-4">
-                <Card.Body>
-                  <Card.Title className="text-center">
-                    {itineraryData.name}
-                  </Card.Title>
-                  <Card.Text>
-                    <strong>Original Price:</strong> ${itineraryData?.price? convertedPrice(itineraryData.price):"N/A"}
-                  </Card.Text>
-                  {isPromoApplied && (
-                    <>
-                      <Card.Text className="text-success">
-                        <strong>Discount Applied:</strong> {discountPercent.toFixed(2)}% ({convertedPrice(discountValue)})
-                      </Card.Text>
-                      <Card.Text>
-                        <strong>Discounted Price:</strong> {convertedPrice(newSubtotal)}
-                      </Card.Text>
-                    </>
-                  )}
-                  <Row>
-                    <Col md={8}>
-                      <input
-                        type="text"
-                        className="form-control my-3 border"
-                        placeholder="Enter Promo Code"
-                        value={promoCode}
-                        onChange={(e) => setPromoCode(e.target.value)}
-                        aria-label="Promo Code Input"
-                      />
-                      {promoError && <small className="text-danger">{promoError}</small>}
-                    </Col>
-                    <Col md={4}>
-                      <Button
-                        variant="main"
-                        className="w-75 my-3 border-warning-subtle"
-                        onClick={handleApplyPromoCode}
-                        aria-label="Apply Promo Code"
-                      >
-                        Apply
-                      </Button>
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card>
-              <h3 className="text-center mb-4">Choose Payment Method</h3>
-              <Form>
-                <Form.Check
-                  type="radio"
-                  label={
-                    <span>
-                      <FaWallet className="me-2" /> Wallet (Balance: 
-                      {convertedPrice(walletBalance)})
-                    </span>
-                  }
-                  name="paymentMethod"
-                  value="Wallet"
-                  checked={paymentMethod === "Wallet"}
-                  onChange={handlePaymentMethodChange}
-                  className="mb-3"
-                />
-                <Form.Check
-                  type="radio"
-                  label={
-                    <span>
-                      <FaCreditCard className="me-2" /> Bank Card
-                    </span>
-                  }
-                  name="paymentMethod"
-                  value="CreditCard"
-                  checked={paymentMethod === "CreditCard"}
-                  onChange={handlePaymentMethodChange}
-                  className="mb-3"
-                />
+        <Col md={7}>
+          <Card>
+            <Card.Header className="pt-2 pb-0 bg-transparent">
+              <h3 className="fw-bold">Confirm Your Order</h3>
+            </Card.Header>
+            <Card.Body>
+              <Row>
+                <h4 className="fw-bold">Contact Information</h4>
+                <Form.Group>
+                  <Form.Control
+                    type="email"
+                    className="custom-form-control"
+                    value={Tourist.email}
+                    readOnly
+                  />
+                </Form.Group>
+              </Row>
+              <Row className="mt-4">
+                <h4 className="fw-bold">Payment Method</h4>
+                <Form.Group className="mt-2">
+                  <Form.Check
+                    type="radio"
+                    label={
+                      <span>
+                        <FaWallet className="me-2" /> Wallet (Balance: {convertedPrice(walletBalance)}{" "})
+                      </span>
+                    }
+                    name="paymentMethod"
+                    value="Wallet"
+                    checked={paymentMethod === "Wallet"}
+                    onChange={handlePaymentMethodChange}
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Check
+                    type="radio"
+                    label={
+                      <span>
+                        <FaCreditCard className="me-2" /> Bank Card
+                      </span>
+                    }
+                    name="paymentMethod"
+                    value="CreditCard"
+                    checked={paymentMethod === "CreditCard"}
+                    onChange={handlePaymentMethodChange}
+                  />
+                </Form.Group>
                 {paymentMethod === "CreditCard" && (
                   <div className="bank-card-details">
-                    <Form.Group className="mb-3">
-                      <Form.Label>Card Number</Form.Label>
-                      <div className="d-flex align-items-center">
-                        <Form.Control
-                          type="text"
-                          name="cardNumber"
-                          value={cardDetails.cardNumber}
-                          onChange={handleCardDetailsChange}
-                          placeholder="Enter card number"
-                        />
-                        {/* Display icon based on card type */}
-                        {cardType === "Visa" && (
-                          <FaCcVisa className="ms-2 text-primary" />
-                        )}
-                        {cardType === "MasterCard" && (
-                          <FaCcMastercard className="ms-2 text-danger" />
-                        )}
-                      </div>
-                      {errors.cardNumber && (
-                        <div className="text-danger">{errors.cardNumber}</div>
-                      )}
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Expiry Date</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="expiryDate"
-                        value={cardDetails.expiryDate}
-                        onChange={handleCardDetailsChange}
-                        placeholder="MM/YY"
-                      />
-                      {errors.expiryDate && (
-                        <div className="text-danger">{errors.expiryDate}</div>
-                      )}
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>CVV</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="cvv"
-                        value={cardDetails.cvv}
-                        onChange={handleCardDetailsChange}
-                        placeholder="Enter CVV"
-                      />
-                      {errors.cvv && (
-                        <div className="text-danger">{errors.cvv}</div>
-                      )}
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>First Name</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="firstName"
-                        value={cardDetails.firstName}
-                        onChange={handleCardDetailsChange}
-                        placeholder="Enter first name"
-                      />
-                      {errors.firstName && (
-                        <div className="text-danger">{errors.firstName}</div>
-                      )}
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Last Name</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="lastName"
-                        value={cardDetails.lastName}
-                        onChange={handleCardDetailsChange}
-                        placeholder="Enter last name"
-                      />
-                      {errors.lastName && (
-                        <div className="text-danger">{errors.lastName}</div>
-                      )}
-                    </Form.Group>
+                    {clientSecret && (
+                      <Elements stripe={stripePromise} options={{ clientSecret }}>
+                        <PaymentForm ref={stripeFormRef} />
+                      </Elements>
+                    )}
                   </div>
                 )}
-                <Button
-                  className="Confirm-button w-100"
-                  onClick={handleConfirmPayment}
-                >
-                  Confirm Payment
-                </Button>
-              </Form>
+              </Row>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={4}>
+          {itineraryData ? (
+            <>
+              <Card className="shadow-sm cart-summary">
+                <Card.Header className="bg-white mt-2">
+                  <h4 className="fw-bold">Order Summary</h4>
+                </Card.Header>
+                <Card.Body className="p-0 pt-3">
+                  <Container className="px-4">
+                    <Row className="mb-3">
+                      <Col xs={3}>
+                        <img
+                          src={"https://via.placeholder.com/150"}
+                          alt={itineraryData.name}
+                          className="img-fluid rounded-3"
+                        />
+                      </Col>
+                      <Col xs={9} className="ps-0">
+                        <div className="d-flex justify-content-between h-100">
+                          <div>
+                            <span>{itineraryData.name}</span>
+                            <p className="text-muted">{itineraryData.category.type}</p>
+                          </div>
+                          <div className="d-flex align-items-center">
+                            <span>{itineraryData.price !== undefined ? convertedPrice(itineraryData.price) : "N/A"}</span>
+                          </div>
+                        </div>
+                      </Col>
+                    </Row>
+                  </Container>
+                </Card.Body>
+                <Card.Footer className="p-0 pt-3 bg-transparent">
+                  <Container className="px-4">
+                    <Row onClick={() => setHavePromoCode(!havePromoCode)}>
+                      <Col xs={10}>
+                        <span className="have-promo-code">Do you have a Promo Code?</span>
+                      </Col>
+                      <Col xs={2}>
+                        <span className={`promo-accordian ${havePromoCode ? 'active' : ''}`}>
+                          <i className="fas fa-chevron-down"></i>
+                        </span>
+                      </Col>
+                    </Row>
+                    <Row className={`mt-1 ${havePromoCode ? '' : 'd-none'}`}>
+                      <Col md={8} className="pe-0">
+                        <input
+                          type="text"
+                          className="form-control my-3 mt-1 border"
+                          placeholder="Enter Promo Code"
+                          value={promoCode}
+                          onChange={(e) => setPromoCode(e.target.value)}
+                          aria-label="Promo Code Input"
+                        />
+                        {promoError && <small className="text-danger">{promoError}</small>}
+                      </Col>
+                      <Col md={4}>
+                        <Button
+                          variant="main-inverse"
+                          className="w-100 my-3 mt-1 rounded-5"
+                          onClick={handleApplyPromoCode}
+                          aria-label="Apply Promo Code"
+                        >
+                          Apply
+                        </Button>
+                      </Col>
+                    </Row>
+                    <ul className="mt-3">
+                      <li className="d-flex justify-content-between">
+                        <span>Subtotal</span>
+                        <span>
+                          {getConvertedCurrencyWithSymbol(oldSubtotal, baseCurrency, currency)}
+                        </span>
+                      </li>
+                      <li className="d-flex justify-content-between discount-row">
+                        <span>Discount</span>
+                        <span>
+                          {"- " + getConvertedCurrencyWithSymbol(isPromoApplied ? oldSubtotal - newSubtotal : 0, baseCurrency, currency)}
+                        </span>
+                      </li>
+                    </ul>
+                  </Container>
+                  <hr />
+                  <Container className="px-4">
+                    <ul>
+                      <li className="d-flex justify-content-between">
+                        <span>Total</span>
+                        <span>{convertedPrice(newSubtotal)}</span>
+                      </li>
+                    </ul>
+                  </Container>
+                  <Container className="px-4 mt-4">
+                    <Button variant="main-inverse" className="w-100 mb-4" onClick={handleConfirmPayment}>Confirm Order</Button>
+                  </Container>
+                </Card.Footer>
+
+              </Card>
             </>
           ) : (
-            <p>Loading Itinerary details...</p>
+            <p>Loading itinerary details...</p>
           )}
         </Col>
       </Row>

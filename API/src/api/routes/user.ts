@@ -8,7 +8,8 @@ export default (app: Router) => {
   const userController: UserController = Container.get(UserController);
 
   app.use("/users", route);
-  route.get("/test", userController.test);
+  route.get("/SendNotificationAndEmailforUpcomingEvents", userController.SendNotificationAndEmailforUpcomingEvents);
+  route.get("/SendNotificationAndEmailforBirthday", userController.SendNotificationAndEmailforBirthday);
   route.post("/createUser", userController.createUser);
   route.get("/loginUser", userController.loginUser);
   route.get("/forgetPassword/:email", userController.forgetPassword);

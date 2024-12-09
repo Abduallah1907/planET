@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./FilterBy.css";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import MultiRangeSlider from "../MultiSelectRange/MultiSliderRange";
@@ -11,13 +11,20 @@ interface filterData {
 interface FilterByProps {
   filterOptions: { [key: string]: any };
   onFilterChange: (filter: filterData) => void; // Add this prop
+  initialFilter?: filterData;
 }
 
 const FilterBy: React.FC<FilterByProps> = ({
   filterOptions,
   onFilterChange,
+  initialFilter,
 }) => {
   const [filter, setFilter] = React.useState<filterData>({});
+
+  useEffect(() => {
+    initialFilter && setFilter(initialFilter);
+    console.log(initialFilter);
+  }, [initialFilter]);
 
   const handleCheckboxChange = (key: string, value: string) => {
     setFilter((prevFilter) => {

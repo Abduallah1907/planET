@@ -38,6 +38,7 @@ import { IAddress } from "@/interfaces/IAddress";
 import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-11-20.acacia",
+  typescript: true
 });
 
 // comment and ratings
@@ -69,7 +70,23 @@ export default class TouristService {
     @Inject("sellerModel") private sellerModel: Models.SellerModel,
     @Inject("addressModel") private addressModel: Models.AddressModel,
     @Inject("tagModel") private tagModel: Models.TagModel,
-  ) {}
+  ) { }
+  
+  public async createPaymentIntentService(amount: number,currency: string) {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // in cents
+      currency: currency,
+      automatic_payment_methods: { enabled: true },
+    });
+
+    if (
+      !paymentIntent ||
+      paymentIntent.status !== "requires_payment_method"
+    ) {
+      throw new InternalServerError("Failed to create payment intent");
+    }
+    return new response(true, paymentIntent, "Payment intent created", 201);
+  }
 
   public async stripeWebhookService(event: Stripe.Event) {
     const paymentIntentId = (event.data.object as Stripe.PaymentIntent).id;
@@ -591,18 +608,6 @@ export default class TouristService {
       tourist.total_loyality_points
     );
     if (payment_type === PaymentType.CreditCard) {
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(activity.price * 100),
-        currency: "egp",
-        automatic_payment_methods: { enabled: true },
-      });
-
-      if (
-        !paymentIntent ||
-        paymentIntent.status !== "requires_payment_method"
-      ) {
-        throw new InternalServerError("Failed to create payment intent");
-      }
       //Save paymentIntent.id in the ticket
     } else {
       if (tourist.wallet < priceToPay) {

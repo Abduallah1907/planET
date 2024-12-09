@@ -139,6 +139,7 @@ export default class UserService {
         }
       }
     }
+    return new response(true, null, "Notifications sent", 200);
   }
   public async SendNotificationAndEmailforBirthday() {
     const currentDate = new Date();
@@ -207,7 +208,9 @@ export default class UserService {
         if (mail == null) throw new NotFoundError("Failed to send email");
       }
     }
+    return new response(true, null, "Notifications sent", 200);
   }
+
   public async createUserService(userData: IUserInputDTO) {
     // const phoneNumRegex =
     //   /^\+\d{1,3}[\s-]?(\d{1,4}[\s-]?\d{1,4}[\s-]?\d{1,9})$/;
@@ -274,7 +277,7 @@ export default class UserService {
         break;
 
       case UserRoles.Tourist:
-        const tourist = await this.touristModel.findOne({ user_id: user_id });
+        const tourist = await this.touristModel.findOne({ user_id: user_id }).populate("preferences");
         if (tourist instanceof Error)
           throw new InternalServerError("Internal server error");
         if (tourist == null) throw new NotFoundError("Tourist not found");

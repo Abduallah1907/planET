@@ -8,7 +8,8 @@ import { ActivityService } from "../../services/ActivityService";
 import { IActivity } from "../../types/IActivity";
 import { useNavigate } from "react-router-dom";
 import { reverseGeoCode } from "../../utils/geoCoder";
-import { get } from "http";
+import { useAppSelector } from "../../store/hooks";
+import { set } from "date-fns";
 
 export default function ActivitiesPage() {
   const navigate = useNavigate();
@@ -47,9 +48,10 @@ export default function ActivitiesPage() {
     setActivities(activitiesData.data);
   };
 
-  const getFilteredActivites = async () => {
+  const getFilteredActivites = async (currentFilter: any) => {
+    console.log(currentFilter);
     const modifiedFilter = Object.fromEntries(
-      Object.entries(filter).map(([key, value]) =>
+      Object.entries(currentFilter).map(([key, value]) =>
         Array.isArray(value) ? [key, value.join(",")] : [key, value]
       )
     );
@@ -60,16 +62,35 @@ export default function ActivitiesPage() {
   };
 
   const handleApplyFilters = () => {
-    getFilteredActivites();
+    getFilteredActivites(filter);
   };
 
   const getFilterComponents = async () => {
     const filterData = await ActivityService.getFilterComponents();
     setfilterComponents(filterData.data);
   };
+
+  const user = useAppSelector((state) => state.user);
+
+  const [initialFilter, setInitialFilter] = useState({});
+
   useEffect(() => {
-    getActivities();
     getFilterComponents();
+    if (user.role === "TOURIST") {
+      if (user.stakeholder_id?.preferences?.length > 0) {
+        console.log("Test", user.stakeholder_id?.preferences);
+        const prefrences = user.stakeholder_id.preferences;
+        const newFilter = {
+          ...filter,
+          tag: prefrences.map((prefrence:any) => prefrence.type),
+        };
+        setFilter(newFilter);
+        setInitialFilter(newFilter);
+        getFilteredActivites(newFilter);
+      } else {
+        getActivities();
+      }
+    }
   }, []);
 
   
@@ -159,6 +180,7 @@ export default function ActivitiesPage() {
           <FilterBy
             filterOptions={filtercomponent}
             onFilterChange={onFilterChange}
+            initialFilter={initialFilter}
           />
         </Col>
 

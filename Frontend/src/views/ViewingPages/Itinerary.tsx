@@ -7,6 +7,7 @@ import { BiSort } from "react-icons/bi";
 import { ItineraryService } from "../../services/ItineraryService";
 import { IItinerary } from "../../types/IItinerary";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../store/hooks";
 
 export default function ItinerariesPage() {
   const navigate = useNavigate();
@@ -24,9 +25,9 @@ export default function ItinerariesPage() {
     const ItinerariesData = await ItineraryService.getAllItineraries(1);
     setItineraries(ItinerariesData.data);
   };
-  const getFilteredItineraries = async () => {
+  const getFilteredItineraries = async (currentFilter: any) => {
     const modifiedFilter = Object.fromEntries(
-      Object.entries(filter).map(([key, value]) =>
+      Object.entries(currentFilter).map(([key, value]) =>
         Array.isArray(value) ? [key, value.join(",")] : [key, value]
       )
     );
@@ -37,11 +38,30 @@ export default function ItinerariesPage() {
   };
 
   const handleApplyFilters = () => {
-    getFilteredItineraries();
+    getFilteredItineraries(filter);
   };
+
+  const user = useAppSelector((state) => state.user);
+
+  const [initialFilter, setInitialFilter] = useState({});
+  
   useEffect(() => {
-    getItinerary();
     getFilterComponents();
+    if (user.role === "TOURIST") {
+      if (user.stakeholder_id?.preferences?.length > 0) {
+        console.log("Test", user.stakeholder_id?.preferences);
+        const prefrences = user.stakeholder_id.preferences;
+        const newFilter = {
+          ...filter,
+          tag: prefrences.map((prefrence:any) => prefrence.type),
+        };
+        setFilter(newFilter);
+        setInitialFilter(newFilter);
+        getFilteredItineraries(newFilter);
+      } else {
+        getItinerary();
+      }
+    }
   }, []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,6 +150,7 @@ export default function ItinerariesPage() {
           <FilterBy
             filterOptions={filtercomponent}
             onFilterChange={onFilterChange}
+            initialFilter={initialFilter}
           />
         </Col>
 

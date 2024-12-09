@@ -3,13 +3,27 @@ import UserService from "@/services/userService";
 import Container, { Inject, Service } from "typedi";
 import { IGovernorUpdateDTO, IUser, IUserInputDTO } from "@/interfaces/IUser";
 import { Schema, Types } from "mongoose";
-import User from "@/models/user";
-import UserRoles from "@/types/enums/userRoles";
 
 @Service()
 export class UserController {
-  public async test(req: Request, res: Response): Promise<void> {
-    res.status(200).json({ message: "User test" });
+  public async SendNotificationAndEmailforUpcomingEvents(res: any, req: any) {
+    const userService: UserService = Container.get(UserService);
+    const user = await userService.SendNotificationAndEmailforUpcomingEvents();
+    if (user) {
+      res.status(user.status).json(user);
+    } else {
+      res.status(200).json(null);
+    }
+  }
+
+  public async SendNotificationAndEmailforBirthday(req: any, res: any) {
+    const userService: UserService = Container.get(UserService);
+    const user = await userService.SendNotificationAndEmailforBirthday();
+    if (user) {
+      res.status(user.status).json(user);
+    } else {
+      res.status(200).json(null);
+    }
   }
 
   public async createUser(req: Request, res: Response): Promise<void> {

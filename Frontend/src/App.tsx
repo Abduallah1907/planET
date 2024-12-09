@@ -75,7 +75,6 @@ import TG_Sales from "./components/Revenue/TG_Sales";
 import Adv_Sales from "./components/Revenue/Adv_Sales";
 import S_Sales from "./components/Revenue/S_Sales";
 import BookmarkEvents from "./views/ViewingPages/BookmarkEvents";
-import ChooseDeliveryAddress from "./views/ViewingPages/ChooseDeliveryAddress";
 import ActiveOrders from "./views/ActiveOrders";
 import Orders from "./views/ViewingPages/Orders";
 import Wishlist from "./views/Wishlist";
@@ -99,7 +98,6 @@ const App: React.FC = () => {
     };
     handleLogin();
   }, [dispatch, navigate]);
-  const email = useAppSelector((state) => state.user.email);
 
   if (!isLoginComplete) {
     return (
@@ -138,7 +136,7 @@ const App: React.FC = () => {
 
           <Route path="/test" element={<BookingLayout />} />
 
-          <Route path="/bookActivity/:id" element={<BookingActivity email={email} />} />
+          <Route path="/bookActivity/:id" element={<BookingActivity />} />
           <Route path="/bookItinerary/:id" element={<BookingItinerary />} />
           <Route path="/MyBookings/upcoming" element={<MyBookings />} />
           <Route path="/MyBookings/past" element={<MyBookings />} />
@@ -194,7 +192,6 @@ const App: React.FC = () => {
           <Route path="/MyComplaints" element={<MyComplaints />} />
           <Route path="/Cart" element={<Cart />} />
           <Route path="/wishlist" element={<Wishlist />} />
-          <Route path="/ChooseDeliveryAddress" element={<ChooseDeliveryAddress />} />
 
           <Route path="/Orders" element={<Orders />}>
             <Route path="Past" element={<PastOrders />} />

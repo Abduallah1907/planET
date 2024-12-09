@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Container,
@@ -25,7 +25,11 @@ import { clearCart } from "../../store/cartSlice";
 import { BiChevronDown } from "react-icons/bi";
 import AddDeliveryAddress from "../CreatePages/AddDeliveryAddress";
 import { useAppContext } from "../../AppContext";
-import { PaymentIcon } from "react-svg-credit-card-payment-icons";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import PaymentForm from "../../components/paymentForm";
+import showToastMessage from "../../utils/showToastMessage";
+import { ToastTypes } from "../../utils/toastTypes";
 
 interface DeliveryAddress {
   _id: string;
@@ -40,26 +44,13 @@ interface FormData {
   DeliveryAddress: string;
 }
 
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY!);
+
 const ProductPayemnt: React.FC = () => {
   const Cart = useAppSelector((state) => state.cart);
   const [paymentMethod, setPaymentMethod] = useState<string>("Wallet");
-  const [cardType, setCardType] = useState<string | null>(null);
   const Tourist = useAppSelector((state) => state.user);
 
-  const [cardDetails, setCardDetails] = useState({
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
-    firstName: "",
-    lastName: "",
-  });
-  const [errors, setErrors] = useState({
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
-    firstName: "",
-    lastName: "",
-  });
   const navigate = useNavigate();
   const [walletBalance, setWalletBalanceState] = useState<number>(0);
   const [discountType, setDiscountType] = useState<string>("percentage"); // or "flat"
@@ -68,6 +59,8 @@ const ProductPayemnt: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     DeliveryAddress: "",
   });
+  const [clientSecret, setClientSecret] = useState(''); // Add state for clientSecret
+  const stripeFormRef = useRef<any>(null);
 
   const [addressModalShow, setAddressModalShow] = useState(false);
 
@@ -121,69 +114,24 @@ const ProductPayemnt: React.FC = () => {
     fetchWalletBalance();
   }, [Tourist]);
 
+  useEffect(() => {
+    const fetchClientSecret = async () => {
+      try {
+        if (paymentMethod !== "CreditCard") return;
+        const response = await TouristService.createPaymentIntent(currency, totalAfterDiscount);
+        console.log(response.data);
+        setClientSecret(response.data.client_secret);
+      } catch (error) {
+        console.error("Error fetching client secret:", error);
+      }
+    };
+    fetchClientSecret();
+  }, [paymentMethod]);
+
   const handlePaymentMethodChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     setPaymentMethod(e.target.value);
-  };
-
-  const cardPatterns = {
-    Amex: /^3[47]/,
-    Diners: /^3(?:0[0-5]|[68])/,
-    Discover: /^6(?:011|5[0-9])/,
-    Jcb: /^(?:2131|1800|35\d)/,
-    Maestro: /^(5018|5020|5038|6304|6759|6761|6763)/,
-    Mastercard: /^5[1-5]/,
-    Unionpay: /^62/,
-    Visa: /^4/,
-  };
-
-
-  const handleCardDetailsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const fieldName = name as keyof typeof cardDetails;
-    const newErrors = {
-      cardNumber: "Please enter your card number",
-      expiryDate: "Please enter your expiration date",
-      cvv: "Please enter your CVV",
-      firstName: "Please enter your first name",
-      lastName: "Please enter your last name",
-    };
-
-    setCardDetails((prevDetails) => ({
-      ...prevDetails,
-      [fieldName]: value,
-    }));
-
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [fieldName]: value ? "" : newErrors[fieldName],
-    }));
-
-    if (name === "expiryDate" && value.length === 5) {
-      const [month, year] = value.split('/');
-      if (parseInt(month, 10) < 1 || parseInt(month, 10) > 12) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          expiryDate: "Invalid month. Use MM/YY.",
-        }));
-      } else if (parseInt(year, 10) <= new Date().getFullYear() % 100 && parseInt(month, 10) < new Date().getMonth() + 1) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          expiryDate: "Card has expired.",
-        }));
-      }
-    }
-
-    if (name === "cardNumber") {
-      const cardType = Object.keys(cardPatterns).find((card) =>
-        cardPatterns[card as keyof typeof cardPatterns].test(value)
-      );
-      setCardType(cardType ?? null);
-    }
-  };
-
-  const validateCardDetails = () => {
   };
 
   const dispatch = useAppDispatch();
@@ -215,6 +163,33 @@ const ProductPayemnt: React.FC = () => {
         console.error("Error booking activity:", error);
       }
     } else if (paymentMethod === "CreditCard") {
+      // Call the Stripe form's submit method
+      const result = await stripeFormRef.current?.submit();
+
+      if (result?.success) {
+        showToastMessage("Payment was successful!",ToastTypes.SUCCESS);
+        try {
+          const orderData = {
+            tourist_id: Tourist.stakeholder_id._id,
+            cart: {
+              items: Cart.products.map((item: any) => ({
+                product_id: item.product.id,
+                quantity: item.quantity,
+              })),
+              cost: totalBeforeDiscount, // Save original total for reference
+            },
+            cost: finalCost, // Use discounted cost for the payment
+            payment_type: paymentMethod,
+          };
+          await TouristService.createOrder(orderData);
+          dispatch(clearCart());
+          navigate("/tourist/Profile");
+        } catch (error) {
+          console.error("Error booking activity:", error);
+        }
+        navigate("/Orders/Active");
+      }
+
     }
   };
 
@@ -302,109 +277,11 @@ const ProductPayemnt: React.FC = () => {
                 </Form.Group>
                 {paymentMethod === "CreditCard" && (
                   <div className="bank-card-details">
-                    <Row>
-                      <Form.Group className="mb-3">
-                        <Form.Label className="fw-bold">Card Number</Form.Label>
-                        <div className="d-flex align-items-center">
-                          <Form.Control
-                            type="text"
-                            name="cardNumber"
-                            className="custom-form-control"
-                            value={cardDetails.cardNumber}
-                            onChange={handleCardDetailsChange}
-                            placeholder="Enter card number"
-                            required={paymentMethod === "CreditCard"}
-                          />
-                          {cardType && (
-                            <PaymentIcon type={cardType as "Amex" | "Diners" | "Discover" | "Jcb" | "Maestro" | "Mastercard" | "Unionpay" | "Visa"} format="flatRounded" className="ms-2" width={70} />
-                          )}
-                        </div>
-                        {errors.cardNumber && (
-                          <div className="text-danger mt-1">{errors.cardNumber}</div>
-                        )}
-                      </Form.Group>
-                    </Row>
-                    <Row>
-                      <Col>
-                        <Form.Group className="mb-3">
-                          <Form.Label className="fw-bold">Expiry Date</Form.Label>
-                          <InputMask
-                            mask="99/99"
-                            value={cardDetails.expiryDate}
-                            onChange={handleCardDetailsChange}
-                          >
-                            {(inputProps: any) => (
-                              <Form.Control
-                                {...inputProps}
-                                type="text"
-                                name="expiryDate"
-                                className="custom-form-control"
-                                placeholder="MM/YY"
-                                required={paymentMethod === "CreditCard"}
-                              />
-                            )}
-                          </InputMask>
-                          {errors.expiryDate && (
-                            <div className="text-danger mt-1">{errors.expiryDate}</div>
-                          )}
-                        </Form.Group>
-                      </Col>
-                      <Col>
-                        <Form.Group className="mb-3">
-                          <Form.Label className="fw-bold">CVV</Form.Label>
-                          <Form.Control
-                            type="number"
-                            name="cvv"
-                            min={100}
-                            max={999}
-                            value={cardDetails.cvv}
-                            className="custom-form-control"
-                            onChange={handleCardDetailsChange}
-                            placeholder="Enter CVV"
-                            required={paymentMethod === "CreditCard"}
-                          />
-                          {errors.cvv && (
-                            <div className="text-danger mt-1">{errors.cvv}</div>
-                          )}
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col>
-                        <Form.Group className="mb-3">
-                          <Form.Label className="fw-bold">First Name</Form.Label>
-                          <Form.Control
-                            type="text"
-                            name="firstName"
-                            value={cardDetails.firstName}
-                            className="custom-form-control"
-                            onChange={handleCardDetailsChange}
-                            placeholder="Enter first name"
-                            required={paymentMethod === "CreditCard"}
-                          />
-                          {errors.firstName && (
-                            <div className="text-danger mt-1">{errors.firstName}</div>
-                          )}
-                        </Form.Group>
-                      </Col>
-                      <Col>
-                        <Form.Group className="mb-3">
-                          <Form.Label className="fw-bold">Last Name</Form.Label>
-                          <Form.Control
-                            type="text"
-                            name="lastName"
-                            value={cardDetails.lastName}
-                            className="custom-form-control"
-                            onChange={handleCardDetailsChange}
-                            placeholder="Enter last name"
-                            required={paymentMethod === "CreditCard"}
-                          />
-                          {errors.lastName && (
-                            <div className="text-danger mt-1">{errors.lastName}</div>
-                          )}
-                        </Form.Group>
-                      </Col>
-                    </Row>
+                    {clientSecret && (
+                      <Elements stripe={stripePromise} options={{ clientSecret }}>
+                        <PaymentForm ref={stripeFormRef} />
+                      </Elements>
+                    )}
                   </div>
                 )}
               </Row>

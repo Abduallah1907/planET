@@ -10,6 +10,7 @@ export default (app: Router) => {
 
   app.use("/tourist", route);
   route.post("/StripeWebhook", touristController.stripeWebhookController);
+  route.post("/createPaymentIntent", touristController.createPaymentIntent);
   route.get(
     "/getTourist/:email",
     authorize([UserRoles.Tourist]),
