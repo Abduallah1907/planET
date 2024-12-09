@@ -6,24 +6,16 @@ import { Schema, Types } from "mongoose";
 
 @Service()
 export class UserController {
-  public async SendNotificationAndEmailforUpcomingEvents(res: any, req: any) {
+  public async SendNotificationAndEmailforUpcomingEvents(req: any, res: any) {
     const userService: UserService = Container.get(UserService);
     const user = await userService.SendNotificationAndEmailforUpcomingEvents();
-    if (user) {
-      res.status(user.status).json(user);
-    } else {
-      res.status(200).json(null);
-    }
+    res.status(200).json(user);
   }
 
   public async SendNotificationAndEmailforBirthday(req: any, res: any) {
     const userService: UserService = Container.get(UserService);
     const user = await userService.SendNotificationAndEmailforBirthday();
-    if (user) {
-      res.status(user.status).json(user);
-    } else {
-      res.status(200).json(null);
-    }
+    res.status(200).json(user);
   }
 
   public async createUser(req: Request, res: Response): Promise<void> {

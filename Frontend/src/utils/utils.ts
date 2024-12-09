@@ -9,9 +9,10 @@ import { ToastTypes } from "./toastTypes";
 import ChangePasswordForm from "../views/auth/ChangePasswordForm";
 import ChangePasswordG from "../views/auth/ChangePasswordG";
 import PromoCode from "../views/PromoCode";
-import { FaTachometerAlt, FaPlus, FaBox, FaList, FaTags, FaHistory, FaUsers, FaKey, FaExclamationCircle, FaChartLine, FaClipboardList, FaMapMarkerAlt, FaShoppingCart, FaBookmark, FaTruck, FaClipboardCheck, FaUserShield, FaSuitcase, FaFileAlt } from 'react-icons/fa';
+import { FaTachometerAlt, FaPlus, FaBox, FaList, FaTags, FaHistory, FaUsers, FaKey, FaExclamationCircle, FaChartLine, FaClipboardList, FaMapMarkerAlt, FaShoppingCart, FaBookmark, FaTruck, FaClipboardCheck, FaUserShield, FaSuitcase, FaFileAlt, FaBell } from 'react-icons/fa';
 import AddNewProduct from "../views/CreatePages/AddNewProduct";
 import Preferences from "../views/Preferences";
+import NotificationsModal from "../components/notificationsModal";
 export class Utils {
   private static secretKey = "your_secret_key";
 
@@ -180,6 +181,7 @@ export class Utils {
             { path: "/Complaints", label: "Complaints", icon: FaExclamationCircle },
             { path: "/sales", label: "Sales Report", icon: FaChartLine },
             { label: "Create Promo Code", isModal: true, modalComponent: PromoCode, icon: FaFileAlt },
+            { label: "Notifications", isModal: true, modalComponent: NotificationsModal, icon: FaBell },
           ])
         );
         break;
