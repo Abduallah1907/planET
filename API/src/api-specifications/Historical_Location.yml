@@ -287,3 +287,22 @@ paths:
           description: Filter components are fetched
         "500":
           description: Internal Server Error
+  /api/historical_location/getComments/{historical_location_id}:
+    get:
+      tags:
+        - Historical_location
+      summary: Get comments by historical location ID
+      description: Get comments by historical location ID
+      parameters:
+        - in: path
+          name: historical_location_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Comments are fetched
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error        
