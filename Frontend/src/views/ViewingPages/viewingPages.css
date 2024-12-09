@@ -47,10 +47,10 @@
 .map-price-button.active .map-price-marker {
     background-color: white;
     color: var(--main-color);
-    
+
 }
 
-.yNHHyP-marker-view:has(.map-price-button.active){
+.yNHHyP-marker-view:has(.map-price-button.active) {
     z-index: 1;
 }
 
@@ -63,4 +63,9 @@
     transform: rotate(45deg);
     width: 1rem;
     z-index: -1;
+}
+
+.card-below-topbar {
+    top: 170px; /* Adjust this value based on the height of your TopBar */
+    /* Adjust this value based on the height of your TopBar */
 }

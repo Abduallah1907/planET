@@ -244,7 +244,7 @@ export default function HotelsPage() {
                     {!isMediumScreen && (
                         <Col lg={4} className="p-0">
                             {(hotels.length > 0 && !loading) ? (
-                                <Card className="sticky-top mt-3 p-2">
+                                <Card className="sticky-top mt-3 p-2 card-below-topbar">
                                     <Map
                                         style={{ height: "500px" }}
                                         defaultCenter={center}

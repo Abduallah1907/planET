@@ -61,6 +61,8 @@ export default function ItinerariesPage() {
       } else {
         getItinerary();
       }
+    } else {
+      getItinerary();
     }
   }, []);
 

@@ -90,6 +90,8 @@ export default function ActivitiesPage() {
       } else {
         getActivities();
       }
+    } else {
+      getActivities();
     }
   }, []);
 

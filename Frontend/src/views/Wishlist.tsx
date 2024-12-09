@@ -45,8 +45,8 @@ const WishlistPage: React.FC = () => {
         </Col>
       </Row>
       <Row className="justify-content-md-center">
-        <Col md={10}>
-          {wishlist.products.map((product: any) => (
+        {wishlist.products.map((product: any) => (
+          <Col md={5}>
             <WishlistCard
               key={product._id}
               id={product._id}
@@ -54,15 +54,15 @@ const WishlistPage: React.FC = () => {
               price={product.price}
               description={product.description}
               image={product.image}
-              //onAddToCart={() => navigate("/cart")} // Example handler
-              //onRemoveFromWishlist={() => {
-              /* Dispatch remove from wishlist action */
-              //}}
+            //onAddToCart={() => navigate("/cart")} // Example handler
+            //onRemoveFromWishlist={() => {
+            /* Dispatch remove from wishlist action */
+            //}}
             />
-          ))}
-        </Col>
-      </Row>
-    </div>
+          </Col>
+        ))}
+    </Row>
+    </div >
   );
 };
 

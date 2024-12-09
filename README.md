@@ -476,7 +476,16 @@ giving us a 404 as a result, giving us the result we expected.
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![App Screenshot 1](screenshots/1.png)
+![App Screenshot 2](screenshots/2.png)
+![App Screenshot 3](screenshots/3.png)
+![App Screenshot 4](screenshots/4.png)
+![App Screenshot 5](screenshots/5.png)
+![App Screenshot 6](screenshots/6.png)
+![App Screenshot 7](screenshots/7.png)
+![App Screenshot 8](screenshots/8.png)
+![App Screenshot 9](screenshots/9.png)
+![App Screenshot 10](screenshots/10.png)
 
 ## Features
 

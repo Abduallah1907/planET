@@ -76,7 +76,7 @@ const WishlistCard = ({
         </Col>
 
         {/* Main Info Section */}
-        <Col md={5} className="d-flex align-items-stretch">
+        <Col md={4} className="d-flex align-items-stretch">
           <Card.Body className="p-0 d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center mb-1">
@@ -101,19 +101,21 @@ const WishlistCard = ({
           <h4 style={{ fontWeight: "bold" }}>{convertedPrice}</h4>
 
           <div>
-            <Button className="" variant="main-inverse" onClick={addToCart}>
+            <Button className="m-0" variant="main-inverse" onClick={addToCart}>
               Add to Cart
             </Button>
-            <Button
-              variant="main-inverse"
-              className=""
-              onClick={(e) => {
-                removeFromWishlist(e);
-              }}
-            >
-              <FaTrashAlt>Remove</FaTrashAlt>
-            </Button>
           </div>
+        </Col>
+        <Col md={1} className="d-flex justify-content-center align-items-center">
+          <Button
+            variant="main-inverse"
+            className=""
+            onClick={(e) => {
+              removeFromWishlist(e);
+            }}
+          >
+            <FaTrashAlt>Remove</FaTrashAlt>
+          </Button>
         </Col>
       </Row>
     </Card>
