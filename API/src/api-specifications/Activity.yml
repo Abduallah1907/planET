@@ -378,3 +378,24 @@ paths:
           description: The itinerary is already flagged
         500:
           description: Internal server error.
+  /api/activity/getComments/{activity_id}:
+    get:
+      tags:
+        - Activity
+      summary: Retrieve comments from an activity
+      description: Retrieve comments from an activity
+      parameters:
+        - name: activity_id
+          in: path
+          description: The activity we want to retrieve comments from.
+          required: true
+          schema:
+            type: string
+            format: objectId
+      responses:
+        200:
+          description: List of comments
+        404:
+          description: Activity not found.
+        500:
+          description: Internal server error.        

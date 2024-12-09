@@ -7,12 +7,24 @@ import getRoleAndID from "../middlewares/getRole";
 const router = Router();
 
 export default (app: Router) => {
-  const historical_locationController: Historical_locationController = Container.get(Historical_locationController);
+  const historical_locationController: Historical_locationController =
+    Container.get(Historical_locationController);
 
   app.use("/historical_location", router);
-  router.get("/getAllHistorical_locations", getRoleAndID, historical_locationController.getAllHistorical_locationsController);
-  router.post("/createHistorical_location", authorize([UserRoles.Governor]), historical_locationController.createHistorical_locationController);
-  router.get("/getHistorical_locationByID", historical_locationController.getHistorical_locationByIDController);
+  router.get(
+    "/getAllHistorical_locations",
+    getRoleAndID,
+    historical_locationController.getAllHistorical_locationsController
+  );
+  router.post(
+    "/createHistorical_location",
+    authorize([UserRoles.Governor]),
+    historical_locationController.createHistorical_locationController
+  );
+  router.get(
+    "/getHistorical_locationByID",
+    historical_locationController.getHistorical_locationByIDController
+  );
   router.get(
     "/getHistorical_locationByIDForGoverner",
     authorize([UserRoles.Governor]),
@@ -40,8 +52,25 @@ export default (app: Router) => {
     historical_locationController.getSearchHistorical_location
   );
 
-  router.get("/getUpcomingHistorical_locations", getRoleAndID, historical_locationController.getUpcomingHistorical_locations);
+  router.get(
+    "/getUpcomingHistorical_locations",
+    getRoleAndID,
+    historical_locationController.getUpcomingHistorical_locations
+  );
 
-  router.get("/getFilteredHistorical_locations", getRoleAndID, historical_locationController.getFilteredHistorical_locations);
-  router.get("/getFilterComponents", getRoleAndID, historical_locationController.getFilterComponents);
+  router.get(
+    "/getFilteredHistorical_locations",
+    getRoleAndID,
+    historical_locationController.getFilteredHistorical_locations
+  );
+  router.get(
+    "/getFilterComponents",
+    getRoleAndID,
+    historical_locationController.getFilterComponents
+  );
+  router.get(
+    "/getComments/:historical_location_id",
+    getRoleAndID,
+    historical_locationController.getComments
+  );
 };

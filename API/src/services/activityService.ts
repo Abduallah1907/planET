@@ -683,4 +683,14 @@ export default class ActivityService {
 
     return new response(true, { activity_id }, "Activity flagged", 200);
   }
+
+  public async getCommentsService(
+    activity_id: Types.ObjectId
+  ): Promise<response> {
+    const activity = await this.activityModel
+      .findById(activity_id)
+      .populate("comments");
+    if (!activity) throw new NotFoundError("Activity not found");
+    return new response(true, activity.comments, "Comments fetched", 200);
+  }
 }

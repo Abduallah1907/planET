@@ -169,4 +169,14 @@ export class ActivityController {
       );
     res.status(updatedActivity.status).json(updatedActivity);
   }
+  public async getComments(req: Request, res: Response): Promise<any> {
+    const { activity_id } = req.params;
+    const activity_idObjectId = new Types.ObjectId(activity_id);
+
+    const activityService: ActivityService = Container.get(ActivityService);
+    const comments = await activityService.getCommentsService(
+      activity_idObjectId
+    );
+    res.status(comments.status).json(comments);
+  }
 }

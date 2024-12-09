@@ -239,4 +239,24 @@ paths:
         "404":
           description: Product not found
         "500":
-          description: Internal Server Error        
+          description: Internal Server Error   
+  /api/product/getComments/{product_id}:
+    get:
+      tags:
+        - Product
+      summary: Get comments by product id
+      description: Get comments by product id
+      parameters:
+        - in: path
+          name: product_id
+          required: true
+          schema:
+            type: string
+          description: Product ID
+      responses:
+        "200":
+          description: Comments are fetched
+        "404":
+          description: Comments not found
+        "500":
+          description: Internal Server Error             
