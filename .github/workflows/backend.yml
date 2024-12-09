@@ -32,6 +32,8 @@ jobs:
         cd API/src
         touch .env
         echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
+        echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> .env
+        echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}" >> .env
         cat .env
       
     - name: Run backend using nodemon
