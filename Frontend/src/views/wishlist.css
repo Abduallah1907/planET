@@ -1,0 +1,27 @@
+.wishlist-modal .modal-dialog {
+    max-width: 400px; /* Set width similar to Facebook's panel */
+    margin: 0;
+    top: 10%; /* Adjust vertical positioning */
+    right: 0;
+    position: absolute;
+  }
+  
+  .wishlist-modal .modal-content {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .wishlist-modal .wishlist-items {
+    max-height: 400px; /* Limit height to create a scrollable area */
+    overflow-y: auto;
+  }
+  
+  .wishlist-modal .modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .wishlist-modal .modal-body {
+    padding: 0.5rem;
+  }
+  

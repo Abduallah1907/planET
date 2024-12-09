@@ -288,14 +288,15 @@ const TopBar: React.FC = () => {
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown> */}
-
-            <Button
-              variant=""
-              onClick={handleButtonClick}
-              className="btn-help btn-margin me-1"
-            >
-              <MdHelpOutline />
-            </Button>
+            {(User.role === "TOURIST" || !IsLoggedIn) && (
+              <Button
+                variant=""
+                onClick={handleButtonClick}
+                className="btn-help btn-margin me-1"
+              >
+                <MdHelpOutline />
+              </Button>
+            )}
 
             {IsLoggedIn ? (
               <>
@@ -307,6 +308,7 @@ const TopBar: React.FC = () => {
                   >
                     <FaShoppingCart />
                   </Button>
+                  
                 )}
                 {User.role === "TOURIST" && (
                   <Button
