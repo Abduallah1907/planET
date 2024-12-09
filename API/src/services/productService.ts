@@ -286,4 +286,14 @@ export class ProductService {
       200
     );
   }
+
+  public async getCommentsService(product_id: Types.ObjectId) {
+    const product = await this.productModel
+      .findById(product_id)
+      .populate("comments");
+    if (product instanceof Error)
+      throw new InternalServerError("Internal Server Error");
+    if (!product) throw new NotFoundError("Product not found");
+    return new response(true, product.comments, "Comments are fetched", 200);
+  }
 }
