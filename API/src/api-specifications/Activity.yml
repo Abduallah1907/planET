@@ -392,7 +392,6 @@ paths:
           schema:
             type: string
             format: objectId
-            example: "6700067cce53c3263e1f8e5c"
       responses:
         200:
           description: List of comments

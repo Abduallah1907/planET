@@ -669,4 +669,12 @@ export default class ItineraryService {
       200
     );
   }
+  public async getCommentsService(itinerary_id: Types.ObjectId) {
+    const itinerary = await this.itineraryModel
+      .findById(itinerary_id)
+      .populate("comments");
+    if (!itinerary) throw new NotFoundError("Itinerary not found");
+
+    return new response(true, itinerary.comments, "Comments fetched", 200);
+  }
 }

@@ -187,4 +187,14 @@ export class ItineraryController {
     );
     res.status(filterComponent.status).json(filterComponent);
   }
+
+  public async getComments(req: any, res: any) {
+    const { itinerary_id } = req.params;
+    const itinerary_idObjectId = new Types.ObjectId(itinerary_id);
+    const itineraryService: ItineraryService = Container.get(ItineraryService);
+    const comments = await itineraryService.getCommentsService(
+      itinerary_idObjectId
+    );
+    res.status(comments.status).json(comments);
+  }
 }

@@ -425,3 +425,23 @@ paths:
           description: The itinerary is already flagged
         500:
           description: Internal server error.
+  /api/itinerary/getComments/{itinerary_id}:
+    get:
+      tags:
+        - Itinerary
+      summary: Retrieve comments for an itinerary
+      parameters:
+        - name: itinerary_id
+          in: path
+          description: The itinerary we want to fetch comments for.
+          required: true
+          schema:
+            type: string
+            format: objectId
+      responses:
+        200:
+          description: List of comments.
+        404:
+          description: Itinerary not found.
+        500:
+          description: Internal server error.        
