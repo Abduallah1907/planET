@@ -80,9 +80,9 @@ const BookmarkEvents: React.FC = () => {
             );
             return (
               <div
-                onClick={() => navigate(`/Activity/${event.id}`)} // Use the event's ID to navigate to the details page
+                onClick={() => navigate(`/Activity/${event._id}`)} // Use the event's ID to navigate to the details page
                 className="activity-card"
-                key={event.id}
+                key={event._id}
                 style={{
                   width: "450px", // Adjust width for smaller cards
                   margin: "10px", // Space between cards
