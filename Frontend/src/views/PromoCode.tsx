@@ -20,6 +20,7 @@ const PromoCode: React.FC<PromoCodeProps> = ({show, onHide}) => {
     discount: "",
     numberOfDays: "",
   });
+  const [promoCode, setPromoCode] = useState<string>("");
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -36,8 +37,10 @@ const PromoCode: React.FC<PromoCodeProps> = ({show, onHide}) => {
       discount: formData.discount,
       numberOfDays: formData.numberOfDays,
     };
-    await AdminService.createPromoCode(data);
-    onHide(); // Close modal after successful submission
+    const response = await AdminService.createPromoCode(data);
+    if(response.data.promoCode)
+      setPromoCode(response.data.promoCode);
+    // onHide(); // Close modal after successful submission
   };
 
   return (
@@ -49,6 +52,11 @@ const PromoCode: React.FC<PromoCodeProps> = ({show, onHide}) => {
         </Modal.Header>
         <Modal.Body>
           <Container>
+            {promoCode && (
+              <div className="alert alert-success" role="alert">
+                Promo Code: {promoCode}
+              </div>
+            )}
             <Form onSubmit={handleSubmit}>
               {/* Discount Value */}
               <AdminFormGroup
