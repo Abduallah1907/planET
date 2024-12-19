@@ -629,6 +629,12 @@ MAIL_HOST = 'smtp.gmail.com'
 MAIL_PORT = 587
 MAIL_USERNAME = 'your email'
 MAIL_PASSWORD = 'your password'
+
+AMADEUS_CLIENTID = 'your amadeues client id'
+AMADEUS_CLIENT_SECRET = 'your amadeues secret key'
+
+STRIPE_SECRET_KEY ='your stripe secret key'
+STRIPE_WEBHOOK_SECRET='your stripe webhook secret key'
 ```
 
 #### 3. Set Up the Frontend
@@ -650,6 +656,7 @@ The next step is to setup the enviroment file to store all our sensitive variabl
 
 ```
 REACT_APP_GOOGLE_MAPS_API_KEY='your google api key'
+REACT_APP_STRIPE_PUBLIC_KEY='your stripe public key'
 ```
 
 After finishing the above steps, running the project is relatively simple, all one needs is two terminal sessions and a browser.
