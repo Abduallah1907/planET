@@ -671,7 +671,7 @@ This should run the frontend server at port 3000 by default, and can be visited 
 Once the site opens up, then congratulations! You have successfully ran our site.
 
 ## How to Use
-Welcome to our Itinerary Planner! This guide will help you navigate our site and plan your perfect trip with ease. Make sure you pass by the (installation section)[#installation] before continuing on. This will only cover a basic overview of what mainly can do, check the (features section)[#features] for everything you can do.
+Welcome to our Itinerary Planner! This guide will help you navigate our site and plan your perfect trip with ease. Make sure you pass by the [installation section](#installation) before continuing on. This will only cover a basic overview of what you can mainly do, if you want to see more information about everything possible, check the [features section](#features).
 
 ### Tourist
 #### Step 1: Create an Account
