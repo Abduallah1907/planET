@@ -112,7 +112,7 @@ This project is built using the **MERN** stack, which consists of the following 
 - **Security**: Use environment variables for sensitive information.
 
 ## Front-End (React)
-
+```src
 │   index.js           # Entry point of the application
 │   App.js             # Main App component that includes routing and global state
 │   App.css            # Global styles for the application
@@ -123,7 +123,7 @@ This project is built using the **MERN** stack, which consists of the following 
 └───store              # Redux store and slices
 └───utils              # Utility functions and helpers
 └───views              # Page components
-
+```
 ### Components
 
 - Reusable UI Components: All reusable UI components are placed in the components directory. Each component has its own folder containing the component file and its corresponding styles.
@@ -486,50 +486,101 @@ giving us a 404 as a result, giving us the result we expected.
 ![App Screenshot 8](screenshots/8.png)
 ![App Screenshot 9](screenshots/9.png)
 ![App Screenshot 10](screenshots/10.png)
+![App Screenshot 11](screenshots/11.png)
+![App Screenshot 12](screenshots/12.png)
+![App Screenshot 13](screenshots/13.png)
+![App Screenshot 14](screenshots/14.png)
+![App Screenshot 15](screenshots/15.png)
+![App Screenshot 15](screenshots/16.png)
+![App Screenshot 15](screenshots/17.png)
+![App Screenshot 15](screenshots/18.png)
+
+
 
 ## Features
-
 ### Features For Tourists
 
 - Book itineraries and activities all over the world.
 - Look at the most popular historical locations wherever.
-- Book hotels and airplanes through the site directly.
+- Book hotels, airplanes, and transportation through the site directly.
 - Bookmark your favorite activities.
-- Browse through an endless shop containing all types of souveniers.
-- Wishlist your most wanted products.
-- Receive loyalty points for every payment done.
+- Be guided through the steps to begin a vacation.
+- Select tour preferences for your vacation.
+- Browse through an endless shop containing all types of souveniers and products.
+- Search and filter through any activity, itinerary, or product in any way you want, such as date, tages, names, or even budget.
+- Choose any currency to view the prices with.
+- Rate and comment on any itinerary and activity you attended, or the tour guide you attended with.
+- Pay for any itinerary/event online or from your wallet, and recieve a virtual receipt if sucessful.
+- Cancel a booking 48 hours before the start of the activity/itinerary, and view the amount refunded to your wallet.
+- View all past and upcoming activities/itineraries i paid for.
+- Be reminded through email and application for upcoming activities/itineraries I paid for.
+- Receive loyalty points for every payment done, and get a badge based on the level.
 - Use your loyalty points to recieve cash inside your wallet.
-- Get promocodes, and apply them to whatever you want.
+- File complaints for admins to get feedback about the site.
+- Save products to your wishlist for future reference.
+- View and manage all the products in your wishlist.
+- Remove items from your wishlist when no longer needed.
+- Add items to your cart with ease, whether through your wishlist or the product page.
+- Remove and modify the quantity products from your cart.
+- Complete your purchase through a streamlined checkout process.
+- Add a new delivery address, or store multiple addresses for future use.
+- Choose from available delivery addresses when completing your order.
+- Select payment methods: Wallet, Credit Card, or Cash on Delivery.
+- View and track your current and past orders.
+- Rate and review products you've purchased to share your experience.
+- Check detailed order information and its current status.
+- Cancel an order if needed, with an option to view the amount refunded into your wallet.
+- Receive a special promo code on your birthday via email and system notification.
+- Apply promo codes for discounts on any product site-wide.
 
-### Features For Tourists
+### Features For Admins
 
 - Check out the number of users per month.
 - View a report of total revenue from all the different events, itineraries, and products, and be able to filter them based on date.
 - Be able to view complaints and be able to filter, sort, and reply to them.
 - Recieve notifactions for any out of stock products via email and site.
 - Create tourism governors and other admins.
+- Moderate the site by deleting accounts and flagging activities and itineraries.
 
 ### Features For Advertisers
 
+- Register by uploading your ID and taxation registery card and information
 - Create activities for tourists to book and enjoy through the site.
+- View a list of all your activities and how many peopled booked it.
 - Customize your profile according to your needs, including your website, hotline, and much more.
 - Track your earnings overall or for a specific activity.
+- Recieve notifactions whenever your activity is marked as inapproriate.
 
 ### Features For Tour Guides
 
+- Register by uploading your ID and certificates.
 - Create and personalize your profile with your past experiences.
 - Create itineraries for people to experience.
+- View a list of all created itineraries, and how many people booked it.
 - Track your earnings overall or for a specific itinerary.
+- Activate and deactivate itineraries as you like.
+- Recieve notifactions whenever your itinerary is marked as inapproriate.
 
 ### Features For Sellers
 
+- Register by uploading your ID and taxation registery card.
+- Upload a photo to your own account.
 - Create a product for tourists to buy.
+- View your the quantity left for your product.
 - Track your earnings overall or for a specific product.
+- Archive/Unarchive your product.
 
 ### Features For Tourism Governor
 
 - Create historical places for people to find and experience inside your country.
+- View all places you created.
+- Create personalized tags for your place.
 
+### Features For All
+
+- Login using your username/email and password.
+- Change your pasword using an OTP.
+- Request to be deleted off the system.
 ## Installation
 
 This guide will help you get up and running with the MERN stack application (MongoDB, Express, React, Node.js) quickly.
@@ -601,8 +652,6 @@ The next step is to setup the enviroment file to store all our sensitive variabl
 REACT_APP_GOOGLE_MAPS_API_KEY='your google api key'
 ```
 
-## How to Use
-
 After finishing the above steps, running the project is relatively simple, all one needs is two terminal sessions and a browser.
 
 Start both terminal session in the project root folder, and run the following commands to run the backend:
@@ -612,7 +661,7 @@ cd API/src
 npx nodemon ./app.ts
 ```
 
-This should run the backend server at the port 8000 by default, unless it was changed in the .env file.
+This should run the backend server at the port 8000 by default, unless it was changed in the .env file. It will take some time, so please be patient.
 
 Following that, using the other terminal session, navigate to frontend directory and start the server:
 
@@ -625,6 +674,66 @@ This should run the frontend server at port 3000 by default, and can be visited 
 
 Once the site opens up, then congratulations! You have successfully ran our site.
 
+## How to Use
+Welcome to our Itinerary Planner! This guide will help you navigate our site and plan your perfect trip with ease. Make sure you pass by the [installation section](#installation) before continuing on. This will only cover a basic overview of what you can mainly do, if you want to see more information about everything possible, check the [features section](#features).
+
+### Tourist
+#### Step 1: Create an Account
+To get started, you'll need to create a free account. Simply click on the Sign Up button in the top right corner of the homepage and enter your details. If you already have an account, click Login to access your plans.
+
+#### Step 2: Search Destinations
+After logging in, you can choose either the itinerary or activity section.
+
+#### Step 3: Book your event
+After choosing one of the sections, you will be able to browse through a list of activities/itineraries. You can also filter through them as needed. Once you see something you like, you can click on it to view further details or to book it. Once you decide to book it, you will be brought to a page to choose your payment method. Once sucessful, a virtual reciept will be sent through email.
+
+There are more aspects to explore, such as the products section and your history. You can view the demo in the main page if you ever get lost, or contact us to help you.
+
+### Advertiser
+#### Step 1: Create an Account
+First step is to register, and upload all the required documents and fill out the required information. After creating your account, an admin will review your documents and will either accept or reject you.
+
+#### Step 2: Customize your Account
+After getting accepted, you can personalize your account even further by adding link to your website, hotline, and so on for tourists to view if needed.
+
+#### Step 3: Create an Activity
+After personalizing your account to meet your needs, you can create an activity through your account by entering its date, time, location (using Google Maps), price (or price range), category, tags, special discounts, and if booking is open. Once finished, tourists all over the world can view this activity and book it if it interests them. You can track all earnings and bookings for your activities through your own account.
+
+### Tour Guide
+#### Step 1: Create an Account
+First step is to register, and upload all the required documents and fill out the required information. After creating your account, an admin will review your documents and will either accept or reject you.
+
+#### Step 2: Customize your Account
+After getting accepted, you can personalize your account even further by adding years of experience and previous works for tourists to view.
+
+#### Step 3: Create an Itinerary
+After personalizing your account to meet your needs, you can create an itinerary through your account by entering its date, time, location (using Google Maps), price (or price range), category, tags, special discounts, and if booking is open. Once finished, tourists all over the world can view this activity and book it if it interests them. You can track all earnings and bookings for your itineraries through your own account.
+
+
+### Seller
+#### Step 1: Create an Account
+First step is to register, and upload all the required documents and fill out the required information. After creating your account, an admin will review your documents and will either accept or reject you.
+
+#### Step 2: Customize your Account
+After getting accepted, you can personalize your account even further by adding your name, photo, and description for tourists to view.
+
+#### Step 3: Create a Product
+After personalizing your account to meet your needs, you can create an product through your account by entering details, price, and quantity. Once created, tourists can buy it and get delivered directly to them through our site. You can track all earnings and remaining quantity for your products through your own account.
+
+### Admin
+#### Step 1: Login into a Admin Account
+You cannot register directly as admin, another admin must create your account. Once created, you can login using the login credientials sent by the other admin.
+
+#### Step 2: Moderate the Site
+You can view all itineraries, activities, and products, and mark any as inappropriate, or ban the person who made them. You can also view all copmlaints made by tourists, and reply to any of them. Complaints can be viewed from the side navigation bar.
+
+### Tourism Governor
+#### Step 1: Be Invited by an Admin
+You cannot register directly as a tourism governor, an admin must create your account. Once created, you can login using the login credientials sent by the admin.
+
+#### Step 2: Create a Historical Place
+After being invited, you can create a historical place for tourists to view through your account by entering the place's details. You can also create custom tags for your place.
+  
 ## API References
 
 This project uses OpenAPI 3 for generating and maintaining our API documentation. All of the files can be found inside of [api-specifications](/API/src/api-specifications/) folder.
