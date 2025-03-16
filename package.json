@@ -6,7 +6,7 @@
   },
   "scripts": {
     "install-server": "cd API && npm i",
-    "start-server": "cd API/src && npx nodemon ./app.ts",
+    "start-server": "cd API/src && npx ts-node ./app.ts",
     "install-client": "cd Frontend && npm i",
     "build-client": "cd Frontend && npm run build",
     "start-client": "cd Frontend && npm run start"

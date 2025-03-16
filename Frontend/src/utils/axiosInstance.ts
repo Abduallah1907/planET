@@ -4,7 +4,7 @@ import showToast from "./showToast";
 import { logout } from "../store/userSlice";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8000/api",
+  baseURL: "https://planet-9sgy.onrender.com/api",
   headers: {
     "Content-Type": "application/json",
     timeout: 1000,
